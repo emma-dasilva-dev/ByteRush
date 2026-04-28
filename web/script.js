@@ -1,3 +1,16 @@
+// === Gestion des boutons de navigation de la homepage ===
+document.getElementById("startHtmlJourney")?.addEventListener("click", () => {
+  window.location.href = "L1-html.html";
+});
+document.getElementById("startCssJourney")?.addEventListener("click", () => {
+  window.location.href = "L2-css.html";
+});
+document.getElementById("startJsJourney")?.addEventListener("click", () => {
+  window.location.href = "L3-js.html";
+});
+document.getElementById("mainHtmlJourney")?.addEventListener("click", () => {
+  window.location.href = "L1-html.html";
+});
 // === Script d’accueil extrait de index.html ===
 (function () {
   function getProgress() {
