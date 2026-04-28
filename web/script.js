@@ -1055,14 +1055,44 @@ const game = {
   },
 
   showCompletionScreen() {
+    // Détecte le contexte (HTML ou CSS)
+    const isHtmlLevel = window.location.pathname.includes("L1-html.html");
+    const isCssLevel = window.location.pathname.includes("L2-css.html");
     const progress = loadJourneyProgress();
-    progress.htmlComplete = true;
-    progress.currentWorld = "css";
-    saveJourneyProgress(progress);
+
+    if (isHtmlLevel) {
+      progress.htmlComplete = true;
+      progress.currentWorld = "css";
+      saveJourneyProgress(progress);
+    } else if (isCssLevel) {
+      progress.cssComplete = true;
+      progress.currentWorld = "js";
+      saveJourneyProgress(progress);
+    }
 
     const completionScreen = document.getElementById("completion-screen");
     if (completionScreen) {
       completionScreen.style.display = "flex";
+
+      // Ajoute le bouton de progression si besoin
+      if (isHtmlLevel && !document.getElementById("continue-grove-btn")) {
+        const btn = document.createElement("button");
+        btn.id = "continue-grove-btn";
+        btn.className = "btn btn-primary glow-hover";
+        btn.textContent = "Continue to Color Grove";
+        btn.onclick = function () { window.location.href = "L2-css.html"; };
+        const group = completionScreen.querySelector(".button-group") || completionScreen;
+        group.insertBefore(btn, group.firstChild);
+      }
+      if (isCssLevel && !document.getElementById("continue-core-btn")) {
+        const btn = document.createElement("button");
+        btn.id = "continue-core-btn";
+        btn.className = "btn btn-primary glow-hover";
+        btn.textContent = "Continue to Lightning Core";
+        btn.onclick = function () { window.location.href = "L3-js.html"; };
+        const group = completionScreen.querySelector(".button-group, .grove-completion-actions") || completionScreen;
+        group.insertBefore(btn, group.firstChild);
+      }
     }
   },
 
