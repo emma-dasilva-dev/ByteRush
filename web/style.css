@@ -1,3 +1,256 @@
+/* === Styles extraits de index.html === */
+body.index-page {
+  position: relative;
+  overflow-x: hidden;
+  background:
+    linear-gradient(180deg, rgba(17, 11, 40, 0.92) 0%, rgba(8, 11, 28, 0.98) 100%),
+    #080b1c;
+  image-rendering: pixelated;
+}
+body.index-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(115, 86, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(115, 86, 255, 0.08) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.25) 30%, rgba(0, 0, 0, 0.9) 100%);
+  pointer-events: none;
+  z-index: -1;
+}
+body.index-page::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 32vh;
+  background:
+    linear-gradient(180deg, rgba(10, 13, 28, 0) 0%, rgba(10, 13, 28, 0.96) 100%),
+    repeating-linear-gradient(90deg, rgba(103, 232, 249, 0.1) 0 2px, transparent 2px 34px);
+  transform: perspective(540px) rotateX(72deg);
+  transform-origin: bottom;
+  pointer-events: none;
+  z-index: -1;
+}
+.moon-glow {
+  background: radial-gradient(circle, rgba(119, 92, 255, 0.18) 0%, rgba(103, 232, 249, 0.05) 36%, transparent 72%);
+}
+.menu-panel.journey-panel {
+  max-width: 760px;
+  padding: 40px 36px;
+  border: 2px solid rgba(147, 197, 253, 0.2);
+  background:
+    linear-gradient(180deg, rgba(15, 17, 43, 0.92), rgba(8, 11, 28, 0.96)),
+    rgba(255, 255, 255, 0.04);
+  box-shadow: 0 0 0 2px rgba(103, 232, 249, 0.06), 0 20px 48px rgba(0, 0, 0, 0.38);
+}
+.journey-title {
+  font-family: "Courier New", monospace;
+  font-size: clamp(2.6rem, 5vw, 4rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9ddcff;
+  text-shadow: 0 0 0 rgba(0, 0, 0, 0), 0 0 14px rgba(103, 232, 249, 0.25);
+  margin-bottom: 12px;
+}
+.journey-subtitle {
+  color: #d9c9ff;
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.journey-description {
+  color: #b7c5ea;
+  line-height: 1.7;
+  margin-bottom: 26px;
+}
+.journey-current {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(147, 197, 253, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  text-align: left;
+}
+.journey-current-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.journey-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #8ca0cf;
+  margin-bottom: 6px;
+}
+.journey-value {
+  color: #f6f9ff;
+  font-size: 1.08rem;
+  font-weight: 700;
+}
+.journey-summary {
+  color: #cdd8f3;
+  line-height: 1.6;
+}
+.journey-trail {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 26px 0 30px;
+}
+.journey-step {
+  flex: 1;
+  min-width: 0;
+  padding: 14px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  text-align: center;
+  opacity: 0.58;
+  transition: 0.25s ease;
+}
+.journey-step.is-active {
+  opacity: 1;
+  border-color: rgba(103, 232, 249, 0.34);
+  box-shadow: 0 0 18px rgba(103, 232, 249, 0.12);
+}
+.journey-step.is-complete {
+  opacity: 0.95;
+  border-color: rgba(134, 239, 172, 0.28);
+  background: rgba(134, 239, 172, 0.08);
+}
+.journey-step-title {
+  display: block;
+  color: #edf4ff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.journey-step-state {
+  display: block;
+  color: #a4b5d9;
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.journey-connector {
+  width: 24px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(103, 232, 249, 0.18), rgba(167, 139, 250, 0.24));
+  flex-shrink: 0;
+}
+.button-group.journey-actions {
+  gap: 12px;
+}
+.button-group.journey-actions #continueJourney {
+  min-height: 56px;
+  font-size: 1.05rem;
+  border: 1px solid rgba(103, 232, 249, 0.25);
+  box-shadow: 0 0 20px rgba(103, 232, 249, 0.16);
+}
+.button-group.journey-actions #resetJourney {
+  align-self: center;
+  min-width: 180px;
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+@media (max-width: 768px) {
+  .menu-panel.journey-panel {
+    padding: 28px 20px;
+  }
+  .journey-current-grid {
+    grid-template-columns: 1fr;
+  }
+  .journey-trail {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .journey-connector {
+    width: 2px;
+    height: 18px;
+    margin: 0 auto;
+  }
+}
+/* ========== PROTECTED HTML EDITOR FOR L1 ========== */
+.protected-editor {
+  background: linear-gradient(180deg, #0a1528 0%, #0a0e1a 100%);
+  border-radius: 10px;
+  border: 1.5px solid var(--border-soft);
+  box-shadow: 0 2px 16px 0 rgba(111,168,220,0.08);
+  padding: 18px 16px;
+  font-family: 'Fira Mono', 'Consolas', 'Courier New', monospace;
+  font-size: 1.08rem;
+  color: var(--mist-blue);
+  min-height: 120px;
+  max-height: 340px;
+  overflow-x: auto;
+  overflow-y: auto;
+  margin-bottom: 18px;
+  white-space: pre;
+}
+.code-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+.tag {
+  color: #b7a6ff;
+  background: rgba(183,166,255,0.08);
+  border-radius: 4px;
+  padding: 0 4px;
+  font-size: 1.01em;
+  user-select: text;
+  pointer-events: none;
+}
+.code-slot {
+  background: rgba(255,255,255,0.07);
+  border: 1.5px solid rgba(147,197,253,0.18);
+  border-radius: 4px;
+  color: #eaf6ff;
+  font-family: inherit;
+  font-size: 1em;
+  padding: 2px 7px;
+  margin: 0 2px;
+  min-width: 38px;
+  max-width: 320px;
+  outline: none;
+  box-shadow: 0 0 0 1.5px rgba(111,168,220,0.08);
+  transition: border 0.18s, box-shadow 0.18s;
+}
+.code-slot:focus {
+  border: 1.5px solid #8b5cf6;
+  box-shadow: 0 0 0 2px #8b5cf633;
+  background: rgba(183,166,255,0.13);
+  color: #fff;
+}
+@media (max-width: 600px) {
+  .protected-editor {
+    font-size: 0.98rem;
+    padding: 10px 4px;
+    min-height: 80px;
+    max-height: 220px;
+  }
+  .code-slot {
+    min-width: 22px;
+    font-size: 0.97em;
+  }
+}
 :root {
   --bg-main: #07111f;
   --bg-deep: #030814;

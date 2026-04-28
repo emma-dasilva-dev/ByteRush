@@ -30,7 +30,6 @@
         <section class="code-container glass-panel">
           <div class="code-header">
             <span>Code puzzle</span>
-            <span>Drag or tap the glowing pieces</span>
           </div>
           <div id="code-puzzle" class="code-puzzle" aria-live="polite"></div>
         </section>
@@ -41,14 +40,6 @@
         <iframe id="preview-frame" title="Live preview"></iframe>
       </aside>
     </main>
-
-    <section class="answer-chips glass-panel">
-      <div class="code-header">
-        <span>Puzzle pieces</span>
-        <span>Move them into the code</span>
-      </div>
-      <div id="answer-chips" class="answer-chips-list"></div>
-    </section>
 
     <footer class="action-area glass-panel">
       <div id="message-area"></div>
@@ -78,9 +69,10 @@
       <h2>Forest Restored</h2>
       <div class="completion-stats">You reached 120 energy.</div>
       <p class="completion-message">
-        Every mission helped rebuild the learning forest. You can return to the menu or replay the journey.
+        Every mission helped rebuild the learning forest. You can return to the menu, replay the journey, or continue to the next world.
       </p>
       <div class="button-group">
+        <button id="continue-grove-btn" class="btn btn-primary glow-hover">Continue to Color Grove</button>
         <button id="return-forest-btn" class="btn btn-primary glow-hover">Return to Forest</button>
         <button id="replay-journey-btn" class="btn btn-secondary glow-hover">Replay journey</button>
       </div>
