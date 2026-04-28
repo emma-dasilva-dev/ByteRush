@@ -224,6 +224,8 @@
     const area = document.getElementById('js-message-area');
     area.textContent = msg;
     area.className = isError ? 'msg-error' : 'msg-success';
+    jsShakeError(isError);
+    jsGlowSuccess(isError);
   }
 
   function showMissionComplete(mission, result) {
@@ -231,6 +233,8 @@
     document.getElementById('js-mission-complete-learn').innerHTML = mission.learn.map(l => `<div class="success-learn">${escape(l)}</div>`).join('');
     document.getElementById('js-mission-complete-energy').textContent = `+${ENERGY_PER_MISSION} Core Energy restored`;
     document.getElementById('js-mission-complete-overlay').classList.add('active');
+    jsPopModal();
+    jsFloatEnergy();
   }
 
   function closeMissionComplete() {
@@ -246,16 +250,76 @@
   function playTransition() {
     const overlay = document.getElementById('js-transition-overlay');
     const text = document.getElementById('js-transition-text');
+    if (!overlay || !text) return;
+
+    // Reset overlay state
+    overlay.classList.remove('fadeout', 'glow-pulse');
+    text.classList.remove('fadein', 'fadeout', 'glow-pulse');
+    overlay.style.opacity = '';
+    text.style.opacity = '';
+    text.style.transform = '';
+
+    // Step 1: Activate overlay, fade in, glow pulse
     overlay.classList.add('active');
-    text.textContent = 'The core hums...';
+    overlay.style.opacity = '0';
     setTimeout(() => {
-      text.textContent = 'The energy shifts...';
+      overlay.style.transition = 'opacity 0.6s cubic-bezier(.4,1,.6,1)';
+      overlay.style.opacity = '1';
+      text.textContent = 'The core hums...';
+      text.classList.add('fadein');
+      text.style.opacity = '0';
+      text.style.transform = 'scale(0.98)';
+      setTimeout(() => {
+        text.style.transition = 'opacity 0.7s, transform 0.7s';
+        text.style.opacity = '1';
+        text.style.transform = 'scale(1)';
+        overlay.classList.add('glow-pulse');
+        text.classList.add('glow-pulse');
+      }, 40);
+    }, 10);
+
+    // Step 2: After 1.2s, fade out text, fade in next
+    setTimeout(() => {
+      text.classList.remove('fadein', 'glow-pulse');
+      text.classList.add('fadeout');
+      text.style.transition = 'opacity 0.5s, transform 0.5s';
+      text.style.opacity = '0';
+      text.style.transform = 'scale(0.98)';
+      setTimeout(() => {
+        text.textContent = 'The energy shifts...';
+        text.classList.remove('fadeout');
+        text.classList.add('fadein');
+        text.style.transition = 'opacity 0.7s, transform 0.7s';
+        text.style.opacity = '1';
+        text.style.transform = 'scale(1)';
+        overlay.classList.add('glow-pulse');
+        text.classList.add('glow-pulse');
+      }, 500);
+    }, 1200);
+
+    // Step 3: After 2.4s, load next mission, fade out overlay
+    setTimeout(() => {
+      text.classList.remove('fadein', 'glow-pulse');
+      text.classList.add('fadeout');
+      text.style.transition = 'opacity 0.6s, transform 0.6s';
+      text.style.opacity = '0';
+      text.style.transform = 'scale(0.98)';
       setTimeout(() => {
         pendingMissionResult = null;
         loadMission(state.currentMissionIdx + 1);
-        setTimeout(() => overlay.classList.remove('active'), 500);
-      }, 1200);
-    }, 1200);
+        overlay.style.transition = 'opacity 0.8s cubic-bezier(.4,1,.6,1)';
+        overlay.style.opacity = '0';
+        setTimeout(() => {
+          overlay.classList.remove('active', 'glow-pulse');
+          text.classList.remove('fadeout', 'glow-pulse');
+          overlay.style.transition = '';
+          overlay.style.opacity = '';
+          text.style.transition = '';
+          text.style.opacity = '';
+          text.style.transform = '';
+        }, 800);
+      }, 600);
+    }, 2400);
   }
 
   function showCompletionScreen() {
@@ -1229,7 +1293,7 @@ const game = {
     this.currentCode = mission.starterCode;
 
     if (editor) {
-      editor.textContent = this.currentCode;
+      editor.value = this.currentCode;
     }
 
     this.pendingMissionResult = null;
@@ -1246,7 +1310,7 @@ const game = {
       return this.currentCode;
     }
 
-    return editor.textContent || "";
+    return editor.value || "";
   },
 
   updatePreview() {
@@ -1275,7 +1339,10 @@ const game = {
       return;
     }
 
-    const result = mission.validate(this.getCurrentCode());
+    this.updatePreview();
+    const values = this.getMissionValues(this.getCurrentCode(), mission);
+    const result = mission.validate(values, this);
+
     if (!result.valid) {
       this.showMessage(result.msg, true);
       return;
@@ -1290,6 +1357,128 @@ const game = {
     this.saveState();
     this.updateHUD();
     this.showMissionComplete(result);
+  },
+
+  getPreviewContext() {
+    const previewFrame = document.getElementById("preview-frame");
+    const previewDoc = previewFrame?.contentDocument || previewFrame?.contentWindow?.document;
+    const previewWindow = previewFrame?.contentWindow;
+
+    if (!previewDoc || !previewWindow) {
+      return null;
+    }
+
+    return {
+      doc: previewDoc,
+      win: previewWindow,
+      body: previewDoc.body,
+      title: previewDoc.querySelector("h1"),
+      card: previewDoc.querySelector(".magic-card"),
+      button: previewDoc.querySelector("button")
+    };
+  },
+
+  getStyle(element) {
+    if (!element) {
+      return {};
+    }
+
+    const previewFrame = document.getElementById("preview-frame");
+    const previewWindow = previewFrame?.contentWindow;
+    return previewWindow ? previewWindow.getComputedStyle(element) : {};
+  },
+
+  applyPreviewFeedback(options = {}) {
+    const context = this.getPreviewContext();
+    if (!context?.doc || !context.card || !context.button || !context.title) {
+      return;
+    }
+
+    const scene = context.doc.querySelector(".grove-scene");
+    const cardStyle = this.getStyle(context.card);
+    const buttonStyle = this.getStyle(context.button);
+    const titleStyle = this.getStyle(context.title);
+    const bodyStyle = this.getStyle(context.body);
+    const mission = this.missions[this.state.currentMissionIdx];
+
+    if (!scene || !mission) {
+      return;
+    }
+
+    const hasColorHit =
+      this.propertyMatches(bodyStyle.backgroundColor, "backgroundColor", "lavender") ||
+      this.propertyMatches(bodyStyle.color, "color", "white") ||
+      this.propertyMatches(titleStyle.color, "color", "gold");
+    const hasSpacingHit =
+      this.allSidesEqual(cardStyle, "padding", "24px") ||
+      this.allSidesEqual(cardStyle, "margin", "20px") ||
+      this.allSidesEqual(buttonStyle, "padding", "12px");
+    const hasShapeHit =
+      this.borderMatches(cardStyle, "2px", "solid", "white") ||
+      this.propertyMatches(cardStyle.borderRadius, "borderRadius", "18px") ||
+      this.propertyMatches(buttonStyle.borderRadius, "borderRadius", "999px");
+    const hasGlowHit =
+      this.propertyMatches(cardStyle.boxShadow, "boxShadow", "0 0 24px rgba(147, 197, 253, 0.45)") ||
+      this.propertyMatches(buttonStyle.backgroundColor, "backgroundColor", "lavender") ||
+      this.propertyMatches(buttonStyle.color, "color", "white");
+
+    const valueHitByMission = {
+      "css-m1": hasColorHit,
+      "css-m2": hasSpacingHit,
+      "css-m3": hasShapeHit,
+      "css-m4": hasGlowHit
+    };
+
+    scene.classList.toggle("value-hit", Boolean(valueHitByMission[mission.id]));
+    context.card.classList.toggle("value-hit", Boolean(valueHitByMission[mission.id]));
+    context.card.classList.toggle(
+      "shadow-hit",
+      this.propertyMatches(cardStyle.boxShadow, "boxShadow", "0 0 24px rgba(147, 197, 253, 0.45)")
+    );
+    scene.classList.toggle(
+      "button-hit",
+      this.propertyMatches(buttonStyle.backgroundColor, "backgroundColor", "lavender") ||
+      this.propertyMatches(buttonStyle.color, "color", "white")
+    );
+
+    if (options.missionComplete) {
+      scene.classList.remove("success-pulse");
+      void context.card.offsetWidth;
+      scene.classList.add("success-pulse");
+    }
+  },
+
+  propertyMatches(actual, propertyName, expected) {
+    return this.normalizeCssValue(actual) === this.normalizeCssValue(this.resolveCssValue(propertyName, expected));
+  },
+
+  allSidesEqual(style, propertyPrefix, expected) {
+    const suffixes = ["Top", "Right", "Bottom", "Left"];
+    return suffixes.every((suffix) => this.normalizeCssValue(style[`${propertyPrefix}${suffix}`]) === this.normalizeCssValue(expected));
+  },
+
+  borderMatches(style, width, lineStyle, color) {
+    return (
+      this.normalizeCssValue(style.borderTopWidth) === this.normalizeCssValue(width) &&
+      this.normalizeCssValue(style.borderTopStyle) === this.normalizeCssValue(lineStyle) &&
+      this.propertyMatches(style.borderTopColor, "color", color)
+    );
+  },
+
+  normalizeCssValue(value) {
+    return String(value ?? "").replace(/\s+/g, " ").trim().toLowerCase();
+  },
+
+  resolveCssValue(propertyName, expected) {
+    const probe = document.createElement("div");
+    probe.style.position = "absolute";
+    probe.style.opacity = "0";
+    probe.style.pointerEvents = "none";
+    probe.style[propertyName] = expected;
+    document.body.appendChild(probe);
+    const computed = window.getComputedStyle(probe)[propertyName];
+    probe.remove();
+    return computed;
   },
 
   showMissionComplete(result) {
@@ -1310,7 +1499,7 @@ const game = {
     }
 
     if (energy) {
-      energy.textContent = `+${ENERGY_PER_MISSION} Forest Energy restored`;
+      energy.textContent = `+${ENERGY_PER_MISSION} Grove Energy restored`;
     }
 
     if (actionButton) {
@@ -1347,10 +1536,10 @@ const game = {
     }
 
     overlay.classList.add("active");
-    text.textContent = "The forest listens...";
+    text.textContent = "The grove listens...";
 
     window.setTimeout(() => {
-      text.textContent = "The forest shifts...";
+      text.textContent = "The colors shift...";
 
       window.setTimeout(() => {
         this.pendingMissionResult = null;
@@ -1384,6 +1573,12 @@ const game = {
     }
 
     const completionScreen = document.getElementById("completion-screen");
+    const completionEnergyTotal = document.getElementById("completion-energy-total");
+
+    if (completionEnergyTotal) {
+      completionEnergyTotal.textContent = `${this.state.energy} / 120`;
+    }
+
     if (completionScreen) {
       completionScreen.style.display = "flex";
 
@@ -1411,6 +1606,14 @@ const game = {
         btnReturn.style.display = "";
       }
     }
+  },
+
+  replayCore() {
+    this.state.currentMissionIdx = 0;
+    this.pendingMissionResult = null;
+    this.currentCode = "";
+    this.saveState();
+    window.location.reload();
   },
 
   showMessage(text, isError) {
@@ -1467,7 +1670,7 @@ const game = {
           border-radius: 20px;
           overflow: hidden;
           padding: 18px;
-          background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(4,8,17,0.18));
+          background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(4,8,11,0.18));
           border: 1px solid rgba(175, 203, 255, 0.18);
           box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
         }

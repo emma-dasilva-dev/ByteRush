@@ -71,14 +71,25 @@
     </div>
   </div>
 
-  <section id="js-completion-screen" class="core-completion-screen">
-    <div class="completion-content core-completion-content">
-      <h2>The Lightning Core is Awake</h2>
-      <div class="completion-stats">Core Energy: <span id="js-completion-energy-total">120 / 120</span></div>
-      <p class="completion-message">
-        You awakened interaction, response, and movement inside ByteRush.
-      </p>
-      <div class="button-group core-completion-actions">
+
+  <section id="js-completion-screen" class="core-victory-screen">
+    <div class="core-victory-card">
+      <div class="core-victory-orb"></div>
+      <h2 class="core-victory-title">The Lightning Core is Awake</h2>
+      <div class="core-victory-story">The final spark has returned.<br>The forest can now respond, move, and come alive.</div>
+      <div class="core-achievement-list">
+        <div class="core-achievement">You restored:</div>
+        <ul>
+          <li>Interaction</li>
+          <li>Response</li>
+          <li>Movement</li>
+        </ul>
+      </div>
+      <div class="core-energy-complete">
+        <div class="core-energy-label">Core Energy Restored</div>
+        <div class="core-energy-value" id="js-completion-energy-total">120 / 120</div>
+      </div>
+      <div class="core-victory-actions">
         <button id="js-return-camp-btn" class="btn btn-primary glow-hover">Return to Camp</button>
         <button id="js-replay-btn" class="btn btn-secondary glow-hover">Replay Core</button>
       </div>
