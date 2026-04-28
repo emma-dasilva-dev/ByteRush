@@ -39,12 +39,26 @@
   cursor: pointer;
 }
 .journey-card {
-  display: block;
+  min-width: 0;
+  width: 260px;
+  max-width: 300px;
+  min-height: 120px;
+  max-height: 135px;
+  height: 128px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(30, 34, 60, 0.82);
+  border: 1.5px solid rgba(147, 197, 253, 0.18);
+  box-shadow: 0 0 0 2px rgba(103, 232, 249, 0.08), 0 8px 32px 0 rgba(103, 232, 249, 0.08);
+  position: relative;
+  transition: box-shadow 0.22s, border 0.22s;
   text-decoration: none;
   color: inherit;
   cursor: pointer;
-  padding: 24px;
-  position: relative;
   z-index: 2;
 }
 
@@ -54,10 +68,18 @@
 }
 
 .journey-card-cta {
-  display: inline-block;
-  margin-top: 16px;
+  display: block;
+  margin-top: 8px;
   color: var(--moon-blue);
   font-weight: 700;
+  font-size: 0.97rem;
+  background: rgba(103,232,249,0.08);
+  border-radius: 8px;
+  padding: 4px 0 2px 0;
+  box-shadow: 0 0 8px 1px #a78bfa22;
+  text-align: left;
+  width: 100%;
+  filter: drop-shadow(0 0 4px #a78bfa33);
 }
 
 .stars-container,
@@ -447,8 +469,8 @@
 }
 .home-shell {
   display: grid;
-  grid-template-columns: 320px minmax(420px, 620px);
-  gap: 56px;
+  grid-template-columns: 300px 1fr;
+  gap: 48px;
   align-items: center;
   width: 100%;
   max-width: 1080px;
@@ -456,8 +478,9 @@
 .journey-list {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  align-items: stretch;
+  gap: 14px;
+  align-items: flex-start;
+  justify-content: flex-start;
 }
 .journey-card {
   min-width: 0;
@@ -506,6 +529,10 @@
   align-items: flex-start;
   justify-content: center;
   padding: 32px 0 32px 0;
+  min-height: 420px;
+  height: 70vh;
+  max-width: 620px;
+  margin: 0 auto;
 }
 .main-title {
   font-family: 'Courier New', monospace;
@@ -514,21 +541,21 @@
   text-transform: uppercase;
   color: #9ddcff;
   text-shadow: 0 0 0 rgba(0,0,0,0), 0 0 18px #67e8f940;
-  margin-bottom: 10px;
+  margin-bottom: 22px;
 }
 .subtitle {
   color: #d9c9ff;
-  font-size: 1.25rem;
+  font-size: 1.18rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   margin-bottom: 18px;
 }
 .description {
   color: #b7c5ea;
-  font-size: 1.13rem;
+  font-size: 1.08rem;
   line-height: 1.7;
-  margin-bottom: 32px;
-  max-width: 420px;
+  margin-bottom: 38px;
+  max-width: 480px;
 }
 .main-html-btn {
   min-width: 220px;

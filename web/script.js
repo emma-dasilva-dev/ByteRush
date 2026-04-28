@@ -1,36 +1,33 @@
-// Fixe la clickabilité des boutons d'action sur tous les niveaux
+// Validation flow pour chaque niveau :
 document.addEventListener("DOMContentLoaded", function () {
-  // HTML
-  const htmlBtn = document.getElementById("html-action-btn");
-  if (htmlBtn) {
+  // HTML Forest
+  const htmlBtn = document.getElementById("html-action-btn") || document.getElementById("action-btn");
+  if (htmlBtn && window.game && typeof window.game.checkSolution === "function") {
     htmlBtn.disabled = false;
     htmlBtn.addEventListener("click", function () {
       console.log("HTML action clicked");
-      if (window.game && typeof window.game.checkSolution === "function") {
-        window.game.checkSolution();
-      }
+      const result = window.game.checkSolution();
+      console.log("Validation result:", result);
     });
   }
-  // CSS
+  // CSS Grove
   const cssBtn = document.getElementById("css-action-btn");
-  if (cssBtn) {
+  if (cssBtn && window.game && typeof window.game.checkCssSolution === "function") {
     cssBtn.disabled = false;
     cssBtn.addEventListener("click", function () {
       console.log("CSS action clicked");
-      if (window.game && typeof window.game.checkCssSolution === "function") {
-        window.game.checkCssSolution();
-      }
+      const result = window.game.checkCssSolution();
+      console.log("Validation result:", result);
     });
   }
-  // JS
+  // JS Core
   const jsBtn = document.getElementById("js-action-btn");
-  if (jsBtn) {
+  if (jsBtn && window.game && typeof window.game.checkJsSolution === "function") {
     jsBtn.disabled = false;
     jsBtn.addEventListener("click", function () {
       console.log("JS action clicked");
-      if (window.game && typeof window.game.checkJsSolution === "function") {
-        window.game.checkJsSolution();
-      }
+      const result = window.game.checkJsSolution();
+      console.log("Validation result:", result);
     });
   }
 });
