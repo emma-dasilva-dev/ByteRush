@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ByteRush - The Lightning Core</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="core-page js-level">
+  <div class="stars-container core-stars"></div>
+  <div class="moon-glow core-glow"></div>
+
+  <div class="game-layout core-layout">
+    <header class="hud core-hud glass-panel core-panel">
+      <div class="hud-left core-hud-left">
+        <div>
+          <div class="hud-title core-brand">ByteRush</div>
+          <div class="core-subtitle">The Lightning Core</div>
+        </div>
+        <div id="mission-indicator" class="hud-mission">Mission 1 / 4</div>
+        <div class="hud-energy core-energy">Core Energy <span id="energy-current">0 / 120</span></div>
+      </div>
+      <button class="btn-back">Back to Forest</button>
+    </header>
+
+    <main class="main-area core-main-area">
+      <section class="editor-section core-editor-section">
+        <article class="mission-info glass-panel core-panel core-story-panel">
+          <h2 id="mission-title" class="mission-title">Mission</h2>
+          <p id="mission-narrator" class="narrator-text"></p>
+        </article>
+
+        <section class="code-container core-editor-panel glass-panel core-panel">
+          <div class="code-header core-code-header">
+            <span>JavaScript sparkbook</span>
+            <span>Edit the values to awaken the chamber</span>
+          </div>
+          <div class="code-puzzle core-editor-wrapper">
+            <textarea id="code-input" class="code-editor core-editor" spellcheck="false" aria-label="JavaScript editor"></textarea>
+          </div>
+        </section>
+      </section>
+
+      <aside class="preview-section core-preview glass-panel core-panel">
+        <div class="preview-header core-preview-header">Lightning Core Preview</div>
+        <iframe id="preview-frame" title="Lightning Core preview"></iframe>
+      </aside>
+    </main>
+
+    <footer class="action-area core-action-area glass-panel core-panel">
+      <div id="message-area"></div>
+      <button id="action-btn" class="btn btn-primary glow-hover">Wake the Crystal</button>
+    </footer>
+  </div>
+
+  <div id="transition-overlay" class="core-transition-overlay">
+    <div id="transition-text"></div>
+  </div>
+
+  <div id="mission-complete-overlay" class="mission-complete-overlay">
+    <div class="mission-complete-card core-complete-card">
+      <h2 id="mission-complete-title" class="mission-complete-title">Mission Complete</h2>
+      <p id="mission-complete-message" class="mission-complete-message"></p>
+      <div class="mission-complete-learn-block">
+        <p class="success-learn-title">You just used:</p>
+        <div id="mission-complete-learn" class="mission-complete-learn"></div>
+      </div>
+      <p id="mission-complete-energy" class="mission-complete-energy">+30 Core Energy restored</p>
+      <button id="mission-complete-continue" class="btn btn-primary mission-complete-continue">Continue</button>
+    </div>
+  </div>
+
+  <section id="completion-screen" class="core-completion-screen">
+    <div class="completion-content core-completion-content">
+      <h2>The Lightning Core is Awake</h2>
+      <div class="completion-stats">Core Energy: <span id="completion-energy-total">120 / 120</span></div>
+      <p class="completion-message">
+        You awakened interaction, response, and movement inside ByteRush.
+      </p>
+      <div class="button-group core-completion-actions">
+        <button id="return-forest-btn" class="btn btn-primary glow-hover">Return to Forest</button>
+        <button id="replay-journey-btn" class="btn btn-secondary glow-hover">Replay Core</button>
+      </div>
+    </div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>

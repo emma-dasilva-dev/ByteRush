@@ -1,7 +1,59 @@
 const STORAGE_KEY = "byterush_player";
 const ENERGY_PER_MISSION = 30;
+const CSS_STORAGE_KEY = "byterush_css_player";
+const JS_STORAGE_KEY = "byterush_js_player";
+const PROGRESS_STORAGE_KEY = "byterush_progress";
+const JS_WORLD_PATH = "L3-js.html";
+
+function getDefaultJourneyProgress() {
+  return {
+    htmlComplete: false,
+    cssComplete: false,
+    jsComplete: false,
+    currentWorld: "html"
+  };
+}
+
+function normalizeJourneyWorld(world) {
+  return ["html", "css", "js", "complete"].includes(world) ? world : "html";
+}
+
+function loadJourneyProgress() {
+  const raw = localStorage.getItem(PROGRESS_STORAGE_KEY);
+
+  if (!raw) {
+    const initialProgress = getDefaultJourneyProgress();
+    saveJourneyProgress(initialProgress);
+    return initialProgress;
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    return {
+      htmlComplete: Boolean(parsed.htmlComplete),
+      cssComplete: Boolean(parsed.cssComplete),
+      jsComplete: Boolean(parsed.jsComplete),
+      currentWorld: normalizeJourneyWorld(parsed.currentWorld)
+    };
+  } catch (error) {
+    console.error("Journey progress corrupted", error);
+    const initialProgress = getDefaultJourneyProgress();
+    saveJourneyProgress(initialProgress);
+    return initialProgress;
+  }
+}
+
+function saveJourneyProgress(progress) {
+  localStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify({
+    htmlComplete: Boolean(progress.htmlComplete),
+    cssComplete: Boolean(progress.cssComplete),
+    jsComplete: Boolean(progress.jsComplete),
+    currentWorld: normalizeJourneyWorld(progress.currentWorld)
+  }));
+}
 
 const game = {
+  jsWorldAvailablePromise: null,
   pendingMissionResult: null,
   currentCode: "",
 
@@ -17,11 +69,10 @@ const game = {
       title: "Mission 1: The Silent Tree",
       narrator: "The tree has no name. Give it one.",
       guideLines: [
-        "Use <h1> for the title.",
-        "Use <p> for the message.",
-        "Write The Moon Tree and I am learning to code."
+        "Change the title to: The Moon Tree",
+        "Change the message to: I am learning to code."
       ],
-      starterCode: "<h1>The Moon Tree</h1>\n<p>I am learning to code.</p>",
+      starterCode: "<h1>name your tree here</h1>\n<p>write one sentence about the tree</p>",
       buttonText: "Awaken the Tree",
       successMsg: "The tree remembers its name.",
       learn: ["<h1> creates a title", "<p> adds text"],
@@ -30,12 +81,20 @@ const game = {
         const heading = doc.querySelector("h1")?.textContent?.trim() || "";
         const paragraph = doc.querySelector("p")?.textContent?.trim() || "";
 
+        if (heading === "name your tree here") {
+          return { valid: false, msg: "Change name your tree here to The Moon Tree." };
+        }
+
         if (heading !== "The Moon Tree") {
-          return { valid: false, msg: "The tree still needs the title The Moon Tree." };
+          return { valid: false, msg: "Change name your tree here to The Moon Tree." };
+        }
+
+        if (paragraph === "write one sentence about the tree") {
+          return { valid: false, msg: "Change write one sentence about the tree to I am learning to code." };
         }
 
         if (paragraph !== "I am learning to code.") {
-          return { valid: false, msg: "The tree still needs the message I am learning to code." };
+          return { valid: false, msg: "Change write one sentence about the tree to I am learning to code." };
         }
 
         return { valid: true, msg: this.successMsg, learn: this.learn };
@@ -63,11 +122,11 @@ const game = {
       title: "Mission 2: The Lost Path",
       narrator: "The path has no steps. Place them gently.",
       guideLines: [
-        "Use one <ul>.",
-        "Add three <li> items.",
-        "Write Walk forward, Climb the hill, and Enter the forest."
+        "First step: Walk forward",
+        "Second step: Climb the hill",
+        "Third step: Enter the forest"
       ],
-      starterCode: "<ul>\n  <li>Walk forward</li>\n  <li>Climb the hill</li>\n  <li>Enter the forest</li>\n</ul>",
+      starterCode: "<ul>\n  <li>first step of the journey</li>\n  <li>second step of the journey</li>\n  <li>third step of the journey</li>\n</ul>",
       buttonText: "Build the Path",
       successMsg: "The way forward is clear.",
       learn: ["<ul> creates a list", "<li> adds list items"],
@@ -79,16 +138,28 @@ const game = {
           return { valid: false, msg: "The path needs three list items." };
         }
 
+        if (items[0] === "first step of the journey") {
+          return { valid: false, msg: "Change the first step to Walk forward." };
+        }
+
         if (items[0] !== "Walk forward") {
-          return { valid: false, msg: "The first step must be Walk forward." };
+          return { valid: false, msg: "Change the first step to Walk forward." };
+        }
+
+        if (items[1] === "second step of the journey") {
+          return { valid: false, msg: "Change the second step to Climb the hill." };
         }
 
         if (items[1] !== "Climb the hill") {
-          return { valid: false, msg: "The second step must be Climb the hill." };
+          return { valid: false, msg: "Change the second step to Climb the hill." };
+        }
+
+        if (items[2] === "third step of the journey") {
+          return { valid: false, msg: "Change the third step to Enter the forest." };
         }
 
         if (items[2] !== "Enter the forest") {
-          return { valid: false, msg: "The third step must be Enter the forest." };
+          return { valid: false, msg: "Change the third step to Enter the forest." };
         }
 
         return { valid: true, msg: this.successMsg, learn: this.learn };
@@ -119,11 +190,12 @@ const game = {
       title: "Mission 3: The Glowing Signs",
       narrator: "The signs are blank. Guide the travelers.",
       guideLines: [
-        "Add one <img> with the correct src and alt.",
-        "Add one <a> with href #forest-map.",
-        "Link text must be Open the forest map."
+        "Image src: https://picsum.photos/id/1025/200/300",
+        "Alt text: Friendly glowing forest path",
+        "Link href: #path",
+        "Link text: Enter the forest"
       ],
-      starterCode: "<img src=\"https://picsum.photos/id/1025/200/300\" alt=\"Friendly forest path with glowing flowers\">\n<a href=\"#forest-map\">Open the forest map</a>",
+      starterCode: "<img src=\"add forest image link here\" alt=\"describe the forest path\">\n<a href=\"#path\">enter the forest</a>",
       buttonText: "Light the Signs",
       successMsg: "Travelers can find their way now.",
       learn: ["<img> displays an image", "<a> creates a clickable link"],
@@ -133,27 +205,39 @@ const game = {
         const link = doc.querySelector("a");
 
         if (!image) {
-          return { valid: false, msg: "Add an image to light the sign." };
+          return { valid: false, msg: "Change the image src to https://picsum.photos/id/1025/200/300." };
+        }
+
+        if (image.getAttribute("src")?.trim() === "add forest image link here") {
+          return { valid: false, msg: "Change the image src to https://picsum.photos/id/1025/200/300." };
         }
 
         if (image.getAttribute("src")?.trim() !== "https://picsum.photos/id/1025/200/300") {
-          return { valid: false, msg: "The image source must be https://picsum.photos/id/1025/200/300." };
+          return { valid: false, msg: "Change the image src to https://picsum.photos/id/1025/200/300." };
         }
 
-        if (image.getAttribute("alt")?.trim() !== "Friendly forest path with glowing flowers") {
-          return { valid: false, msg: "The image alt text must be Friendly forest path with glowing flowers." };
+        if (image.getAttribute("alt")?.trim() === "describe the forest path") {
+          return { valid: false, msg: "Change the image alt to Friendly glowing forest path." };
+        }
+
+        if (image.getAttribute("alt")?.trim() !== "Friendly glowing forest path") {
+          return { valid: false, msg: "Change the image alt to Friendly glowing forest path." };
         }
 
         if (!link) {
-          return { valid: false, msg: "Add a link for the forest map." };
+          return { valid: false, msg: "Keep the link href as #path." };
         }
 
-        if (link.getAttribute("href")?.trim() !== "#forest-map") {
-          return { valid: false, msg: "The link href must be #forest-map." };
+        if (link.getAttribute("href")?.trim() !== "#path") {
+          return { valid: false, msg: "Keep the link href as #path." };
         }
 
-        if (link.textContent.trim() !== "Open the forest map") {
-          return { valid: false, msg: "The link text must be Open the forest map." };
+        if (link.textContent.trim() === "enter the forest") {
+          return { valid: false, msg: "Change the link text to Enter the forest." };
+        }
+
+        if (link.textContent.trim() !== "Enter the forest") {
+          return { valid: false, msg: "Change the link text to Enter the forest." };
         }
 
         return { valid: true, msg: this.successMsg, learn: this.learn };
@@ -187,11 +271,17 @@ const game = {
       title: "Mission 4: The First Clearing",
       narrator: "The clearing is almost awake. Bring everything together.",
       guideLines: [
-        "Use <h1>, <p>, <ul>, <img>, and <a>.",
-        "List items must be Pages, Lists, and Links.",
-        "Finish with Continue the journey."
+        "Title: The First Clearing",
+        "Message: The forest is waking up.",
+        "List item 1: Pages",
+        "List item 2: Lists",
+        "List item 3: Links",
+        "Image src: https://picsum.photos/id/1018/200/300",
+        "Alt text: A quiet forest clearing",
+        "Link href: #next",
+        "Link text: Continue the journey"
       ],
-      starterCode: "<div>\n  <h1>The First Clearing</h1>\n  <p>The forest is waking up.</p>\n  <ul>\n    <li>Pages</li>\n    <li>Lists</li>\n    <li>Links</li>\n  </ul>\n  <img src=\"https://picsum.photos/id/1018/200/300\" alt=\"A quiet forest clearing\">\n  <a href=\"#next-path\">Continue the journey</a>\n</div>",
+      starterCode: "<div>\n  <h1>name the clearing</h1>\n  <p>describe what is happening</p>\n  <ul>\n    <li>first thing restored</li>\n    <li>second thing restored</li>\n    <li>third thing restored</li>\n  </ul>\n  <img src=\"add clearing image\" alt=\"describe the clearing\">\n  <a href=\"#next\">continue forward</a>\n</div>",
       buttonText: "Restore the Forest",
       successMsg: "The forest breathes again.",
       learn: ["You combined multiple HTML elements", "You built a complete mini page"],
@@ -203,32 +293,60 @@ const game = {
         const image = doc.querySelector("img");
         const link = doc.querySelector("a");
 
+        if (heading === "name the clearing") {
+          return { valid: false, msg: "Change the clearing title to The First Clearing." };
+        }
+
         if (heading !== "The First Clearing") {
-          return { valid: false, msg: "The title must be The First Clearing." };
+          return { valid: false, msg: "Change the clearing title to The First Clearing." };
+        }
+
+        if (paragraph === "describe what is happening") {
+          return { valid: false, msg: "Change the message to The forest is waking up." };
         }
 
         if (paragraph !== "The forest is waking up.") {
-          return { valid: false, msg: "The message must be The forest is waking up." };
+          return { valid: false, msg: "Change the message to The forest is waking up." };
+        }
+
+        if (
+          items[0] === "first thing restored" ||
+          items[1] === "second thing restored" ||
+          items[2] === "third thing restored"
+        ) {
+          return { valid: false, msg: "Change the list items to Pages, Lists, and Links." };
         }
 
         if (items[0] !== "Pages" || items[1] !== "Lists" || items[2] !== "Links") {
-          return { valid: false, msg: "The list must contain Pages, Lists, and Links." };
+          return { valid: false, msg: "Change the list items to Pages, Lists, and Links." };
+        }
+
+        if (image?.getAttribute("src")?.trim() === "add clearing image") {
+          return { valid: false, msg: "Change the image src to https://picsum.photos/id/1018/200/300." };
         }
 
         if (image?.getAttribute("src")?.trim() !== "https://picsum.photos/id/1018/200/300") {
-          return { valid: false, msg: "The image source must be https://picsum.photos/id/1018/200/300." };
+          return { valid: false, msg: "Change the image src to https://picsum.photos/id/1018/200/300." };
+        }
+
+        if (image?.getAttribute("alt")?.trim() === "describe the clearing") {
+          return { valid: false, msg: "Change the image alt to A quiet forest clearing." };
         }
 
         if (image?.getAttribute("alt")?.trim() !== "A quiet forest clearing") {
-          return { valid: false, msg: "The image alt text must be A quiet forest clearing." };
+          return { valid: false, msg: "Change the image alt to A quiet forest clearing." };
         }
 
-        if (link?.getAttribute("href")?.trim() !== "#next-path") {
-          return { valid: false, msg: "The link href must be #next-path." };
+        if (link?.getAttribute("href")?.trim() !== "#next") {
+          return { valid: false, msg: "Keep the link href as #next." };
+        }
+
+        if (link?.textContent?.trim() === "continue forward") {
+          return { valid: false, msg: "Change the link text to Continue the journey." };
         }
 
         if (link?.textContent?.trim() !== "Continue the journey") {
-          return { valid: false, msg: "The link text must be Continue the journey." };
+          return { valid: false, msg: "Change the link text to Continue the journey." };
         }
 
         return { valid: true, msg: this.successMsg, learn: this.learn };
@@ -277,34 +395,140 @@ const game = {
 
   setupIndexPage() {
     this.loadState();
-    this.updateMenuProgress();
-
-    const startAdventure = document.getElementById("startAdventure");
-    const continueJourney = document.getElementById("continueJourney");
+    const progress = loadJourneyProgress();
+    // Prépare les éléments dynamiques
+    const eyebrow = document.getElementById("eyebrow");
+    const mainTitle = document.getElementById("main-title");
+    const subtitle = document.getElementById("subtitle");
+    const description = document.getElementById("description");
+    const mainBtn = document.getElementById("mainJourneyBtn");
     const resetJourney = document.getElementById("resetJourney");
 
-    if (startAdventure) {
-      startAdventure.addEventListener("click", () => {
+    // Récupère la progression détaillée
+    const htmlSave = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    const cssSave = JSON.parse(localStorage.getItem(CSS_STORAGE_KEY) || '{}');
+    const jsSave = JSON.parse(localStorage.getItem(JS_STORAGE_KEY) || '{}');
+
+    // Détermine l'état du joueur
+    const htmlComplete = !!progress.htmlComplete;
+    const cssComplete = !!progress.cssComplete;
+    const jsComplete = !!progress.jsComplete;
+    let eyebrowText = '';
+    let titleText = 'ByteRush';
+    let subtitleText = '';
+    let descText = '';
+    let btnText = '';
+    let btnAction = null;
+
+    // Messages personnalisés selon la progression
+    if (!htmlComplete && !cssComplete && !jsComplete) {
+      // Nouveau joueur
+      eyebrowText = 'START YOUR';
+      subtitleText = 'Coding Adventure';
+      descText = 'Build websites, restore the Code Forest, and learn HTML, CSS, and JavaScript as you play.';
+      btnText = 'Get Started';
+      btnAction = () => {
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(CSS_STORAGE_KEY);
+        localStorage.removeItem(JS_STORAGE_KEY);
+        localStorage.removeItem(PROGRESS_STORAGE_KEY);
         this.resetState();
         this.saveState();
+        const nextProgress = getDefaultJourneyProgress();
+        saveJourneyProgress(nextProgress);
         window.location.href = "L1-html.html";
-      });
+      };
+    } else if (!htmlComplete) {
+      // HTML en cours
+      eyebrowText = 'WELCOME BACK';
+      subtitleText = 'Your journey continues';
+      descText = 'The first trees are waking. Keep restoring the forest.';
+      btnText = 'Continue Journey';
+      btnAction = () => {
+        window.location.href = "L1-html.html";
+      };
+    } else if (htmlComplete && !cssComplete) {
+      // CSS en cours
+      eyebrowText = 'WELCOME BACK';
+      subtitleText = 'Your journey continues';
+      descText = 'The forest has structure. Now the Color Grove is ready to bloom.';
+      btnText = 'Continue Journey';
+      btnAction = () => {
+        window.location.href = "L2-css.html";
+      };
+    } else if (htmlComplete && cssComplete && !jsComplete) {
+      // JS en cours
+      eyebrowText = 'WELCOME BACK';
+      subtitleText = 'Your journey continues';
+      descText = 'The grove glows with color. Now the Lightning Core waits for energy.';
+      btnText = 'Continue Journey';
+      btnAction = () => {
+        window.location.href = "L3-js.html";
+      };
+    } else if (htmlComplete && cssComplete && jsComplete) {
+      // Tout terminé
+      eyebrowText = 'WELCOME BACK';
+      subtitleText = 'Journey Complete';
+      descText = 'You restored structure, style, and energy to ByteRush.';
+      btnText = 'Replay Journey';
+      btnAction = () => {
+        window.location.href = "L1-html.html";
+      };
     }
 
-    if (continueJourney) {
-      continueJourney.addEventListener("click", () => {
-        this.loadState();
-        window.location.href = "L1-html.html";
-      });
+    // Injection dynamique
+    if (eyebrow) eyebrow.textContent = eyebrowText;
+    if (mainTitle) mainTitle.textContent = titleText;
+    if (subtitle) subtitle.textContent = subtitleText;
+    if (description) description.textContent = descText;
+    if (mainBtn) {
+      mainBtn.textContent = btnText;
+      mainBtn.onclick = btnAction;
     }
 
+    // Reset Journey
     if (resetJourney) {
-      resetJourney.addEventListener("click", () => {
+      resetJourney.onclick = (e) => {
+        e.preventDefault();
+        localStorage.removeItem(PROGRESS_STORAGE_KEY);
         localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(CSS_STORAGE_KEY);
+        localStorage.removeItem(JS_STORAGE_KEY);
         this.resetState();
         window.location.reload();
-      });
+      };
     }
+
+    // Affichage du chemin de progression (dots)
+    // Les classes CSS sont déjà gérées côté HTML/CSS, le script d'origine met à jour les dots
+    this.checkJsWorldAvailability().then((jsAvailable) => {
+      const nextProgress = loadJourneyProgress();
+      this.updateMenuProgress(nextProgress, jsAvailable);
+      this.renderJourneyMap(nextProgress, jsAvailable);
+    });
+  },
+
+  async checkJsWorldAvailability() {
+    return true;
+  },
+
+  getJourneyDestination(progress, jsAvailable) {
+    const nextProgress = progress || loadJourneyProgress();
+    const world = normalizeJourneyWorld(nextProgress.currentWorld);
+
+    if (world === "css") {
+      return nextProgress.htmlComplete ? "L2-css.html" : "L1-html.html";
+    }
+
+    if (world === "js") {
+      return jsAvailable ? JS_WORLD_PATH : null;
+    }
+
+    if (world === "complete") {
+      return jsAvailable ? JS_WORLD_PATH : "L1-html.html";
+    }
+
+    return "L1-html.html";
   },
 
   setupGamePage() {
@@ -430,18 +654,34 @@ const game = {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(this.state));
   },
 
-  updateMenuProgress() {
+  updateMenuProgress(progress = loadJourneyProgress(), jsAvailable = false) {
     const progressText = document.getElementById("progress-text");
     const progressBar = document.getElementById("progress-bar");
     const continueJourney = document.getElementById("continueJourney");
-    const completedCount = this.state.completedMissions.length;
-    const progressPercent = Math.round((completedCount / this.missions.length) * 100);
-    const hasProgress = completedCount > 0 || this.state.currentMissionIdx > 0 || this.state.energy > 0;
+    const completedWorlds = [progress.htmlComplete, progress.cssComplete, progress.jsComplete].filter(Boolean).length;
+    const progressPercent = Math.round((completedWorlds / 3) * 100);
+    const htmlSave = localStorage.getItem(STORAGE_KEY);
+    const cssSave = localStorage.getItem(CSS_STORAGE_KEY);
+    const jsSave = localStorage.getItem(JS_STORAGE_KEY);
+    const hasProgress = Boolean(htmlSave || cssSave || progress.htmlComplete || progress.cssComplete || progress.jsComplete);
+    let statusText = "No journey started yet. HTML Forest is ready.";
+
+    if (progress.jsComplete) {
+      statusText = "3 of 3 worlds awakened. ByteRush is fully alive.";
+    } else if (progress.cssComplete) {
+      statusText = jsAvailable
+        ? "2 of 3 worlds awakened. JavaScript Core is ready."
+        : "2 of 3 worlds awakened. JavaScript Core is coming soon.";
+    } else if (progress.htmlComplete) {
+      statusText = "1 of 3 worlds awakened. The Color Grove is now open.";
+    } else if (jsSave) {
+      statusText = "JavaScript Core is your current path.";
+    } else if (htmlSave) {
+      statusText = "HTML Forest is your current path.";
+    }
 
     if (progressText) {
-      progressText.textContent = hasProgress
-        ? `${completedCount} of ${this.missions.length} missions completed, ${this.state.energy} energy stored.`
-        : "No journey started yet.";
+      progressText.textContent = statusText;
     }
 
     if (progressBar) {
@@ -449,7 +689,63 @@ const game = {
     }
 
     if (continueJourney) {
-      continueJourney.disabled = !hasProgress;
+      continueJourney.disabled = progress.currentWorld === "js" && !jsAvailable && hasProgress;
+      continueJourney.title = continueJourney.disabled ? "JavaScript Core is coming soon." : "";
+    }
+  },
+
+  renderJourneyMap(progress = loadJourneyProgress(), jsAvailable = false) {
+    const htmlCard = document.getElementById("journey-html-card");
+    const cssCard = document.getElementById("journey-css-card");
+    const jsCard = document.getElementById("journey-js-card");
+    const htmlStatus = document.getElementById("journey-html-status");
+    const cssStatus = document.getElementById("journey-css-status");
+    const jsStatus = document.getElementById("journey-js-status");
+    const htmlButton = document.getElementById("journey-html-btn");
+    const cssButton = document.getElementById("journey-css-btn");
+    const jsButton = document.getElementById("journey-js-btn");
+    const htmlSave = localStorage.getItem(STORAGE_KEY);
+
+    if (htmlCard && htmlStatus && htmlButton) {
+      htmlCard.classList.toggle("journey-card-completed", progress.htmlComplete);
+      htmlCard.classList.remove("journey-card-locked");
+      htmlStatus.textContent = progress.htmlComplete
+        ? "Completed"
+        : (htmlSave ? "Continue" : "Start");
+      htmlStatus.className = `journey-status ${progress.htmlComplete ? "journey-status-complete" : "journey-status-open"}`;
+      htmlButton.disabled = false;
+      htmlButton.textContent = progress.htmlComplete ? "Revisit HTML Forest" : (htmlSave ? "Continue HTML Forest" : "Start HTML Forest");
+      htmlButton.title = "";
+    }
+
+    if (cssCard && cssStatus && cssButton) {
+      const cssUnlocked = progress.htmlComplete;
+      cssCard.classList.toggle("journey-card-locked", !cssUnlocked);
+      cssCard.classList.toggle("journey-card-completed", progress.cssComplete);
+      cssStatus.textContent = !cssUnlocked
+        ? "Locked"
+        : (progress.cssComplete ? "Completed" : "Start / Continue");
+      cssStatus.className = `journey-status ${!cssUnlocked ? "journey-status-locked" : (progress.cssComplete ? "journey-status-complete" : "journey-status-open")}`;
+      cssButton.disabled = !cssUnlocked;
+      cssButton.textContent = !cssUnlocked
+        ? "Complete HTML Forest first"
+        : (progress.cssComplete ? "Revisit Color Grove" : "Open The Color Grove");
+      cssButton.title = !cssUnlocked ? "Complete HTML Forest first" : "";
+    }
+
+    if (jsCard && jsStatus && jsButton) {
+      const jsUnlocked = progress.cssComplete;
+      const jsReady = jsUnlocked && jsAvailable;
+      jsCard.classList.toggle("journey-card-locked", !jsUnlocked);
+      jsCard.classList.toggle("journey-card-completed", progress.jsComplete);
+      jsCard.classList.toggle("journey-card-soon", jsUnlocked && !jsReady);
+      jsStatus.textContent = !jsUnlocked ? "Locked" : (progress.jsComplete ? "Completed" : (jsReady ? "Start / Continue" : "Coming Soon"));
+      jsStatus.className = `journey-status ${!jsUnlocked ? "journey-status-locked" : (progress.jsComplete ? "journey-status-complete" : (jsReady ? "journey-status-open" : "journey-status-soon"))}`;
+      jsButton.disabled = !jsUnlocked || !jsReady;
+      jsButton.textContent = !jsUnlocked
+        ? "Complete Color Grove first"
+        : (progress.jsComplete ? "Revisit JavaScript Core" : (jsReady ? "Open JavaScript Core" : "Coming Soon"));
+      jsButton.title = !jsUnlocked ? "Complete Color Grove first" : (jsReady ? "" : "JavaScript Core is coming soon.");
     }
   },
 
@@ -634,6 +930,11 @@ const game = {
   },
 
   showCompletionScreen() {
+    const progress = loadJourneyProgress();
+    progress.htmlComplete = true;
+    progress.currentWorld = "css";
+    saveJourneyProgress(progress);
+
     const completionScreen = document.getElementById("completion-screen");
     if (completionScreen) {
       completionScreen.style.display = "flex";
@@ -859,6 +1160,1675 @@ const game = {
   }
 };
 
+const cssLevel = {
+  jsWorldAvailablePromise: null,
+  pendingMissionResult: null,
+  currentCode: "",
+  previewBooted: false,
+
+  state: {
+    energy: 0,
+    currentMissionIdx: 0,
+    completedMissions: []
+  },
+
+  missions: [
+    {
+      id: "css-m1",
+      title: "Mission 1: The Grey Grove",
+      narrator: "The grove has lost its colors. Paint it gently.",
+      guideLines: [
+        "choose_background_color -> lavender",
+        "choose_text_color -> white",
+        "choose_title_color -> gold"
+      ],
+      starterCode: "body {\n  background: choose_background_color;\n  color: choose_text_color;\n}\n\nh1 {\n  color: choose_title_color;\n}",
+      buttonText: "Paint the Grove",
+      successMsg: "The first colors return to the grove.",
+      learn: ["background changes the page color", "color changes text color"],
+      validate(context, level) {
+        const bodyStyle = level.getStyle(context.body);
+        const titleStyle = level.getStyle(context.title);
+
+        if (!level.propertyMatches(bodyStyle.backgroundColor, "backgroundColor", "lavender")) {
+          return { valid: false, msg: "Change choose_background_color to lavender." };
+        }
+
+        if (!level.propertyMatches(bodyStyle.color, "color", "white")) {
+          return { valid: false, msg: "Change choose_text_color to white." };
+        }
+
+        if (!level.propertyMatches(titleStyle.color, "color", "gold")) {
+          return { valid: false, msg: "Change choose_title_color to gold." };
+        }
+
+        return { valid: true, msg: this.successMsg, learn: this.learn };
+      }
+    },
+    {
+      id: "css-m2",
+      title: "Mission 2: The Crowded Petals",
+      narrator: "The flowers are too close together. Give them space to breathe.",
+      guideLines: [
+        "choose_padding -> 24px",
+        "choose_margin -> 20px",
+        "choose_button_padding -> 12px"
+      ],
+      starterCode: ".magic-card {\n  padding: choose_padding;\n  margin: choose_margin;\n}\n\nbutton {\n  padding: choose_button_padding;\n}",
+      buttonText: "Give Space",
+      successMsg: "The petals open with room to breathe.",
+      learn: ["padding adds space inside an element", "margin adds space outside an element"],
+      validate(context, level) {
+        const cardStyle = level.getStyle(context.card);
+        const buttonStyle = level.getStyle(context.button);
+
+        if (!level.allSidesEqual(cardStyle, "padding", "24px")) {
+          return { valid: false, msg: "Change choose_padding to 24px." };
+        }
+
+        if (!level.allSidesEqual(cardStyle, "margin", "20px")) {
+          return { valid: false, msg: "Change choose_margin to 20px." };
+        }
+
+        if (!level.allSidesEqual(buttonStyle, "padding", "12px")) {
+          return { valid: false, msg: "Change choose_button_padding to 12px." };
+        }
+
+        return { valid: true, msg: this.successMsg, learn: this.learn };
+      }
+    },
+    {
+      id: "css-m3",
+      title: "Mission 3: The Soft Stones",
+      narrator: "The stones are sharp and plain. Soften their edges.",
+      guideLines: [
+        "choose_border -> 2px solid white",
+        "choose_radius -> 18px",
+        "choose_button_radius -> 999px"
+      ],
+      starterCode: ".magic-card {\n  border: choose_border;\n  border-radius: choose_radius;\n}\n\nbutton {\n  border-radius: choose_button_radius;\n}",
+      buttonText: "Soften the Stones",
+      successMsg: "The stones become gentle under the moonlight.",
+      learn: ["border draws an outline", "border-radius rounds corners"],
+      validate(context, level) {
+        const cardStyle = level.getStyle(context.card);
+        const buttonStyle = level.getStyle(context.button);
+
+        if (!level.borderMatches(cardStyle, "2px", "solid", "white")) {
+          return { valid: false, msg: "Change choose_border to 2px solid white." };
+        }
+
+        if (!level.propertyMatches(cardStyle.borderRadius, "borderRadius", "18px")) {
+          return { valid: false, msg: "Change choose_radius to 18px." };
+        }
+
+        if (!level.propertyMatches(buttonStyle.borderRadius, "borderRadius", "999px")) {
+          return { valid: false, msg: "Change choose_button_radius to 999px." };
+        }
+
+        return { valid: true, msg: this.successMsg, learn: this.learn };
+      }
+    },
+    {
+      id: "css-m4",
+      title: "Mission 4: The Glowing Card",
+      narrator: "The grove needs a glowing card to hold its message.",
+      guideLines: [
+        "choose_background -> rgba(255, 255, 255, 0.12)",
+        "choose_padding -> 28px",
+        "choose_radius -> 22px",
+        "choose_shadow -> 0 0 24px rgba(147, 197, 253, 0.45)",
+        "choose_button_background -> lavender",
+        "choose_button_text -> white"
+      ],
+      starterCode: ".magic-card {\n  background: choose_background;\n  padding: choose_padding;\n  border-radius: choose_radius;\n  box-shadow: choose_shadow;\n}\n\nbutton {\n  background: choose_button_background;\n  color: choose_button_text;\n}",
+      buttonText: "Light the Card",
+      successMsg: "The grove glows with quiet color.",
+      learn: ["box-shadow adds glow or depth", "combining CSS properties creates design"],
+      validate(context, level) {
+        const cardStyle = level.getStyle(context.card);
+        const buttonStyle = level.getStyle(context.button);
+
+        if (!level.propertyMatches(cardStyle.backgroundColor, "backgroundColor", "rgba(255, 255, 255, 0.12)")) {
+          return { valid: false, msg: "Change choose_background to rgba(255, 255, 255, 0.12)." };
+        }
+
+        if (!level.allSidesEqual(cardStyle, "padding", "28px")) {
+          return { valid: false, msg: "Change choose_padding to 28px." };
+        }
+
+        if (!level.propertyMatches(cardStyle.borderRadius, "borderRadius", "22px")) {
+          return { valid: false, msg: "Change choose_radius to 22px." };
+        }
+
+        if (!level.propertyMatches(cardStyle.boxShadow, "boxShadow", "0 0 24px rgba(147, 197, 253, 0.45)")) {
+          return { valid: false, msg: "Change choose_shadow to 0 0 24px rgba(147, 197, 253, 0.45)." };
+        }
+
+        if (!level.propertyMatches(buttonStyle.backgroundColor, "backgroundColor", "lavender")) {
+          return { valid: false, msg: "Change choose_button_background to lavender." };
+        }
+
+        if (!level.propertyMatches(buttonStyle.color, "color", "white")) {
+          return { valid: false, msg: "Change choose_button_text to white." };
+        }
+
+        return { valid: true, msg: this.successMsg, learn: this.learn };
+      }
+    }
+  ],
+
+  init() {
+    const progress = loadJourneyProgress();
+    if (!progress.htmlComplete) {
+      window.location.href = "index.html";
+      return;
+    }
+
+    this.loadCssState();
+    this.configureCssEditor();
+    this.updateCssHUD();
+
+    const actionButton = document.getElementById("action-btn");
+    const continueButton = document.getElementById("mission-complete-continue");
+    const backButton = document.querySelector(".btn-back");
+    const replayButton = document.getElementById("replay-journey-btn");
+    const returnButton = document.getElementById("return-forest-btn");
+
+    if (actionButton) {
+      actionButton.addEventListener("click", () => {
+        this.checkCssSolution();
+      });
+    }
+
+    if (continueButton) {
+      continueButton.addEventListener("click", () => {
+        this.continueAfterCssMission();
+      });
+    }
+
+    if (backButton) {
+      backButton.addEventListener("click", () => {
+        window.location.href = "index.html";
+      });
+    }
+
+    if (replayButton) {
+      replayButton.addEventListener("click", () => {
+        this.replayCssJourney();
+      });
+    }
+
+    if (returnButton) {
+      returnButton.addEventListener("click", () => {
+        window.location.href = "index.html";
+      });
+    }
+
+    this.loadCssMission(this.normalizeMissionIndex(this.state.currentMissionIdx));
+  },
+
+  configureCssEditor() {
+    const editor = this.getEditorElement();
+    if (!editor) {
+      return;
+    }
+
+    editor.addEventListener("input", () => {
+      this.currentCode = editor.value || "";
+      this.clearMessage();
+      this.updateCssPreview();
+    });
+  },
+
+  getEditorElement() {
+    return document.getElementById("code-input");
+  },
+
+  normalizeMissionIndex(index) {
+    if (!Number.isInteger(index) || index < 0) {
+      return 0;
+    }
+
+    if (index > this.missions.length) {
+      return this.missions.length;
+    }
+
+    return index;
+  },
+
+  loadCssState() {
+    const raw = localStorage.getItem(CSS_STORAGE_KEY);
+
+    if (!raw) {
+      this.resetCssState();
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(raw);
+      this.state = {
+        energy: Number.isFinite(parsed.energy) ? parsed.energy : 0,
+        currentMissionIdx: this.normalizeMissionIndex(parsed.currentMissionIdx ?? 0),
+        completedMissions: Array.isArray(parsed.completedMissions) ? parsed.completedMissions : []
+      };
+      this.pendingMissionResult = null;
+      this.currentCode = "";
+    } catch (error) {
+      console.error("CSS save file corrupted", error);
+      this.resetCssState();
+    }
+  },
+
+  saveCssState() {
+    localStorage.setItem(CSS_STORAGE_KEY, JSON.stringify(this.state));
+  },
+
+  resetCssState() {
+    this.state = {
+      energy: 0,
+      currentMissionIdx: 0,
+      completedMissions: []
+    };
+    this.currentCode = "";
+    this.pendingMissionResult = null;
+    this.previewBooted = false;
+  },
+
+  updateCssHUD() {
+    const missionIndicator = document.getElementById("mission-indicator");
+    const energyCurrent = document.getElementById("energy-current");
+
+    if (missionIndicator) {
+      missionIndicator.textContent = `Mission ${Math.min(this.state.currentMissionIdx + 1, this.missions.length)} / ${this.missions.length}`;
+    }
+
+    if (energyCurrent) {
+      energyCurrent.textContent = `${this.state.energy} / 120`;
+    }
+  },
+
+  loadCssMission(index) {
+    if (index >= this.missions.length) {
+      this.showCssCompletionScreen();
+      return;
+    }
+
+    this.state.currentMissionIdx = index;
+    const mission = this.missions[index];
+    const missionTitle = document.getElementById("mission-title");
+    const missionNarrator = document.getElementById("mission-narrator");
+    const actionButton = document.getElementById("action-btn");
+    const completionScreen = document.getElementById("completion-screen");
+    const editor = this.getEditorElement();
+
+    if (completionScreen) {
+      completionScreen.style.display = "none";
+    }
+
+    if (missionTitle) {
+      missionTitle.textContent = mission.title;
+    }
+
+    if (missionNarrator) {
+      missionNarrator.innerHTML = `<span class="mission-copy">${this.escapeHtml(mission.narrator)}</span><span class="mission-label mission-guide-label">Guide</span>${mission.guideLines.map((line) => `<div class="guide-line">${this.escapeHtml(line)}</div>`).join("")}`;
+    }
+
+    if (actionButton) {
+      actionButton.textContent = mission.buttonText;
+      actionButton.disabled = false;
+    }
+
+    this.currentCode = mission.starterCode;
+
+    if (editor) {
+      editor.value = this.currentCode;
+    }
+
+    this.pendingMissionResult = null;
+    this.closeMissionComplete();
+    this.clearMessage();
+    this.updateCssHUD();
+    this.updateCssPreview();
+    this.saveCssState();
+  },
+
+  updateCssPreview(cssCode = this.getCurrentCode()) {
+    const previewFrame = document.getElementById("preview-frame");
+    if (!previewFrame) {
+      return;
+    }
+
+    const previewDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+
+    if (!this.previewBooted || !previewDoc.getElementById("grove-user-styles")) {
+      previewDoc.open();
+      previewDoc.write(this.buildPreviewDocument(cssCode));
+      previewDoc.close();
+      this.previewBooted = true;
+    } else {
+      const userStyles = previewDoc.getElementById("grove-user-styles");
+      if (userStyles) {
+        userStyles.textContent = cssCode;
+      }
+    }
+
+    this.applyPreviewFeedback();
+  },
+
+  buildPreviewDocument(cssCode) {
+    return `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+          :root {
+            color-scheme: dark;
+          }
+
+          * {
+            box-sizing: border-box;
+          }
+
+          html,
+          body {
+            margin: 0;
+            min-height: 100%;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+          }
+
+          body {
+            min-height: 100vh;
+            padding: 18px;
+            background: radial-gradient(circle at top, #1c1441 0%, #0d081d 60%, #070412 100%);
+            color: #f8f5ff;
+            transition: all 0.3s ease;
+          }
+
+          .grove-scene {
+            min-height: calc(100vh - 36px);
+            display: grid;
+            place-items: center;
+            padding: 22px;
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            background:
+              radial-gradient(circle at top right, rgba(139, 92, 246, 0.24), transparent 28%),
+              radial-gradient(circle at bottom left, rgba(134, 239, 172, 0.16), transparent 24%),
+              linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+            border: 1px solid rgba(249, 168, 212, 0.18);
+            transition: all 0.3s ease;
+          }
+
+          .grove-scene::before,
+          .grove-scene::after {
+            content: "";
+            position: absolute;
+            border-radius: 999px;
+            filter: blur(20px);
+            opacity: 0.65;
+            transition: all 0.3s ease;
+          }
+
+          .grove-scene::before {
+            inset: auto auto 12% 8%;
+            width: 130px;
+            height: 130px;
+            background: rgba(249, 168, 212, 0.18);
+          }
+
+          .grove-scene::after {
+            inset: 10% 10% auto auto;
+            width: 110px;
+            height: 110px;
+            background: rgba(147, 197, 253, 0.16);
+          }
+
+          .magic-card {
+            position: relative;
+            z-index: 1;
+            width: min(100%, 420px);
+            margin: 0;
+            padding: 20px;
+            border: none;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 14px rgba(134, 239, 172, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            text-align: left;
+            transform: translateY(0) scale(1);
+            transition: all 0.3s ease;
+          }
+
+          h1 {
+            margin: 0 0 10px;
+            color: #f9a8d4;
+            font-size: 1.8rem;
+            transition: all 0.3s ease;
+          }
+
+          p {
+            margin: 0 0 18px;
+            line-height: 1.6;
+            color: #d8d1ef;
+            transition: all 0.3s ease;
+          }
+
+          button {
+            border: none;
+            border-radius: 14px;
+            padding: 10px 14px;
+            background: linear-gradient(135deg, #93c5fd, #8b5cf6);
+            color: #100b24;
+            font-weight: 700;
+            cursor: pointer;
+            transform: translateY(0) scale(1);
+            box-shadow: 0 10px 22px rgba(9, 4, 20, 0.18);
+            transition: all 0.3s ease;
+          }
+
+          button:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 14px 28px rgba(147, 197, 253, 0.2);
+          }
+
+          .grove-scene.value-hit::before {
+            opacity: 0.82;
+            transform: scale(1.08);
+          }
+
+          .grove-scene.value-hit::after {
+            opacity: 0.78;
+            transform: scale(1.06);
+          }
+
+          .magic-card.value-hit {
+            box-shadow: 0 0 24px rgba(134, 239, 172, 0.24), 0 12px 32px rgba(10, 5, 25, 0.24);
+          }
+
+          .magic-card.shadow-hit {
+            box-shadow: 0 0 24px rgba(147, 197, 253, 0.45), 0 14px 30px rgba(18, 8, 38, 0.28);
+          }
+
+          .grove-scene.button-hit button {
+            box-shadow: 0 0 16px rgba(249, 168, 212, 0.24), 0 10px 20px rgba(18, 8, 38, 0.22);
+          }
+
+          .grove-scene.success-pulse .magic-card {
+            animation: groveSuccessPulse 0.55s ease;
+          }
+
+          @keyframes groveSuccessPulse {
+            0% {
+              transform: translateY(0) scale(1);
+            }
+
+            45% {
+              transform: translateY(-2px) scale(1.02);
+            }
+
+            100% {
+              transform: translateY(0) scale(1);
+            }
+          }
+        </style>
+        <style id="grove-user-styles">${cssCode}</style>
+      </head>
+      <body>
+        <div class="grove-scene">
+          <div class="magic-card">
+            <h1>The Color Grove</h1>
+            <p>The grove is waiting for color and light.</p>
+            <button>Enter the Grove</button>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+  },
+
+  getCurrentCode() {
+    const editor = this.getEditorElement();
+    if (!editor) {
+      return this.currentCode;
+    }
+
+    return editor.value || "";
+  },
+
+  checkCssSolution() {
+    const mission = this.missions[this.state.currentMissionIdx];
+    if (!mission) {
+      return;
+    }
+
+    this.updateCssPreview();
+    const context = this.getPreviewContext();
+    if (!context) {
+      this.showMessage("The grove preview is not ready yet.", true);
+      return;
+    }
+
+    const result = mission.validate(context, this);
+    if (!result.valid) {
+      this.showMessage(result.msg, true);
+      return;
+    }
+
+    if (!this.state.completedMissions.includes(mission.id)) {
+      this.state.completedMissions.push(mission.id);
+      this.state.energy += ENERGY_PER_MISSION;
+    }
+
+    this.pendingMissionResult = result;
+    this.saveCssState();
+    this.updateCssHUD();
+    this.applyPreviewFeedback({ missionComplete: true });
+    this.showCssMissionComplete(result);
+  },
+
+  getPreviewContext() {
+    const previewFrame = document.getElementById("preview-frame");
+    const previewDoc = previewFrame?.contentDocument || previewFrame?.contentWindow?.document;
+    const previewWindow = previewFrame?.contentWindow;
+
+    if (!previewDoc || !previewWindow) {
+      return null;
+    }
+
+    return {
+      doc: previewDoc,
+      win: previewWindow,
+      body: previewDoc.body,
+      title: previewDoc.querySelector("h1"),
+      card: previewDoc.querySelector(".magic-card"),
+      button: previewDoc.querySelector("button")
+    };
+  },
+
+  getStyle(element) {
+    if (!element) {
+      return {};
+    }
+
+    const previewFrame = document.getElementById("preview-frame");
+    const previewWindow = previewFrame?.contentWindow;
+    return previewWindow ? previewWindow.getComputedStyle(element) : {};
+  },
+
+  applyPreviewFeedback(options = {}) {
+    const context = this.getPreviewContext();
+    if (!context?.doc || !context.card || !context.button || !context.title) {
+      return;
+    }
+
+    const scene = context.doc.querySelector(".grove-scene");
+    const cardStyle = this.getStyle(context.card);
+    const buttonStyle = this.getStyle(context.button);
+    const titleStyle = this.getStyle(context.title);
+    const bodyStyle = this.getStyle(context.body);
+    const mission = this.missions[this.state.currentMissionIdx];
+
+    if (!scene || !mission) {
+      return;
+    }
+
+    const hasColorHit =
+      this.propertyMatches(bodyStyle.backgroundColor, "backgroundColor", "lavender") ||
+      this.propertyMatches(bodyStyle.color, "color", "white") ||
+      this.propertyMatches(titleStyle.color, "color", "gold");
+    const hasSpacingHit =
+      this.allSidesEqual(cardStyle, "padding", "24px") ||
+      this.allSidesEqual(cardStyle, "margin", "20px") ||
+      this.allSidesEqual(buttonStyle, "padding", "12px");
+    const hasShapeHit =
+      this.borderMatches(cardStyle, "2px", "solid", "white") ||
+      this.propertyMatches(cardStyle.borderRadius, "borderRadius", "18px") ||
+      this.propertyMatches(buttonStyle.borderRadius, "borderRadius", "999px");
+    const hasGlowHit =
+      this.propertyMatches(cardStyle.boxShadow, "boxShadow", "0 0 24px rgba(147, 197, 253, 0.45)") ||
+      this.propertyMatches(buttonStyle.backgroundColor, "backgroundColor", "lavender") ||
+      this.propertyMatches(buttonStyle.color, "color", "white");
+
+    const valueHitByMission = {
+      "css-m1": hasColorHit,
+      "css-m2": hasSpacingHit,
+      "css-m3": hasShapeHit,
+      "css-m4": hasGlowHit
+    };
+
+    scene.classList.toggle("value-hit", Boolean(valueHitByMission[mission.id]));
+    context.card.classList.toggle("value-hit", Boolean(valueHitByMission[mission.id]));
+    context.card.classList.toggle(
+      "shadow-hit",
+      this.propertyMatches(cardStyle.boxShadow, "boxShadow", "0 0 24px rgba(147, 197, 253, 0.45)")
+    );
+    scene.classList.toggle(
+      "button-hit",
+      this.propertyMatches(buttonStyle.backgroundColor, "backgroundColor", "lavender") ||
+      this.propertyMatches(buttonStyle.color, "color", "white")
+    );
+
+    if (options.missionComplete) {
+      scene.classList.remove("success-pulse");
+      void context.card.offsetWidth;
+      scene.classList.add("success-pulse");
+    }
+  },
+
+  propertyMatches(actual, propertyName, expected) {
+    return this.normalizeCssValue(actual) === this.normalizeCssValue(this.resolveCssValue(propertyName, expected));
+  },
+
+  allSidesEqual(style, propertyPrefix, expected) {
+    const suffixes = ["Top", "Right", "Bottom", "Left"];
+    return suffixes.every((suffix) => this.normalizeCssValue(style[`${propertyPrefix}${suffix}`]) === this.normalizeCssValue(expected));
+  },
+
+  borderMatches(style, width, lineStyle, color) {
+    return (
+      this.normalizeCssValue(style.borderTopWidth) === this.normalizeCssValue(width) &&
+      this.normalizeCssValue(style.borderTopStyle) === this.normalizeCssValue(lineStyle) &&
+      this.propertyMatches(style.borderTopColor, "color", color)
+    );
+  },
+
+  normalizeCssValue(value) {
+    return String(value ?? "").replace(/\s+/g, " ").trim().toLowerCase();
+  },
+
+  resolveCssValue(propertyName, expected) {
+    const probe = document.createElement("div");
+    probe.style.position = "absolute";
+    probe.style.opacity = "0";
+    probe.style.pointerEvents = "none";
+    probe.style[propertyName] = expected;
+    document.body.appendChild(probe);
+    const computed = window.getComputedStyle(probe)[propertyName];
+    probe.remove();
+    return computed;
+  },
+
+  showCssMissionComplete(result) {
+    const overlay = document.getElementById("mission-complete-overlay");
+    const message = document.getElementById("mission-complete-message");
+    const learn = document.getElementById("mission-complete-learn");
+    const energy = document.getElementById("mission-complete-energy");
+    const actionButton = document.getElementById("action-btn");
+
+    if (message) {
+      message.textContent = result.msg;
+    }
+
+    if (learn) {
+      learn.innerHTML = Array.isArray(result.learn)
+        ? result.learn.map((item) => `<div class="success-learn">${this.escapeHtml(item)}</div>`).join("")
+        : "";
+    }
+
+    if (energy) {
+      energy.textContent = `+${ENERGY_PER_MISSION} Grove Energy restored`;
+    }
+
+    if (actionButton) {
+      actionButton.disabled = true;
+    }
+
+    if (overlay) {
+      overlay.classList.add("active");
+    }
+  },
+
+  closeMissionComplete() {
+    const overlay = document.getElementById("mission-complete-overlay");
+    if (overlay) {
+      overlay.classList.remove("active");
+    }
+  },
+
+  continueAfterCssMission() {
+    if (!this.pendingMissionResult) {
+      return;
+    }
+
+    this.closeMissionComplete();
+    this.playCssTransition();
+  },
+
+  playCssTransition() {
+    const overlay = document.getElementById("transition-overlay");
+    const text = document.getElementById("transition-text");
+
+    if (!overlay || !text) {
+      return;
+    }
+
+    overlay.classList.add("active");
+    text.textContent = "The grove listens...";
+
+    window.setTimeout(() => {
+      text.textContent = "The colors shift...";
+
+      window.setTimeout(() => {
+        this.pendingMissionResult = null;
+        this.loadCssMission(this.state.currentMissionIdx + 1);
+        window.setTimeout(() => {
+          overlay.classList.remove("active");
+        }, 500);
+      }, 1200);
+    }, 1200);
+  },
+
+  showCssCompletionScreen() {
+    const progress = loadJourneyProgress();
+    progress.cssComplete = true;
+    progress.currentWorld = "js";
+    saveJourneyProgress(progress);
+
+    const completionScreen = document.getElementById("completion-screen");
+    const completionEnergyTotal = document.getElementById("completion-energy-total");
+
+    if (completionEnergyTotal) {
+      completionEnergyTotal.textContent = `${this.state.energy} / 120`;
+    }
+
+    if (completionScreen) {
+      completionScreen.style.display = "flex";
+    }
+  },
+
+  replayCssJourney() {
+    this.state.currentMissionIdx = 0;
+    this.pendingMissionResult = null;
+    this.currentCode = "";
+    this.saveCssState();
+    window.location.reload();
+  },
+
+  showMessage(text, isError) {
+    const messageArea = document.getElementById("message-area");
+    if (!messageArea) {
+      return;
+    }
+
+    messageArea.textContent = text;
+    messageArea.className = isError ? "msg-error" : "msg-success";
+  },
+
+  clearMessage() {
+    const messageArea = document.getElementById("message-area");
+    if (!messageArea) {
+      return;
+    }
+
+    messageArea.textContent = "";
+    messageArea.className = "";
+  },
+
+  escapeHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+};
+
+const jsLevel = {
+  pendingMissionResult: null,
+  currentCode: "",
+
+  state: {
+    energy: 0,
+    currentMissionIdx: 0,
+    completedMissions: []
+  },
+
+  missions: [
+    {
+      id: "js-m1",
+      title: "Mission 1: The Sleeping Button",
+      narrator: "A sleeping crystal waits for a touch. Wake it with a button.",
+      guideLines: [
+        "buttonText -> Wake the crystal",
+        "message -> The crystal is awake."
+      ],
+      fields: ["buttonText", "message"],
+      expected: {
+        buttonText: "Wake the crystal",
+        message: "The crystal is awake."
+      },
+      starterCode: "const buttonText = \"change this text\";\nconst message = \"change this message\";",
+      buttonText: "Wake the Crystal",
+      successMsg: "The crystal begins to glow.",
+      learn: ["const stores a value", "JavaScript can change what appears on the page"],
+      validate(values) {
+        if (values.buttonText !== this.expected.buttonText) {
+          return { valid: false, msg: "Change buttonText to Wake the crystal." };
+        }
+
+        if (values.message !== this.expected.message) {
+          return { valid: false, msg: "Change message to The crystal is awake." };
+        }
+
+        return { valid: true, msg: this.successMsg, learn: this.learn };
+      }
+    },
+    {
+      id: "js-m2",
+      title: "Mission 2: The Echo Input",
+      narrator: "The Core repeats what it hears. Give it a voice.",
+      guideLines: [
+        "inputName -> Luna",
+        "echoMessage -> Welcome to the Core, Luna."
+      ],
+      fields: ["inputName", "echoMessage"],
+      expected: {
+        inputName: "Luna",
+        echoMessage: "Welcome to the Core, Luna."
+      },
+      starterCode: "const inputName = \"change this name\";\nconst echoMessage = \"change this echo\";",
+      buttonText: "Give It Voice",
+      successMsg: "The Core echoes softly.",
+      learn: ["input stores user text", "JavaScript can display a message"],
+      validate(values) {
+        if (values.inputName !== this.expected.inputName) {
+          return { valid: false, msg: "Change inputName to Luna." };
+        }
+
+        if (values.echoMessage !== this.expected.echoMessage) {
+          return { valid: false, msg: "Change echoMessage to Welcome to the Core, Luna." };
+        }
+
+        return { valid: true, msg: this.successMsg, learn: this.learn };
+      }
+    },
+    {
+      id: "js-m3",
+      title: "Mission 3: The Changing Light",
+      narrator: "The light crystal waits for its color. Set the glow.",
+      guideLines: [
+        "crystalColor -> cyan",
+        "glowPower -> strong"
+      ],
+      fields: ["crystalColor", "glowPower"],
+      expected: {
+        crystalColor: "cyan",
+        glowPower: "strong"
+      },
+      starterCode: "const crystalColor = \"change this color\";\nconst glowPower = \"change this glow\";",
+      buttonText: "Change the Light",
+      successMsg: "The crystal shines with new color.",
+      learn: ["JavaScript can change styles", "values can control how things look"],
+      validate(values) {
+        if (values.crystalColor !== this.expected.crystalColor) {
+          return { valid: false, msg: "Change crystalColor to cyan." };
+        }
+
+        if (values.glowPower !== this.expected.glowPower) {
+          return { valid: false, msg: "Change glowPower to strong." };
+        }
+
+        return { valid: true, msg: this.successMsg, learn: this.learn };
+      }
+    },
+    {
+      id: "js-m4",
+      title: "Mission 4: The Living Page",
+      narrator: "The Core is ready. Bring the chamber to life.",
+      guideLines: [
+        "heroName -> Code Keeper",
+        "actionText -> Activate the Core",
+        "powerColor -> violet",
+        "finalMessage -> The Lightning Core is alive."
+      ],
+      fields: ["heroName", "actionText", "powerColor", "finalMessage"],
+      expected: {
+        heroName: "Code Keeper",
+        actionText: "Activate the Core",
+        powerColor: "violet",
+        finalMessage: "The Lightning Core is alive."
+      },
+      starterCode: "const heroName = \"change this name\";\nconst actionText = \"change this action\";\nconst powerColor = \"change this color\";\nconst finalMessage = \"change this message\";",
+      buttonText: "Awaken the Core",
+      successMsg: "The chamber lights pulse with life.",
+      learn: ["JavaScript can update text", "JavaScript can control page behavior"],
+      validate(values) {
+        if (values.heroName !== this.expected.heroName) {
+          return { valid: false, msg: "Change heroName to Code Keeper." };
+        }
+
+        if (values.actionText !== this.expected.actionText) {
+          return { valid: false, msg: "Change actionText to Activate the Core." };
+        }
+
+        if (values.powerColor !== this.expected.powerColor) {
+          return { valid: false, msg: "Change powerColor to violet." };
+        }
+
+        if (values.finalMessage !== this.expected.finalMessage) {
+          return { valid: false, msg: "Change finalMessage to The Lightning Core is alive." };
+        }
+
+        return { valid: true, msg: this.successMsg, learn: this.learn };
+      }
+    }
+  ],
+
+  init() {
+    const progress = loadJourneyProgress();
+    if (!progress.cssComplete) {
+      window.location.href = "index.html";
+      return;
+    }
+
+    if (!progress.jsComplete) {
+      progress.currentWorld = "js";
+      saveJourneyProgress(progress);
+    }
+
+    this.loadJsState();
+    this.configureJsEditor();
+    this.updateJsHUD();
+
+    const actionButton = document.getElementById("action-btn");
+    const continueButton = document.getElementById("mission-complete-continue");
+    const backButton = document.querySelector(".btn-back");
+    const replayButton = document.getElementById("replay-journey-btn");
+    const returnButton = document.getElementById("return-forest-btn");
+
+    if (actionButton) {
+      actionButton.addEventListener("click", () => {
+        this.checkJsSolution();
+      });
+    }
+
+    if (continueButton) {
+      continueButton.addEventListener("click", () => {
+        this.continueAfterJsMission();
+      });
+    }
+
+    if (backButton) {
+      backButton.addEventListener("click", () => {
+        window.location.href = "index.html";
+      });
+    }
+
+    if (replayButton) {
+      replayButton.addEventListener("click", () => {
+        this.replayJsCore();
+      });
+    }
+
+    if (returnButton) {
+      returnButton.addEventListener("click", () => {
+        window.location.href = "index.html";
+      });
+    }
+
+    this.loadJsMission(this.normalizeMissionIndex(this.state.currentMissionIdx));
+  },
+
+  configureJsEditor() {
+    const editor = this.getEditorElement();
+    if (!editor) {
+      return;
+    }
+
+    editor.addEventListener("input", () => {
+      this.currentCode = editor.value || "";
+      this.clearMessage();
+      this.updateJsPreview();
+    });
+  },
+
+  getEditorElement() {
+    return document.getElementById("code-input");
+  },
+
+  normalizeMissionIndex(index) {
+    if (!Number.isInteger(index) || index < 0) {
+      return 0;
+    }
+
+    if (index > this.missions.length) {
+      return this.missions.length;
+    }
+
+    return index;
+  },
+
+  loadJsState() {
+    const raw = localStorage.getItem(JS_STORAGE_KEY);
+
+    if (!raw) {
+      this.resetJsState();
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(raw);
+      this.state = {
+        energy: Number.isFinite(parsed.energy) ? parsed.energy : 0,
+        currentMissionIdx: this.normalizeMissionIndex(parsed.currentMissionIdx ?? 0),
+        completedMissions: Array.isArray(parsed.completedMissions) ? parsed.completedMissions : []
+      };
+      this.pendingMissionResult = null;
+      this.currentCode = "";
+    } catch (error) {
+      console.error("JS save file corrupted", error);
+      this.resetJsState();
+    }
+  },
+
+  saveJsState() {
+    localStorage.setItem(JS_STORAGE_KEY, JSON.stringify(this.state));
+  },
+
+  resetJsState() {
+    this.state = {
+      energy: 0,
+      currentMissionIdx: 0,
+      completedMissions: []
+    };
+    this.currentCode = "";
+    this.pendingMissionResult = null;
+  },
+
+  updateJsHUD() {
+    const missionIndicator = document.getElementById("mission-indicator");
+    const energyCurrent = document.getElementById("energy-current");
+
+    if (missionIndicator) {
+      missionIndicator.textContent = `Mission ${Math.min(this.state.currentMissionIdx + 1, this.missions.length)} / ${this.missions.length}`;
+    }
+
+    if (energyCurrent) {
+      energyCurrent.textContent = `${this.state.energy} / 120`;
+    }
+  },
+
+  loadJsMission(index) {
+    if (index >= this.missions.length) {
+      this.showJsCompletionScreen();
+      return;
+    }
+
+    this.state.currentMissionIdx = index;
+    const mission = this.missions[index];
+    const missionTitle = document.getElementById("mission-title");
+    const missionNarrator = document.getElementById("mission-narrator");
+    const actionButton = document.getElementById("action-btn");
+    const completionScreen = document.getElementById("completion-screen");
+    const editor = this.getEditorElement();
+
+    if (completionScreen) {
+      completionScreen.style.display = "none";
+    }
+
+    if (missionTitle) {
+      missionTitle.textContent = mission.title;
+    }
+
+    if (missionNarrator) {
+      missionNarrator.innerHTML = `<span class="mission-copy">${this.escapeHtml(mission.narrator)}</span><span class="mission-label mission-guide-label">Guide</span>${mission.guideLines.map((line) => `<div class="guide-line">${this.escapeHtml(line)}</div>`).join("")}`;
+    }
+
+    if (actionButton) {
+      actionButton.textContent = mission.buttonText;
+      actionButton.disabled = false;
+    }
+
+    this.currentCode = mission.starterCode;
+
+    if (editor) {
+      editor.value = this.currentCode;
+    }
+
+    this.pendingMissionResult = null;
+    this.closeMissionComplete();
+    this.clearMessage();
+    this.updateJsHUD();
+    this.updateJsPreview();
+    this.saveJsState();
+  },
+
+  updateJsPreview(jsCode = this.getCurrentCode()) {
+    const previewFrame = document.getElementById("preview-frame");
+    if (!previewFrame) {
+      return;
+    }
+
+    const previewDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+    previewDoc.open();
+    previewDoc.write(this.buildPreviewDocument(jsCode));
+    previewDoc.close();
+  },
+
+  buildPreviewDocument(jsCode) {
+    const mission = this.missions[this.state.currentMissionIdx];
+    const values = this.getMissionValues(jsCode, mission);
+    const preview = this.buildPreviewData(mission, values);
+
+    return `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+          :root {
+            color-scheme: dark;
+            --crystal-color: ${this.escapeHtml(preview.crystalColor)};
+          }
+
+          * {
+            box-sizing: border-box;
+          }
+
+          html,
+          body {
+            margin: 0;
+            min-height: 100%;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+          }
+
+          body {
+            min-height: 100vh;
+            padding: 18px;
+            background: radial-gradient(circle at top, #10224d 0%, #050916 58%, #02030a 100%);
+            color: #f8fbff;
+          }
+
+          .core-scene {
+            min-height: calc(100vh - 36px);
+            border-radius: 24px;
+            padding: 22px;
+            overflow: hidden;
+            position: relative;
+            background:
+              radial-gradient(circle at top right, rgba(56, 189, 248, 0.18), transparent 24%),
+              radial-gradient(circle at bottom left, rgba(167, 139, 250, 0.16), transparent 26%),
+              linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+            border: 1px solid rgba(103, 232, 249, 0.18);
+          }
+
+          .core-grid {
+            min-height: calc(100vh - 80px);
+            display: grid;
+            grid-template-columns: minmax(180px, 0.9fr) minmax(260px, 1.1fr);
+            gap: 18px;
+            align-items: center;
+          }
+
+          .core-grid > * {
+            min-width: 0;
+          }
+
+          .core-display,
+          .core-console {
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+            border-radius: 20px;
+            background: rgba(7, 12, 30, 0.76);
+            border: 1px solid rgba(103, 232, 249, 0.18);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+          }
+
+          .core-display {
+            min-height: 280px;
+            display: grid;
+            place-items: center;
+          }
+
+          .energy-crystal-wrap {
+            position: relative;
+            width: 170px;
+            height: 170px;
+            display: grid;
+            place-items: center;
+          }
+
+          .energy-ring,
+          .energy-ring::before,
+          .energy-ring::after {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            content: "";
+          }
+
+          .energy-ring {
+            border: 1px solid rgba(103, 232, 249, 0.18);
+            box-shadow: 0 0 26px rgba(56, 189, 248, 0.12);
+          }
+
+          .energy-ring::before {
+            inset: 14px;
+            border: 1px solid rgba(167, 139, 250, 0.18);
+          }
+
+          .energy-ring::after {
+            inset: 28px;
+            border: 1px solid rgba(253, 230, 138, 0.16);
+          }
+
+          .energy-crystal {
+            width: 92px;
+            height: 120px;
+            clip-path: polygon(50% 0%, 82% 22%, 100% 58%, 68% 100%, 32% 100%, 0% 58%, 18% 22%);
+            background: linear-gradient(180deg, rgba(255,255,255,0.92), var(--crystal-color));
+            box-shadow: ${this.escapeHtml(preview.crystalShadow)};
+            animation: crystalPulse ${preview.pulseDuration}s ease-in-out infinite;
+          }
+
+          .core-console h1 {
+            margin: 0 0 10px;
+            color: #67e8f9;
+            font-size: 1.6rem;
+          }
+
+          .console-topline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+          }
+
+          .hero-chip,
+          .status-chip {
+            display: inline-flex;
+            align-items: center;
+            min-height: 30px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.76rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+          }
+
+          .hero-chip {
+            background: rgba(167, 139, 250, 0.12);
+            color: #d8cbff;
+          }
+
+          .status-chip {
+            background: rgba(56, 189, 248, 0.12);
+            color: #9de7ff;
+          }
+
+          .core-message,
+          .core-final-message,
+          .core-note {
+            color: #bfd7ff;
+            line-height: 1.6;
+          }
+
+          .core-message {
+            min-height: 52px;
+            margin: 0 0 14px;
+          }
+
+          .core-input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #8ecdf5;
+          }
+
+          .core-input {
+            width: 100%;
+            min-height: 46px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(103, 232, 249, 0.2);
+            background: rgba(255, 255, 255, 0.04);
+            color: #f8fbff;
+            margin-bottom: 14px;
+          }
+
+          .core-button {
+            min-height: 44px;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #38bdf8, #a78bfa);
+            color: #061020;
+            font-weight: 700;
+            box-shadow: 0 12px 26px rgba(8, 14, 30, 0.26);
+          }
+
+          .core-final-message {
+            margin-top: 14px;
+            min-height: 24px;
+          }
+
+          .core-note {
+            margin-top: 10px;
+            font-size: 0.9rem;
+          }
+
+          @keyframes crystalPulse {
+            0%,
+            100% {
+              transform: scale(1);
+              filter: brightness(1);
+            }
+
+            50% {
+              transform: scale(1.04);
+              filter: brightness(1.12);
+            }
+          }
+
+          @media (max-width: 720px) {
+            .core-grid {
+              grid-template-columns: 1fr;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="core-scene">
+          <div class="core-grid">
+            <section class="core-display">
+              <div class="energy-crystal-wrap">
+                <div class="energy-ring"></div>
+                <div class="energy-crystal"></div>
+              </div>
+            </section>
+
+            <section class="core-console">
+              <div class="console-topline">
+                <span class="hero-chip">${this.escapeHtml(preview.heroName)}</span>
+                <span class="status-chip">${this.escapeHtml(preview.statusLabel)}</span>
+              </div>
+              <h1>The Lightning Core</h1>
+              <p class="core-message">${this.escapeHtml(preview.message)}</p>
+              <label class="core-input-label">Echo Input</label>
+              <input class="core-input" type="text" value="${this.escapeHtml(preview.inputValue)}" readonly>
+              <button class="core-button" type="button">${this.escapeHtml(preview.buttonText)}</button>
+              <p class="core-final-message">${this.escapeHtml(preview.finalMessage)}</p>
+              <p class="core-note">${this.escapeHtml(preview.note)}</p>
+            </section>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+  },
+
+  buildPreviewData(mission, values) {
+    const missionId = mission?.id || "js-m1";
+    const crystalColorMap = {
+      cyan: "#67e8f9",
+      violet: "#a78bfa",
+      gold: "#fde68a"
+    };
+    const colorKey = (values.powerColor || values.crystalColor || "cyan").toLowerCase();
+
+    const preview = {
+      heroName: values.heroName || "Spark Walker",
+      statusLabel: "Idle",
+      message: values.message || values.echoMessage || "The chamber listens for a clear signal.",
+      inputValue: values.inputName || "",
+      buttonText: values.buttonText || values.actionText || "Touch the crystal",
+      finalMessage: values.finalMessage || "The energy is gathering.",
+      note: "Edit the constants to see the chamber respond.",
+      crystalColor: crystalColorMap[colorKey] || "#67e8f9",
+      crystalShadow: "0 0 26px rgba(103, 232, 249, 0.26)",
+      pulseDuration: 2.6
+    };
+
+    if (missionId === "js-m1") {
+      preview.statusLabel = "Button Link";
+      preview.note = "The button and crystal message update from your const values.";
+    }
+
+    if (missionId === "js-m2") {
+      preview.statusLabel = "Echo Link";
+      preview.note = "The input and display repeat the name you store.";
+    }
+
+    if (missionId === "js-m3") {
+      preview.statusLabel = "Light Shift";
+      preview.message = `Crystal color: ${values.crystalColor || "waiting"}. Glow: ${values.glowPower || "waiting"}.`;
+      preview.note = "JavaScript values can decide how the crystal looks.";
+      preview.crystalShadow = values.glowPower === "strong"
+        ? "0 0 32px rgba(103, 232, 249, 0.5), 0 0 58px rgba(56, 189, 248, 0.34)"
+        : "0 0 18px rgba(103, 232, 249, 0.18)";
+      preview.pulseDuration = values.glowPower === "strong" ? 1.6 : 2.8;
+      preview.buttonText = "Channel the glow";
+    }
+
+    if (missionId === "js-m4") {
+      preview.statusLabel = "Core Awake";
+      preview.heroName = values.heroName || "Spark Walker";
+      preview.buttonText = values.actionText || "Prepare the chamber";
+      preview.message = "The chamber is ready for its final instruction.";
+      preview.finalMessage = values.finalMessage || "The core is waiting for its final signal.";
+      preview.note = "Name, action, color, and message combine into a living interface.";
+      preview.crystalColor = crystalColorMap[colorKey] || "#a78bfa";
+      preview.crystalShadow = colorKey === "violet"
+        ? "0 0 32px rgba(167, 139, 250, 0.52), 0 0 60px rgba(56, 189, 248, 0.18)"
+        : "0 0 20px rgba(103, 232, 249, 0.22)";
+      preview.pulseDuration = 1.8;
+    }
+
+    return preview;
+  },
+
+  getCurrentCode() {
+    const editor = this.getEditorElement();
+    if (!editor) {
+      return this.currentCode;
+    }
+
+    return editor.value || "";
+  },
+
+  checkJsSolution() {
+    const mission = this.missions[this.state.currentMissionIdx];
+    if (!mission) {
+      return;
+    }
+
+    this.updateJsPreview();
+    const values = this.getMissionValues(this.getCurrentCode(), mission);
+    const result = mission.validate(values, this);
+
+    if (!result.valid) {
+      this.showMessage(result.msg, true);
+      return;
+    }
+
+    if (!this.state.completedMissions.includes(mission.id)) {
+      this.state.completedMissions.push(mission.id);
+      this.state.energy += ENERGY_PER_MISSION;
+    }
+
+    this.pendingMissionResult = result;
+    this.saveJsState();
+    this.updateJsHUD();
+    this.showJsMissionComplete(result);
+  },
+
+  getMissionValues(code, mission) {
+    if (!mission) {
+      return {};
+    }
+
+    return mission.fields.reduce((result, fieldName) => {
+      result[fieldName] = this.extractConstValue(code, fieldName);
+      return result;
+    }, {});
+  },
+
+  extractConstValue(code, variableName) {
+    const patterns = [
+      new RegExp(`const\\s+${variableName}\\s*=\\s*"([^"]*)"\\s*;?`),
+      new RegExp(`const\\s+${variableName}\\s*=\\s*'([^']*)'\\s*;?`),
+      new RegExp(`const\\s+${variableName}\\s*=\\s*\\x60([^\\x60]*)\\x60\\s*;?`)
+    ];
+
+    for (const pattern of patterns) {
+      const match = code.match(pattern);
+      if (match) {
+        return match[1].trim();
+      }
+    }
+
+    return "";
+  },
+
+  showJsMissionComplete(result) {
+    const overlay = document.getElementById("mission-complete-overlay");
+    const message = document.getElementById("mission-complete-message");
+    const learn = document.getElementById("mission-complete-learn");
+    const energy = document.getElementById("mission-complete-energy");
+    const actionButton = document.getElementById("action-btn");
+
+    if (message) {
+      message.textContent = result.msg;
+    }
+
+    if (learn) {
+      learn.innerHTML = Array.isArray(result.learn)
+        ? result.learn.map((item) => `<div class="success-learn">${this.escapeHtml(item)}</div>`).join("")
+        : "";
+    }
+
+    if (energy) {
+      energy.textContent = `+${ENERGY_PER_MISSION} Core Energy restored`;
+    }
+
+    if (actionButton) {
+      actionButton.disabled = true;
+    }
+
+    if (overlay) {
+      overlay.classList.add("active");
+    }
+  },
+
+  closeMissionComplete() {
+    const overlay = document.getElementById("mission-complete-overlay");
+    if (overlay) {
+      overlay.classList.remove("active");
+    }
+  },
+
+  continueAfterJsMission() {
+    if (!this.pendingMissionResult) {
+      return;
+    }
+
+    this.closeMissionComplete();
+    this.playJsTransition();
+  },
+
+  playJsTransition() {
+    const overlay = document.getElementById("transition-overlay");
+    const text = document.getElementById("transition-text");
+
+    if (!overlay || !text) {
+      return;
+    }
+
+    overlay.classList.add("active");
+    text.textContent = "The core hums...";
+
+    window.setTimeout(() => {
+      text.textContent = "The energy shifts...";
+
+      window.setTimeout(() => {
+        this.pendingMissionResult = null;
+        this.loadJsMission(this.state.currentMissionIdx + 1);
+        window.setTimeout(() => {
+          overlay.classList.remove("active");
+        }, 500);
+      }, 1200);
+    }, 1200);
+  },
+
+  showJsCompletionScreen() {
+    const progress = loadJourneyProgress();
+    progress.jsComplete = true;
+    progress.currentWorld = "complete";
+    saveJourneyProgress(progress);
+
+    const completionScreen = document.getElementById("completion-screen");
+    const completionEnergyTotal = document.getElementById("completion-energy-total");
+
+    if (completionEnergyTotal) {
+      completionEnergyTotal.textContent = `${this.state.energy} / 120`;
+    }
+
+    if (completionScreen) {
+      completionScreen.style.display = "flex";
+    }
+  },
+
+  replayJsCore() {
+    this.state.currentMissionIdx = 0;
+    this.pendingMissionResult = null;
+    this.currentCode = "";
+    this.saveJsState();
+    window.location.reload();
+  },
+
+  showMessage(text, isError) {
+    const messageArea = document.getElementById("message-area");
+    if (!messageArea) {
+      return;
+    }
+
+    messageArea.textContent = text;
+    messageArea.className = isError ? "msg-error" : "msg-success";
+  },
+
+  clearMessage() {
+    const messageArea = document.getElementById("message-area");
+    if (!messageArea) {
+      return;
+    }
+
+    messageArea.textContent = "";
+    messageArea.className = "";
+  },
+
+  escapeHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+};
+
 document.addEventListener("DOMContentLoaded", () => {
+  if (window.location.pathname.includes("L3-js.html")) {
+    jsLevel.init();
+    return;
+  }
+
+  if (window.location.pathname.includes("L2-css.html")) {
+    cssLevel.init();
+    return;
+  }
+
   game.init();
 });

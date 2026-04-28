@@ -3,23 +3,258 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ByteRush - Enter the Code Forest</title>
+  <title>ByteRush - Continue Your Code Journey</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    body.index-page {
+      position: relative;
+      overflow-x: hidden;
+      background:
+        linear-gradient(180deg, rgba(17, 11, 40, 0.92) 0%, rgba(8, 11, 28, 0.98) 100%),
+        #080b1c;
+      image-rendering: pixelated;
+    }
+
+    body.index-page::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(115, 86, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(115, 86, 255, 0.08) 1px, transparent 1px);
+      background-size: 34px 34px;
+      mask-image: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.25) 30%, rgba(0, 0, 0, 0.9) 100%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    body.index-page::after {
+      content: "";
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 32vh;
+      background:
+        linear-gradient(180deg, rgba(10, 13, 28, 0) 0%, rgba(10, 13, 28, 0.96) 100%),
+        repeating-linear-gradient(90deg, rgba(103, 232, 249, 0.1) 0 2px, transparent 2px 34px);
+      transform: perspective(540px) rotateX(72deg);
+      transform-origin: bottom;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .moon-glow {
+      background: radial-gradient(circle, rgba(119, 92, 255, 0.18) 0%, rgba(103, 232, 249, 0.05) 36%, transparent 72%);
+    }
+
+    .menu-panel.journey-panel {
+      max-width: 760px;
+      padding: 40px 36px;
+      border: 2px solid rgba(147, 197, 253, 0.2);
+      background:
+        linear-gradient(180deg, rgba(15, 17, 43, 0.92), rgba(8, 11, 28, 0.96)),
+        rgba(255, 255, 255, 0.04);
+      box-shadow: 0 0 0 2px rgba(103, 232, 249, 0.06), 0 20px 48px rgba(0, 0, 0, 0.38);
+    }
+
+    .journey-title {
+      font-family: "Courier New", monospace;
+      font-size: clamp(2.6rem, 5vw, 4rem);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #9ddcff;
+      text-shadow: 0 0 0 rgba(0, 0, 0, 0), 0 0 14px rgba(103, 232, 249, 0.25);
+      margin-bottom: 12px;
+    }
+
+    .journey-subtitle {
+      color: #d9c9ff;
+      font-size: 1.05rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .journey-description {
+      color: #b7c5ea;
+      line-height: 1.7;
+      margin-bottom: 26px;
+    }
+
+    .journey-current {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 24px;
+      padding: 18px 20px;
+      border-radius: 14px;
+      border: 1px solid rgba(147, 197, 253, 0.16);
+      background: rgba(255, 255, 255, 0.04);
+      text-align: left;
+    }
+
+    .journey-current-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .journey-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #8ca0cf;
+      margin-bottom: 6px;
+    }
+
+    .journey-value {
+      color: #f6f9ff;
+      font-size: 1.08rem;
+      font-weight: 700;
+    }
+
+    .journey-summary {
+      color: #cdd8f3;
+      line-height: 1.6;
+    }
+
+    .journey-trail {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 26px 0 30px;
+    }
+
+    .journey-step {
+      flex: 1;
+      min-width: 0;
+      padding: 14px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      text-align: center;
+      opacity: 0.58;
+      transition: 0.25s ease;
+    }
+
+    .journey-step.is-active {
+      opacity: 1;
+      border-color: rgba(103, 232, 249, 0.34);
+      box-shadow: 0 0 18px rgba(103, 232, 249, 0.12);
+    }
+
+    .journey-step.is-complete {
+      opacity: 0.95;
+      border-color: rgba(134, 239, 172, 0.28);
+      background: rgba(134, 239, 172, 0.08);
+    }
+
+    .journey-step-title {
+      display: block;
+      color: #edf4ff;
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .journey-step-state {
+      display: block;
+      color: #a4b5d9;
+      font-size: 0.74rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .journey-connector {
+      width: 24px;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(103, 232, 249, 0.18), rgba(167, 139, 250, 0.24));
+      flex-shrink: 0;
+    }
+
+    .button-group.journey-actions {
+      gap: 12px;
+    }
+
+    .button-group.journey-actions #continueJourney {
+      min-height: 56px;
+      font-size: 1.05rem;
+      border: 1px solid rgba(103, 232, 249, 0.25);
+      box-shadow: 0 0 20px rgba(103, 232, 249, 0.16);
+    }
+
+    .button-group.journey-actions #resetJourney {
+      align-self: center;
+      min-width: 180px;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 768px) {
+      .menu-panel.journey-panel {
+        padding: 28px 20px;
+      }
+
+      .journey-current-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .journey-trail {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .journey-connector {
+        width: 2px;
+        height: 18px;
+        margin: 0 auto;
+      }
+    }
+  </style>
 </head>
 <body class="index-page">
   <div class="stars-container"></div>
   <div class="moon-glow"></div>
 
-  <main class="menu-panel glass-panel">
+  <main class="menu-panel glass-panel journey-panel">
     <header class="menu-header">
-      <h1 class="game-title">ByteRush</h1>
-      <p class="game-subtitle">Enter the Code Forest</p>
+      <div id="eyebrow" class="eyebrow-text" style="color:#a4b5d9;font-size:0.92rem;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px;"></div>
+      <h1 id="main-title" class="game-title journey-title">ByteRush</h1>
+      <div id="subtitle" class="game-subtitle journey-subtitle"></div>
     </header>
 
     <section class="menu-content">
-      <p class="game-description">
-        Build mini websites and restore the forest using HTML, CSS, and JavaScript.
-      </p>
+      <div id="description" class="game-description journey-description"></div>
+
+      <section class="journey-current glass-panel" aria-labelledby="journey-current-title">
+        <div>
+          <p class="progress-label">Current Path</p>
+          <h2 id="journey-current-title" class="journey-map-title">Resume where you stopped</h2>
+        </div>
+
+        <div class="journey-current-grid">
+          <div>
+            <p class="journey-label">Current World</p>
+            <p id="current-world-name" class="journey-value">HTML Forest</p>
+          </div>
+          <div>
+            <p class="journey-label">Current Mission</p>
+            <p id="current-mission-number" class="journey-value">Mission 1</p>
+          </div>
+        </div>
+
+        <p id="journey-summary" class="journey-summary">Your adventure begins in HTML Forest.</p>
+      </section>
 
       <section class="progress-card" aria-live="polite">
         <div class="progress-copy">
@@ -31,14 +266,175 @@
         </div>
       </section>
 
-      <div class="button-group">
-        <button id="startAdventure" class="btn btn-primary glow-hover">Start Adventure</button>
-        <button id="continueJourney" class="btn btn-secondary glow-hover">Continue Journey</button>
-        <button id="resetJourney" class="btn btn-danger glow-hover">Reset Journey</button>
+      <section class="journey-trail" aria-label="Journey trail">
+        <div id="trail-html" class="journey-step is-active">
+          <span class="journey-step-title">HTML Forest</span>
+          <span class="journey-step-state">Current</span>
+        </div>
+        <div class="journey-connector" aria-hidden="true"></div>
+        <div id="trail-css" class="journey-step">
+          <span class="journey-step-title">Color Grove</span>
+          <span class="journey-step-state">Waiting</span>
+        </div>
+        <div class="journey-connector" aria-hidden="true"></div>
+        <div id="trail-js" class="journey-step">
+          <span class="journey-step-title">JavaScript Core</span>
+          <span class="journey-step-state">Waiting</span>
+        </div>
+      </section>
+
+      <div class="button-group journey-actions">
+        <button id="mainJourneyBtn" class="btn btn-primary glow-hover" style="min-width:200px;font-size:1.1rem;"></button>
+        <a id="resetJourney" href="#" style="font-size:0.98rem;color:#b7c5ea;opacity:0.7;text-decoration:underline;margin-top:8px;align-self:center;">Reset Journey</a>
       </div>
     </section>
   </main>
 
   <script src="script.js"></script>
+  <script>
+    (function () {
+      function getProgress() {
+        try {
+          return JSON.parse(localStorage.getItem("byterush_progress")) || {};
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function getSave(key) {
+        try {
+          return JSON.parse(localStorage.getItem(key)) || {};
+        } catch (error) {
+          return {};
+        }
+      }
+
+      function worldFromProgress(progress) {
+        if (progress.jsComplete) {
+          return "complete";
+        }
+
+        if (progress.cssComplete) {
+          return "js";
+        }
+
+        if (progress.htmlComplete) {
+          return "css";
+        }
+
+        return "html";
+      }
+
+      function missionLabel(world, saves) {
+        if (world === "css") {
+          return `Mission ${Math.min((saves.css.currentMissionIdx || 0) + 1, 4)}`;
+        }
+
+        if (world === "js") {
+          return `Mission ${Math.min((saves.js.currentMissionIdx || 0) + 1, 4)}`;
+        }
+
+        if (world === "complete") {
+          return "Journey Complete";
+        }
+
+        return `Mission ${Math.min((saves.html.currentMissionIdx || 0) + 1, 4)}`;
+      }
+
+      function worldName(world) {
+        if (world === "css") {
+          return "Color Grove";
+        }
+
+        if (world === "js") {
+          return "JavaScript Core";
+        }
+
+        if (world === "complete") {
+          return "Journey Complete";
+        }
+
+        return "HTML Forest";
+      }
+
+      function summaryText(world, progress) {
+        if (world === "complete") {
+          return "Every world is awake. You can step back into JavaScript Core or reset the journey and begin again.";
+        }
+
+        if (world === "js") {
+          return progress.cssComplete
+            ? "Color and structure are restored. One final spark remains in JavaScript Core."
+            : "The path is preparing the JavaScript Core.";
+        }
+
+        if (world === "css") {
+          return "HTML Forest is complete. The Color Grove is now waiting for your next step.";
+        }
+
+        return "Your adventure begins in HTML Forest. Continue from the first mission and awaken the journey.";
+      }
+
+      function updateTrailStep(id, state, tone) {
+        const step = document.getElementById(id);
+        if (!step) {
+          return;
+        }
+
+        step.classList.remove("is-active", "is-complete");
+        if (tone === "active") {
+          step.classList.add("is-active");
+        }
+        if (tone === "complete") {
+          step.classList.add("is-complete");
+        }
+
+        const label = step.querySelector(".journey-step-state");
+        if (label) {
+          label.textContent = state;
+        }
+      }
+
+      function refreshJourneyScreen() {
+        const progress = getProgress();
+        const saves = {
+          html: getSave("byterush_player"),
+          css: getSave("byterush_css_player"),
+          js: getSave("byterush_js_player")
+        };
+        const world = worldFromProgress(progress);
+        const currentWorldName = document.getElementById("current-world-name");
+        const currentMissionNumber = document.getElementById("current-mission-number");
+        const journeySummary = document.getElementById("journey-summary");
+        const continueJourney = document.getElementById("continueJourney");
+
+        if (currentWorldName) {
+          currentWorldName.textContent = worldName(world);
+        }
+
+        if (currentMissionNumber) {
+          currentMissionNumber.textContent = missionLabel(world, saves);
+        }
+
+        if (journeySummary) {
+          journeySummary.textContent = summaryText(world, progress);
+        }
+
+        updateTrailStep("trail-html", progress.htmlComplete ? "Complete" : (world === "html" ? "Current" : "Start"), progress.htmlComplete ? "complete" : (world === "html" ? "active" : ""));
+        updateTrailStep("trail-css", progress.cssComplete ? "Complete" : (world === "css" ? "Current" : "Waiting"), progress.cssComplete ? "complete" : (world === "css" ? "active" : ""));
+        updateTrailStep("trail-js", progress.jsComplete ? "Complete" : (world === "js" ? "Current" : (world === "complete" ? "Complete" : "Waiting")), progress.jsComplete ? "complete" : (world === "js" ? "active" : ""));
+
+        if (continueJourney && world === "complete") {
+          continueJourney.textContent = "Replay JavaScript Core";
+        }
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", refreshJourneyScreen);
+      } else {
+        refreshJourneyScreen();
+      }
+    }());
+  </script>
 </body>
 </html>
