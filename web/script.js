@@ -1,3 +1,39 @@
+// Fixe la clickabilité des boutons d'action sur tous les niveaux
+document.addEventListener("DOMContentLoaded", function () {
+  // HTML
+  const htmlBtn = document.getElementById("html-action-btn");
+  if (htmlBtn) {
+    htmlBtn.disabled = false;
+    htmlBtn.addEventListener("click", function () {
+      console.log("HTML action clicked");
+      if (window.game && typeof window.game.checkSolution === "function") {
+        window.game.checkSolution();
+      }
+    });
+  }
+  // CSS
+  const cssBtn = document.getElementById("css-action-btn");
+  if (cssBtn) {
+    cssBtn.disabled = false;
+    cssBtn.addEventListener("click", function () {
+      console.log("CSS action clicked");
+      if (window.game && typeof window.game.checkCssSolution === "function") {
+        window.game.checkCssSolution();
+      }
+    });
+  }
+  // JS
+  const jsBtn = document.getElementById("js-action-btn");
+  if (jsBtn) {
+    jsBtn.disabled = false;
+    jsBtn.addEventListener("click", function () {
+      console.log("JS action clicked");
+      if (window.game && typeof window.game.checkJsSolution === "function") {
+        window.game.checkJsSolution();
+      }
+    });
+  }
+});
 // === Lightning Core (JS Level) ===
 (function () {
   if (!window.location.pathname.includes('L3-js.html')) return;
@@ -5,6 +41,9 @@
   // --- State ---
   const JS_STORAGE_KEY = 'byterush_js_player';
   const PROGRESS_KEY = 'byterush_progress';
+  const XP_PER_MISSION = 25;
+  const XP_BONUS_FIRST_TRY = 10;
+  const LEVEL_THRESHOLDS = [0, 50, 120, 200, 300]; // Level 1-5
   const ENERGY_PER_MISSION = 30;
   const missions = [
     {
@@ -150,6 +189,7 @@
     const mission = missions[idx];
     document.getElementById('js-mission-indicator').textContent = `Mission ${idx + 1} / 4`;
     document.getElementById('js-energy-current').textContent = `${state.energy} / 120`;
+    updateXPLevelHUD();
     document.getElementById('js-mission-title').textContent = mission.title;
     document.getElementById('js-mission-narrator').innerHTML = `<span class="mission-copy">${escape(mission.narrator)}</span><span class="mission-label mission-guide-label">Guide</span>${mission.guide.map(line => `<div class="guide-line">${escape(line)}</div>`).join('')}`;
     document.getElementById('js-action-btn').textContent = mission.button;
@@ -209,32 +249,169 @@
       showMessage(result.msg, true);
       return;
     }
+    let xpGained = 0;
+    let bonus = false;
+    let progress = {};
+    try { progress = JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {}; } catch {}
+    if (!progress.xp) progress.xp = 0;
+    if (!progress.level) progress.level = 1;
     if (!state.completedMissions.includes(mission.id)) {
       state.completedMissions.push(mission.id);
       state.energy += ENERGY_PER_MISSION;
+      xpGained += XP_PER_MISSION;
+      // Bonus si premier essai (aucune erreur affichée avant)
+      if (!state["_failedOnce" + mission.id]) {
+        xpGained += XP_BONUS_FIRST_TRY;
+        bonus = true;
+      }
     }
+    // Mise à jour XP/level
+    progress.xp += xpGained;
+    let newLevel = progress.level;
+    for (let i = LEVEL_THRESHOLDS.length - 1; i >= 0; i--) {
+      if (progress.xp >= LEVEL_THRESHOLDS[i]) {
+        newLevel = i + 1;
+        break;
+      }
+    }
+    const leveledUp = newLevel > progress.level;
+    progress.level = newLevel;
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
     saveState();
-    showMissionComplete(mission, result);
+    showMissionComplete(mission, result, xpGained, bonus, leveledUp);
     pendingMissionResult = { mission, result };
     document.getElementById('js-action-btn').disabled = true;
     document.getElementById('js-energy-current').textContent = `${state.energy} / 120`;
+    updateXPLevelHUD();
+    if (xpGained > 0) showXPFloat(xpGained, bonus, leveledUp);
   }
 
-  function showMessage(msg, isError) {
+  function showMessage(msg, isError, missionId) {
     const area = document.getElementById('js-message-area');
     area.textContent = msg;
     area.className = isError ? 'msg-error' : 'msg-success';
+    if (isError && missionId) state["_failedOnce" + missionId] = true;
     jsShakeError(isError);
     jsGlowSuccess(isError);
   }
 
-  function showMissionComplete(mission, result) {
+  function showMissionComplete(mission, result, xpGained, bonus, leveledUp) {
     document.getElementById('js-mission-complete-message').textContent = mission.successMsg;
     document.getElementById('js-mission-complete-learn').innerHTML = mission.learn.map(l => `<div class="success-learn">${escape(l)}</div>`).join('');
     document.getElementById('js-mission-complete-energy').textContent = `+${ENERGY_PER_MISSION} Core Energy restored`;
     document.getElementById('js-mission-complete-overlay').classList.add('active');
     jsPopModal();
     jsFloatEnergy();
+    // XP feedback
+    if (xpGained > 0) showXPFloat(xpGained, bonus, leveledUp);
+  }
+
+  // XP/Level HUD
+  function updateXPLevelHUD() {
+    let progress = {};
+    try { progress = JSON.parse(localStorage.getItem(PROGRESS_KEY)) || {}; } catch {}
+    const level = progress.level || 1;
+    const xp = progress.xp || 0;
+    let next = LEVEL_THRESHOLDS[level] || LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length-1];
+    let prev = LEVEL_THRESHOLDS[level-1] || 0;
+    if (level >= LEVEL_THRESHOLDS.length) next = xp, prev = xp;
+    let hud = document.getElementById('js-xp-hud');
+    if (!hud) {
+      hud = document.createElement('div');
+      hud.id = 'js-xp-hud';
+      hud.style.display = 'flex';
+      hud.style.flexDirection = 'column';
+      hud.style.alignItems = 'flex-end';
+      hud.style.marginLeft = 'auto';
+      hud.style.marginRight = '16px';
+      hud.style.fontSize = '1.01rem';
+      hud.style.color = 'var(--core-violet)';
+      document.querySelector('.core-hud-left')?.appendChild(hud);
+    }
+    hud.innerHTML = `<div style="font-weight:700;color:var(--electric-blue);">Level ${level}</div><div style="color:var(--core-text-secondary);">XP: ${xp} / ${next}</div>`;
+  }
+
+  // XP/Level feedback
+  function showXPFloat(xpGained, bonus, leveledUp) {
+    const hud = document.getElementById('js-xp-hud');
+    if (!hud) return;
+    const float = document.createElement('div');
+    float.className = 'xp-float';
+    float.style.position = 'absolute';
+    float.style.right = '0';
+    float.style.top = '-18px';
+    float.style.fontWeight = '700';
+    float.style.fontSize = '1.01rem';
+    float.style.color = '#38bdf8';
+    float.style.textShadow = '0 2px 12px #a7f3d0cc, 0 0 8px #a78bfa44';
+    float.style.zIndex = '30';
+    float.style.pointerEvents = 'none';
+    float.style.opacity = '0';
+    float.style.transition = 'opacity 0.18s, transform 1.1s cubic-bezier(.4,1,.6,1)';
+    float.textContent = `+${XP_PER_MISSION} XP`;
+    hud.appendChild(float);
+    setTimeout(() => {
+      float.style.opacity = '1';
+      float.style.transform = 'translateY(-32px) scale(1.12)';
+    }, 10);
+    setTimeout(() => {
+      float.style.opacity = '0';
+      float.style.transform = 'translateY(-64px) scale(0.98)';
+    }, 1200);
+    setTimeout(() => { float.remove(); }, 1800);
+    if (bonus) {
+      const bonusFloat = document.createElement('div');
+      bonusFloat.className = 'xp-float';
+      bonusFloat.style.position = 'absolute';
+      bonusFloat.style.right = '0';
+      bonusFloat.style.top = '-38px';
+      bonusFloat.style.fontWeight = '700';
+      bonusFloat.style.fontSize = '0.98rem';
+      bonusFloat.style.color = '#a78bfa';
+      bonusFloat.style.textShadow = '0 2px 12px #a7f3d0cc, 0 0 8px #a78bfa44';
+      bonusFloat.style.zIndex = '30';
+      bonusFloat.style.pointerEvents = 'none';
+      bonusFloat.style.opacity = '0';
+      bonusFloat.style.transition = 'opacity 0.18s, transform 1.1s cubic-bezier(.4,1,.6,1)';
+      bonusFloat.textContent = `+${XP_BONUS_FIRST_TRY} Bonus XP`;
+      hud.appendChild(bonusFloat);
+      setTimeout(() => {
+        bonusFloat.style.opacity = '1';
+        bonusFloat.style.transform = 'translateY(-52px) scale(1.12)';
+      }, 10);
+      setTimeout(() => {
+        bonusFloat.style.opacity = '0';
+        bonusFloat.style.transform = 'translateY(-84px) scale(0.98)';
+      }, 1200);
+      setTimeout(() => { bonusFloat.remove(); }, 1800);
+    }
+    if (leveledUp) {
+      const levelFloat = document.createElement('div');
+      levelFloat.className = 'xp-float';
+      levelFloat.style.position = 'absolute';
+      levelFloat.style.right = '0';
+      levelFloat.style.top = '-60px';
+      levelFloat.style.fontWeight = '900';
+      levelFloat.style.fontSize = '1.12rem';
+      levelFloat.style.color = '#f9a8d4';
+      levelFloat.style.textShadow = '0 2px 18px #a7f3d0cc, 0 0 12px #a78bfa44';
+      levelFloat.style.zIndex = '31';
+      levelFloat.style.pointerEvents = 'none';
+      levelFloat.style.opacity = '0';
+      levelFloat.style.transition = 'opacity 0.18s, transform 1.1s cubic-bezier(.4,1,.6,1)';
+      levelFloat.textContent = `Level Up!`;
+      hud.appendChild(levelFloat);
+      setTimeout(() => {
+        levelFloat.style.opacity = '1';
+        levelFloat.style.transform = 'translateY(-90px) scale(1.18)';
+        levelFloat.style.filter = 'drop-shadow(0 0 18px #a7f3d0cc) drop-shadow(0 0 24px #a78bfa)';
+      }, 10);
+      setTimeout(() => {
+        levelFloat.style.opacity = '0';
+        levelFloat.style.transform = 'translateY(-120px) scale(0.98)';
+      }, 1400);
+      setTimeout(() => { levelFloat.remove(); }, 2000);
+    }
   }
 
   function closeMissionComplete() {
@@ -351,6 +528,7 @@
   document.getElementById('js-mission-complete-continue').addEventListener('click', continueAfterMission);
   document.getElementById('js-return-camp-btn').addEventListener('click', () => { window.location.href = 'index.html'; });
   document.getElementById('js-replay-btn').addEventListener('click', replayCore);
+  updateXPLevelHUD();
   // Back to Camp (HUD)
   document.getElementById('js-back-camp').addEventListener('click', () => { window.location.href = 'index.html'; });
 
@@ -1033,16 +1211,94 @@ const game = {
     this.configureEditor();
     this.updateHUD();
 
-    const actionButton = document.getElementById("action-btn");
-    const continueButton = document.getElementById("mission-complete-continue");
-    const backButton = document.querySelector(".btn-back");
-    const replayButton = document.getElementById("replay-journey-btn");
-    const returnButton = document.getElementById("return-forest-btn");
 
-    if (actionButton) {
-      actionButton.addEventListener("click", () => {
-        this.checkSolution();
-      });
+
+    // HTML Forest: bouton d'action unique et texte dynamique
+    const htmlActionBtn = document.getElementById("html-action-btn");
+    if (htmlActionBtn) {
+      htmlActionBtn.style.display = "inline-flex";
+      htmlActionBtn.style.opacity = "1";
+      htmlActionBtn.style.visibility = "visible";
+      htmlActionBtn.style.position = "relative";
+      htmlActionBtn.style.zIndex = "20";
+      htmlActionBtn.disabled = false;
+      htmlActionBtn.textContent = this.missions[this.state.currentMissionIdx]?.buttonText || "Check";
+      htmlActionBtn.removeEventListener && htmlActionBtn.removeEventListener("click", this._htmlActionHandler);
+      this._htmlActionHandler = () => { this.checkSolution(); };
+      htmlActionBtn.addEventListener("click", this._htmlActionHandler);
+    }
+
+    // CSS Grove: bouton d'action unique et texte dynamique
+    const cssActionBtn = document.getElementById("css-action-btn");
+    if (cssActionBtn) {
+      cssActionBtn.style.display = "inline-flex";
+      cssActionBtn.style.opacity = "1";
+      cssActionBtn.style.visibility = "visible";
+      cssActionBtn.style.position = "relative";
+      cssActionBtn.style.zIndex = "20";
+      cssActionBtn.disabled = false;
+      // Si missions CSS sont dans this.missions, sinon hardcode
+      cssActionBtn.textContent = this.missions[this.state.currentMissionIdx]?.buttonText || "Check";
+      cssActionBtn.removeEventListener && cssActionBtn.removeEventListener("click", this._cssActionHandler);
+      this._cssActionHandler = () => { this.checkCssSolution && this.checkCssSolution(); };
+      cssActionBtn.addEventListener("click", this._cssActionHandler);
+    }
+
+    // JS Core: bouton d'action unique et texte dynamique
+    const jsActionBtn = document.getElementById("js-action-btn");
+    if (jsActionBtn) {
+      jsActionBtn.style.display = "inline-flex";
+      jsActionBtn.style.opacity = "1";
+      jsActionBtn.style.visibility = "visible";
+      jsActionBtn.style.position = "relative";
+      jsActionBtn.style.zIndex = "20";
+      jsActionBtn.disabled = false;
+      if (window.location.pathname.includes("L3-js.html")) {
+        // Le texte du bouton est géré par le script JS Core
+      }
+      jsActionBtn.removeEventListener && jsActionBtn.removeEventListener("click", this._jsActionHandler);
+      this._jsActionHandler = () => { this.checkJsSolution && this.checkJsSolution(); };
+      jsActionBtn.addEventListener("click", this._jsActionHandler);
+    }
+
+    const continueButton = document.getElementById("mission-complete-continue");
+    if (continueButton) {
+      continueButton.style.display = "inline-block";
+      continueButton.disabled = false;
+      continueButton.removeEventListener && continueButton.removeEventListener("click", this._continueBtnHandler);
+      this._continueBtnHandler = () => { this.continueAfterMissionComplete(); };
+      continueButton.addEventListener("click", this._continueBtnHandler);
+    }
+
+    const backButton = document.querySelector(".btn-back");
+    if (backButton) {
+      backButton.style.display = "inline-block";
+      backButton.disabled = false;
+      backButton.removeEventListener && backButton.removeEventListener("click", this._backBtnHandler);
+      this._backBtnHandler = () => { window.location.href = "index.html"; };
+      backButton.addEventListener("click", this._backBtnHandler);
+    }
+
+    const replayButton = document.getElementById("replay-journey-btn");
+    if (replayButton) {
+      replayButton.style.display = "inline-block";
+      replayButton.disabled = false;
+      replayButton.removeEventListener && replayButton.removeEventListener("click", this._replayBtnHandler);
+      this._replayBtnHandler = () => {
+        this.resetState();
+        this.saveState();
+        window.location.reload();
+      };
+      replayButton.addEventListener("click", this._replayBtnHandler);
+    }
+
+    const returnButton = document.getElementById("return-forest-btn");
+    if (returnButton) {
+      returnButton.style.display = "inline-block";
+      returnButton.disabled = false;
+      returnButton.removeEventListener && returnButton.removeEventListener("click", this._returnBtnHandler);
+      this._returnBtnHandler = () => { window.location.href = "index.html"; };
+      returnButton.addEventListener("click", this._returnBtnHandler);
     }
 
     if (continueButton) {
@@ -1290,10 +1546,15 @@ const game = {
       actionButton.disabled = false;
     }
 
-    this.currentCode = mission.starterCode;
 
+    this.currentCode = mission.starterCode;
     if (editor) {
-      editor.value = this.currentCode;
+      // Pour textarea ou contenteditable
+      if ('value' in editor) {
+        editor.value = this.currentCode;
+      } else {
+        editor.textContent = this.currentCode;
+      }
     }
 
     this.pendingMissionResult = null;
