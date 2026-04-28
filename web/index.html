@@ -226,68 +226,15 @@
   <div class="stars-container"></div>
   <div class="moon-glow"></div>
 
-  <main class="menu-panel glass-panel journey-panel">
-    <header class="menu-header">
-      <div id="eyebrow" class="eyebrow-text" style="color:#a4b5d9;font-size:0.92rem;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px;"></div>
-      <h1 id="main-title" class="game-title journey-title">ByteRush</h1>
-      <div id="subtitle" class="game-subtitle journey-subtitle"></div>
-    </header>
 
-    <section class="menu-content">
-      <div id="description" class="game-description journey-description"></div>
-
-      <section class="journey-current glass-panel" aria-labelledby="journey-current-title">
-        <div>
-          <p class="progress-label">Current Path</p>
-          <h2 id="journey-current-title" class="journey-map-title">Resume where you stopped</h2>
-        </div>
-
-        <div class="journey-current-grid">
-          <div>
-            <p class="journey-label">Current World</p>
-            <p id="current-world-name" class="journey-value">HTML Forest</p>
-          </div>
-          <div>
-            <p class="journey-label">Current Mission</p>
-            <p id="current-mission-number" class="journey-value">Mission 1</p>
-          </div>
-        </div>
-
-        <p id="journey-summary" class="journey-summary">Your adventure begins in HTML Forest.</p>
-      </section>
-
-      <section class="progress-card" aria-live="polite">
-        <div class="progress-copy">
-          <p class="progress-label">Journey status</p>
-          <p id="progress-text" class="progress-text">No journey started yet.</p>
-        </div>
-        <div class="progress-meter" aria-hidden="true">
-          <span id="progress-bar" class="progress-bar"></span>
-        </div>
-      </section>
-
-      <section class="journey-trail" aria-label="Journey trail">
-        <div id="trail-html" class="journey-step is-active">
-          <span class="journey-step-title">HTML Forest</span>
-          <span class="journey-step-state">Current</span>
-        </div>
-        <div class="journey-connector" aria-hidden="true"></div>
-        <div id="trail-css" class="journey-step">
-          <span class="journey-step-title">Color Grove</span>
-          <span class="journey-step-state">Waiting</span>
-        </div>
-        <div class="journey-connector" aria-hidden="true"></div>
-        <div id="trail-js" class="journey-step">
-          <span class="journey-step-title">JavaScript Core</span>
-          <span class="journey-step-state">Waiting</span>
-        </div>
-      </section>
-
-      <div class="button-group journey-actions">
-        <button id="mainJourneyBtn" class="btn btn-primary glow-hover" style="min-width:200px;font-size:1.1rem;"></button>
-        <a id="resetJourney" href="#" style="font-size:0.98rem;color:#b7c5ea;opacity:0.7;text-decoration:underline;margin-top:8px;align-self:center;">Reset Journey</a>
-      </div>
-    </section>
+  <main id="start-screen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:90vh;text-align:center;">
+    <div id="eyebrow" style="color:#a4b5d9;font-size:1.05rem;letter-spacing:0.18em;text-transform:uppercase;margin-bottom:14px;"></div>
+    <h1 id="main-title" style="font-family:'Courier New',monospace;font-size:clamp(3.2rem,7vw,5.2rem);letter-spacing:0.09em;text-transform:uppercase;color:#9ddcff;text-shadow:0 0 0 rgba(0,0,0,0),0 0 18px rgba(103,232,249,0.25);margin-bottom:10px;">ByteRush</h1>
+    <div id="subtitle" style="color:#d9c9ff;font-size:1.25rem;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:18px;">Coding Adventure</div>
+    <div id="description" style="color:#b7c5ea;font-size:1.13rem;line-height:1.7;margin-bottom:32px;">Build. Explore. Restore the forest.</div>
+    <button id="mainJourneyBtn" class="btn btn-primary glow-hover" style="min-width:220px;font-size:1.18rem;margin-bottom:38px;"></button>
+    <div style="flex:1 1 0;"></div>
+    <a id="resetJourney" href="#" style="font-size:1.01rem;color:#b7c5ea;opacity:0.7;text-decoration:underline;margin-top:32px;">Reset Journey</a>
   </main>
 
   <script src="script.js"></script>
