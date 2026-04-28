@@ -1853,9 +1853,9 @@ const cssLevel = {
       title: "Mission 1: The Grey Grove",
       narrator: "The grove has lost its colors. Paint it gently.",
       guideLines: [
-        "choose_background_color -> lavender",
-        "choose_text_color -> white",
-        "choose_title_color -> gold"
+        "choose_background_color -> #1A1235",
+        "choose_text_color -> #F8F6FF",
+        "choose_title_color -> #F5B7D2"
       ],
       starterCode: "body {\n  background: choose_background_color;\n  color: choose_text_color;\n}\n\nh1 {\n  color: choose_title_color;\n}",
       buttonText: "Paint the Grove",
@@ -1864,19 +1864,15 @@ const cssLevel = {
       validate(context, level) {
         const bodyStyle = level.getStyle(context.body);
         const titleStyle = level.getStyle(context.title);
-
-        if (!level.propertyMatches(bodyStyle.backgroundColor, "backgroundColor", "lavender")) {
-          return { valid: false, msg: "Change choose_background_color to lavender." };
+        if (!level.propertyMatches(bodyStyle.backgroundColor, "backgroundColor", "#1A1235")) {
+          return { valid: false, msg: "Change choose_background_color to #1A1235." };
         }
-
-        if (!level.propertyMatches(bodyStyle.color, "color", "white")) {
-          return { valid: false, msg: "Change choose_text_color to white." };
+        if (!level.propertyMatches(bodyStyle.color, "color", "#F8F6FF")) {
+          return { valid: false, msg: "Change choose_text_color to #F8F6FF." };
         }
-
-        if (!level.propertyMatches(titleStyle.color, "color", "gold")) {
-          return { valid: false, msg: "Change choose_title_color to gold." };
+        if (!level.propertyMatches(titleStyle.color, "color", "#F5B7D2")) {
+          return { valid: false, msg: "Change choose_title_color to #F5B7D2." };
         }
-
         return { valid: true, msg: this.successMsg, learn: this.learn };
       }
     },
@@ -1896,19 +1892,15 @@ const cssLevel = {
       validate(context, level) {
         const cardStyle = level.getStyle(context.card);
         const buttonStyle = level.getStyle(context.button);
-
         if (!level.allSidesEqual(cardStyle, "padding", "24px")) {
           return { valid: false, msg: "Change choose_padding to 24px." };
         }
-
         if (!level.allSidesEqual(cardStyle, "margin", "20px")) {
           return { valid: false, msg: "Change choose_margin to 20px." };
         }
-
         if (!level.allSidesEqual(buttonStyle, "padding", "12px")) {
           return { valid: false, msg: "Change choose_button_padding to 12px." };
         }
-
         return { valid: true, msg: this.successMsg, learn: this.learn };
       }
     },
@@ -1917,7 +1909,7 @@ const cssLevel = {
       title: "Mission 3: The Soft Stones",
       narrator: "The stones are sharp and plain. Soften their edges.",
       guideLines: [
-        "choose_border -> 2px solid white",
+        "choose_border -> 2px solid #C8B6FF",
         "choose_radius -> 18px",
         "choose_button_radius -> 999px"
       ],
@@ -1928,19 +1920,15 @@ const cssLevel = {
       validate(context, level) {
         const cardStyle = level.getStyle(context.card);
         const buttonStyle = level.getStyle(context.button);
-
-        if (!level.borderMatches(cardStyle, "2px", "solid", "white")) {
-          return { valid: false, msg: "Change choose_border to 2px solid white." };
+        if (!level.borderMatches(cardStyle, "2px", "solid", "#C8B6FF")) {
+          return { valid: false, msg: "Change choose_border to 2px solid #C8B6FF." };
         }
-
         if (!level.propertyMatches(cardStyle.borderRadius, "borderRadius", "18px")) {
           return { valid: false, msg: "Change choose_radius to 18px." };
         }
-
         if (!level.propertyMatches(buttonStyle.borderRadius, "borderRadius", "999px")) {
           return { valid: false, msg: "Change choose_button_radius to 999px." };
         }
-
         return { valid: true, msg: this.successMsg, learn: this.learn };
       }
     },
@@ -1949,12 +1937,12 @@ const cssLevel = {
       title: "Mission 4: The Glowing Card",
       narrator: "The grove needs a glowing card to hold its message.",
       guideLines: [
-        "choose_background -> rgba(255, 255, 255, 0.12)",
+        "choose_background -> #2A1B4A",
         "choose_padding -> 28px",
         "choose_radius -> 22px",
-        "choose_shadow -> 0 0 24px rgba(147, 197, 253, 0.45)",
-        "choose_button_background -> lavender",
-        "choose_button_text -> white"
+        "choose_shadow -> 0 0 24px rgba(200, 182, 255, 0.35)",
+        "choose_button_background -> #A78BFA",
+        "choose_button_text -> #F8F6FF"
       ],
       starterCode: ".magic-card {\n  background: choose_background;\n  padding: choose_padding;\n  border-radius: choose_radius;\n  box-shadow: choose_shadow;\n}\n\nbutton {\n  background: choose_button_background;\n  color: choose_button_text;\n}",
       buttonText: "Light the Card",
@@ -1963,31 +1951,24 @@ const cssLevel = {
       validate(context, level) {
         const cardStyle = level.getStyle(context.card);
         const buttonStyle = level.getStyle(context.button);
-
-        if (!level.propertyMatches(cardStyle.backgroundColor, "backgroundColor", "rgba(255, 255, 255, 0.12)")) {
-          return { valid: false, msg: "Change choose_background to rgba(255, 255, 255, 0.12)." };
+        if (!level.propertyMatches(cardStyle.backgroundColor, "backgroundColor", "#2A1B4A")) {
+          return { valid: false, msg: "Change choose_background to #2A1B4A." };
         }
-
         if (!level.allSidesEqual(cardStyle, "padding", "28px")) {
           return { valid: false, msg: "Change choose_padding to 28px." };
         }
-
         if (!level.propertyMatches(cardStyle.borderRadius, "borderRadius", "22px")) {
           return { valid: false, msg: "Change choose_radius to 22px." };
         }
-
-        if (!level.propertyMatches(cardStyle.boxShadow, "boxShadow", "0 0 24px rgba(147, 197, 253, 0.45)")) {
-          return { valid: false, msg: "Change choose_shadow to 0 0 24px rgba(147, 197, 253, 0.45)." };
+        if (!level.propertyMatches(cardStyle.boxShadow, "boxShadow", "0 0 24px rgba(200, 182, 255, 0.35)")) {
+          return { valid: false, msg: "Change choose_shadow to 0 0 24px rgba(200, 182, 255, 0.35)." };
         }
-
-        if (!level.propertyMatches(buttonStyle.backgroundColor, "backgroundColor", "lavender")) {
-          return { valid: false, msg: "Change choose_button_background to lavender." };
+        if (!level.propertyMatches(buttonStyle.backgroundColor, "backgroundColor", "#A78BFA")) {
+          return { valid: false, msg: "Change choose_button_background to #A78BFA." };
         }
-
-        if (!level.propertyMatches(buttonStyle.color, "color", "white")) {
-          return { valid: false, msg: "Change choose_button_text to white." };
+        if (!level.propertyMatches(buttonStyle.color, "color", "#F8F6FF")) {
+          return { valid: false, msg: "Change choose_button_text to #F8F6FF." };
         }
-
         return { valid: true, msg: this.successMsg, learn: this.learn };
       }
     }
@@ -2173,18 +2154,36 @@ const cssLevel = {
 
     const previewDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
 
-    if (!this.previewBooted || !previewDoc.getElementById("grove-user-styles")) {
-      previewDoc.open();
-      previewDoc.write(this.buildPreviewDocument(cssCode));
-      previewDoc.close();
-      this.previewBooted = true;
-    } else {
-      const userStyles = previewDoc.getElementById("grove-user-styles");
-      if (userStyles) {
-        userStyles.textContent = cssCode;
-      }
-    }
+    // Always wrap in a dark scene for readability
+    const previewHtml = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+          :root { color-scheme: dark; }
+          html, body { margin: 0; min-height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+          body { background: #1A1235 !important; color: #F8F6FF !important; min-height: 100vh; padding: 18px; }
+          .grove-scene { min-height: calc(100vh - 36px); display: grid; place-items: center; padding: 22px; border-radius: 24px; overflow: hidden; position: relative; background: none; border: none; }
+        </style>
+        <style id="grove-user-styles">${cssCode}</style>
+      </head>
+      <body>
+        <div class="grove-scene">
+          <div class="magic-card">
+            <h1>The Color Grove</h1>
+            <p>The grove is waiting for color and light.</p>
+            <button>Enter the Grove</button>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
 
+    previewDoc.open();
+    previewDoc.write(previewHtml);
+    previewDoc.close();
     this.applyPreviewFeedback();
   },
 

@@ -1,3 +1,44 @@
+/* === CSS Grove Soft Palette === */
+.grove-scene {
+  background: none !important;
+}
+.magic-card {
+  background: #2A1B4A !important;
+  color: #F8F6FF !important;
+  border: 2px solid #C8B6FF !important;
+  box-shadow: 0 0 24px rgba(200, 182, 255, 0.18);
+}
+.magic-card h1 {
+  color: #F5B7D2 !important;
+}
+.magic-card button {
+  background: #A78BFA !important;
+  color: #F8F6FF !important;
+  border-radius: 999px !important;
+}
+/* === Lightning Core Victory Sparkles === */
+.core-victory-sparkle {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(circle, #a7f3d0 60%, #a78bfa 100%, transparent 80%);
+  opacity: 0.72;
+  filter: blur(0.5px) brightness(1.18);
+  animation: sparklePulse 1.8s infinite linear;
+  z-index: 2;
+}
+.core-victory-orb .sparkle1 { left: 12px; top: 18px; animation-delay: 0s; }
+.core-victory-orb .sparkle2 { right: 18px; top: 38px; animation-delay: 0.5s; }
+.core-victory-orb .sparkle3 { left: 38px; bottom: 18px; animation-delay: 1.1s; }
+.core-victory-orb .sparkle4 { right: 28px; bottom: 32px; animation-delay: 0.8s; }
+@keyframes sparklePulse {
+  0% { opacity: 0.72; transform: scale(0.7); filter: brightness(1.18); }
+  40% { opacity: 1; transform: scale(1.12); filter: brightness(1.32); }
+  60% { opacity: 0.92; transform: scale(0.92); filter: brightness(1.18); }
+  100% { opacity: 0.72; transform: scale(0.7); filter: brightness(1.18); }
+}
 /* === Lightning Core Victory Screen === */
 .core-victory-screen {
   position: fixed;
