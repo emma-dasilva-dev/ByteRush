@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-// === HTML Forest checkSolution (STRICT DEBUG FLOW) ===
+// === HTML Forest checkSolution (RESTORE FEEDBACK & PREVIEW) ===
 if (!window.game) window.game = {};
 window.game.checkSolution = function() {
   // 1. Get current mission
@@ -51,27 +51,20 @@ window.game.checkSolution = function() {
     console.error("Unable to get code from editor");
     return;
   }
-  // 3. Extract fields from code (parse HTML)
-  let fields = {};
-  try {
-    const doc = new DOMParser().parseFromString(code, "text/html");
-    fields = {
-      heading: doc.querySelector("h1")?.textContent?.trim() || "",
-      paragraph: doc.querySelector("p")?.textContent?.trim() || "",
-      items: Array.from(doc.querySelectorAll("li")).map(li => li.textContent.trim()),
-      imageSrc: doc.querySelector("img")?.getAttribute("src")?.trim() || "",
-      imageAlt: doc.querySelector("img")?.getAttribute("alt")?.trim() || "",
-      linkHref: doc.querySelector("a")?.getAttribute("href")?.trim() || "",
-      linkText: doc.querySelector("a")?.textContent?.trim() || ""
+  // 3. Show preview using buildPreview if available
+  const preview = document.getElementById("preview") || document.getElementById("html-preview") || document.getElementById("preview-frame");
+  if (typeof mission.buildPreview === "function" && preview) {
+    // helpers for escaping
+    const helpers = {
+      text: (t) => String(t).replace(/</g, "&lt;").replace(/>/g, "&gt;"),
+      attr: (t) => String(t).replace(/"/g, "&quot;")
     };
-  } catch (e) {
-    console.error("HTML parse error", e);
-    fields = {};
+    preview.innerHTML = mission.buildPreview(code, helpers);
   }
-  // 4. Run validation with fields
+  // 4. Run validation with code
   let result = null;
   try {
-    result = mission.validate ? mission.validate(fields) : null;
+    result = mission.validate ? mission.validate(code) : null;
   } catch (e) {
     console.error("Validation error:", e);
     result = { valid: false, msg: "Validation error." };
@@ -115,9 +108,12 @@ window.game.checkSolution = function() {
     }
     const energy = document.getElementById("mission-complete-energy");
     if (energy) energy.textContent = "+30 Forest Energy restored";
-    // Continue button wiring
+    // Continue button wiring (toujours visible et focus)
     const cont = document.getElementById("mission-complete-continue");
     if (cont) {
+      cont.style.display = '';
+      cont.disabled = false;
+      cont.focus();
       cont.onclick = function() {
         modal.classList.remove("active");
         state.currentMissionIdx += 1;
@@ -141,7 +137,8 @@ window.game.checkSolution = function() {
       }
     }, 1000);
   }
-};
+});
+
 // === Lightning Core (JS Level) ===
 (function () {
   if (!window.location.pathname.includes('L3-js.html')) return;
@@ -408,6 +405,17 @@ window.game.checkSolution = function() {
     document.getElementById('js-mission-complete-learn').innerHTML = mission.learn.map(l => `<div class="success-learn">${escape(l)}</div>`).join('');
     document.getElementById('js-mission-complete-energy').textContent = `+${ENERGY_PER_MISSION} Core Energy restored`;
     document.getElementById('js-mission-complete-overlay').classList.add('active');
+    // Affiche le bouton Continue et connecte l'action
+    const continueBtn = document.getElementById('js-mission-complete-continue');
+    if (continueBtn) {
+      continueBtn.style.display = '';
+      continueBtn.disabled = false;
+      continueBtn.onclick = function () {
+        document.getElementById('js-mission-complete-overlay').classList.remove('active');
+        pendingMissionResult = null;
+        loadMission(state.currentMissionIdx + 1);
+      };
+    }
     jsPopModal();
     jsFloatEnergy();
     // XP feedback
@@ -1320,7 +1328,6 @@ const game = {
     this.updateHUD();
 
 
-
     // HTML Forest: bouton d'action unique et texte dynamique
     const htmlActionBtn = document.getElementById("html-action-btn");
     if (htmlActionBtn) {
@@ -1452,7 +1459,7 @@ const game = {
 
     editor.innerHTML = "";
     editor.setAttribute("contenteditable", "true");
-    editor.setAttribute("spellcheck", "false");
+    editor.setAttribute("
     editor.classList.add("code-editor");
 
     editor.addEventListener("input", () => {
@@ -2592,8 +2599,9 @@ const cssLevel = {
             background:
               radial-gradient(circle at 60% 20%, rgba(200,182,255,0.13), transparent 60%),
               radial-gradient(circle at 20% 80%, rgba(245,183,210,0.10), transparent 60%),
-              linear-gradient(180deg, rgba(255,255,255,0.06), rgba(4,8,11,0.18));
+              linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255, 255, 255, 0.01));
             border: 1px solid rgba(249, 168, 212, 0.18);
+            transition: all 0.3s ease;
           }
           .petal {
             position: absolute;
@@ -2655,10 +2663,6 @@ const cssLevel = {
       </head>
       <body>
         <div class="grove-scene">
-          <div class="petal petal1"></div>
-          <div class="petal petal2"></div>
-          <div class="petal petal3"></div>
-          <div class="petal petal4"></div>
           <div class="magic-card">
             <h1>The Color Grove</h1>
             <p>The grove is waiting for color and light.</p>
@@ -2685,6 +2689,7 @@ const cssLevel = {
         <style>
           :root {
             color-scheme: dark;
+            --crystal-color: ${this.escapeHtml(preview.crystalColor)};
           }
 
           * {
@@ -2702,23 +2707,20 @@ const cssLevel = {
             min-height: 100vh;
             padding: 18px;
             background: radial-gradient(circle at top, #1c1441 0%, #0d081d 60%, #070412 100%);
-            color: #f8f5ff;
-            transition: all 0.3s ease;
+            color: #f8fbff;
           }
 
           .grove-scene {
             min-height: calc(100vh - 36px);
-            display: grid;
-            place-items: center;
-            padding: 22px;
             border-radius: 24px;
+            padding: 22px;
             overflow: hidden;
             position: relative;
             background:
               radial-gradient(circle at top right, rgba(139, 92, 246, 0.24), transparent 28%),
               radial-gradient(circle at bottom left, rgba(134, 239, 172, 0.16), transparent 24%),
-              linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
-            border: 1px solid rgba(249, 168, 212, 0.18);
+              linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+            border: 1px solid rgba(103, 232, 249, 0.18);
             transition: all 0.3s ease;
           }
 
@@ -2850,6 +2852,66 @@ const cssLevel = {
     `;
   },
 
+  buildPreviewData(mission, values) {
+    const missionId = mission?.id || "js-m1";
+    const crystalColorMap = {
+      cyan: "#67e8f9",
+      violet: "#a78bfa",
+      gold: "#fde68a"
+    };
+    const colorKey = (values.powerColor || values.crystalColor || "cyan").toLowerCase();
+
+    const preview = {
+      heroName: values.heroName || "Spark Walker",
+      statusLabel: "Idle",
+      message: values.message || values.echoMessage || "The chamber listens for a clear signal.",
+      inputValue: values.inputName || "",
+      buttonText: values.buttonText || values.actionText || "Touch the crystal",
+      finalMessage: values.finalMessage || "The energy is gathering.",
+      note: "Edit the constants to see the chamber respond.",
+      crystalColor: crystalColorMap[colorKey] || "#67e8f9",
+      crystalShadow: "0 0 26px rgba(103, 232, 249, 0.26)",
+      pulseDuration: 2.6
+    };
+
+    if (missionId === "js-m1") {
+      preview.statusLabel = "Button Link";
+      preview.note = "The button and crystal message update from your const values.";
+    }
+
+    if (missionId === "js-m2") {
+      preview.statusLabel = "Echo Link";
+      preview.note = "The input and display repeat the name you store.";
+    }
+
+    if (missionId === "js-m3") {
+      preview.statusLabel = "Light Shift";
+      preview.message = `Crystal color: ${values.crystalColor || "waiting"}. Glow: ${values.glowPower || "waiting"}.`;
+      preview.note = "JavaScript values can decide how the crystal looks.";
+      preview.crystalShadow = values.glowPower === "strong"
+        ? "0 0 32px rgba(103, 232, 249, 0.5), 0 0 58px rgba(56, 189, 248, 0.34)"
+        : "0 0 18px rgba(103, 232, 249, 0.18)";
+      preview.pulseDuration = values.glowPower === "strong" ? 1.6 : 2.8;
+      preview.buttonText = "Channel the glow";
+    }
+
+    if (missionId === "js-m4") {
+      preview.statusLabel = "Core Awake";
+      preview.heroName = values.heroName || "Spark Walker";
+      preview.buttonText = values.actionText || "Prepare the chamber";
+      preview.message = "The chamber is ready for its final instruction.";
+      preview.finalMessage = values.finalMessage || "The core is waiting for its final signal.";
+      preview.note = "Name, action, color, and message combine into a living interface.";
+      preview.crystalColor = crystalColorMap[colorKey] || "#a78bfa";
+      preview.crystalShadow = colorKey === "violet"
+        ? "0 0 32px rgba(167, 139, 250, 0.52), 0 0 60px rgba(56, 189, 248, 0.18)"
+        : "0 0 20px rgba(103, 232, 249, 0.22)";
+      preview.pulseDuration = 1.8;
+    }
+
+    return preview;
+  },
+
   getCurrentCode() {
     const editor = this.getEditorElement();
     if (!editor) {
@@ -2859,20 +2921,16 @@ const cssLevel = {
     return editor.value || "";
   },
 
-  checkCssSolution() {
+  checkJsSolution() {
     const mission = this.missions[this.state.currentMissionIdx];
     if (!mission) {
       return;
     }
 
-    this.updateCssPreview();
-    const context = this.getPreviewContext();
-    if (!context) {
-      this.showMessage("The grove preview is not ready yet.", true);
-      return;
-    }
+    this.updateJsPreview();
+    const values = this.getMissionValues(this.getCurrentCode(), mission);
+    const result = mission.validate(values, this);
 
-    const result = mission.validate(context, this);
     if (!result.valid) {
       this.showMessage(result.msg, true);
       return;
@@ -2884,135 +2942,40 @@ const cssLevel = {
     }
 
     this.pendingMissionResult = result;
-    this.saveCssState();
-    this.updateCssHUD();
-    this.applyPreviewFeedback({ missionComplete: true });
-    this.showCssMissionComplete(result);
+    this.saveJsState();
+    this.updateJsHUD();
+    this.showJsMissionComplete(result);
   },
 
-  getPreviewContext() {
-    const previewFrame = document.getElementById("preview-frame");
-    const previewDoc = previewFrame?.contentDocument || previewFrame?.contentWindow?.document;
-    const previewWindow = previewFrame?.contentWindow;
-
-    if (!previewDoc || !previewWindow) {
-      return null;
-    }
-
-    return {
-      doc: previewDoc,
-      win: previewWindow,
-      body: previewDoc.body,
-      title: previewDoc.querySelector("h1"),
-      card: previewDoc.querySelector(".magic-card"),
-      button: previewDoc.querySelector("button")
-    };
-  },
-
-  getStyle(element) {
-    if (!element) {
+  getMissionValues(code, mission) {
+    if (!mission) {
       return {};
     }
 
-    const previewFrame = document.getElementById("preview-frame");
-    const previewWindow = previewFrame?.contentWindow;
-    return previewWindow ? previewWindow.getComputedStyle(element) : {};
+    return mission.fields.reduce((result, fieldName) => {
+      result[fieldName] = this.extractConstValue(code, fieldName);
+      return result;
+    }, {});
   },
 
-  applyPreviewFeedback(options = {}) {
-    const context = this.getPreviewContext();
-    if (!context?.doc || !context.card || !context.button || !context.title) {
-      return;
+  extractConstValue(code, variableName) {
+    const patterns = [
+      new RegExp(`const\\s+${variableName}\\s*=\\s*"([^"]*)"\\s*;?`),
+      new RegExp(`const\\s+${variableName}\\s*=\\s*'([^']*)'\\s*;?`),
+      new RegExp(`const\\s+${variableName}\\s*=\\s*\\x60([^\\x60]*)\\x60\\s*;?`)
+    ];
+
+    for (const pattern of patterns) {
+      const match = code.match(pattern);
+      if (match) {
+        return match[1].trim();
+      }
     }
 
-    const scene = context.doc.querySelector(".grove-scene");
-    const cardStyle = this.getStyle(context.card);
-    const buttonStyle = this.getStyle(context.button);
-    const titleStyle = this.getStyle(context.title);
-    const bodyStyle = this.getStyle(context.body);
-    const mission = this.missions[this.state.currentMissionIdx];
-
-    if (!scene || !mission) {
-      return;
-    }
-
-    const hasColorHit =
-      this.propertyMatches(bodyStyle.backgroundColor, "backgroundColor", "lavender") ||
-      this.propertyMatches(bodyStyle.color, "color", "white") ||
-      this.propertyMatches(titleStyle.color, "color", "gold");
-    const hasSpacingHit =
-      this.allSidesEqual(cardStyle, "padding", "24px") ||
-      this.allSidesEqual(cardStyle, "margin", "20px") ||
-      this.allSidesEqual(buttonStyle, "padding", "12px");
-    const hasShapeHit =
-      this.borderMatches(cardStyle, "2px", "solid", "white") ||
-      this.propertyMatches(cardStyle.borderRadius, "borderRadius", "18px") ||
-      this.propertyMatches(buttonStyle.borderRadius, "borderRadius", "999px");
-    const hasGlowHit =
-      this.propertyMatches(cardStyle.boxShadow, "boxShadow", "0 0 24px rgba(147, 197, 253, 0.45)") ||
-      this.propertyMatches(buttonStyle.backgroundColor, "backgroundColor", "lavender") ||
-      this.propertyMatches(buttonStyle.color, "color", "white");
-
-    const valueHitByMission = {
-      "css-m1": hasColorHit,
-      "css-m2": hasSpacingHit,
-      "css-m3": hasShapeHit,
-      "css-m4": hasGlowHit
-    };
-
-    scene.classList.toggle("value-hit", Boolean(valueHitByMission[mission.id]));
-    context.card.classList.toggle("value-hit", Boolean(valueHitByMission[mission.id]));
-    context.card.classList.toggle(
-      "shadow-hit",
-      this.propertyMatches(cardStyle.boxShadow, "boxShadow", "0 0 24px rgba(147, 197, 253, 0.45)")
-    );
-    scene.classList.toggle(
-      "button-hit",
-      this.propertyMatches(buttonStyle.backgroundColor, "backgroundColor", "lavender") ||
-      this.propertyMatches(buttonStyle.color, "color", "white")
-    );
-
-    if (options.missionComplete) {
-      scene.classList.remove("success-pulse");
-      void context.card.offsetWidth;
-      scene.classList.add("success-pulse");
-    }
+    return "";
   },
 
-  propertyMatches(actual, propertyName, expected) {
-    return this.normalizeCssValue(actual) === this.normalizeCssValue(this.resolveCssValue(propertyName, expected));
-  },
-
-  allSidesEqual(style, propertyPrefix, expected) {
-    const suffixes = ["Top", "Right", "Bottom", "Left"];
-    return suffixes.every((suffix) => this.normalizeCssValue(style[`${propertyPrefix}${suffix}`]) === this.normalizeCssValue(expected));
-  },
-
-  borderMatches(style, width, lineStyle, color) {
-    return (
-      this.normalizeCssValue(style.borderTopWidth) === this.normalizeCssValue(width) &&
-      this.normalizeCssValue(style.borderTopStyle) === this.normalizeCssValue(lineStyle) &&
-      this.propertyMatches(style.borderTopColor, "color", color)
-    );
-  },
-
-  normalizeCssValue(value) {
-    return String(value ?? "").replace(/\s+/g, " ").trim().toLowerCase();
-  },
-
-  resolveCssValue(propertyName, expected) {
-    const probe = document.createElement("div");
-    probe.style.position = "absolute";
-    probe.style.opacity = "0";
-    probe.style.pointerEvents = "none";
-    probe.style[propertyName] = expected;
-    document.body.appendChild(probe);
-    const computed = window.getComputedStyle(probe)[propertyName];
-    probe.remove();
-    return computed;
-  },
-
-  showCssMissionComplete(result) {
+  showJsMissionComplete(result) {
     const overlay = document.getElementById("mission-complete-overlay");
     const message = document.getElementById("mission-complete-message");
     const learn = document.getElementById("mission-complete-learn");
@@ -3030,7 +2993,7 @@ const cssLevel = {
     }
 
     if (energy) {
-      energy.textContent = `+${ENERGY_PER_MISSION} Grove Energy restored`;
+      energy.textContent = `+${ENERGY_PER_MISSION} Core Energy restored`;
     }
 
     if (actionButton) {
@@ -3049,16 +3012,16 @@ const cssLevel = {
     }
   },
 
-  continueAfterCssMission() {
+  continueAfterJsMission() {
     if (!this.pendingMissionResult) {
       return;
     }
 
     this.closeMissionComplete();
-    this.playCssTransition();
+    this.playJsTransition();
   },
 
-  playCssTransition() {
+  playJsTransition() {
     const overlay = document.getElementById("transition-overlay");
     const text = document.getElementById("transition-text");
 
@@ -3067,14 +3030,14 @@ const cssLevel = {
     }
 
     overlay.classList.add("active");
-    text.textContent = "The grove listens...";
+    text.textContent = "The core hums...";
 
     window.setTimeout(() => {
-      text.textContent = "The colors shift...";
+      text.textContent = "The energy shifts...";
 
       window.setTimeout(() => {
         this.pendingMissionResult = null;
-        this.loadCssMission(this.state.currentMissionIdx + 1);
+        this.loadJsMission(this.state.currentMissionIdx + 1);
         window.setTimeout(() => {
           overlay.classList.remove("active");
         }, 500);
@@ -3082,10 +3045,10 @@ const cssLevel = {
     }, 1200);
   },
 
-  showCssCompletionScreen() {
+  showJsCompletionScreen() {
     const progress = loadJourneyProgress();
-    progress.cssComplete = true;
-    progress.currentWorld = "js";
+    progress.jsComplete = true;
+    progress.currentWorld = "complete";
     saveJourneyProgress(progress);
 
     const completionScreen = document.getElementById("completion-screen");
@@ -3100,11 +3063,11 @@ const cssLevel = {
     }
   },
 
-  replayCssJourney() {
+  replayJsCore() {
     this.state.currentMissionIdx = 0;
     this.pendingMissionResult = null;
     this.currentCode = "";
-    this.saveCssState();
+    this.saveJsState();
     window.location.reload();
   },
 
@@ -3150,138 +3113,134 @@ const jsLevel = {
 
   missions: [
     {
-      id: "js-m1",
-      title: "Mission 1: The Sleeping Button",
-      narrator: "A sleeping crystal waits for a touch. Wake it with a button.",
+      id: "m1",
+      title: "Mission 1: The Silent Tree",
+      narrator: "The tree has no name. Give it one.",
       guideLines: [
-        "buttonText -> Wake the crystal",
-        "message -> The crystal is awake."
+        "change_background_color → purple",
+        "change_text_color → white",
+        "change_title_color → pink"
       ],
-      fields: ["buttonText", "message"],
-      expected: {
-        buttonText: "Wake the crystal",
-        message: "The crystal is awake."
-      },
-      starterCode: "const buttonText = \"change this text\";\nconst message = \"change this message\";",
-      buttonText: "Wake the Crystal",
-      successMsg: "The crystal begins to glow.",
-      learn: ["const stores a value", "JavaScript can change what appears on the page"],
-      validate(values) {
-        if (values.buttonText !== this.expected.buttonText) {
-          return { valid: false, msg: "Change buttonText to Wake the crystal." };
+      starterCode: "body {\n  background: change_background_color;\n  color: change_text_color;\n}\n\nh1 {\n  color: change_title_color;\n}",
+      buttonText: "Paint the Grove",
+      successMsg: "The first colors return to the grove.",
+      learn: ["background changes the page color", "color changes text color"],
+      validate(context, level) {
+        const bodyStyle = level.getStyle(context.body);
+        const titleStyle = level.getStyle(context.title);
+        if (!level.propertyMatches(bodyStyle.backgroundColor, "backgroundColor", "purple")) {
+          return { valid: false, msg: "Change choose_background_color to purple." };
         }
-
-        if (values.message !== this.expected.message) {
-          return { valid: false, msg: "Change message to The crystal is awake." };
+        if (!level.propertyMatches(bodyStyle.color, "color", "white")) {
+          return { valid: false, msg: "Change choose_text_color to white." };
         }
-
+        if (!level.propertyMatches(titleStyle.color, "color", "pink")) {
+          return { valid: false, msg: "Change choose_title_color to pink." };
+        }
         return { valid: true, msg: this.successMsg, learn: this.learn };
       }
     },
     {
-      id: "js-m2",
-      title: "Mission 2: The Echo Input",
-      narrator: "The Core repeats what it hears. Give it a voice.",
+      id: "m2",
+      title: "Mission 2: The Crowded Petals",
+      narrator: "The flowers are too close together. Give them space to breathe.",
       guideLines: [
-        "inputName -> Luna",
-        "echoMessage -> Welcome to the Core, Luna."
+        "choose_padding -> 24px",
+        "choose_margin -> 20px",
+        "choose_button_padding -> 12px"
       ],
-      fields: ["inputName", "echoMessage"],
-      expected: {
-        inputName: "Luna",
-        echoMessage: "Welcome to the Core, Luna."
-      },
-      starterCode: "const inputName = \"change this name\";\nconst echoMessage = \"change this echo\";",
-      buttonText: "Give It Voice",
-      successMsg: "The Core echoes softly.",
-      learn: ["input stores user text", "JavaScript can display a message"],
-      validate(values) {
-        if (values.inputName !== this.expected.inputName) {
-          return { valid: false, msg: "Change inputName to Luna." };
+      starterCode: ".magic-card {\n  padding: choose_padding;\n  margin: choose_margin;\n}\n\nbutton {\n  padding: choose_button_padding;\n}",
+      buttonText: "Give Space",
+      successMsg: "The petals open with room to breathe.",
+      learn: ["padding adds space inside an element", "margin adds space outside an element"],
+      validate(context, level) {
+        const cardStyle = level.getStyle(context.card);
+        const buttonStyle = level.getStyle(context.button);
+        if (!level.allSidesEqual(cardStyle, "padding", "24px")) {
+          return { valid: false, msg: "Change choose_padding to 24px." };
         }
-
-        if (values.echoMessage !== this.expected.echoMessage) {
-          return { valid: false, msg: "Change echoMessage to Welcome to the Core, Luna." };
+        if (!level.allSidesEqual(cardStyle, "margin", "20px")) {
+          return { valid: false, msg: "Change choose_margin to 20px." };
         }
-
+        if (!level.allSidesEqual(buttonStyle, "padding", "12px")) {
+          return { valid: false, msg: "Change choose_button_padding to 12px." };
+        }
         return { valid: true, msg: this.successMsg, learn: this.learn };
       }
     },
     {
-      id: "js-m3",
-      title: "Mission 3: The Changing Light",
-      narrator: "The light crystal waits for its color. Set the glow.",
+      id: "m3",
+      title: "Mission 3: The Soft Stones",
+      narrator: "The stones are sharp and plain. Soften their edges.",
       guideLines: [
-        "crystalColor -> cyan",
-        "glowPower -> strong"
+        "choose_border -> 2px solid #C8B6FF",
+        "choose_radius -> 18px",
+        "choose_button_radius -> 999px"
       ],
-      fields: ["crystalColor", "glowPower"],
-      expected: {
-        crystalColor: "cyan",
-        glowPower: "strong"
-      },
-      starterCode: "const crystalColor = \"change this color\";\nconst glowPower = \"change this glow\";",
-      buttonText: "Change the Light",
-      successMsg: "The crystal shines with new color.",
-      learn: ["JavaScript can change styles", "values can control how things look"],
-      validate(values) {
-        if (values.crystalColor !== this.expected.crystalColor) {
-          return { valid: false, msg: "Change crystalColor to cyan." };
+      starterCode: ".magic-card {\n  border: choose_border;\n  border-radius: choose_radius;\n}\n\nbutton {\n  border-radius: choose_button_radius;\n}",
+      buttonText: "Soften the Stones",
+      successMsg: "The stones become gentle under the moonlight.",
+      learn: ["border draws an outline", "border-radius rounds corners"],
+      validate(context, level) {
+        const cardStyle = level.getStyle(context.card);
+        const buttonStyle = level.getStyle(context.button);
+        if (!level.borderMatches(cardStyle, "2px", "solid", "#C8B6FF")) {
+          return { valid: false, msg: "Change choose_border to 2px solid #C8B6FF." };
         }
-
-        if (values.glowPower !== this.expected.glowPower) {
-          return { valid: false, msg: "Change glowPower to strong." };
+        if (!level.propertyMatches(cardStyle.borderRadius, "borderRadius", "18px")) {
+          return { valid: false, msg: "Change choose_radius to 18px." };
         }
-
+        if (!level.propertyMatches(buttonStyle.borderRadius, "borderRadius", "999px")) {
+          return { valid: false, msg: "Change choose_button_radius to 999px." };
+        }
         return { valid: true, msg: this.successMsg, learn: this.learn };
       }
     },
     {
-      id: "js-m4",
-      title: "Mission 4: The Living Page",
-      narrator: "The Core is ready. Bring the chamber to life.",
+      id: "m4",
+      title: "Mission 4: The Glowing Card",
+      narrator: "The grove needs a glowing card to hold its message.",
       guideLines: [
-        "heroName -> Code Keeper",
-        "actionText -> Activate the Core",
-        "powerColor -> violet",
-        "finalMessage -> The Lightning Core is alive."
+        "choose_background -> #2A1B4A",
+        "choose_padding -> 28px",
+        "choose_radius -> 22px",
+        "choose_shadow -> 0 0 24px rgba(200, 182, 255, 0.35)",
+        "choose_button_background -> #A78BFA",
+        "choose_button_text -> #F8F6FF"
       ],
-      fields: ["heroName", "actionText", "powerColor", "finalMessage"],
-      expected: {
-        heroName: "Code Keeper",
-        actionText: "Activate the Core",
-        powerColor: "violet",
-        finalMessage: "The Lightning Core is alive."
-      },
-      starterCode: "const heroName = \"change this name\";\nconst actionText = \"change this action\";\nconst powerColor = \"change this color\";\nconst finalMessage = \"change this message\";",
-      buttonText: "Awaken the Core",
-      successMsg: "The chamber lights pulse with life.",
-      learn: ["JavaScript can update text", "JavaScript can control page behavior"],
-      validate(values) {
-        if (values.heroName !== this.expected.heroName) {
-          return { valid: false, msg: "Change heroName to Code Keeper." };
+      starterCode: ".magic-card {\n  background: choose_background;\n  padding: choose_padding;\n  border-radius: choose_radius;\n  box-shadow: choose_shadow;\n}\n\nbutton {\n  background: choose_button_background;\n  color: choose_button_text;\n}",
+      buttonText: "Light the Card",
+      successMsg: "The grove glows with quiet color.",
+      learn: ["box-shadow adds glow or depth", "combining CSS properties creates design"],
+      validate(context, level) {
+        const cardStyle = level.getStyle(context.card);
+        const buttonStyle = level.getStyle(context.button);
+        if (!level.propertyMatches(cardStyle.backgroundColor, "backgroundColor", "#2A1B4A")) {
+          return { valid: false, msg: "Change choose_background to #2A1B4A." };
         }
-
-        if (values.actionText !== this.expected.actionText) {
-          return { valid: false, msg: "Change actionText to Activate the Core." };
+        if (!level.allSidesEqual(cardStyle, "padding", "28px")) {
+          return { valid: false, msg: "Change choose_padding to 28px." };
         }
-
-        if (values.powerColor !== this.expected.powerColor) {
-          return { valid: false, msg: "Change powerColor to violet." };
+        if (!level.propertyMatches(cardStyle.borderRadius, "borderRadius", "22px")) {
+          return { valid: false, msg: "Change choose_radius to 22px." };
         }
-
-        if (values.finalMessage !== this.expected.finalMessage) {
-          return { valid: false, msg: "Change finalMessage to The Lightning Core is alive." };
+        if (!level.propertyMatches(cardStyle.boxShadow, "boxShadow", "0 0 24px rgba(200, 182, 255, 0.35)")) {
+          return { valid: false, msg: "Change choose_shadow to 0 0 24px rgba(200, 182, 255, 0.35)." };
         }
-
+        if (!level.propertyMatches(buttonStyle.backgroundColor, "backgroundColor", "#A78BFA")) {
+          return { valid: false, msg: "Change choose_button_background to #A78BFA." };
+        }
+        if (!level.propertyMatches(buttonStyle.color, "color", "#F8F6FF")) {
+          return { valid: false, msg: "Change choose_button_text to #F8F6FF." };
+        }
         return { valid: true, msg: this.successMsg, learn: this.learn };
       }
     }
   ],
 
   init() {
-    // Suppression du redirect automatique vers index.html pour L3-js.html
-    // La page reste accessible même si cssComplete n'est pas true
+    // Suppression du redirect automatique vers index.html pour L2-css.html
+    // La page reste accessible même si htmlComplete n'est pas true
 
     if (!progress.jsComplete) {
       progress.currentWorld = "js";
@@ -3498,7 +3457,7 @@ const jsLevel = {
           body {
             min-height: 100vh;
             padding: 18px;
-            background: radial-gradient(circle at top, #10224d 0%, #050916 58%, #02030a 100%);
+            background: radial-gradient(circle at top, #1c1441 0%, #0d081d 60%, #070412 100%);
             color: #f8fbff;
           }
 
@@ -3513,6 +3472,7 @@ const jsLevel = {
               radial-gradient(circle at bottom left, rgba(167, 139, 250, 0.16), transparent 26%),
               linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
             border: 1px solid rgba(103, 232, 249, 0.18);
+            transition: all 0.3s ease;
           }
 
           .core-grid {
@@ -3695,6 +3655,7 @@ const jsLevel = {
             }
           }
         </style>
+        <style id="grove-user-styles">${cssCode}</style>
       </head>
       <body>
         <div class="core-scene">

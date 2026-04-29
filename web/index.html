@@ -1,57 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ByteRush - Continue Your Code Journey</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ByteRush — Retro Coding Quest</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="index-page">
-  <div class="stars-container"></div>
-  <div class="moon-glow"></div>
-
-  <main class="main-home">
-    <div class="home-shell">
-      <div class="journey-list">
-        <a href="L1-html.html" class="journey-card glass-panel">
-          <div style="flex:1;width:100%">
-            <div class="journey-card-title">HTML Forest</div>
-            <div class="journey-card-desc">Build the structure of your first web pages.</div>
-          </div>
-          <div style="width:100%;display:flex;justify-content:flex-end;align-items:flex-end;margin-top:auto;">
-            <span class="journey-card-cta">Get Started</span>
-          </div>
-        </a>
-        <a href="L2-css.html" class="journey-card glass-panel">
-          <div style="flex:1;width:100%">
-            <div class="journey-card-title">CSS Color Grove</div>
-            <div class="journey-card-desc">Add colors, spacing, and style to your designs.</div>
-          </div>
-          <div style="width:100%;display:flex;justify-content:flex-end;align-items:flex-end;margin-top:auto;">
-            <span class="journey-card-cta">Get Started</span>
-          </div>
-        </a>
-        <a href="L3-js.html" class="journey-card glass-panel">
-          <div style="flex:1;width:100%">
-            <div class="journey-card-title">JavaScript Lightning Core</div>
-            <div class="journey-card-desc">Make your pages respond and come alive.</div>
-          </div>
-          <div style="width:100%;display:flex;justify-content:flex-end;align-items:flex-end;margin-top:auto;">
-            <span class="journey-card-cta">Get Started</span>
-          </div>
-        </a>
-      </div>
-      <div class="home-hero">
-        <h1 class="main-title">ByteRush</h1>
-        <div class="subtitle">Start your coding journey</div>
-        <div class="description">Build, style, and Learn to code through HTML, CSS, and JavaScript adventures.</div>
-        <button id="mainHtmlJourney" class="btn btn-primary glow-hover main-html-btn">Start with HTML</button>
-        <a id="resetJourney" href="#" class="reset-link">Reset Journey Progress</a>
-      </div>
+<body>
+    <!-- Ambient glow -->
+    <div class="glow-bg"></div>
+    <!-- Floating particles -->
+    <div class="particles" id="particles"></div>
+    <!-- Main panel -->
+    <div class="panel-wrapper">
+        <div class="panel">
+            <!-- Corner pixel decorations -->
+            <div class="pixel-blocks pixel-blocks--tl">
+                <div class="pixel pixel--green"></div>
+                <div class="pixel pixel--green"></div>
+                <div class="pixel pixel--green"></div>
+                <div class="pixel pixel--green"></div>
+                <div class="pixel pixel--muted"></div>
+                <div class="pixel pixel--dim"></div>
+                <div class="pixel pixel--yellow"></div>
+            </div>
+            <div class="pixel-blocks pixel-blocks--tr">
+                <div class="pixel pixel--accent"></div>
+                <div class="pixel pixel--blue"></div>
+                <div class="pixel pixel--blue"></div>
+                <div class="pixel pixel--green"></div>
+                <div class="pixel pixel--yellow"></div>
+                <div class="pixel pixel--green"></div>
+                <div class="pixel pixel--dim"></div>
+            </div>
+            <div class="pixel-blocks pixel-blocks--bl">
+                <div class="pixel pixel--blue"></div>
+                <div class="pixel pixel--yellow"></div>
+                <div class="pixel pixel--yellow"></div>
+                <div class="pixel pixel--green"></div>
+                <div class="pixel pixel--blue"></div>
+                <div class="pixel pixel--green"></div>
+                <div class="pixel pixel--dim"></div>
+            </div>
+            <div class="pixel-blocks pixel-blocks--br">
+                <div class="pixel pixel--green"></div>
+                <div class="pixel pixel--dim"></div>
+                <div class="pixel pixel--yellow"></div>
+                <div class="pixel pixel--blue"></div>
+                <div class="pixel pixel--accent"></div>
+                <div class="pixel pixel--accent"></div>
+                <div class="pixel pixel--yellow"></div>
+            </div>
+            <div class="pixel-blocks pixel-blocks--left">
+                <div class="pixel pixel--green"></div>
+                <div class="pixel pixel--dim"></div>
+                <div class="pixel pixel--accent"></div>
+                <div class="pixel pixel--green"></div>
+                <div class="pixel pixel--blue"></div>
+            </div>
+            <!-- Content -->
+            <div class="content">
+                <!-- Status bar -->
+                <div class="status-bar">
+                    <span class="status-bar__left">
+                        <span class="status-dot"></span>
+                        SYS ONLINE
+                    </span>
+                    <span class="status-bar__right">V1.0.0</span>
+                </div>
+                <div class="label-top">START YOUR</div>
+                <h1 class="title">BYTERUSH</h1>
+                <div class="subtitle">RETRO CODING QUEST</div>
+                <p class="description">
+                    Build. Style. Script.<br>
+                    Complete coding missions and power up your skills.<span class="cursor-blink"></span>
+                </p>
+                <div class="divider"></div>
+                <button class="btn-start" type="button">PRESS START</button>
+                <div class="divider"></div>
+                <div class="modes">
+                    <div class="mode-tag">
+                        <span class="tag-icon"></span>HTML ARENA
+                    </div>
+                    <div class="mode-tag">
+                        <span class="tag-icon"></span>CSS CIRCUIT
+                    </div>
+                    <div class="mode-tag">
+                        <span class="tag-icon"></span>JS CORE
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </main>
-
-  <script src="script.js"></script>
-</body>
+    <!-- Credits -->
+    <div class="credits">
+        <p>© 2026 BYTERUSH — ALL SYSTEMS NOMINAL</p>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>

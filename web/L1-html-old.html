@@ -41,10 +41,16 @@
       </aside>
     </main>
 
-    <footer class="action-area glass-panel">
-      <div id="message-area"></div>
-      <button type="button" id="html-action-btn" class="btn btn-primary glow-hover">Awaken the Tree</button>
+    <footer class="action-area">
+      <div id="html-message-area" class="message-area"></div>
+      <button type="button" id="html-action-btn" class="btn btn-primary glow-hover">
+        Awaken the Tree
+      </button>
     </footer>
+  </div>
+  <div id="mission-complete" style="display:none;">
+    <p>Mission Complete</p>
+    <button id="continue-btn">Continue</button>
   </div>
 
   <div id="transition-overlay">
@@ -60,7 +66,9 @@
         <div id="mission-complete-learn" class="mission-complete-learn"></div>
       </div>
       <p id="mission-complete-energy" class="mission-complete-energy">+30 Forest Energy restored</p>
-      <button id="mission-complete-continue" class="btn btn-primary mission-complete-continue">Continue</button>
+      <div style="display: flex; justify-content: center; align-items: flex-end; width: 100%; margin-top: 18px;">
+        <button id="mission-complete-continue" class="btn btn-primary mission-complete-continue" style="min-width: 140px; font-size: 1.08rem;">Continue</button>
+      </div>
     </div>
   </div>
 
