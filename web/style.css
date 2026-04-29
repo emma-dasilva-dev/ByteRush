@@ -716,17 +716,36 @@ body::after {
     font-size: 7px;
     padding: 5px 8px;
   }
-
   .pixel-blocks--left {
     display: none;
   }
-
   .cards-grid,
   .stats-panel {
     grid-template-columns: 1fr;
   }
-
   #home-screen {
     padding: 0.8rem;
   }
+  /* === HTML ARENA LAYOUT FIX === */
+.arena-layout {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 30px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+/* Equal size */
+.code-area,
+.preview-area {
+  width: 45%;
+  min-width: 300px;
+}
+/* Match heights */
+textarea {
+  height: 180px;
+}
+iframe {
+  height: 180px;
+}
 }

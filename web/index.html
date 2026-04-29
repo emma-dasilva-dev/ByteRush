@@ -8,69 +8,15 @@
 </head>
 <body>
 
-  <!-- START SCREEN -->
   <div id="start-screen">
-
     <div class="glow-bg"></div>
     <div class="particles" id="particles"></div>
 
     <div class="panel-wrapper">
       <div class="panel">
-
-        <div class="pixel-blocks pixel-blocks--tl">
-          <div class="pixel pixel--green"></div>
-          <div class="pixel pixel--green"></div>
-          <div class="pixel pixel--green"></div>
-          <div class="pixel pixel--green"></div>
-          <div class="pixel pixel--muted"></div>
-          <div class="pixel pixel--dim"></div>
-          <div class="pixel pixel--yellow"></div>
-        </div>
-
-        <div class="pixel-blocks pixel-blocks--tr">
-          <div class="pixel pixel--accent"></div>
-          <div class="pixel pixel--blue"></div>
-          <div class="pixel pixel--blue"></div>
-          <div class="pixel pixel--green"></div>
-          <div class="pixel pixel--yellow"></div>
-          <div class="pixel pixel--green"></div>
-          <div class="pixel pixel--dim"></div>
-        </div>
-
-        <div class="pixel-blocks pixel-blocks--bl">
-          <div class="pixel pixel--blue"></div>
-          <div class="pixel pixel--yellow"></div>
-          <div class="pixel pixel--yellow"></div>
-          <div class="pixel pixel--green"></div>
-          <div class="pixel pixel--blue"></div>
-          <div class="pixel pixel--green"></div>
-          <div class="pixel pixel--dim"></div>
-        </div>
-
-        <div class="pixel-blocks pixel-blocks--br">
-          <div class="pixel pixel--green"></div>
-          <div class="pixel pixel--dim"></div>
-          <div class="pixel pixel--yellow"></div>
-          <div class="pixel pixel--blue"></div>
-          <div class="pixel pixel--accent"></div>
-          <div class="pixel pixel--accent"></div>
-          <div class="pixel pixel--yellow"></div>
-        </div>
-
-        <div class="pixel-blocks pixel-blocks--left">
-          <div class="pixel pixel--green"></div>
-          <div class="pixel pixel--dim"></div>
-          <div class="pixel pixel--accent"></div>
-          <div class="pixel pixel--green"></div>
-          <div class="pixel pixel--blue"></div>
-        </div>
-
         <div class="content">
           <div class="status-bar">
-            <span class="status-bar__left">
-              <span class="status-dot"></span>
-              SYS ONLINE
-            </span>
+            <span class="status-bar__left"><span class="status-dot"></span>SYS ONLINE</span>
             <span class="status-bar__right">V1.0.0</span>
           </div>
 
@@ -84,34 +30,23 @@
           </p>
 
           <div class="divider"></div>
-
           <button id="start-btn" class="btn-start" type="button">PRESS START</button>
-
           <div class="divider"></div>
 
           <div class="modes">
-            <div class="mode-tag">
-              <span class="tag-icon"></span>HTML ARENA
-            </div>
-            <div class="mode-tag">
-              <span class="tag-icon"></span>CSS CIRCUIT
-            </div>
-            <div class="mode-tag">
-              <span class="tag-icon"></span>JS CORE
-            </div>
+            <div class="mode-tag"><span class="tag-icon"></span>HTML ARENA</div>
+            <div class="mode-tag"><span class="tag-icon"></span>CSS CIRCUIT</div>
+            <div class="mode-tag"><span class="tag-icon"></span>JS CORE</div>
           </div>
         </div>
-
       </div>
     </div>
 
     <div class="credits">
       <p>©️ 2026 BYTERUSH — ALL SYSTEMS NOMINAL</p>
     </div>
-
   </div>
 
-  <!-- HOME SCREEN / DASHBOARD -->
   <div id="home-screen" style="display: none;">
     <div class="grid-bg"></div>
 
@@ -144,22 +79,26 @@
         </div>
 
         <div class="cards-grid">
-          <div class="mission-card" id="html-arena-card">
-          <span class="card-icon">&lt;/&gt;</span>
-          <strong>HTML Arena</strong><br />
-          Build the structure
-         </div>
 
-          <div class="mission-card">
+          <div class="mission-card" id="html-arena-card">
+            <span class="card-icon">&lt;/&gt;</span>
+            <strong>HTML Arena</strong><br />
+            Build the structure
+            <p>✅ Unlocked</p>
+          </div>
+
+          <div class="mission-card" id="css-card">
             <span class="card-icon">✦</span>
             <strong>CSS Circuit</strong><br />
             Style the interface
+            <p id="css-lock">🔒 Locked</p>
           </div>
 
-          <div class="mission-card">
+          <div class="mission-card" id="js-card">
             <span class="card-icon">⚡</span>
             <strong>JS Core</strong><br />
             Add interaction
+            <p id="js-lock">🔒 Locked</p>
           </div>
 
           <div class="mission-card">
@@ -173,6 +112,7 @@
             <strong>Challenges</strong><br />
             Test your skills
           </div>
+
         </div>
       </main>
 
@@ -206,12 +146,8 @@
           <h4>Badges</h4>
           <p>0</p>
         </div>
-        <p id="result"></p>
-
-        <button onclick="window.location.href='index.html'">
-        ← BACK TO DASHBOARD
-        </button>
       </aside>
+
     </div>
   </div>
 
