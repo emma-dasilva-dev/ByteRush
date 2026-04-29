@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div id="start-screen">
+  <!-- ALL your current code stays here -->
+</div>
     <!-- Ambient glow -->
     <div class="glow-bg"></div>
     <!-- Floating particles -->
@@ -96,6 +99,59 @@
     <div class="credits">
         <p>© 2026 BYTERUSH — ALL SYSTEMS NOMINAL</p>
     </div>
-    <script src="script.js"></script>
+    <!-- ByteRush Dashboard (hidden by défaut) -->
+    <div id="dashboard" class="dashboard" style="display:none;">
+      <div class="dashboard-sidebar">
+        <div class="sidebar-title">MENU</div>
+        <ul class="sidebar-list">
+          <li class="sidebar-item">Home</li>
+          <li class="sidebar-item">HTML Arena</li>
+          <li class="sidebar-item">CSS Circuit</li>
+          <li class="sidebar-item">JS Core</li>
+          <li class="sidebar-item">Projects</li>
+          <li class="sidebar-item">Challenges</li>
+          <li class="sidebar-item">Account</li>
+          <li class="sidebar-item">Settings</li>
+        </ul>
+      </div>
+      <div class="dashboard-main">
+        <div class="dashboard-main-title">MISSION SELECT</div>
+        <div class="dashboard-main-subtitle">Choose your coding path.</div>
+        <div class="dashboard-cards">
+          <div class="dashboard-card">
+            <div class="card-title">HTML Arena</div>
+            <div class="card-desc">Learn structure, tags, headings, links, and images.</div>
+            <button class="card-btn">Enter Arena</button>
+          </div>
+          <div class="dashboard-card">
+            <div class="card-title">CSS Circuit</div>
+            <div class="card-desc">Learn colors, spacing, layouts, borders, and animations.</div>
+            <button class="card-btn">Enter Circuit</button>
+          </div>
+          <div class="dashboard-card">
+            <div class="card-title">JS Core</div>
+            <div class="card-desc">Learn clicks, variables, functions, conditions, and game logic.</div>
+            <button class="card-btn">Enter Core</button>
+          </div>
+        </div>
+      </div>
+      <div class="dashboard-stats">
+        <div class="stats-title">PLAYER STATS</div>
+        <div class="stats-row"><span>Player:</span> <span>Rookie Coder</span></div>
+        <div class="stats-row"><span>Level:</span> <span>1</span></div>
+        <div class="stats-row"><span>XP:</span> <span>0</span></div>
+        <div class="stats-row"><span>Streak:</span> <span>0 days</span></div>
+        <div class="stats-row"><span>Missions Completed:</span> <span>0</span></div>
+      </div>
+    </div>
+    <div id="dashboard" style="display: none;">
+  <h1 style="color: #39ff5a;">MISSION SELECT</h1>
+  <p style="color: white;">Choose your coding path.</p>
+
+  <button>HTML Arena</button>
+  <button>CSS Circuit</button>
+  <button>JS Core</button>
+</div>
+<script src="script.js"></script>
 </body>
 </html>
