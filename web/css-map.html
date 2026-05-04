@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CSS Circuit Map</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+body {
+  background: #03080f;
+  color: #39ff5a;
+  font-family: 'Press Start 2P', monospace;
+  text-align: center;
+  padding: 40px;
+  margin: 0;
+}
+
+h1 {
+  font-size: 22px;
+  text-shadow: 0 0 10px #39ff5a;
+}
+
+p {
+  font-size: 10px;
+  color: #9affaa;
+}
+
+.stats-panel {
+  margin: 20px auto;
+  border: 2px solid #39ff5a;
+  background: #050b12;
+  padding: 15px;
+  width: 340px;
+  box-shadow: 0 0 15px rgba(57, 255, 90, 0.25);
+}
+
+.stats-panel p {
+  margin: 8px 0;
+}
+
+.unlock-message {
+  display: none;
+  margin: 25px auto;
+  padding: 18px;
+  width: 360px;
+  border: 2px solid #39ff5a;
+  background: #39ff5a;
+  color: black;
+  box-shadow: 0 0 25px #39ff5a;
+  font-size: 11px;
+}
+
+.reset-area {
+  margin-top: 14px;
+}
+
+.reset-btn {
+  background: transparent;
+  color: #ff4d4d;
+  border: 2px solid #ff4d4d;
+  padding: 8px 16px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  cursor: pointer;
+}
+
+.reset-btn:hover {
+  background: #ff4d4d;
+  color: black;
+  box-shadow: 0 0 10px #ff4d4d;
+}
+
+.reset-warning {
+  font-size: 8px;
+  opacity: 0.4;
+  margin-top: 6px;
+}
+
+.map {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin-top: 40px;
+}
+
+.node {
+  border: 2px solid #39ff5a;
+  padding: 15px 25px;
+  width: 330px;
+  background: #050b12;
+  font-size: 10px;
+  transition: 0.2s;
+}
+
+.node.completed {
+  color: #39ff5a;
+  box-shadow: 0 0 12px rgba(57, 255, 90, 0.6);
+}
+
+.node.active {
+  background: #39ff5a;
+  color: black;
+  cursor: pointer;
+  box-shadow: 0 0 25px #39ff5a;
+}
+
+.node.active:hover {
+  transform: scale(1.05);
+}
+
+.node.locked {
+  opacity: 0.28;
+  cursor: not-allowed;
+}
+
+.node.boss {
+  border-color: #ffdd57;
+}
+
+.node.boss.active {
+  background: #ffdd57;
+  color: black;
+  box-shadow: 0 0 25px #ffdd57;
+}
+
+.line {
+  width: 2px;
+  height: 22px;
+  background: rgba(57,255,90,0.45);
+}
+
+.back-btn {
+  margin-top: 40px;
+  background: transparent;
+  color: #39ff5a;
+  border: 2px solid #39ff5a;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+}
+
+.back-btn:hover {
+  background: #39ff5a;
+  color: black;
+}
+</style>
+</head>
+
+<body>
+
+<h1>CSS CIRCUIT</h1>
+<p>STYLE THE INTERFACE</p>
+
+<div class="stats-panel">
+  <p>XP: <span id="xp">0</span></p>
+  <p>MISSIONS COMPLETED: <span id="completed">0</span> / 7</p>
+  <p>CURRENT MISSION: <span id="current">1</span></p>
+</div>
+
+<div id="unlock-message" class="unlock-message">
+  🔓 JS CORE UNLOCKED
+</div>
+
+<div class="reset-area">
+  <button onclick="resetProgress()" class="reset-btn">RESET CSS PROGRESS</button>
+  <p class="reset-warning">this erases css progress only</p>
+</div>
+
+<div class="map" id="map"></div>
+
+<button class="back-btn" onclick="goBack()">← BACK</button>
+
+<script>
+const htmlLevel = parseInt(localStorage.getItem("html-level")) || 1;
+
+if (htmlLevel < 8) {
+  alert("CSS Circuit is locked. Finish HTML Boss Mode first!");
+  window.location.href = "index.html";
+}
+
+const missions = [
+  "Mission 1: Colors",
+  "Mission 2: Backgrounds",
+  "Mission 3: Font Size",
+  "Mission 4: Borders",
+  "Mission 5: Alignment",
+  "Mission 6: Spacing",
+  "BOSS MODE"
+];
+
+let level = parseInt(localStorage.getItem("css-level")) || 1;
+let xp = parseInt(localStorage.getItem("xp")) || 0;
+
+const map = document.getElementById("map");
+
+function loadStats() {
+  const completed = Math.min(level - 1, missions.length);
+  const currentMission = level > missions.length ? "COMPLETE" : level;
+
+  document.getElementById("xp").innerText = xp;
+  document.getElementById("completed").innerText = completed;
+  document.getElementById("current").innerText = currentMission;
+
+  if (level > missions.length) {
+    document.getElementById("unlock-message").style.display = "block";
+  } else {
+    document.getElementById("unlock-message").style.display = "none";
+  }
+}
+
+function buildMap() {
+  map.innerHTML = "";
+
+  missions.forEach(function (name, index) {
+    const node = document.createElement("div");
+    node.classList.add("node");
+
+    const missionNumber = index + 1;
+    const isBoss = missionNumber === missions.length;
+
+    if (isBoss) {
+      node.classList.add("boss");
+    }
+
+    if (missionNumber < level) {
+      node.classList.add("completed");
+      node.innerText = "✅ " + name;
+    } else if (missionNumber === level) {
+      node.classList.add("active");
+      node.innerText = isBoss ? "⚔️ " + name : "⚡ " + name;
+
+      node.onclick = function () {
+        window.location.href = "css-arena.html";
+      };
+    } else {
+      node.classList.add("locked");
+      node.innerText = "🔒 " + name;
+    }
+
+    map.appendChild(node);
+
+    if (index < missions.length - 1) {
+      const line = document.createElement("div");
+      line.classList.add("line");
+      map.appendChild(line);
+    }
+  });
+}
+
+function resetProgress() {
+  const confirmReset = confirm("Reset ALL CSS progress?");
+
+  if (confirmReset) {
+    localStorage.removeItem("css-level");
+
+    level = 1;
+
+    loadStats();
+    buildMap();
+  }
+}
+
+function goBack() {
+  window.location.href = "index.html";
+}
+
+loadStats();
+buildMap();
+</script>
+
+</body>
+</html>
