@@ -4,13 +4,18 @@ document.addEventListener("DOMContentLoaded", function () {
   const startScreen = document.getElementById("start-screen");
   const homeScreen = document.getElementById("home-screen");
 
-  const htmlCard = document.getElementById("html-arena-card");
   const cssCard = document.getElementById("css-card");
   const jsCard = document.getElementById("js-card");
 
   const xpDisplay = document.getElementById("xp-value");
+  const streakDisplay = document.getElementById("streak-value");
+  const rankDisplay = document.getElementById("player-rank");
+
   const cssLock = document.getElementById("css-lock");
   const jsLock = document.getElementById("js-lock");
+
+  const htmlStatus = document.getElementById("html-status");
+  const cssStatus = document.getElementById("css-status");
 
   // START BUTTON
   if (startButton) {
@@ -20,67 +25,80 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // HTML ARENA
-  if (htmlCard) {
-    htmlCard.addEventListener("click", function () {
-      window.location.href = "html-map.html";
-    });
+  // DATA
+  const xp = parseInt(localStorage.getItem("xp")) || 0;
+  const streak = parseInt(localStorage.getItem("streak")) || 0;
+  const htmlLevel = parseInt(localStorage.getItem("html-level")) || 1;
+  const cssLevel = parseInt(localStorage.getItem("css-level")) || 0;
+
+  // DISPLAY XP + STREAK
+  if (xpDisplay) xpDisplay.innerText = xp;
+  if (streakDisplay) streakDisplay.innerText = streak;
+
+  // RANK SYSTEM
+  function getRank(xp) {
+    if (xp < 50) return "Rookie Coder";
+    if (xp < 150) return "Syntax Apprentice";
+    if (xp < 300) return "Code Builder";
+    if (xp < 600) return "System Hacker";
+    return "ByteRush Master";
   }
 
-  // CSS CIRCUIT (UNLOCK AFTER HTML BOSS)
+  if (rankDisplay) {
+    rankDisplay.innerText = getRank(xp);
+  }
+
+  // HTML PROGRESS
+  if (htmlStatus) {
+    htmlStatus.innerText = "Mission " + htmlLevel;
+  }
+
+  // CSS LOCK / STATUS
+  if (cssLock) {
+    cssLock.innerText = htmlLevel >= 7 ? "✅ Unlocked" : "🔒 Locked";
+  }
+
+  if (cssStatus) {
+    cssStatus.innerText = htmlLevel >= 7 ? "Mission " + (cssLevel || 1) : "Locked";
+  }
+
+  // JS LOCK
+  if (jsLock) {
+    jsLock.innerText = cssLevel >= 7 ? "✅ Unlocked" : "🔒 Locked";
+  }
+
+  // CLICK HANDLERS
   if (cssCard) {
     cssCard.addEventListener("click", function () {
-      const htmlLevel = parseInt(localStorage.getItem("html-level")) || 1;
-
-      if (htmlLevel >= 8) {
+      if (htmlLevel >= 7) {
         window.location.href = "css-map.html";
       } else {
-        alert("Finish all HTML missions and Boss Mode first!");
+        alert("Finish HTML Arena first!");
       }
     });
   }
 
-  // JS CORE (LOCKED FOR NOW)
   if (jsCard) {
     jsCard.addEventListener("click", function () {
-      alert("JS Core is locked. Complete HTML and CSS first!");
+      if (cssLevel >= 7) {
+        alert("JS Core coming next!");
+      } else {
+        alert("Complete CSS Circuit first!");
+      }
     });
   }
 
-  // XP DISPLAY
-  const xp = parseInt(localStorage.getItem("xp")) || 0;
-
-  if (xpDisplay) {
-    xpDisplay.innerText = xp;
-  }
-
-  // LOCK STATUS
-  const htmlLevel = parseInt(localStorage.getItem("html-level")) || 1;
-
-  if (cssLock) {
-    cssLock.innerText = htmlLevel >= 8 ? "✅ Unlocked" : "🔒 Locked";
-  }
-
-  if (jsLock) {
-    jsLock.innerText = "🔒 Locked";
-  }
-
-  // NAV ACTIVE STATE
+  // SIDEBAR ACTIVE STATE
   const navItems = document.querySelectorAll(".nav-item");
 
   navItems.forEach(function (item) {
-    item.addEventListener("click", function (event) {
-      event.preventDefault();
-
-      navItems.forEach(function (nav) {
-        nav.classList.remove("active");
-      });
-
+    item.addEventListener("click", function () {
+      navItems.forEach(nav => nav.classList.remove("active"));
       item.classList.add("active");
     });
   });
 
-  // PARTICLES EFFECT
+  // PARTICLES
   const particlesContainer = document.getElementById("particles");
 
   if (particlesContainer) {

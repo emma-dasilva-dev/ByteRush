@@ -6,8 +6,10 @@
   <title>ByteRush — Retro Coding Quest</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
+  <!-- START SCREEN -->
   <div id="start-screen">
     <div class="glow-bg"></div>
     <div class="particles" id="particles"></div>
@@ -15,8 +17,11 @@
     <div class="panel-wrapper">
       <div class="panel">
         <div class="content">
+
           <div class="status-bar">
-            <span class="status-bar__left"><span class="status-dot"></span>SYS ONLINE</span>
+            <span class="status-bar__left">
+              <span class="status-dot"></span>SYS ONLINE
+            </span>
             <span class="status-bar__right">V1.0.0</span>
           </div>
 
@@ -38,6 +43,7 @@
             <div class="mode-tag"><span class="tag-icon"></span>CSS CIRCUIT</div>
             <div class="mode-tag"><span class="tag-icon"></span>JS CORE</div>
           </div>
+
         </div>
       </div>
     </div>
@@ -47,27 +53,31 @@
     </div>
   </div>
 
+  <!-- HOME DASHBOARD -->
   <div id="home-screen" style="display: none;">
     <div class="grid-bg"></div>
 
     <div class="dashboard-layout">
 
+      <!-- SIDEBAR -->
       <aside class="sidebar">
-        <div class="logo">ByteRush</div>
+        <a href="index.html" class="logo">ByteRush</a>
 
         <nav>
-          <a href="#" class="nav-item active">Home</a>
-          <a href="#" class="nav-item">HTML Arena</a>
-          <a href="#" class="nav-item">CSS Circuit</a>
-          <a href="#" class="nav-item">JS Core</a>
+          <a href="index.html" class="nav-item active">Home</a>
+          <a href="html-map.html" class="nav-item">HTML Arena</a>
+          <a href="css-map.html" class="nav-item">CSS Circuit</a>
+          <a href="#" id="js-nav" class="nav-item">JS Core</a>
           <a href="#" class="nav-item">Projects</a>
-          <a href="#" class="nav-item">Challenges</a>
-          <a href="#" class="nav-item">Account</a>
+          <a href="challenges.html" class="nav-item">Challenges</a>
+          <a href="account.html" class="nav-item">Account</a>
           <a href="#" class="nav-item">Settings</a>
         </nav>
       </aside>
 
+      <!-- MAIN AREA -->
       <main class="main-area">
+
         <div class="section-header">
           <h2>MISSION CONTROL</h2>
           <p>Choose your coding path and start leveling up.<span class="cursor"></span></p>
@@ -81,9 +91,9 @@
         <div class="cards-grid">
 
           <div class="mission-card" onclick="window.location.href='html-map.html'">
-  <span class="card-icon">&lt;/&gt;</span>
-  <strong>HTML Arena</strong><br>
-  Build the structure
+            <span class="card-icon">&lt;/&gt;</span>
+            <strong>HTML Arena</strong><br />
+            Build the structure
             <p>✅ Unlocked</p>
           </div>
 
@@ -105,25 +115,25 @@
             <span class="card-icon">🕹️</span>
             <strong>Projects</strong><br />
             Build mini games
+            <p>Coming Soon</p>
           </div>
 
-          <div class="mission-card" id="challenge-card" onclick="window.location.href='challenges.html'">
-  <span class="card-icon">🛡️</span>
-  <strong>Challenges</strong><br />
-  <p>⚡ Challenge Mode</p>
-</div>
+          <div class="mission-card" onclick="window.location.href='challenges.html'">
+            <span class="card-icon">🛡️</span>
+            <strong>Challenges</strong><br />
+            Test your skills
+            <p>⚡ Challenge Mode</p>
+          </div>
+
         </div>
       </main>
 
+      <!-- STATS PANEL -->
       <aside class="stats-panel">
-        <div class="stat-box">
-          <h4>Player</h4>
-          <p>Rookie Coder</p>
-        </div>
 
         <div class="stat-box">
-          <h4>Level</h4>
-          <p>1</p>
+          <h4>Player</h4>
+          <p id="player-rank">Rookie Coder</p>
         </div>
 
         <div class="stat-box">
@@ -133,23 +143,30 @@
 
         <div class="stat-box">
           <h4>Streak</h4>
-          <p>0 days</p>
+          <p id="streak-value">0</p>
         </div>
 
         <div class="stat-box">
-          <h4>Missions</h4>
-          <p>0</p>
+          <h4>HTML</h4>
+          <p id="html-status">Mission 1</p>
+        </div>
+
+        <div class="stat-box">
+          <h4>CSS</h4>
+          <p id="css-status">Locked</p>
         </div>
 
         <div class="stat-box">
           <h4>Badges</h4>
-          <p>0</p>
+          <p id="badge-value">0</p>
         </div>
+
       </aside>
 
     </div>
   </div>
 
   <script src="script.js"></script>
+
 </body>
 </html>
