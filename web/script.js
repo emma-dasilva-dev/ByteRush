@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+
   const startButton = document.getElementById("start-btn");
   const startScreen = document.getElementById("start-screen");
   const homeScreen = document.getElementById("home-screen");
@@ -11,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const cssLock = document.getElementById("css-lock");
   const jsLock = document.getElementById("js-lock");
 
+  // START BUTTON
   if (startButton) {
     startButton.addEventListener("click", function () {
       startScreen.style.display = "none";
@@ -18,46 +20,52 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  // HTML ARENA
   if (htmlCard) {
     htmlCard.addEventListener("click", function () {
-      window.location.href = "html-arena.html";
+      window.location.href = "html-map.html";
     });
   }
 
+  // CSS CIRCUIT (UNLOCK AFTER HTML BOSS)
   if (cssCard) {
     cssCard.addEventListener("click", function () {
       const htmlLevel = parseInt(localStorage.getItem("html-level")) || 1;
 
-      if (htmlLevel >= 3) {
-        alert("CSS Circuit unlocked! We will build this next.");
+      if (htmlLevel >= 8) {
+        window.location.href = "css-map.html";
       } else {
-        alert("Finish HTML Arena first!");
+        alert("Finish all HTML missions and Boss Mode first!");
       }
     });
   }
 
+  // JS CORE (LOCKED FOR NOW)
   if (jsCard) {
     jsCard.addEventListener("click", function () {
       alert("JS Core is locked. Complete HTML and CSS first!");
     });
   }
 
+  // XP DISPLAY
   const xp = parseInt(localStorage.getItem("xp")) || 0;
 
   if (xpDisplay) {
     xpDisplay.innerText = xp;
   }
 
+  // LOCK STATUS
   const htmlLevel = parseInt(localStorage.getItem("html-level")) || 1;
 
   if (cssLock) {
-    cssLock.innerText = htmlLevel >= 3 ? "✅ Unlocked" : "🔒 Locked";
+    cssLock.innerText = htmlLevel >= 8 ? "✅ Unlocked" : "🔒 Locked";
   }
 
   if (jsLock) {
     jsLock.innerText = "🔒 Locked";
   }
 
+  // NAV ACTIVE STATE
   const navItems = document.querySelectorAll(".nav-item");
 
   navItems.forEach(function (item) {
@@ -72,6 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+  // PARTICLES EFFECT
   const particlesContainer = document.getElementById("particles");
 
   if (particlesContainer) {
@@ -87,12 +96,5 @@ document.addEventListener("DOMContentLoaded", function () {
       particlesContainer.appendChild(dot);
     }
   }
-  function loadStats() {
-  const cp = localStorage.getItem("cp") || 0;
-  const level = localStorage.getItem("html-level") || 1;
 
-  document.getElementById("cp").innerText = cp;
-  document.getElementById("lvl").innerText = level;
-}
-loadStats();
 });

@@ -154,7 +154,6 @@
   </div>
 
   <div class="arena-layout">
-
     <div>
       <h3>Code Editor</h3>
       <textarea id="code"></textarea>
@@ -167,7 +166,6 @@
       <h3>Live Preview</h3>
       <iframe id="preview"></iframe>
     </div>
-
   </div>
 
   <p id="result"></p>
@@ -177,20 +175,23 @@
   <audio id="success-sound" src="./sounds/success.mp3" preload="auto"></audio>
   <audio id="error-sound" src="./sounds/error.mp3" preload="auto"></audio>
   <audio id="unlock-sound" src="./sounds/unlock.mp3" preload="auto"></audio>
+  <audio id="mistake-sound" src="./sounds/mistake.mp3" preload="auto"></audio>
 
   <script>
     let level = parseInt(localStorage.getItem("html-level")) || 1;
     let attempts = 0;
+    let lastWarningMessage = "";
 
     const missions = {
       1: {
         title: "Mission 1: Headings",
-        starter: "<h1></h1>",
+        starter: "<h1>write title here</h1>",
         tag: "h1",
+        requiredParts: ["<h1>", "</h1>"],
         success: "SYSTEM RESTORED: Main title activated.",
-        bytebot: 'Use h1 tags and place <span class="highlight">"Hello World"</span> inside.',
-        hint1: "You need an opening h1 tag and a closing h1 tag.",
-        hint2: "Pattern: <h1>Hello World</h1>",
+        bytebot: 'Replace <span class="highlight">"write title here"</span> with <span class="highlight">"Hello World"</span>.',
+        hint1: "Keep the <h1> and </h1> tags. Only replace the words inside.",
+        hint2: "Final answer should look like: <h1>Hello World</h1>",
         check: function (code) {
           return code === "<h1>helloworld</h1>";
         }
@@ -198,12 +199,13 @@
 
       2: {
         title: "Mission 2: Paragraphs",
-        starter: "<p></p>",
+        starter: "<p>write message here</p>",
         tag: "p",
+        requiredParts: ["<p>", "</p>"],
         success: "MESSAGE SIGNAL RESTORED.",
-        bytebot: 'Use paragraph tags and place <span class="highlight">"I love coding"</span> inside.',
-        hint1: "You need <p> at the beginning and </p> at the end.",
-        hint2: "Pattern: <p>I love coding</p>",
+        bytebot: 'Replace <span class="highlight">"write message here"</span> with <span class="highlight">"I love coding"</span>.',
+        hint1: "Keep the <p> and </p> tags. Only replace the words inside.",
+        hint2: "Final answer should look like: <p>I love coding</p>",
         check: function (code) {
           return code === "<p>ilovecoding</p>";
         }
@@ -211,12 +213,13 @@
 
       3: {
         title: "Mission 3: Buttons",
-        starter: "<button></button>",
+        starter: "<button>write button text</button>",
         tag: "button",
+        requiredParts: ["<button>", "</button>"],
         success: "CONTROL BUTTON ONLINE.",
-        bytebot: 'Create a button element. The text should be <span class="highlight">"Click Me"</span>.',
-        hint1: "Button text goes between <button> and </button>.",
-        hint2: "Pattern: <button>Click Me</button>",
+        bytebot: 'Replace <span class="highlight">"write button text"</span> with <span class="highlight">"Click Me"</span>.',
+        hint1: "Keep the <button> and </button> tags. Only replace the button text.",
+        hint2: "Final answer should look like: <button>Click Me</button>",
         check: function (code) {
           return code === "<button>clickme</button>";
         }
@@ -224,12 +227,13 @@
 
       4: {
         title: "Mission 4: Links",
-        starter: '<a href="#"></a>',
+        starter: '<a href="#">write link text</a>',
         tag: "a",
+        requiredParts: ['<a href="#">', "</a>"],
         success: "PORTAL LINK ACTIVATED.",
-        bytebot: 'Create an anchor tag. Use href="#" and make the visible text <span class="highlight">"Visit Site"</span>.',
-        hint1: "The href attribute goes inside the opening <a> tag.",
-        hint2: 'Pattern: <a href="#">Visit Site</a>',
+        bytebot: 'Replace <span class="highlight">"write link text"</span> with <span class="highlight">"Visit Site"</span>.',
+        hint1: "Keep the <a href=\"#\"> and </a> tags. Only replace the link text.",
+        hint2: 'Final answer should look like: <a href="#">Visit Site</a>',
         check: function (code) {
           return code === '<ahref="#">visitsite</a>';
         }
@@ -237,13 +241,14 @@
 
       5: {
         title: "Mission 5: Images",
-        starter: '<img src="">',
+        starter: '<img src="write image file here">',
         tag: "img",
         selfClosing: true,
+        requiredParts: ["<img", "src=", ">"],
         success: "IMAGE MODULE LOADED.",
-        bytebot: 'Create an image tag and set the src value to <span class="highlight">"image.png"</span>.',
-        hint1: "The image tag uses src to point to the file.",
-        hint2: 'Pattern: <img src="image.png">',
+        bytebot: 'Replace <span class="highlight">"write image file here"</span> with <span class="highlight">"image.png"</span>.',
+        hint1: "Keep the <img src=\"\"> structure. Only replace the file name.",
+        hint2: 'Final answer should look like: <img src="image.png">',
         check: function (code) {
           return code === '<imgsrc="image.png">';
         }
@@ -251,13 +256,14 @@
 
       6: {
         title: "Mission 6: Lists",
-        starter: "<ul>\n  <li></li>\n</ul>",
+        starter: "<ul>\n  <li>write list item here</li>\n</ul>",
         tag: "ul",
         extraTags: ["li"],
+        requiredParts: ["<ul>", "</ul>", "<li>", "</li>"],
         success: "INVENTORY SYSTEM RESTORED.",
-        bytebot: 'Create a ul list. Inside it, add one li item that says <span class="highlight">"Code"</span>.',
-        hint1: "A list item must be inside the ul tag.",
-        hint2: "Pattern: <ul><li>Code</li></ul>",
+        bytebot: 'Replace <span class="highlight">"write list item here"</span> with <span class="highlight">"Code"</span>.',
+        hint1: "Keep the <ul>, <li>, </li>, and </ul> tags. Only replace the list item text.",
+        hint2: "Final answer should look like: <ul><li>Code</li></ul>",
         check: function (code) {
           return code === "<ul><li>code</li></ul>";
         }
@@ -267,6 +273,7 @@
         title: "BOSS MODE: Profile Card",
         starter: "<h1>Your Name</h1>\n<p>Your bio here</p>\n<img src=\"profile.png\">\n<button>Follow Me</button>",
         boss: true,
+        requiredParts: ["<h1>", "</h1>", "<p>", "</p>", "<img", "src=", "profile.png", "<button>", "</button>"],
         success: "BOSS CLEARED: CSS CIRCUIT UNLOCKED.",
         bytebot: 'Final HTML test. Your card must include <span class="highlight">"h1, p, img, and button"</span>.',
         hint1: "You need h1, p, img src=\"profile.png\", and button.",
@@ -292,6 +299,7 @@
       const codeBox = document.getElementById("code");
 
       attempts = 0;
+      lastWarningMessage = "";
       result.innerText = "";
       hint.innerText = "";
       warning.innerText = "";
@@ -320,13 +328,25 @@
       return matches ? matches.length : 0;
     }
 
-    function checkSyntaxWarnings(rawCode) {
+    function setWarning(message) {
       const warning = document.getElementById("warning");
+
+      warning.innerText = message;
+
+      if (message && message !== lastWarningMessage) {
+        playMistake();
+      }
+
+      lastWarningMessage = message;
+    }
+
+    function checkSyntaxWarnings(rawCode) {
       const mission = missions[level];
 
-      warning.innerText = "";
-
-      if (!mission || rawCode.trim().length === 0) return;
+      if (!mission || rawCode.trim().length === 0) {
+        setWarning("");
+        return;
+      }
 
       const code = rawCode.trim();
       const normalized = normalize(code);
@@ -335,56 +355,66 @@
       const closeBracketCount = countMatches(code, />/g);
 
       if (openBracketCount === 0 || closeBracketCount === 0) {
-        warning.innerText = "⚠️ Uh-oh, you removed a tag bracket < or > — add it back!";
+        setWarning("⚠️ Uh-oh, you removed a tag bracket < or > — add it back!");
         return;
       }
 
       if (openBracketCount !== closeBracketCount) {
-        warning.innerText = "⚠️ Your < and > brackets are not balanced. Every tag needs both sides.";
+        setWarning("⚠️ Uh-oh, your < and > brackets are not balanced. Add the missing bracket back.");
         return;
       }
 
       if (code.includes("< ") || code.includes("</ ")) {
-        warning.innerText = "⚠️ There should be no space right after < or </ inside a tag.";
+        setWarning("⚠️ Uh-oh, there should be no space right after < or </ inside a tag.");
         return;
       }
 
-      if (mission.boss) return;
+      if (mission.requiredParts) {
+        for (let i = 0; i < mission.requiredParts.length; i++) {
+          const part = normalize(mission.requiredParts[i]);
+
+          if (!normalized.includes(part)) {
+            setWarning("⚠️ Uh-oh, you removed this part: " + mission.requiredParts[i] + " — add it back!");
+            return;
+          }
+        }
+      }
+
+      if (mission.boss) {
+        setWarning("");
+        return;
+      }
 
       if (mission.selfClosing) {
         if (!normalized.includes("<img")) {
-          warning.innerText = "⚠️ Missing image tag. Start with <img.";
+          setWarning("⚠️ Uh-oh, you removed the image tag. Add <img back!");
           return;
         }
 
         if (!normalized.includes("src=")) {
-          warning.innerText = "⚠️ Missing src attribute. The image needs src=\"image.png\".";
+          setWarning("⚠️ Uh-oh, you removed src=. Add it back so the image can load.");
           return;
         }
 
-        if (!normalized.includes("image.png")) {
-          warning.innerText = "⚠️ Missing image file name: \"image.png\".";
-          return;
-        }
-
+        setWarning("");
         return;
       }
 
       if (mission.tag) {
         const tag = mission.tag;
 
-        if (!normalized.includes("<" + tag + ">") && tag !== "a") {
-          warning.innerText = "⚠️ Missing opening tag: <" + tag + ">";
+        if (tag !== "a" && !normalized.includes("<" + tag + ">")) {
+          setWarning("⚠️ Uh-oh, you removed the opening tag: <" + tag + "> — add it back!");
           return;
         }
 
         if (tag === "a" && !normalized.includes("<ahref=")) {
-          warning.innerText = "⚠️ Missing link opening tag. Use something like <a href=\"#\">.";
+          setWarning("⚠️ Uh-oh, you removed part of the link tag. Add <a href=\"#\"> back!");
           return;
         }
 
-        if (!normalized.includes("</" + tag + ">")) {
-          warning.innerText = "⚠️ Missing closing tag: </" + tag + ">";
+        if (!normalized.includes("</" + tag + ">") && !mission.selfClosing) {
+          setWarning("⚠️ Uh-oh, you removed the closing tag: </" + tag + "> — add it back!");
           return;
         }
       }
@@ -394,16 +424,18 @@
           const tag = mission.extraTags[i];
 
           if (!normalized.includes("<" + tag + ">")) {
-            warning.innerText = "⚠️ Missing opening tag: <" + tag + ">";
+            setWarning("⚠️ Uh-oh, you removed the opening tag: <" + tag + "> — add it back!");
             return;
           }
 
           if (!normalized.includes("</" + tag + ">")) {
-            warning.innerText = "⚠️ Missing closing tag: </" + tag + ">";
+            setWarning("⚠️ Uh-oh, you removed the closing tag: </" + tag + "> — add it back!");
             return;
           }
         }
       }
+
+      setWarning("");
     }
 
     function checkCode() {
@@ -443,14 +475,13 @@
     function success(xpGain, nextLevel, message) {
       const result = document.getElementById("result");
       const hint = document.getElementById("hint");
-      const warning = document.getElementById("warning");
 
       const isBossComplete = nextLevel > 7;
       const redirectDelay = isBossComplete ? 5800 : 1200;
 
       result.innerText = "✅ " + message + " +" + xpGain + " XP";
       hint.innerText = "";
-      warning.innerText = "";
+      setWarning("");
 
       playSuccess();
 
@@ -517,6 +548,10 @@
 
     function playUnlock() {
       playSound("unlock-sound");
+    }
+
+    function playMistake() {
+      playSound("mistake-sound");
     }
 
     function updatePreview() {
