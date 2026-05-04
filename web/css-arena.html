@@ -1,546 +1,402 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>CSS Circuit Mission</title>
+<meta charset="UTF-8">
+<title>CSS Circuit</title>
 
-  <style>
-    body {
-      background: #03080f;
-      color: #39ff5a;
-      font-family: monospace;
-      text-align: center;
-      padding: 40px;
-      margin: 0;
-    }
+<style>
+body {
+  background: #020617;
+  color: #38bdf8;
+  font-family: monospace;
+  text-align: center;
+  padding: 40px;
+  margin: 0;
+}
 
-    h1, h2, h3 {
-      color: #39ff5a;
-    }
+h1, h2, h3 {
+  color: #38bdf8;
+  text-shadow: 0 0 10px #38bdf8;
+}
 
-    .highlight {
-      color: #39ff5a;
-      font-weight: bold;
-      text-shadow: 0 0 8px rgba(57, 255, 90, 0.7);
-    }
+.bytebot {
+  max-width: 850px;
+  margin: 20px auto;
+  border: 2px solid #38bdf8;
+  background: #020617;
+  padding: 18px;
+  text-align: left;
+  box-shadow: 0 0 18px rgba(56,189,248,0.35);
+}
 
-    .bytebot {
-      max-width: 850px;
-      margin: 20px auto;
-      border: 2px solid #39ff5a;
-      background: #050b12;
-      padding: 18px;
-      text-align: left;
-      box-shadow: 0 0 15px rgba(57, 255, 90, 0.25);
-    }
+.stats {
+  margin: 15px auto;
+  color: #bae6fd;
+  font-weight: bold;
+}
 
-    .arena-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 26px;
-      width: 84%;
-      max-width: 900px;
-      margin: 30px auto;
-    }
+.arena-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 26px;
+  width: 85%;
+  max-width: 950px;
+  margin: 30px auto;
+}
 
-    textarea,
-    iframe {
-      width: 100%;
-      height: 230px;
-      border: 2px solid #39ff5a;
-      box-sizing: border-box;
-    }
+textarea, iframe {
+  width: 100%;
+  height: 250px;
+  border: 2px solid #38bdf8;
+  box-sizing: border-box;
+}
 
-    textarea {
-      background: #050b12;
-      color: #39ff5a;
-      padding: 15px;
-      font-family: monospace;
-      font-size: 16px;
-      resize: none;
-      outline: none;
-    }
+textarea {
+  background: #020617;
+  color: #38bdf8;
+  padding: 15px;
+  font-family: monospace;
+  font-size: 16px;
+  outline: none;
+  resize: none;
+  box-shadow: 0 0 12px rgba(56,189,248,0.25);
+}
 
-    iframe {
-      background: white;
-    }
+iframe {
+  background: white;
+  box-shadow: 0 0 12px rgba(56,189,248,0.25);
+}
 
-    button {
-      background: transparent;
-      color: #39ff5a;
-      border: 2px solid #39ff5a;
-      padding: 10px 18px;
-      margin: 10px 5px;
-      cursor: pointer;
-      font-family: monospace;
-    }
+button {
+  background: transparent;
+  color: #38bdf8;
+  border: 2px solid #38bdf8;
+  padding: 10px 18px;
+  margin: 10px 5px;
+  cursor: pointer;
+  font-family: monospace;
+}
 
-    button:hover {
-      background: #39ff5a;
-      color: black;
-    }
+button:hover {
+  background: #38bdf8;
+  color: black;
+  box-shadow: 0 0 15px #38bdf8;
+}
 
-    button:active {
-      transform: scale(0.92);
-      box-shadow: 0 0 15px #39ff5a;
-    }
+#result {
+  margin-top: 15px;
+  font-weight: bold;
+}
 
-    #result,
-    #hint,
-    #warning {
-      font-weight: bold;
-      margin-top: 15px;
-    }
+.success-flash {
+  animation: successFlash 0.5s ease-in-out;
+}
 
-    #hint {
-      color: #9affaa;
-    }
+@keyframes successFlash {
+  0% { background-color: #020617; }
+  50% { background-color: rgba(56,189,248,0.25); }
+  100% { background-color: #020617; }
+}
 
-    #warning {
-      color: #ff4d4d;
-      font-size: 13px;
-    }
+.preview-glow {
+  animation: previewGlow 0.7s ease-in-out;
+}
 
-    .success-flash {
-      animation: flash 0.4s ease-in-out;
-    }
+@keyframes previewGlow {
+  0% { box-shadow: 0 0 12px rgba(56,189,248,0.25); }
+  50% { box-shadow: 0 0 35px #38bdf8; }
+  100% { box-shadow: 0 0 12px rgba(56,189,248,0.25); }
+}
 
-    @keyframes flash {
-      0% { background-color: #03080f; }
-      50% { background-color: rgba(57, 255, 90, 0.2); }
-      100% { background-color: #03080f; }
-    }
+.error-shake {
+  animation: shake 0.3s ease-in-out;
+}
 
-    .xp-pop {
-      position: fixed;
-      left: 50%;
-      top: 60%;
-      color: #39ff5a;
-      font-size: 20px;
-      font-weight: bold;
-      pointer-events: none;
-      animation: xpFloat 1s ease-out forwards;
-      z-index: 9999;
-    }
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-6px); }
+  100% { transform: translateX(0); }
+}
 
-    @keyframes xpFloat {
-      0% {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0) scale(1);
-      }
-      100% {
-        opacity: 0;
-        transform: translateX(-50%) translateY(-40px) scale(1.3);
-      }
-    }
+.xp-pop {
+  position: fixed;
+  left: 50%;
+  top: 58%;
+  color: #38bdf8;
+  font-size: 22px;
+  font-weight: bold;
+  pointer-events: none;
+  animation: xpFloat 1s ease-out forwards;
+  z-index: 9999;
+}
 
-    @media (max-width: 800px) {
-      .arena-layout {
-        grid-template-columns: 1fr;
-        width: 92%;
-      }
-    }
-  </style>
+@keyframes xpFloat {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-45px) scale(1.3);
+  }
+}
+
+@media (max-width: 800px) {
+  .arena-layout {
+    grid-template-columns: 1fr;
+    width: 92%;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <h1>CSS CIRCUIT</h1>
-  <h2 id="mission-title"></h2>
+<h1>CSS CIRCUIT</h1>
+<h2 id="mission-title"></h2>
 
-  <div class="bytebot">
-    <strong>🤖 ByteBot:</strong>
-    <span id="bytebot-message"></span>
+<div class="stats">
+  ⏱ TIME: <span id="timer">0</span>s |
+  SPEED BONUS: <span id="bonus">Available</span>
+</div>
+
+<div class="bytebot">
+  🤖 <span id="instruction"></span>
+</div>
+
+<div class="arena-layout">
+
+  <div>
+    <h3>CSS Editor</h3>
+    <textarea id="code"></textarea>
+    <br>
+    <button onclick="checkCode()">RUN</button>
+    <button onclick="window.location.href='css-map.html'">← BACK TO MAP</button>
   </div>
 
-  <div class="arena-layout">
-    <div>
-      <h3>CSS Editor</h3>
-      <textarea id="code"></textarea>
-
-      <button onclick="checkCode()">Run</button>
-      <button onclick="window.location.href='css-map.html'">← BACK TO MAP</button>
-    </div>
-
-    <div>
-      <h3>Live Preview</h3>
-      <iframe id="preview"></iframe>
-    </div>
+  <div>
+    <h3>Live Preview</h3>
+    <iframe id="preview"></iframe>
   </div>
 
-  <p id="result"></p>
-  <p id="hint"></p>
-  <p id="warning"></p>
+</div>
 
-  <audio id="success-sound" src="./sounds/success.mp3" preload="auto"></audio>
-  <audio id="error-sound" src="./sounds/error.mp3" preload="auto"></audio>
-  <audio id="unlock-sound" src="./sounds/unlock.mp3" preload="auto"></audio>
-  <audio id="mistake-sound" src="./sounds/mistake.mp3" preload="auto"></audio>
+<p id="result"></p>
 
-  <script>
-    const htmlLevel = parseInt(localStorage.getItem("html-level")) || 1;
+<script>
+let level = parseInt(localStorage.getItem("css-level")) || 1;
+let seconds = 0;
+let timerInterval;
 
-    if (htmlLevel < 8) {
-      alert("CSS Circuit is locked. Finish HTML Boss Mode first!");
-      window.location.href = "index.html";
+const missions = {
+  1: {
+    title: "Mission 1: Colors",
+    starter: "h1 {\n  color: write color here;\n}",
+    instruction: 'Replace "write color here" with "blue".',
+    check: code => code.includes("h1{color:blue;}")
+  },
+  2: {
+    title: "Mission 2: Backgrounds",
+    starter: "body {\n  background-color: write background here;\n}",
+    instruction: 'Replace "write background here" with "black".',
+    check: code => code.includes("body{background-color:black;}")
+  },
+  3: {
+    title: "Mission 3: Font Size",
+    starter: "h1 {\n  font-size: write size here;\n}",
+    instruction: 'Replace "write size here" with "40px".',
+    check: code => code.includes("h1{font-size:40px;}")
+  },
+  4: {
+    title: "Mission 4: Borders",
+    starter: ".card {\n  border: write border here;\n}",
+    instruction: 'Replace "write border here" with "2px solid blue".',
+    check: code => code.includes(".card{border:2pxsolidblue;}")
+  },
+  5: {
+    title: "Mission 5: Alignment",
+    starter: ".card {\n  text-align: write alignment here;\n}",
+    instruction: 'Replace "write alignment here" with "center".',
+    check: code => code.includes(".card{text-align:center;}")
+  },
+  6: {
+    title: "Mission 6: Spacing",
+    starter: ".card {\n  padding: write spacing here;\n}",
+    instruction: 'Replace "write spacing here" with "20px".',
+    check: code => code.includes(".card{padding:20px;}")
+  },
+  7: {
+    title: "BOSS MODE: Styled Profile Card",
+    starter: ".card {\n  color: white;\n  background-color: black;\n  font-size: 20px;\n  border: 2px solid blue;\n  text-align: center;\n  padding: 20px;\n}",
+    instruction: "Use color, background-color, font-size, border, text-align, and padding.",
+    boss: true,
+    check: code =>
+      code.includes("color:") &&
+      code.includes("background-color:") &&
+      code.includes("font-size:") &&
+      code.includes("border:") &&
+      code.includes("text-align:") &&
+      code.includes("padding:")
+  }
+};
+
+function loadMission() {
+  const mission = missions[level];
+
+  if (!mission) {
+    document.getElementById("mission-title").innerText = "CSS CIRCUIT COMPLETE!";
+    document.getElementById("instruction").innerText = "JS Core is ready.";
+    document.getElementById("code").value = "";
+    updatePreview();
+    return;
+  }
+
+  document.getElementById("mission-title").innerText = mission.title;
+  document.getElementById("instruction").innerText = mission.instruction;
+  document.getElementById("code").value = mission.starter;
+  document.getElementById("result").innerText = "";
+
+  seconds = 0;
+  document.getElementById("timer").innerText = seconds;
+  document.getElementById("bonus").innerText = "Available";
+
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    seconds++;
+    document.getElementById("timer").innerText = seconds;
+
+    if (seconds > 15) {
+      document.getElementById("bonus").innerText = "Expired";
+    }
+  }, 1000);
+
+  updatePreview();
+}
+
+function normalize(code) {
+  return code.replace(/\s+/g, "").toLowerCase();
+}
+
+function checkCode() {
+  const rawCode = document.getElementById("code").value;
+  const code = normalize(rawCode);
+  const mission = missions[level];
+
+  updatePreview();
+
+  if (!mission) return;
+
+  if (mission.check(code)) {
+    clearInterval(timerInterval);
+
+    let xpGain = mission.boss ? 50 : 10;
+    let speedBonus = 0;
+
+    if (seconds <= 15) {
+      speedBonus = 5;
+      xpGain += speedBonus;
     }
 
-    let level = parseInt(localStorage.getItem("css-level")) || 1;
-    let attempts = 0;
-    let lastWarningMessage = "";
+    success(xpGain, speedBonus);
+  } else {
+    errorEffect();
+  }
+}
 
-    const missions = {
-      1: {
-        title: "Mission 1: Colors",
-        starter: "h1 {\n  color: write color here;\n}",
-        requiredParts: ["h1", "{", "}", "color:", ";"],
-        success: "COLOR SYSTEM ONLINE.",
-        bytebot: 'Replace <span class="highlight">"write color here"</span> with <span class="highlight">"red"</span>.',
-        hint1: "Keep the h1 selector and color property. Only replace the color value.",
-        hint2: "Final answer should look like: h1 { color: red; }",
-        check: function (code) {
-          return code.includes("h1{color:red;}");
-        }
-      },
+function success(xpGain, speedBonus) {
+  const result = document.getElementById("result");
+  const preview = document.getElementById("preview");
 
-      2: {
-        title: "Mission 2: Backgrounds",
-        starter: "body {\n  background-color: write background here;\n}",
-        requiredParts: ["body", "{", "}", "background-color:", ";"],
-        success: "BACKGROUND GRID RESTORED.",
-        bytebot: 'Replace <span class="highlight">"write background here"</span> with <span class="highlight">"yellow"</span>.',
-        hint1: "Use background-color to change the background.",
-        hint2: "Final answer should look like: body { background-color: yellow; }",
-        check: function (code) {
-          return code.includes("body{background-color:yellow;}");
-        }
-      },
+  result.innerText = speedBonus > 0
+    ? "✅ SUCCESS! +" + xpGain + " XP — SPEED BONUS!"
+    : "✅ SUCCESS! +" + xpGain + " XP";
 
-      3: {
-        title: "Mission 3: Font Size",
-        starter: "h1 {\n  font-size: write size here;\n}",
-        requiredParts: ["h1", "{", "}", "font-size:", ";"],
-        success: "TEXT SIZE BOOSTED.",
-        bytebot: 'Replace <span class="highlight">"write size here"</span> with <span class="highlight">"30px"</span>.',
-        hint1: "Font size needs a number and unit.",
-        hint2: "Final answer should look like: h1 { font-size: 30px; }",
-        check: function (code) {
-          return code.includes("h1{font-size:30px;}");
-        }
-      },
+  document.body.classList.add("success-flash");
+  preview.classList.add("preview-glow");
 
-      4: {
-        title: "Mission 4: Borders",
-        starter: ".card {\n  border: write border here;\n}",
-        requiredParts: [".card", "{", "}", "border:", ";"],
-        success: "BORDER SHIELD ACTIVATED.",
-        bytebot: 'Replace <span class="highlight">"write border here"</span> with <span class="highlight">"2px solid green"</span>.',
-        hint1: "A border needs size, style, and color.",
-        hint2: "Final answer should look like: .card { border: 2px solid green; }",
-        check: function (code) {
-          return code.includes(".card{border:2pxsolidgreen;}");
-        }
-      },
+  setTimeout(() => {
+    document.body.classList.remove("success-flash");
+    preview.classList.remove("preview-glow");
+  }, 700);
 
-      5: {
-        title: "Mission 5: Alignment",
-        starter: ".card {\n  text-align: write alignment here;\n}",
-        requiredParts: [".card", "{", "}", "text-align:", ";"],
-        success: "ALIGNMENT LOCKED.",
-        bytebot: 'Replace <span class="highlight">"write alignment here"</span> with <span class="highlight">"center"</span>.',
-        hint1: "text-align controls horizontal text placement.",
-        hint2: "Final answer should look like: .card { text-align: center; }",
-        check: function (code) {
-          return code.includes(".card{text-align:center;}");
-        }
-      },
+  showXPPop(xpGain);
+  addXP(xpGain);
 
-      6: {
-        title: "Mission 6: Spacing",
-        starter: ".card {\n  padding: write spacing here;\n}",
-        requiredParts: [".card", "{", "}", "padding:", ";"],
-        success: "SPACING MODULE RESTORED.",
-        bytebot: 'Replace <span class="highlight">"write spacing here"</span> with <span class="highlight">"20px"</span>.',
-        hint1: "Padding adds space inside an element.",
-        hint2: "Final answer should look like: .card { padding: 20px; }",
-        check: function (code) {
-          return code.includes(".card{padding:20px;}");
-        }
-      },
+  level++;
+  localStorage.setItem("css-level", level);
 
-      7: {
-        title: "BOSS MODE: Styled Profile Card",
-        starter: ".card {\n  color: white;\n  background-color: black;\n  font-size: 20px;\n  border: 2px solid green;\n  text-align: center;\n  padding: 20px;\n}",
-        boss: true,
-        requiredParts: ["color:", "background-color:", "font-size:", "border:", "text-align:", "padding:"],
-        success: "BOSS CLEARED: JS CORE UNLOCKED.",
-        bytebot: 'Final CSS test. Your card must include <span class="highlight">"color, background-color, font-size, border, text-align, and padding"</span>.',
-        hint1: "You need all six CSS properties.",
-        hint2: "Make sure each property has a value and ends with a semicolon.",
-        check: function (code) {
-          const hasColor = code.includes("color:");
-          const hasBackground = code.includes("background-color:");
-          const hasFontSize = code.includes("font-size:");
-          const hasBorder = code.includes("border:");
-          const hasAlign = code.includes("text-align:");
-          const hasPadding = code.includes("padding:");
+  setTimeout(() => {
+    window.location.href = "css-map.html";
+  }, level > 7 ? 2500 : 1300);
+}
 
-          return hasColor && hasBackground && hasFontSize && hasBorder && hasAlign && hasPadding;
-        }
-      }
-    };
+function errorEffect() {
+  const editor = document.getElementById("code");
+  const result = document.getElementById("result");
 
-    function loadMission() {
-      const mission = missions[level];
-      const title = document.getElementById("mission-title");
-      const result = document.getElementById("result");
-      const hint = document.getElementById("hint");
-      const warning = document.getElementById("warning");
-      const bytebot = document.getElementById("bytebot-message");
-      const codeBox = document.getElementById("code");
+  result.innerText = "❌ Try again. Check the CSS value carefully.";
 
-      attempts = 0;
-      lastWarningMessage = "";
-      result.innerText = "";
-      hint.innerText = "";
-      warning.innerText = "";
+  editor.classList.add("error-shake");
 
-      if (!mission) {
-        title.innerText = "CSS CIRCUIT COMPLETE!";
-        bytebot.innerText = "JS Core is ready. Head back to Mission Control.";
-        codeBox.value = "";
-        updatePreview();
-        return;
-      }
+  setTimeout(() => {
+    editor.classList.remove("error-shake");
+  }, 300);
+}
 
-      title.innerText = mission.title;
-      bytebot.innerHTML = mission.bytebot;
-      codeBox.value = mission.starter;
+function addXP(points) {
+  let xp = parseInt(localStorage.getItem("xp")) || 0;
+  xp += points;
+  localStorage.setItem("xp", xp);
+}
 
-      updatePreview();
-    }
+function showXPPop(amount) {
+  const xp = document.createElement("div");
+  xp.className = "xp-pop";
+  xp.innerText = "+" + amount + " XP";
+  document.body.appendChild(xp);
 
-    function normalize(input) {
-      return input.replace(/\s+/g, "").toLowerCase();
-    }
+  setTimeout(() => {
+    xp.remove();
+  }, 1000);
+}
 
-    function setWarning(message) {
-      const warning = document.getElementById("warning");
-      warning.innerText = message;
+function updatePreview() {
+  const css = document.getElementById("code").value;
 
-      if (message && message !== lastWarningMessage) {
-        playMistake();
-      }
-
-      lastWarningMessage = message;
-    }
-
-    function checkSyntaxWarnings(rawCode) {
-      const mission = missions[level];
-
-      if (!mission || rawCode.trim().length === 0) {
-        setWarning("");
-        return;
-      }
-
-      const code = rawCode.trim();
-      const normalized = normalize(code);
-
-      if (!normalized.includes("{") || !normalized.includes("}")) {
-        setWarning("⚠️ Uh-oh, you removed a curly brace { or } — add it back!");
-        return;
-      }
-
-      const openBraceCount = (code.match(/{/g) || []).length;
-      const closeBraceCount = (code.match(/}/g) || []).length;
-
-      if (openBraceCount !== closeBraceCount) {
-        setWarning("⚠️ Your { and } braces are not balanced. Add the missing brace back.");
-        return;
-      }
-
-      if (!normalized.includes(":")) {
-        setWarning("⚠️ Uh-oh, CSS properties need a colon : before the value.");
-        return;
+  const preview = `
+    <style>
+      body {
+        font-family: Arial;
+        padding: 20px;
       }
 
-      if (!normalized.includes(";")) {
-        setWarning("⚠️ Uh-oh, CSS rules need a semicolon ; at the end.");
-        return;
+      .card {
+        width: 220px;
+        margin: 20px auto;
+        background: #ddd;
+        padding: 10px;
       }
 
-      if (mission.requiredParts) {
-        for (let i = 0; i < mission.requiredParts.length; i++) {
-          const part = normalize(mission.requiredParts[i]);
+      ${css}
+    </style>
 
-          if (!normalized.includes(part)) {
-            setWarning("⚠️ Uh-oh, you removed this part: " + mission.requiredParts[i] + " — add it back!");
-            return;
-          }
-        }
-      }
+    <h1>Hello CSS</h1>
 
-      setWarning("");
-    }
+    <div class="card">
+      <h2>Profile Card</h2>
+      <p>Style me!</p>
+    </div>
+  `;
 
-    function checkCode() {
-      const rawCode = document.getElementById("code").value;
-      const code = normalize(rawCode);
-      const result = document.getElementById("result");
-      const mission = missions[level];
+  document.getElementById("preview").srcdoc = preview;
+}
 
-      updatePreview();
+document.getElementById("code").addEventListener("input", updatePreview);
 
-      if (!mission) {
-        result.innerText = "🏆 CSS Circuit already complete.";
-        return;
-      }
-
-      if (mission.check(code)) {
-        const reward = mission.boss ? 50 : 10;
-        success(reward, level + 1, mission.success);
-      } else {
-        playError();
-        attempts++;
-        showHint(mission);
-        result.innerText = "❌ Style system not restored yet.";
-      }
-    }
-
-    function showHint(mission) {
-      const hint = document.getElementById("hint");
-
-      if (attempts === 1) {
-        hint.innerText = "Hint 1: " + mission.hint1;
-      } else if (attempts >= 2) {
-        hint.innerText = "Hint 2: " + mission.hint2;
-      }
-    }
-
-    function success(xpGain, nextLevel, message) {
-      const result = document.getElementById("result");
-      const hint = document.getElementById("hint");
-
-      const isBossComplete = nextLevel > 7;
-      const redirectDelay = isBossComplete ? 5800 : 1200;
-
-      result.innerText = "✅ " + message + " +" + xpGain + " XP";
-      hint.innerText = "";
-      setWarning("");
-
-      playSuccess();
-
-      if (isBossComplete) {
-        setTimeout(function () {
-          playUnlock();
-        }, 300);
-      }
-
-      document.body.classList.add("success-flash");
-
-      setTimeout(function () {
-        document.body.classList.remove("success-flash");
-      }, 400);
-
-      showXPPop(xpGain);
-
-      addXP(xpGain);
-      level = nextLevel;
-      localStorage.setItem("css-level", level);
-
-      setTimeout(function () {
-        window.location.href = "css-map.html";
-      }, redirectDelay);
-    }
-
-    function addXP(points) {
-      let xp = parseInt(localStorage.getItem("xp")) || 0;
-      xp += points;
-      localStorage.setItem("xp", xp);
-    }
-
-    function showXPPop(amount) {
-      const xp = document.createElement("div");
-      xp.className = "xp-pop";
-      xp.innerText = "+" + amount + " XP";
-
-      document.body.appendChild(xp);
-
-      setTimeout(function () {
-        xp.remove();
-      }, 1000);
-    }
-
-    function playSound(id) {
-      const sound = document.getElementById(id);
-
-      if (!sound) return;
-
-      sound.currentTime = 0;
-
-      sound.play().catch(function () {
-        console.log("Sound blocked or missing:", id);
-      });
-    }
-
-    function playSuccess() {
-      playSound("success-sound");
-    }
-
-    function playError() {
-      playSound("error-sound");
-    }
-
-    function playUnlock() {
-      playSound("unlock-sound");
-    }
-
-    function playMistake() {
-      playSound("mistake-sound");
-    }
-
-    function updatePreview() {
-      const cssCode = document.getElementById("code").value;
-
-      const previewHTML = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              padding: 20px;
-            }
-
-            .card {
-              width: 220px;
-              margin: 20px auto;
-              background-color: #eeeeee;
-              padding: 10px;
-            }
-
-            ${cssCode}
-          </style>
-        </head>
-        <body>
-          <h1>Hello CSS</h1>
-
-          <div class="card">
-            <h2>Profile Card</h2>
-            <p>Style me with CSS.</p>
-          </div>
-        </body>
-        </html>
-      `;
-
-      document.getElementById("preview").srcdoc = previewHTML;
-      checkSyntaxWarnings(cssCode);
-    }
-
-    document.getElementById("code").addEventListener("input", updatePreview);
-
-    loadMission();
-  </script>
+loadMission();
+</script>
 
 </body>
 </html>

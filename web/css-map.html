@@ -5,76 +5,64 @@
 <title>CSS Circuit Map</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
 body {
-  background: #03080f;
-  color: #39ff5a;
-  font-family: 'Press Start 2P', monospace;
+  background: #020617;
+  color: #38bdf8;
+  font-family: monospace;
   text-align: center;
   padding: 40px;
   margin: 0;
 }
 
 h1 {
-  font-size: 22px;
-  text-shadow: 0 0 10px #39ff5a;
+  text-shadow: 0 0 10px #38bdf8;
 }
 
 p {
-  font-size: 10px;
-  color: #9affaa;
+  color: #7dd3fc;
 }
 
 .stats-panel {
   margin: 20px auto;
-  border: 2px solid #39ff5a;
-  background: #050b12;
+  border: 2px solid #38bdf8;
+  background: #020617;
   padding: 15px;
-  width: 340px;
-  box-shadow: 0 0 15px rgba(57, 255, 90, 0.25);
-}
-
-.stats-panel p {
-  margin: 8px 0;
+  width: 320px;
+  box-shadow: 0 0 15px rgba(56,189,248,0.3);
 }
 
 .unlock-message {
   display: none;
   margin: 25px auto;
   padding: 18px;
-  width: 360px;
-  border: 2px solid #39ff5a;
-  background: #39ff5a;
+  width: 340px;
+  border: 2px solid #38bdf8;
+  background: #38bdf8;
   color: black;
-  box-shadow: 0 0 25px #39ff5a;
-  font-size: 11px;
+  box-shadow: 0 0 25px #38bdf8;
 }
 
 .reset-area {
-  margin-top: 14px;
+  margin-top: 15px;
 }
 
 .reset-btn {
   background: transparent;
-  color: #ff4d4d;
-  border: 2px solid #ff4d4d;
+  color: #f87171;
+  border: 2px solid #f87171;
   padding: 8px 16px;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 9px;
   cursor: pointer;
 }
 
 .reset-btn:hover {
-  background: #ff4d4d;
+  background: #f87171;
   color: black;
-  box-shadow: 0 0 10px #ff4d4d;
+  box-shadow: 0 0 10px #f87171;
 }
 
 .reset-warning {
-  font-size: 8px;
+  font-size: 10px;
   opacity: 0.4;
-  margin-top: 6px;
 }
 
 .map {
@@ -86,24 +74,23 @@ p {
 }
 
 .node {
-  border: 2px solid #39ff5a;
+  border: 2px solid #38bdf8;
   padding: 15px 25px;
-  width: 330px;
-  background: #050b12;
-  font-size: 10px;
+  width: 300px;
+  background: #020617;
   transition: 0.2s;
 }
 
 .node.completed {
-  color: #39ff5a;
-  box-shadow: 0 0 12px rgba(57, 255, 90, 0.6);
+  color: #38bdf8;
+  box-shadow: 0 0 15px rgba(56,189,248,0.6);
 }
 
 .node.active {
-  background: #39ff5a;
+  background: #38bdf8;
   color: black;
   cursor: pointer;
-  box-shadow: 0 0 25px #39ff5a;
+  box-shadow: 0 0 25px #38bdf8;
 }
 
 .node.active:hover {
@@ -111,39 +98,36 @@ p {
 }
 
 .node.locked {
-  opacity: 0.28;
-  cursor: not-allowed;
+  opacity: 0.3;
 }
 
 .node.boss {
-  border-color: #ffdd57;
+  border-color: #60a5fa;
 }
 
 .node.boss.active {
-  background: #ffdd57;
+  background: #60a5fa;
   color: black;
-  box-shadow: 0 0 25px #ffdd57;
+  box-shadow: 0 0 25px #60a5fa;
 }
 
 .line {
   width: 2px;
-  height: 22px;
-  background: rgba(57,255,90,0.45);
+  height: 20px;
+  background: rgba(56,189,248,0.5);
 }
 
 .back-btn {
   margin-top: 40px;
   background: transparent;
-  color: #39ff5a;
-  border: 2px solid #39ff5a;
+  color: #38bdf8;
+  border: 2px solid #38bdf8;
   padding: 10px 20px;
   cursor: pointer;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 10px;
 }
 
 .back-btn:hover {
-  background: #39ff5a;
+  background: #38bdf8;
   color: black;
 }
 </style>
@@ -177,7 +161,7 @@ p {
 const htmlLevel = parseInt(localStorage.getItem("html-level")) || 1;
 
 if (htmlLevel < 8) {
-  alert("CSS Circuit is locked. Finish HTML Boss Mode first!");
+  alert("CSS Circuit is locked. Finish HTML first!");
   window.location.href = "index.html";
 }
 
@@ -198,41 +182,37 @@ const map = document.getElementById("map");
 
 function loadStats() {
   const completed = Math.min(level - 1, missions.length);
-  const currentMission = level > missions.length ? "COMPLETE" : level;
+  const current = level > missions.length ? "COMPLETE" : level;
 
   document.getElementById("xp").innerText = xp;
   document.getElementById("completed").innerText = completed;
-  document.getElementById("current").innerText = currentMission;
+  document.getElementById("current").innerText = current;
 
   if (level > missions.length) {
     document.getElementById("unlock-message").style.display = "block";
-  } else {
-    document.getElementById("unlock-message").style.display = "none";
   }
 }
 
 function buildMap() {
   map.innerHTML = "";
 
-  missions.forEach(function (name, index) {
+  missions.forEach((name, index) => {
     const node = document.createElement("div");
     node.classList.add("node");
 
-    const missionNumber = index + 1;
-    const isBoss = missionNumber === missions.length;
+    const num = index + 1;
+    const isBoss = num === missions.length;
 
-    if (isBoss) {
-      node.classList.add("boss");
-    }
+    if (isBoss) node.classList.add("boss");
 
-    if (missionNumber < level) {
+    if (num < level) {
       node.classList.add("completed");
       node.innerText = "✅ " + name;
-    } else if (missionNumber === level) {
+    } else if (num === level) {
       node.classList.add("active");
       node.innerText = isBoss ? "⚔️ " + name : "⚡ " + name;
 
-      node.onclick = function () {
+      node.onclick = () => {
         window.location.href = "css-arena.html";
       };
     } else {
@@ -251,13 +231,9 @@ function buildMap() {
 }
 
 function resetProgress() {
-  const confirmReset = confirm("Reset ALL CSS progress?");
-
-  if (confirmReset) {
+  if (confirm("Reset CSS progress?")) {
     localStorage.removeItem("css-level");
-
     level = 1;
-
     loadStats();
     buildMap();
   }
