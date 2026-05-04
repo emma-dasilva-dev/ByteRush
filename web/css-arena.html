@@ -19,6 +19,11 @@ h1, h2, h3 {
   text-shadow: 0 0 10px #38bdf8;
 }
 
+.highlight {
+  color: #38bdf8;
+  font-weight: bold;
+}
+
 .bytebot {
   max-width: 850px;
   margin: 20px auto;
@@ -35,6 +40,25 @@ h1, h2, h3 {
   font-weight: bold;
 }
 
+.streak-box {
+  margin: 10px auto;
+  color: #facc15;
+  font-weight: bold;
+}
+
+.streak-hot {
+  animation: streakGlow 1s infinite alternate;
+}
+
+@keyframes streakGlow {
+  from {
+    text-shadow: 0 0 8px #facc15;
+  }
+  to {
+    text-shadow: 0 0 22px #facc15;
+  }
+}
+
 .arena-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -44,7 +68,8 @@ h1, h2, h3 {
   margin: 30px auto;
 }
 
-textarea, iframe {
+textarea,
+.preview-box {
   width: 100%;
   height: 250px;
   border: 2px solid #38bdf8;
@@ -62,9 +87,41 @@ textarea {
   box-shadow: 0 0 12px rgba(56,189,248,0.25);
 }
 
-iframe {
-  background: white;
+.preview-box {
+  background: #0f172a;
+  color: white;
+  padding: 20px;
+  overflow: auto;
   box-shadow: 0 0 12px rgba(56,189,248,0.25);
+}
+
+.preview-box h1 {
+  color: white;
+  text-shadow: none;
+}
+
+.preview-card {
+  width: 220px;
+  margin: 20px auto;
+  background: #1e293b;
+  color: white;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.preview-card h2 {
+  color: white;
+  text-shadow: none;
+}
+
+.preview-card p {
+  opacity: 0.8;
+}
+
+.feedback-label {
+  color: #38bdf8;
+  font-weight: bold;
+  margin-top: 15px;
 }
 
 button {
@@ -83,9 +140,27 @@ button:hover {
   box-shadow: 0 0 15px #38bdf8;
 }
 
-#result {
+#result,
+#hint,
+#warning {
   margin-top: 15px;
   font-weight: bold;
+}
+
+#hint {
+  color: #bae6fd;
+}
+
+#warning {
+  color: #f87171;
+}
+
+.almost {
+  color: #fde68a;
+}
+
+.correct {
+  color: #38bdf8;
 }
 
 .success-flash {
@@ -162,8 +237,13 @@ button:hover {
   SPEED BONUS: <span id="bonus">Available</span>
 </div>
 
+<div class="streak-box" id="streak-box">
+  🔥 STREAK: <span id="streak-value">0</span>
+</div>
+
 <div class="bytebot">
-  🤖 <span id="instruction"></span>
+  <strong>🤖 ByteBot:</strong>
+  <span id="instruction"></span>
 </div>
 
 <div class="arena-layout">
@@ -178,92 +258,160 @@ button:hover {
 
   <div>
     <h3>Live Preview</h3>
-    <iframe id="preview"></iframe>
+
+    <div id="preview-box" class="preview-box">
+      <h1 id="preview-title">Hello CSS</h1>
+
+      <div id="preview-card" class="preview-card">
+        <h2>Profile Card</h2>
+        <p>Style me!</p>
+      </div>
+
+      <div id="feedback-label" class="feedback-label"></div>
+    </div>
   </div>
 
 </div>
 
 <p id="result"></p>
+<p id="hint"></p>
+<p id="warning"></p>
+
+<audio id="success-sound" src="./sounds/success.mp3" preload="auto"></audio>
+<audio id="error-sound" src="./sounds/error.mp3" preload="auto"></audio>
+<audio id="unlock-sound" src="./sounds/unlock.mp3" preload="auto"></audio>
+<audio id="mistake-sound" src="./sounds/mistake.mp3" preload="auto"></audio>
 
 <script>
+const htmlLevel = parseInt(localStorage.getItem("html-level")) || 1;
+
+if (htmlLevel < 8) {
+  alert("CSS Circuit is locked. Finish HTML Boss Mode first!");
+  window.location.href = "index.html";
+}
+
 let level = parseInt(localStorage.getItem("css-level")) || 1;
+let attempts = 0;
 let seconds = 0;
 let timerInterval;
+let lastWarningMessage = "";
+let streak = parseInt(localStorage.getItem("streak")) || 0;
 
 const missions = {
   1: {
     title: "Mission 1: Colors",
     starter: "h1 {\n  color: write color here;\n}",
-    instruction: 'Replace "write color here" with "blue".',
-    check: code => code.includes("h1{color:blue;}")
+    selector: "h1",
+    property: "color:",
+    value: "blue",
+    requiredParts: ["h1", "{", "}", "color:", ";"],
+    success: "COLOR SYSTEM ONLINE.",
+    bytebot: 'Replace <span class="highlight">"write color here"</span> with <span class="highlight">"blue"</span>.',
+    hint1: "Keep the h1 selector and color property. Only replace the color value.",
+    hint2: "Final answer should look like: h1 { color: blue; }"
   },
   2: {
     title: "Mission 2: Backgrounds",
     starter: "body {\n  background-color: write background here;\n}",
-    instruction: 'Replace "write background here" with "black".',
-    check: code => code.includes("body{background-color:black;}")
+    selector: "body",
+    property: "background-color:",
+    value: "black",
+    requiredParts: ["body", "{", "}", "background-color:", ";"],
+    success: "BACKGROUND GRID RESTORED.",
+    bytebot: 'Replace <span class="highlight">"write background here"</span> with <span class="highlight">"black"</span>.',
+    hint1: "Keep body and background-color. Only replace the background value.",
+    hint2: "Final answer should look like: body { background-color: black; }"
   },
   3: {
     title: "Mission 3: Font Size",
     starter: "h1 {\n  font-size: write size here;\n}",
-    instruction: 'Replace "write size here" with "40px".',
-    check: code => code.includes("h1{font-size:40px;}")
+    selector: "h1",
+    property: "font-size:",
+    value: "40px",
+    requiredParts: ["h1", "{", "}", "font-size:", ";"],
+    success: "TEXT SIZE BOOSTED.",
+    bytebot: 'Replace <span class="highlight">"write size here"</span> with <span class="highlight">"40px"</span>.',
+    hint1: "Keep font-size. CSS size needs a number and unit.",
+    hint2: "Final answer should look like: h1 { font-size: 40px; }"
   },
   4: {
     title: "Mission 4: Borders",
     starter: ".card {\n  border: write border here;\n}",
-    instruction: 'Replace "write border here" with "2px solid blue".',
-    check: code => code.includes(".card{border:2pxsolidblue;}")
+    selector: ".card",
+    property: "border:",
+    value: "2pxsolidblue",
+    displayValue: "2px solid blue",
+    requiredParts: [".card", "{", "}", "border:", ";"],
+    success: "BORDER SHIELD ACTIVATED.",
+    bytebot: 'Replace <span class="highlight">"write border here"</span> with <span class="highlight">"2px solid blue"</span>.',
+    hint1: "Keep border. A border needs size, style, and color.",
+    hint2: "Final answer should look like: .card { border: 2px solid blue; }"
   },
   5: {
     title: "Mission 5: Alignment",
     starter: ".card {\n  text-align: write alignment here;\n}",
-    instruction: 'Replace "write alignment here" with "center".',
-    check: code => code.includes(".card{text-align:center;}")
+    selector: ".card",
+    property: "text-align:",
+    value: "center",
+    requiredParts: [".card", "{", "}", "text-align:", ";"],
+    success: "ALIGNMENT LOCKED.",
+    bytebot: 'Replace <span class="highlight">"write alignment here"</span> with <span class="highlight">"center"</span>.',
+    hint1: "Keep text-align. It controls horizontal text placement.",
+    hint2: "Final answer should look like: .card { text-align: center; }"
   },
   6: {
     title: "Mission 6: Spacing",
     starter: ".card {\n  padding: write spacing here;\n}",
-    instruction: 'Replace "write spacing here" with "20px".',
-    check: code => code.includes(".card{padding:20px;}")
+    selector: ".card",
+    property: "padding:",
+    value: "20px",
+    requiredParts: [".card", "{", "}", "padding:", ";"],
+    success: "SPACING MODULE RESTORED.",
+    bytebot: 'Replace <span class="highlight">"write spacing here"</span> with <span class="highlight">"20px"</span>.',
+    hint1: "Keep padding. Padding adds space inside an element.",
+    hint2: "Final answer should look like: .card { padding: 20px; }"
   },
   7: {
     title: "BOSS MODE: Styled Profile Card",
     starter: ".card {\n  color: white;\n  background-color: black;\n  font-size: 20px;\n  border: 2px solid blue;\n  text-align: center;\n  padding: 20px;\n}",
-    instruction: "Use color, background-color, font-size, border, text-align, and padding.",
     boss: true,
-    check: code =>
-      code.includes("color:") &&
-      code.includes("background-color:") &&
-      code.includes("font-size:") &&
-      code.includes("border:") &&
-      code.includes("text-align:") &&
-      code.includes("padding:")
+    requiredParts: ["color:", "background-color:", "font-size:", "border:", "text-align:", "padding:", "{", "}", ";"],
+    success: "BOSS CLEARED: JS CORE UNLOCKED.",
+    bytebot: 'Final CSS test. Your card must include <span class="highlight">"color, background-color, font-size, border, text-align, and padding"</span>.',
+    hint1: "You need all six CSS properties.",
+    hint2: "Make sure each property has a value and ends with a semicolon."
   }
 };
 
 function loadMission() {
   const mission = missions[level];
 
+  attempts = 0;
+  lastWarningMessage = "";
+
+  document.getElementById("result").innerText = "";
+  document.getElementById("hint").innerText = "";
+  setWarning("");
+  updateStreakDisplay();
+
   if (!mission) {
     document.getElementById("mission-title").innerText = "CSS CIRCUIT COMPLETE!";
-    document.getElementById("instruction").innerText = "JS Core is ready.";
+    document.getElementById("instruction").innerText = "JS Core is ready. Head back to Mission Control.";
     document.getElementById("code").value = "";
     updatePreview();
     return;
   }
 
   document.getElementById("mission-title").innerText = mission.title;
-  document.getElementById("instruction").innerText = mission.instruction;
+  document.getElementById("instruction").innerHTML = mission.bytebot;
   document.getElementById("code").value = mission.starter;
-  document.getElementById("result").innerText = "";
 
   seconds = 0;
   document.getElementById("timer").innerText = seconds;
   document.getElementById("bonus").innerText = "Available";
 
   clearInterval(timerInterval);
-  timerInterval = setInterval(() => {
+  timerInterval = setInterval(function () {
     seconds++;
     document.getElementById("timer").innerText = seconds;
 
@@ -279,44 +427,317 @@ function normalize(code) {
   return code.replace(/\s+/g, "").toLowerCase();
 }
 
+function setWarning(message) {
+  const warning = document.getElementById("warning");
+  warning.innerText = message;
+
+  if (message && message !== lastWarningMessage) {
+    playMistake();
+  }
+
+  lastWarningMessage = message;
+}
+
+function updateStreakDisplay() {
+  const streakValue = document.getElementById("streak-value");
+  const streakBox = document.getElementById("streak-box");
+
+  streakValue.innerText = streak;
+
+  if (streak >= 3) {
+    streakBox.classList.add("streak-hot");
+  } else {
+    streakBox.classList.remove("streak-hot");
+  }
+}
+
+function resetStreak() {
+  streak = 0;
+  localStorage.setItem("streak", streak);
+  updateStreakDisplay();
+}
+
+function increaseStreak() {
+  streak++;
+  localStorage.setItem("streak", streak);
+  updateStreakDisplay();
+}
+
+function getStreakBonus() {
+  if (streak === 2) return 5;
+  if (streak >= 3) return 10;
+  return 0;
+}
+
+function checkSyntaxWarnings(rawCode) {
+  const mission = missions[level];
+
+  if (!mission || rawCode.trim().length === 0) {
+    setWarning("");
+    return;
+  }
+
+  const code = rawCode.trim();
+  const normalized = normalize(code);
+
+  const openBraceCount = (code.match(/{/g) || []).length;
+  const closeBraceCount = (code.match(/}/g) || []).length;
+
+  if (!normalized.includes("{") || !normalized.includes("}")) {
+    setWarning("⚠️ Uh-oh, you removed a curly brace { or } — add it back!");
+    return;
+  }
+
+  if (openBraceCount !== closeBraceCount) {
+    setWarning("⚠️ Uh-oh, your { and } braces are not balanced. Add the missing brace back.");
+    return;
+  }
+
+  if (!normalized.includes(":")) {
+    setWarning("⚠️ Uh-oh, CSS properties need a colon : before the value.");
+    return;
+  }
+
+  if (!normalized.includes(";")) {
+    setWarning("⚠️ Uh-oh, CSS rules need a semicolon ; at the end.");
+    return;
+  }
+
+  if (mission.requiredParts) {
+    for (let i = 0; i < mission.requiredParts.length; i++) {
+      const part = normalize(mission.requiredParts[i]);
+
+      if (!normalized.includes(part)) {
+        setWarning("⚠️ Uh-oh, you removed this part: " + mission.requiredParts[i] + " — add it back!");
+        return;
+      }
+    }
+  }
+
+  setWarning("");
+}
+
+function getMissionProgress(code, mission) {
+  if (!mission) return { status: "missing", message: "No mission found." };
+
+  if (mission.boss) {
+    const hasColor = code.includes("color:");
+    const hasBackground = code.includes("background-color:");
+    const hasFontSize = code.includes("font-size:");
+    const hasBorder = code.includes("border:");
+    const hasAlign = code.includes("text-align:");
+    const hasPadding = code.includes("padding:");
+
+    const total = [hasColor, hasBackground, hasFontSize, hasBorder, hasAlign, hasPadding].filter(Boolean).length;
+
+    if (total === 6) {
+      return { status: "correct", message: "✅ Perfect! All required CSS powers are active." };
+    }
+
+    return {
+      status: "almost",
+      message: "🟡 Boss progress: " + total + "/6 CSS powers active. Keep going."
+    };
+  }
+
+  const hasSelector = code.includes(normalize(mission.selector));
+  const hasProperty = code.includes(normalize(mission.property));
+  const hasValue = code.includes(normalize(mission.value));
+  const hasColon = code.includes(":");
+  const hasSemicolon = code.includes(";");
+
+  if (!hasSelector) {
+    return {
+      status: "missing",
+      message: "🔴 Missing selector. You need: " + mission.selector
+    };
+  }
+
+  if (!hasProperty) {
+    return {
+      status: "missing",
+      message: "🔴 Missing property. You need: " + mission.property
+    };
+  }
+
+  if (!hasColon) {
+    return {
+      status: "missing",
+      message: "🔴 Missing colon. CSS needs ':' before the value."
+    };
+  }
+
+  if (!hasValue) {
+    return {
+      status: "almost",
+      message: "🟡 Almost. Structure is correct, but the value should be: " + (mission.displayValue || mission.value)
+    };
+  }
+
+  if (!hasSemicolon) {
+    return {
+      status: "almost",
+      message: "🟡 Almost. Add a semicolon ; at the end."
+    };
+  }
+
+  return {
+    status: "correct",
+    message: "✅ Perfect! Clean CSS."
+  };
+}
+
+function updatePreview() {
+  const cssCode = document.getElementById("code").value;
+  const previewBox = document.getElementById("preview-box");
+  const title = document.getElementById("preview-title");
+  const card = document.getElementById("preview-card");
+
+  title.removeAttribute("style");
+  card.removeAttribute("style");
+  previewBox.removeAttribute("style");
+
+  previewBox.className = "preview-box";
+
+  const normalized = normalize(cssCode);
+
+  if (level === 1 && normalized.includes("color:blue;")) {
+    title.style.color = "blue";
+  }
+
+  if (level === 2 && normalized.includes("background-color:black;")) {
+    previewBox.style.backgroundColor = "black";
+  }
+
+  if (level === 3 && normalized.includes("font-size:40px;")) {
+    title.style.fontSize = "40px";
+  }
+
+  if (level === 4 && normalized.includes("border:2pxsolidblue;")) {
+    card.style.border = "2px solid blue";
+  }
+
+  if (level === 5 && normalized.includes("text-align:center;")) {
+    card.style.textAlign = "center";
+  }
+
+  if (level === 6 && normalized.includes("padding:20px;")) {
+    card.style.padding = "20px";
+  }
+
+  if (level === 7) {
+    if (normalized.includes("color:white;")) card.style.color = "white";
+    if (normalized.includes("background-color:black;")) card.style.backgroundColor = "black";
+    if (normalized.includes("font-size:20px;")) card.style.fontSize = "20px";
+    if (normalized.includes("border:2pxsolidblue;")) card.style.border = "2px solid blue";
+    if (normalized.includes("text-align:center;")) card.style.textAlign = "center";
+    if (normalized.includes("padding:20px;")) card.style.padding = "20px";
+  }
+
+  document.getElementById("feedback-label").innerText = getFeedbackLabel();
+  checkSyntaxWarnings(cssCode);
+}
+
+function getFeedbackLabel() {
+  if (level === 1) return "Focus: Watch the heading turn blue.";
+  if (level === 2) return "Focus: Watch the preview background turn black.";
+  if (level === 3) return "Focus: Watch the heading become bigger.";
+  if (level === 4) return "Focus: Watch the card border appear.";
+  if (level === 5) return "Focus: Watch the card text center.";
+  if (level === 6) return "Focus: Watch the card spacing expand.";
+  if (level === 7) return "Boss Mode: Style the full card.";
+  return "";
+}
+
 function checkCode() {
   const rawCode = document.getElementById("code").value;
   const code = normalize(rawCode);
   const mission = missions[level];
+  const result = document.getElementById("result");
 
   updatePreview();
 
-  if (!mission) return;
+  if (!mission) {
+    result.innerText = "🏆 CSS Circuit already complete.";
+    return;
+  }
 
-  if (mission.check(code)) {
+  const progress = getMissionProgress(code, mission);
+
+  if (progress.status === "correct") {
     clearInterval(timerInterval);
+
+    increaseStreak();
 
     let xpGain = mission.boss ? 50 : 10;
     let speedBonus = 0;
+    let streakBonus = getStreakBonus();
 
     if (seconds <= 15) {
       speedBonus = 5;
       xpGain += speedBonus;
     }
 
-    success(xpGain, speedBonus);
+    xpGain += streakBonus;
+
+    success(xpGain, speedBonus, streakBonus, mission.success);
+  } else if (progress.status === "almost") {
+    playMistake();
+    attempts++;
+    showHint(mission);
+    result.innerHTML = '<span class="almost">' + progress.message + '</span>';
   } else {
+    resetStreak();
+    playError();
+    attempts++;
+    showHint(mission);
+    result.innerHTML = progress.message;
     errorEffect();
   }
 }
 
-function success(xpGain, speedBonus) {
-  const result = document.getElementById("result");
-  const preview = document.getElementById("preview");
+function showHint(mission) {
+  const hint = document.getElementById("hint");
 
-  result.innerText = speedBonus > 0
-    ? "✅ SUCCESS! +" + xpGain + " XP — SPEED BONUS!"
-    : "✅ SUCCESS! +" + xpGain + " XP";
+  if (attempts === 1) {
+    hint.innerText = "Hint 1: " + mission.hint1;
+  } else if (attempts >= 2) {
+    hint.innerText = "Hint 2: " + mission.hint2;
+  }
+}
+
+function success(xpGain, speedBonus, streakBonus, message) {
+  const result = document.getElementById("result");
+  const preview = document.getElementById("preview-box");
+
+  const isBossComplete = level + 1 > 7;
+  const redirectDelay = isBossComplete ? 5800 : 1300;
+
+  let bonusText = "";
+
+  if (speedBonus > 0) {
+    bonusText += " — SPEED BONUS!";
+  }
+
+  if (streakBonus > 0) {
+    bonusText += " — STREAK BONUS +" + streakBonus + "!";
+  }
+
+  result.innerText = "✅ " + message + " +" + xpGain + " XP" + bonusText;
+
+  setWarning("");
+  playSuccess();
+
+  if (isBossComplete) {
+    setTimeout(function () {
+      playUnlock();
+    }, 300);
+  }
 
   document.body.classList.add("success-flash");
   preview.classList.add("preview-glow");
 
-  setTimeout(() => {
+  setTimeout(function () {
     document.body.classList.remove("success-flash");
     preview.classList.remove("preview-glow");
   }, 700);
@@ -327,20 +748,17 @@ function success(xpGain, speedBonus) {
   level++;
   localStorage.setItem("css-level", level);
 
-  setTimeout(() => {
+  setTimeout(function () {
     window.location.href = "css-map.html";
-  }, level > 7 ? 2500 : 1300);
+  }, redirectDelay);
 }
 
 function errorEffect() {
   const editor = document.getElementById("code");
-  const result = document.getElementById("result");
-
-  result.innerText = "❌ Try again. Check the CSS value carefully.";
 
   editor.classList.add("error-shake");
 
-  setTimeout(() => {
+  setTimeout(function () {
     editor.classList.remove("error-shake");
   }, 300);
 }
@@ -357,40 +775,36 @@ function showXPPop(amount) {
   xp.innerText = "+" + amount + " XP";
   document.body.appendChild(xp);
 
-  setTimeout(() => {
+  setTimeout(function () {
     xp.remove();
   }, 1000);
 }
 
-function updatePreview() {
-  const css = document.getElementById("code").value;
+function playSound(id) {
+  const sound = document.getElementById(id);
+  if (!sound) return;
 
-  const preview = `
-    <style>
-      body {
-        font-family: Arial;
-        padding: 20px;
-      }
+  sound.currentTime = 0;
 
-      .card {
-        width: 220px;
-        margin: 20px auto;
-        background: #ddd;
-        padding: 10px;
-      }
+  sound.play().catch(function () {
+    console.log("Sound blocked or missing:", id);
+  });
+}
 
-      ${css}
-    </style>
+function playSuccess() {
+  playSound("success-sound");
+}
 
-    <h1>Hello CSS</h1>
+function playError() {
+  playSound("error-sound");
+}
 
-    <div class="card">
-      <h2>Profile Card</h2>
-      <p>Style me!</p>
-    </div>
-  `;
+function playUnlock() {
+  playSound("unlock-sound");
+}
 
-  document.getElementById("preview").srcdoc = preview;
+function playMistake() {
+  playSound("mistake-sound");
 }
 
 document.getElementById("code").addEventListener("input", updatePreview);
