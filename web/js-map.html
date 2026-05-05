@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JS Core Mission</title>
+  <link rel="stylesheet" href="arcade-theme.css">
+
+  <style>
+    body {
+      text-align: center;
+      padding: 32px;
+      margin: 0;
+    }
+
+    .highlight {
+      color: #FF0000;
+      font-weight: bold;
+    }
+
+    .arena-header {
+      max-width: 900px;
+      margin: 0 auto 20px;
+    }
+
+    .bytebot {
+      max-width: 900px;
+      margin: 20px auto;
+      text-align: left;
+    }
+
+    .arena-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      width: 90%;
+      max-width: 1050px;
+      margin: 28px auto;
+    }
+
+    .editor-panel,
+    .preview-panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+    }
+
+    textarea,
+    .preview-box {
+      width: 100%;
+      height: 300px;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      font-family: monospace;
+      font-size: 15px;
+      resize: none;
+      outline: none;
+    }
+
+    .preview-box {
+      background: #ffffff;
+      color: #111827;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      overflow: auto;
+    }
+
+    .demo-button {
+      background: #FF0000;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-weight: bold;
+      margin-top: 12px;
+    }
+
+    .output-text {
+      color: #111827;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 18px;
+    }
+
+    .button-row {
+      margin-top: 14px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    #result,
+    #hint,
+    #warning {
+      font-weight: bold;
+      margin-top: 14px;
+    }
+
+    .success-flash {
+      animation: flash 0.4s ease-in-out;
+    }
+
+    @keyframes flash {
+      0% { background-color: var(--bg); }
+      50% { background-color: rgba(255, 0, 0, 0.18); }
+      100% { background-color: var(--bg); }
+    }
+
+    .xp-pop {
+      position: fixed;
+      left: 50%;
+      top: 60%;
+      color: #FF0000;
+      font-size: 22px;
+      font-weight: bold;
+      pointer-events: none;
+      animation: xpFloat 1s ease-out forwards;
+      z-index: 9999;
+    }
+
+    @keyframes xpFloat {
+      0% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-40px) scale(1.2);
+      }
+    }
+
+    @media (max-width: 850px) {
+      .arena-layout {
+        grid-template-columns: 1fr;
+        width: 94%;
+      }
+
+      textarea,
+      .preview-box {
+        height: 260px;
+      }
+    }
+  </style>
+</head>
+
+<body class="theme-js">
+
+  <div class="arena-header">
+    <h1>JS CORE</h1>
+    <p>Learn how to make websites interactive using JavaScript.</p>
+    <h2 id="mission-title"></h2>
+  </div>
+
+  <div class="bytebot">
+    <strong>🤖 ByteBot:</strong>
+    <span id="bytebot-message"></span>
+  </div>
+
+  <div class="arena-layout">
+    <div class="editor-panel">
+      <h3>JavaScript Editor</h3>
+      <textarea id="code"></textarea>
+
+      <div class="button-row">
+        <button onclick="checkCode()">Run</button>
+        <button onclick="window.location.href='js-map.html'">← Back to Map</button>
+      </div>
+    </div>
+
+    <div class="preview-panel">
+      <h3>Live Preview</h3>
+
+      <div class="preview-box" id="preview-box">
+        <h2>JavaScript Output</h2>
+        <p id="preview-message">Your result will appear here.</p>
+        <button class="demo-button">Demo Button</button>
+        <div class="output-text" id="output-text">Waiting for code...</div>
+      </div>
+    </div>
+  </div>
+
+  <p id="result"></p>
+  <p id="hint"></p>
+  <p id="warning"></p>
+
+  <audio id="success-sound" src="./sounds/success.mp3" preload="auto"></audio>
+  <audio id="error-sound" src="./sounds/error.mp3" preload="auto"></audio>
+  <audio id="unlock-sound" src="./sounds/unlock.mp3" preload="auto"></audio>
+  <audio id="mistake-sound" src="./sounds/mistake.mp3" preload="auto"></audio>
+
+  <script>
+    let level = parseInt(localStorage.getItem("js-level")) || 1;
+    let attempts = 0;
+    let lastWarningMessage = "";
+
+    const missions = {
+      1: {
+        title: "Mission 1: Variables",
+        starter: 'let name = "ByteRush";',
+        success: "VARIABLE CREATED.",
+        bytebot: 'Create a variable named <span class="highlight">"name"</span> and set it to <span class="highlight">"ByteRush"</span>.',
+        hint1: 'Use let to create a variable.',
+        hint2: 'Final answer should look like: let name = "ByteRush";',
+        requiredParts: ["let", "name", "=", '"ByteRush"', ";"],
+        check: function(code) {
+          return code === 'letname="byterush";';
+        }
+      },
+
+      2: {
+        title: "Mission 2: Functions",
+        starter: 'function greet() {\n  return "Hello";\n}',
+        success: "FUNCTION ONLINE.",
+        bytebot: 'Create a function named <span class="highlight">"greet"</span> that returns <span class="highlight">"Hello"</span>.',
+        hint1: 'A function uses function name() { }.',
+        hint2: 'Final answer should include: function greet() { return "Hello"; }',
+        requiredParts: ["function", "greet", "return", '"Hello"'],
+        check: function(code) {
+          return code.includes("functiongreet(){return\"hello\";}");
+        }
+      },
+
+      3: {
+        title: "Mission 3: Events",
+        starter: 'button.addEventListener("click", function() {\n  message = "Clicked!";\n});',
+        success: "CLICK EVENT ACTIVATED.",
+        bytebot: 'Create a click event that changes the message to <span class="highlight">"Clicked!"</span>.',
+        hint1: 'Use addEventListener with "click".',
+        hint2: 'Your code should include addEventListener("click"... and "Clicked!".',
+        requiredParts: ["addEventListener", '"click"', '"Clicked!"'],
+        check: function(code) {
+          return code.includes("addeventlistener(\"click\"") && code.includes("\"clicked!\"");
+        }
+      },
+
+      4: {
+        title: "Mission 4: Conditions",
+        starter: 'if (score > 5) {\n  result = "You win!";\n}',
+        success: "CONDITION CHECK PASSED.",
+        bytebot: 'Use an if statement to check if <span class="highlight">score is greater than 5</span>.',
+        hint1: 'Use if with score > 5.',
+        hint2: 'Final answer should include: if (score > 5) { result = "You win!"; }',
+        requiredParts: ["if", "score", ">", "5", '"You win!"'],
+        check: function(code) {
+          return code.includes("if(score>5){result=\"youwin!\";}");
+        }
+      },
+
+      5: {
+        title: "Mission 5: Loops",
+        starter: 'for (let i = 0; i < 3; i++) {\n  console.log(i);\n}',
+        success: "LOOP SYSTEM RUNNING.",
+        bytebot: 'Create a loop that counts from <span class="highlight">0 to 2</span>.',
+        hint1: 'Use a for loop.',
+        hint2: 'Final answer should include: for (let i = 0; i < 3; i++).',
+        requiredParts: ["for", "let", "i", "<", "3", "i++"],
+        check: function(code) {
+          return code.includes("for(leti=0;i<3;i++)");
+        }
+      },
+
+      6: {
+        title: "Mission 6: DOM Manipulation",
+        starter: 'document.getElementById("message").innerText = "Hello JS";',
+        success: "DOM UPDATED.",
+        bytebot: 'Use JavaScript to change page text to <span class="highlight">"Hello JS"</span>.',
+        hint1: 'Use document.getElementById.',
+        hint2: 'Final answer should include innerText = "Hello JS";',
+        requiredParts: ["document", "getElementById", "innerText", '"Hello JS"'],
+        check: function(code) {
+          return code.includes("document.getelementbyid(\"message\").innertext=\"hellojs\";");
+        }
+      },
+
+      7: {
+        title: "BOSS MODE: Interactive App",
+        starter:
+`let count = 0;
+
+function increaseCount() {
+  count++;
+  document.getElementById("message").innerText = count;
+}`,
+        boss: true,
+        success: "BOSS CLEARED: JAVASCRIPT CORE COMPLETE.",
+        bytebot: 'Final JS test. Create a counter using <span class="highlight">count</span>, a function, and <span class="highlight">innerText</span>.',
+        hint1: 'You need a count variable and a function.',
+        hint2: 'Use count++ and innerText to update the page.',
+        requiredParts: ["let", "count", "function", "count++", "innerText"],
+        check: function(code) {
+          const hasCount = code.includes("letcount=0;");
+          const hasFunction = code.includes("functionincreasecount()");
+          const hasIncrease = code.includes("count++");
+          const hasInnerText = code.includes("innertext");
+
+          return hasCount && hasFunction && hasIncrease && hasInnerText;
+        }
+      }
+    };
+
+    function loadMission() {
+      const mission = missions[level];
+
+      attempts = 0;
+      lastWarningMessage = "";
+
+      document.getElementById("result").innerText = "";
+      document.getElementById("hint").innerText = "";
+      document.getElementById("warning").innerText = "";
+
+      if (!mission) {
+        document.getElementById("mission-title").innerText = "JS CORE COMPLETE!";
+        document.getElementById("bytebot-message").innerText = "You completed JavaScript Core. Head back to Mission Control.";
+        document.getElementById("code").value = 'console.log("JS Core Complete!");';
+        updatePreview();
+        return;
+      }
+
+      document.getElementById("mission-title").innerText = mission.title;
+      document.getElementById("bytebot-message").innerHTML = mission.bytebot;
+      document.getElementById("code").value = mission.starter;
+
+      updatePreview();
+    }
+
+    function normalize(input) {
+      return input.replace(/\s+/g, "").toLowerCase();
+    }
+
+    function setWarning(message) {
+      const warning = document.getElementById("warning");
+      warning.innerText = message;
+
+      if (message && message !== lastWarningMessage) {
+        playMistake();
+      }
+
+      lastWarningMessage = message;
+    }
+
+    function checkSyntaxWarnings(rawCode) {
+      const mission = missions[level];
+
+      if (!mission || rawCode.trim().length === 0) {
+        setWarning("");
+        return;
+      }
+
+      const code = rawCode.trim();
+      const normalized = normalize(code);
+
+      if (mission.requiredParts) {
+        for (let i = 0; i < mission.requiredParts.length; i++) {
+          const part = normalize(mission.requiredParts[i]);
+
+          if (!normalized.includes(part)) {
+            setWarning("⚠️ Uh-oh, you removed this part: " + mission.requiredParts[i] + " — add it back!");
+            return;
+          }
+        }
+      }
+
+      if ((code.includes("{") && !code.includes("}")) || (!code.includes("{") && code.includes("}"))) {
+        setWarning("⚠️ Uh-oh, your curly braces { } are not balanced.");
+        return;
+      }
+
+      if (code.includes("(") && !code.includes(")")) {
+        setWarning("⚠️ Uh-oh, your parentheses ( ) are not balanced.");
+        return;
+      }
+
+      setWarning("");
+    }
+
+    function updatePreview() {
+      const rawCode = document.getElementById("code").value;
+      const code = normalize(rawCode);
+
+      const previewMessage = document.getElementById("preview-message");
+      const outputText = document.getElementById("output-text");
+
+      if (level === 1 && code.includes('letname="byterush";')) {
+        previewMessage.innerText = "Variable created:";
+        outputText.innerText = "name = ByteRush";
+      } else if (level === 2 && code.includes("functiongreet(){return\"hello\";}")) {
+        previewMessage.innerText = "Function output:";
+        outputText.innerText = "Hello";
+      } else if (level === 3 && code.includes("addeventlistener(\"click\"") && code.includes("\"clicked!\"")) {
+        previewMessage.innerText = "Event ready:";
+        outputText.innerText = "Click event created!";
+      } else if (level === 4 && code.includes("if(score>5){result=\"youwin!\";}")) {
+        previewMessage.innerText = "Condition result:";
+        outputText.innerText = "You win!";
+      } else if (level === 5 && code.includes("for(leti=0;i<3;i++)")) {
+        previewMessage.innerText = "Loop output:";
+        outputText.innerText = "0, 1, 2";
+      } else if (level === 6 && code.includes("document.getelementbyid(\"message\").innertext=\"hellojs\";")) {
+        previewMessage.innerText = "DOM text updated:";
+        outputText.innerText = "Hello JS";
+      } else if (level === 7 && code.includes("letcount=0;") && code.includes("count++") && code.includes("innertext")) {
+        previewMessage.innerText = "Counter app ready:";
+        outputText.innerText = "0 → 1 → 2";
+      } else {
+        previewMessage.innerText = "Your result will appear here.";
+        outputText.innerText = "Waiting for correct code...";
+      }
+
+      checkSyntaxWarnings(rawCode);
+    }
+
+    function checkCode() {
+      const rawCode = document.getElementById("code").value;
+      const code = normalize(rawCode);
+      const mission = missions[level];
+
+      updatePreview();
+
+      if (!mission) {
+        document.getElementById("result").innerText = "🏆 JS Core already complete.";
+        return;
+      }
+
+      if (mission.check(code)) {
+        const reward = mission.boss ? 50 : 10;
+        success(reward, level + 1, mission.success);
+      } else {
+        playError();
+        attempts++;
+        showHint(mission);
+        document.getElementById("result").innerText = "❌ JS system not restored yet.";
+      }
+    }
+
+    function showHint(mission) {
+      const hint = document.getElementById("hint");
+
+      if (attempts === 1) {
+        hint.innerText = "Hint 1: " + mission.hint1;
+      } else if (attempts >= 2) {
+        hint.innerText = "Hint 2: " + mission.hint2;
+      }
+    }
+
+    function success(xpGain, nextLevel, message) {
+      const isBossComplete = nextLevel > 7;
+      const redirectDelay = isBossComplete ? 5800 : 1200;
+
+      document.getElementById("result").innerText = "✅ " + message + " +" + xpGain + " XP";
+      document.getElementById("hint").innerText = "";
+      setWarning("");
+
+      playSuccess();
+
+      if (isBossComplete) {
+        setTimeout(function () {
+          playUnlock();
+        }, 300);
+      }
+
+      document.body.classList.add("success-flash");
+
+      setTimeout(function () {
+        document.body.classList.remove("success-flash");
+      }, 400);
+
+      showXPPop(xpGain);
+      addXP(xpGain);
+
+      level = nextLevel;
+      localStorage.setItem("js-level", level);
+
+      setTimeout(function () {
+        window.location.href = "js-map.html";
+      }, redirectDelay);
+    }
+
+    function addXP(points) {
+      let xp = parseInt(localStorage.getItem("xp")) || 0;
+      xp += points;
+      localStorage.setItem("xp", xp);
+    }
+
+    function showXPPop(amount) {
+      const xp = document.createElement("div");
+      xp.className = "xp-pop";
+      xp.innerText = "+" + amount + " XP";
+
+      document.body.appendChild(xp);
+
+      setTimeout(function () {
+        xp.remove();
+      }, 1000);
+    }
+
+    function playSound(id) {
+      const sound = document.getElementById(id);
+
+      if (!sound) return;
+
+      sound.currentTime = 0;
+
+      sound.play().catch(function () {
+        console.log("Sound blocked or missing:", id);
+      });
+    }
+
+    function playSuccess() {
+      playSound("success-sound");
+    }
+
+    function playError() {
+      playSound("error-sound");
+    }
+
+    function playUnlock() {
+      playSound("unlock-sound");
+    }
+
+    function playMistake() {
+      playSound("mistake-sound");
+    }
+
+    document.getElementById("code").addEventListener("input", updatePreview);
+
+    loadMission();
+  </script>
+
+</body>
+</html>
