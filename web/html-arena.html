@@ -297,6 +297,76 @@ button:disabled {
   }
 }
 
+.mission-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 8, 15, 0.88);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 18px;
+}
+
+.mission-modal.show {
+  display: flex;
+}
+
+.mission-box {
+  width: min(520px, 100%);
+  background: var(--panel);
+  border: 2px solid var(--green);
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 0 35px rgba(57, 255, 90, 0.25);
+  animation: popupIn 0.25s ease-out;
+}
+
+@keyframes popupIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.mission-box h2 {
+  margin: 0 0 14px;
+  color: var(--green);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.mission-box p {
+  margin: 0 0 14px;
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.learned-box {
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  padding: 12px;
+  margin: 14px 0;
+}
+
+.learned-box p {
+  color: var(--muted);
+  font-size: 11px;
+  margin: 0;
+}
+
+.modal-next-btn {
+  margin-top: 10px;
+  background: var(--green);
+  color: var(--bg);
+  padding: 9px 14px;
+}
+
 @media (max-width: 950px) {
   body {
     padding: 8px;
@@ -423,6 +493,23 @@ button:disabled {
   </section>
 
 </main>
+
+<div class="mission-modal" id="mission-modal">
+  <div class="mission-box">
+    <h2 class="pixel">MISSION COMPLETED</h2>
+
+    <p id="modal-success-text">Great work.</p>
+
+    <div class="learned-box">
+      <div class="label">WHAT YOU LEARNED</div>
+      <p id="modal-learned-text"></p>
+    </div>
+
+    <button id="modal-next-btn" class="modal-next-btn" type="button">
+      Next Mission
+    </button>
+  </div>
+</div>
 
 <audio id="success-sound" src="./sounds/success.mp3" preload="auto"></audio>
 <audio id="error-sound" src="./sounds/error.mp3" preload="auto"></audio>
@@ -579,6 +666,11 @@ const hintBtn = document.getElementById("hint-btn");
 const nextBtn = document.getElementById("next-btn");
 const backBtn = document.getElementById("back-btn");
 
+const missionModal = document.getElementById("mission-modal");
+const modalSuccessText = document.getElementById("modal-success-text");
+const modalLearnedText = document.getElementById("modal-learned-text");
+const modalNextBtn = document.getElementById("modal-next-btn");
+
 function normalize(input) {
   return input.replace(/\s+/g, "").toLowerCase();
 }
@@ -604,6 +696,8 @@ function loadMission() {
   lives = 3;
   missionComplete = false;
   lastWarningMessage = "";
+
+  missionModal.classList.remove("show");
 
   updateStats();
 
@@ -704,7 +798,25 @@ function checkSyntaxWarnings(rawCode) {
 
 function updatePreview() {
   const code = codeBox.value;
+
   previewEl.srcdoc = code;
+
+  previewEl.onload = function () {
+    const iframeDoc =
+      previewEl.contentDocument || previewEl.contentWindow.document;
+
+    iframeDoc.body.style.background = "#02060B";
+    iframeDoc.body.style.color = "white";
+    iframeDoc.body.style.fontFamily = "Arial";
+    iframeDoc.body.style.padding = "12px";
+
+    const allElements = iframeDoc.body.querySelectorAll("*");
+
+    allElements.forEach(function (el) {
+      el.style.color = "white";
+    });
+  };
+
   checkSyntaxWarnings(code);
 }
 
@@ -781,6 +893,19 @@ function manualHint() {
   }
 }
 
+function showMissionPopup(successMessage, learnedMessage) {
+  modalSuccessText.innerText = successMessage;
+  modalLearnedText.innerText = learnedMessage;
+
+  if (level > 7) {
+    modalNextBtn.innerText = "Back to Map";
+  } else {
+    modalNextBtn.innerText = "Next Mission";
+  }
+
+  missionModal.classList.add("show");
+}
+
 function completeMission(xpGain, message, learnedMessage) {
   missionComplete = true;
 
@@ -820,6 +945,8 @@ function completeMission(xpGain, message, learnedMessage) {
   localStorage.setItem("html-level", level);
 
   updateStats();
+
+  showMissionPopup(message, learnedMessage);
 }
 
 function goNextMission() {
@@ -888,9 +1015,16 @@ function playMistake() {
 runBtn.addEventListener("click", checkCode);
 hintBtn.addEventListener("click", manualHint);
 nextBtn.addEventListener("click", goNextMission);
+
+modalNextBtn.addEventListener("click", function () {
+  missionModal.classList.remove("show");
+  goNextMission();
+});
+
 backBtn.addEventListener("click", function () {
   window.location.href = "html-map.html";
 });
+
 codeBox.addEventListener("input", updatePreview);
 
 loadMission();

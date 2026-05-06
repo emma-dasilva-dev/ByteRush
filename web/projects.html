@@ -14,10 +14,12 @@
   --bg: #03080F;
   --panel: #050B12;
   --panel2: #07111D;
+  --dark: #02060B;
   --text: #E8FFF0;
   --muted: #A8C9B1;
-  --line: rgba(57, 255, 90, 0.35);
+  --line: rgba(57,255,90,0.35);
   --yellow: #FACC15;
+  --orange: #FF9F3B;
 }
 
 * {
@@ -29,117 +31,61 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: Consolas, Monaco, monospace;
-  padding: 12px;
+  padding: 14px;
   min-height: 100vh;
-  line-height: 1.35;
   font-size: 13px;
+  overflow-x: hidden;
 }
 
-h1, h2, h3, button, .project-title, .badge-label {
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(57,255,90,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57,255,90,0.025) 1px, transparent 1px);
+  background-size: 38px 38px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+h1, h2, h3, button, .project-title, .badge-label, .terminal-label {
   font-family: 'Press Start 2P', monospace;
 }
 
 .lab {
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
 }
 
-.topbar,
-.panel {
+.topbar {
   border: 2px solid var(--line);
   background: var(--panel);
-  padding: 11px;
-}
-
-.topbar {
-  margin-bottom: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
   display: flex;
   justify-content: space-between;
-  gap: 12px;
   align-items: center;
+  gap: 12px;
 }
 
 h1 {
   color: var(--green);
-  font-size: 15px;
-  margin: 0 0 5px;
+  font-size: 17px;
+  margin: 0 0 6px;
 }
 
 .desc {
   color: var(--muted);
   margin: 0;
-  font-size: 12px;
-}
-
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-}
-
-.project-card {
-  border: 1px solid var(--line);
-  background: #02060B;
-  padding: 10px;
-  cursor: pointer;
-  min-height: 135px;
-}
-
-.project-card:hover {
-  border-color: var(--green);
-}
-
-.project-title {
-  color: var(--green);
-  font-size: 7px;
-  margin-bottom: 6px;
-  line-height: 1.6;
-}
-
-.project-card p {
-  color: var(--muted);
-  font-size: 11px;
-  margin: 5px 0;
-}
-
-.badge-label {
-  display: inline-block;
-  border: 1px solid var(--line);
-  color: var(--green);
-  padding: 4px 6px;
-  font-size: 6px;
-  margin-top: 5px;
-}
-
-.builder {
-  display: none;
-}
-
-.builder-header {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.builder-header h2 {
-  color: var(--green);
-  font-size: 11px;
-  margin: 0;
-}
-
-.mode-buttons {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+  font-size: 13px;
 }
 
 button {
   background: var(--green);
   color: var(--bg);
   border: none;
-  padding: 9px 10px;
+  padding: 10px 12px;
   cursor: pointer;
   font-size: 7px;
 }
@@ -160,30 +106,184 @@ button:hover {
   opacity: 0.85;
 }
 
-.work-layout {
+.projects-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
 }
 
-textarea {
-  width: 100%;
-  height: 255px;
-  background: #02060B;
-  color: var(--green);
+.project-card {
   border: 1px solid var(--line);
-  padding: 11px;
-  font-size: 13px;
-  resize: vertical;
-  outline: none;
-  font-family: Consolas, Monaco, monospace;
+  background: linear-gradient(180deg, #07111D, #02060B);
+  padding: 12px;
+  cursor: pointer;
+  min-height: 245px;
+  position: relative;
+  transition: 0.15s ease;
 }
 
-iframe {
-  width: 100%;
-  height: 255px;
-  background: white;
+.project-card:hover {
+  border-color: var(--green);
+  transform: translateY(-2px);
+}
+
+.project-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.project-icon {
+  color: var(--green);
+  font-size: 17px;
+}
+
+.project-title {
+  color: var(--green);
+  font-size: 8px;
+  line-height: 1.7;
+}
+
+.project-card p {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 7px 0;
+  line-height: 1.45;
+}
+
+.project-story {
+  color: var(--text);
+  font-size: 12px;
+  min-height: 42px;
+}
+
+.badge-label {
+  display: inline-block;
   border: 1px solid var(--line);
+  color: var(--green);
+  padding: 5px 7px;
+  font-size: 6px;
+  margin-top: 5px;
+}
+
+.easy { color: var(--green); border-color: var(--green); }
+.medium { color: var(--yellow); border-color: var(--yellow); }
+.hard { color: var(--orange); border-color: var(--orange); }
+.boss { color: var(--red); border-color: var(--red); }
+
+.project-preview {
+  border: 1px solid var(--line);
+  background: var(--dark);
+  height: 58px;
+  margin: 10px 0;
+  padding: 8px;
+  overflow: hidden;
+}
+
+.fake-avatar {
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--green);
+  margin: 0 auto 5px;
+}
+
+.fake-line {
+  height: 5px;
+  background: rgba(57,255,90,0.45);
+  margin: 4px auto;
+}
+
+.fake-line.short { width: 45%; }
+.fake-line.mid { width: 70%; }
+.fake-line.long { width: 90%; }
+
+.fake-button {
+  border: 1px solid var(--green);
+  width: 52px;
+  height: 13px;
+  margin: 6px auto 0;
+}
+
+.fake-counter {
+  font-size: 22px;
+  color: var(--green);
+  text-align: center;
+}
+
+.fake-quiz-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.fake-answer {
+  border: 1px solid var(--line);
+  height: 14px;
+}
+
+.fake-portfolio {
+  display: grid;
+  grid-template-columns: 0.7fr 1.3fr;
+  gap: 7px;
+  height: 100%;
+}
+
+.fake-side,
+.fake-main {
+  border: 1px solid var(--line);
+}
+
+.project-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  color: var(--text);
+  font-size: 12px;
+}
+
+.status-bar {
+  margin-top: 8px;
+  height: 7px;
+  border: 1px solid var(--line);
+  background: #02060B;
+  overflow: hidden;
+}
+
+.status-fill {
+  height: 100%;
+  background: var(--green);
+  width: 0%;
+}
+
+.builder {
+  display: none;
+}
+
+.builder-header {
+  border: 2px solid var(--line);
+  background: var(--panel);
+  padding: 12px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.builder-header h2 {
+  color: var(--green);
+  font-size: 12px;
+  margin: 0;
+}
+
+.mode-buttons {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
 }
 
 .info-grid {
@@ -194,10 +294,17 @@ iframe {
 }
 
 .bytebot,
-.checklist {
+.checklist,
+.panel,
+.result {
   border: 1px solid var(--line);
+  background: var(--panel);
+  padding: 11px;
+}
+
+.bytebot,
+.checklist {
   background: var(--panel2);
-  padding: 10px;
 }
 
 .bytebot h3,
@@ -205,13 +312,14 @@ iframe {
 .panel h3 {
   color: var(--green);
   font-size: 8px;
-  margin: 0 0 6px;
+  margin: 0 0 7px;
 }
 
 .bytebot p {
   color: var(--muted);
   margin: 0;
   font-size: 12px;
+  line-height: 1.5;
 }
 
 .check-item {
@@ -224,26 +332,73 @@ iframe {
   color: var(--green);
 }
 
+.work-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+textarea {
+  width: 100%;
+  height: 260px;
+  background: var(--dark);
+  color: var(--green);
+  border: 1px solid var(--line);
+  padding: 12px;
+  font-size: 13px;
+  resize: vertical;
+  outline: none;
+  font-family: Consolas, Monaco, monospace;
+}
+
+textarea:focus {
+  border-color: var(--green);
+}
+
+.browser-frame {
+  border: 1px solid var(--line);
+  background: var(--dark);
+}
+
+.browser-top {
+  height: 28px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 9px;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--green);
+}
+
+.browser-title {
+  color: var(--muted);
+  font-size: 11px;
+  margin-left: 6px;
+}
+
+iframe {
+  width: 100%;
+  height: 232px;
+  background: white;
+  border: none;
+  display: block;
+}
+
 .result {
   margin-top: 10px;
-  border: 1px solid var(--line);
   background: var(--panel2);
-  padding: 10px;
   color: var(--muted);
   font-size: 13px;
 }
 
-.success {
-  color: var(--green);
-}
-
-.error {
-  color: var(--red);
-}
-
-.warning {
-  color: var(--yellow);
-}
+.success { color: var(--green); }
+.error { color: var(--red); }
+.warning { color: var(--yellow); }
 
 #completion-overlay {
   position: fixed;
@@ -267,6 +422,16 @@ iframe {
 .overlay-small {
   color: var(--yellow);
   font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.score-box {
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  padding: 12px;
+  color: var(--text);
+  margin-top: 12px;
+  min-width: 280px;
 }
 
 @media (max-width: 1000px) {
@@ -295,7 +460,7 @@ iframe {
   <section class="topbar">
     <div>
       <h1>Projects Lab</h1>
-      <p class="desc">Build real mini-projects using your coding skills.</p>
+      <p class="desc">Build real mini-projects inside the ByteRush workshop.</p>
     </div>
 
     <button class="secondary" onclick="window.location.href='dashboard.html'">Go Back to Dashboard</button>
@@ -340,7 +505,16 @@ iframe {
 
       <div class="panel">
         <h3>LIVE PREVIEW</h3>
-        <iframe id="preview"></iframe>
+
+        <div class="browser-frame">
+          <div class="browser-top">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="browser-title">project-preview.html</span>
+          </div>
+          <iframe id="preview"></iframe>
+        </div>
       </div>
     </div>
 
@@ -351,19 +525,25 @@ iframe {
 </main>
 
 <div id="completion-overlay">
-  <div class="overlay-text">PROJECT COMPLETE</div>
+  <div class="overlay-text">SYSTEM COMPLETE</div>
   <div class="overlay-small" id="overlay-reward"></div>
+  <div class="score-box" id="score-box"></div>
 </div>
 
 <script>
 const projects = [
   {
     id: "profile-card",
+    icon: "</>",
     title: "Profile Card",
     difficulty: "EASY",
+    difficultyClass: "easy",
     reward: 80,
     badge: "Profile Builder",
+    type: "FRONTEND",
+    story: "An underground coder needs a digital identity card.",
     description: "Build a profile card using HTML and CSS.",
+    previewType: "profile",
     guidedSteps: [
       "<h1>Your Name</h1>",
       "\n<p>Your short bio goes here.</p>",
@@ -396,11 +576,16 @@ body {
 
   {
     id: "click-counter",
+    icon: "++",
     title: "Click Counter",
     difficulty: "MEDIUM",
+    difficultyClass: "medium",
     reward: 120,
     badge: "Click Master",
+    type: "INTERACTIVE",
+    story: "A power generator needs a working click monitor.",
     description: "Build a button that increases a number.",
+    previewType: "counter",
     starter:
 `<h1>Click Counter</h1>
 <p>Count: <span id="count">0</span></p>
@@ -426,11 +611,16 @@ function increase() {
 
   {
     id: "mini-quiz",
+    icon: "?",
     title: "Mini Quiz",
     difficulty: "HARD",
+    difficultyClass: "hard",
     reward: 150,
     badge: "Quiz Creator",
+    type: "LOGIC",
+    story: "A security checkpoint needs a quiz verification system.",
     description: "Build a quiz that checks an answer.",
+    previewType: "quiz",
     starter:
 `<h1>Mini Quiz</h1>
 <p>What does HTML stand for?</p>
@@ -461,11 +651,16 @@ function checkAnswer(answer) {
 
   {
     id: "boss-portfolio",
+    icon: "★",
     title: "Boss Portfolio",
     difficulty: "BOSS",
+    difficultyClass: "boss",
     reward: 250,
     badge: "Boss Developer",
+    type: "BOSS BUILD",
+    story: "Build your final developer identity page.",
     description: "Build a mini portfolio with HTML, CSS, and JS.",
+    previewType: "portfolio",
     starter:
 `<h1>Your Name</h1>
 <p>I am learning to code with ByteRush.</p>
@@ -511,16 +706,33 @@ function renderProjects() {
 
   projects.forEach(project => {
     const complete = localStorage.getItem("project-" + project.id + "-complete") === "true";
+    const progress = getSavedProgress(project);
 
     const card = document.createElement("div");
     card.className = "project-card";
 
     card.innerHTML = `
-      <div class="project-title">${project.title}</div>
-      <p>${project.description}</p>
-      <span class="badge-label">${project.difficulty}</span>
-      <p>${complete ? "Completed" : "Available"}</p>
-      <p>${project.reward} XP</p>
+      <div class="project-top">
+        <div>
+          <div class="project-title">${project.title}</div>
+          <span class="badge-label ${project.difficultyClass}">${project.difficulty}</span>
+          <span class="badge-label">${project.type}</span>
+        </div>
+        <div class="project-icon">${project.icon}</div>
+      </div>
+
+      ${getMiniPreview(project.previewType)}
+
+      <p class="project-story">${project.story}</p>
+
+      <div class="status-bar">
+        <div class="status-fill" style="width:${progress}%"></div>
+      </div>
+
+      <div class="project-footer">
+        <span>${complete ? "Completed" : progress > 0 ? "In Progress" : "Available"}</span>
+        <span>${project.reward} XP</span>
+      </div>
     `;
 
     card.onclick = function() {
@@ -531,12 +743,64 @@ function renderProjects() {
   });
 }
 
+function getMiniPreview(type) {
+  if (type === "profile") {
+    return `
+      <div class="project-preview">
+        <div class="fake-avatar"></div>
+        <div class="fake-line mid"></div>
+        <div class="fake-line short"></div>
+        <div class="fake-button"></div>
+      </div>
+    `;
+  }
+
+  if (type === "counter") {
+    return `
+      <div class="project-preview">
+        <div class="fake-counter">07</div>
+        <div class="fake-button"></div>
+      </div>
+    `;
+  }
+
+  if (type === "quiz") {
+    return `
+      <div class="project-preview">
+        <div class="fake-line long"></div>
+        <div class="fake-quiz-row">
+          <div class="fake-answer"></div>
+          <div class="fake-answer"></div>
+        </div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="project-preview">
+      <div class="fake-portfolio">
+        <div class="fake-side"></div>
+        <div class="fake-main"></div>
+      </div>
+    </div>
+  `;
+}
+
+function getSavedProgress(project) {
+  const savedCode = (localStorage.getItem("project-" + project.id + "-code") || "").toLowerCase();
+
+  if (!savedCode) return 0;
+
+  const passed = project.requirements.filter(req => req.check(savedCode)).length;
+  return Math.round((passed / project.requirements.length) * 100);
+}
+
 function openProject(id) {
   activeProject = projects.find(project => project.id === id);
   guidedIndex = parseInt(localStorage.getItem("project-" + id + "-guided-index")) || 0;
 
   document.getElementById("project-title").innerText = activeProject.title;
-  document.getElementById("instruction").innerText = getInstruction();
+  document.getElementById("instruction").innerText = "ByteBot: " + activeProject.story + " Build it step-by-step. Use the checklist. Click Next Guided Step if you need help.";
 
   const savedCode = localStorage.getItem("project-" + id + "-code");
   codeBox.value = savedCode || activeProject.starter;
@@ -548,20 +812,16 @@ function openProject(id) {
   renderChecklist();
 }
 
-function getInstruction() {
-  return "Build the project step-by-step. Use the checklist and click Next Guided Step when you need help.";
-}
-
 function addGuidedStep() {
   if (!activeProject) return;
 
   if (activeProject.guidedSteps.length === 0) {
-    document.getElementById("result").innerHTML = "<span class='warning'>This project does not need guided steps. Use the checklist to finish it.</span>";
+    document.getElementById("result").innerHTML = "<span class='warning'>ByteBot: This build is challenge-based. Use the checklist and test your skills.</span>";
     return;
   }
 
   if (guidedIndex >= activeProject.guidedSteps.length) {
-    document.getElementById("result").innerHTML = "<span class='success'>All guided steps are already added.</span>";
+    document.getElementById("result").innerHTML = "<span class='success'>ByteBot: All guided steps are already added. Now check the project.</span>";
     return;
   }
 
@@ -576,7 +836,7 @@ function addGuidedStep() {
 
   runProject();
 
-  document.getElementById("result").innerHTML = "<span class='success'>Next guided step added.</span>";
+  document.getElementById("result").innerHTML = "<span class='success'>ByteBot: Good. Next build piece added.</span>";
 }
 
 function runProject() {
@@ -620,8 +880,10 @@ function checkProject() {
 
   if (passed === total) {
     completeProject();
+  } else if (passed >= Math.ceil(total / 2)) {
+    result.innerHTML = `<span class="warning">ByteBot: Close. ${passed}/${total} systems are working. Finish the remaining checklist items.</span>`;
   } else {
-    result.innerHTML = `<span class="error">Not complete yet. ${passed}/${total} requirements passed.</span>`;
+    result.innerHTML = `<span class="error">ByteBot: Build incomplete. ${passed}/${total} systems are working.</span>`;
   }
 }
 
@@ -645,9 +907,9 @@ function completeProject() {
     localStorage.setItem(completedKey, "true");
 
     showOverlay(activeProject.badge, activeProject.reward);
-    result.innerHTML = `<span class="success">Project complete! +${activeProject.reward} XP. Badge unlocked: ${activeProject.badge}</span>`;
+    result.innerHTML = `<span class="success">ByteBot: Project complete. +${activeProject.reward} XP. Badge unlocked: ${activeProject.badge}</span>`;
   } else {
-    result.innerHTML = `<span class="success">Project already completed. Badge: ${activeProject.badge}</span>`;
+    result.innerHTML = `<span class="success">ByteBot: Project already completed. Badge: ${activeProject.badge}</span>`;
   }
 
   renderProjects();
@@ -656,13 +918,25 @@ function completeProject() {
 function showOverlay(badge, xp) {
   const overlay = document.getElementById("completion-overlay");
   const reward = document.getElementById("overlay-reward");
+  const scoreBox = document.getElementById("score-box");
 
   reward.innerText = "Badge unlocked: " + badge + " | +" + xp + " XP";
+  scoreBox.innerHTML = `
+    STYLE: ${randomScore()}<br>
+    LOGIC: ${randomScore()}<br>
+    CLEAN CODE: ${randomScore()}<br>
+    RANK: A
+  `;
+
   overlay.style.display = "flex";
 
   setTimeout(function() {
     overlay.style.display = "none";
-  }, 2600);
+  }, 3000);
+}
+
+function randomScore() {
+  return Math.floor(Math.random() * 16) + 85;
 }
 
 function resetProject() {
@@ -677,7 +951,7 @@ function resetProject() {
     codeBox.value = activeProject.starter;
 
     runProject();
-    document.getElementById("result").innerText = "Project reset.";
+    document.getElementById("result").innerText = "ByteBot: Project reset. Start rebuilding.";
   }
 }
 
