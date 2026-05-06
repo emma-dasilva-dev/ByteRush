@@ -4,10 +4,11 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>HTML Arena | ByteRush</title>
+
 <link rel="stylesheet" href="arcade-theme.css">
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Press+Start+2P&display=swap');
 
 :root {
   --green: #39FF5A;
@@ -15,9 +16,9 @@
   --bg: #03080F;
   --panel: #050B12;
   --panel2: #07111D;
-  --text: #D6FFE0;
-  --muted: #8FAF9A;
-  --line: rgba(57, 255, 90, 0.35);
+  --text: #E6FFE9;
+  --muted: rgba(230, 255, 233, 0.68);
+  --line: rgba(57, 255, 90, 0.28);
   --yellow: #FACC15;
 }
 
@@ -29,173 +30,200 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: Consolas, Monaco, monospace;
-  padding: 28px;
-  line-height: 1.6;
+  font-family: "IBM Plex Mono", monospace;
+  padding: 10px;
+  line-height: 1.45;
 }
 
 .arena {
-  max-width: 1250px;
+  max-width: 1060px;
   margin: 0 auto;
 }
 
-h1, h2, h3, button {
-  font-family: 'Press Start 2P', monospace;
+.pixel {
+  font-family: "Press Start 2P", monospace;
 }
 
-.topbar {
-  border: 2px solid var(--line);
+.topbar,
+.panel {
+  border: 1px solid var(--line);
   background: var(--panel);
-  padding: 22px;
-  margin-bottom: 20px;
+  padding: 10px;
+  margin-bottom: 8px;
 }
 
 h1 {
+  margin: 0 0 5px;
   color: var(--green);
-  font-size: 22px;
-  margin: 0 0 12px;
-  letter-spacing: 1px;
+  font-size: 15px;
+  line-height: 1.4;
 }
 
 .desc {
   color: var(--muted);
-  font-size: 15px;
+  font-size: 11px;
   margin: 0;
 }
 
-#mission-title {
-  margin-top: 18px;
-  color: var(--green);
-  font-size: 13px;
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 7px;
+  margin-bottom: 8px;
 }
 
-.panel {
-  border: 2px solid var(--line);
+.stat-box {
+  border: 1px solid var(--line);
   background: var(--panel);
-  padding: 18px;
+  padding: 7px;
 }
 
-.bytebot {
-  margin-bottom: 18px;
+.stat-box h3,
+.label,
+.panel-title {
+  font-family: "Press Start 2P", monospace;
+  font-size: 6px;
+  line-height: 1.4;
+  color: var(--green);
+  margin: 0 0 5px;
+}
+
+.stat-box p {
+  margin: 0;
+  font-size: 11px;
+  color: var(--text);
+}
+
+.learning-panel {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  gap: 10px;
   background: var(--panel2);
 }
 
-.bytebot h2,
-.editor-panel h2,
-.preview-panel h2,
-.feedback h2 {
+.mission-name {
   color: var(--green);
-  font-size: 12px;
-  margin: 0 0 14px;
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 1.45;
 }
 
-.bytebot p {
-  font-size: 15px;
+.learning-copy h2 {
+  margin: 0 0 4px;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.learning-copy p {
   margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
 }
 
 .highlight {
   color: var(--green);
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .arena-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 18px;
+  gap: 8px;
 }
 
 textarea {
   width: 100%;
-  min-height: 300px;
+  min-height: 210px;
   resize: vertical;
   background: #02060B;
   color: var(--green);
   border: 1px solid var(--line);
-  padding: 16px;
-  font-size: 15px;
-  line-height: 1.5;
+  padding: 9px;
+  font-size: 12px;
+  line-height: 1.45;
   outline: none;
-  font-family: Consolas, Monaco, monospace;
+  font-family: "IBM Plex Mono", monospace;
 }
 
 textarea:focus {
   border-color: var(--green);
 }
 
+.preview-note {
+  color: var(--muted);
+  font-size: 10px;
+  margin: 0 0 6px;
+}
+
 .preview-frame-wrap {
   background: #02060B;
   border: 1px solid var(--line);
-  min-height: 300px;
-  padding: 14px;
+  min-height: 210px;
+  padding: 8px;
 }
 
 iframe {
   width: 100%;
-  min-height: 270px;
+  min-height: 190px;
   border: none;
-  background: white;
+  background: #02060B;
 }
 
 .buttons {
   display: flex;
-  gap: 10px;
+  gap: 6px;
   flex-wrap: wrap;
-  margin-top: 14px;
+  margin-top: 8px;
 }
 
 button {
-  background: var(--green);
-  color: #03080F;
-  border: none;
-  padding: 13px 16px;
-  cursor: pointer;
-  font-size: 10px;
-}
-
-button.secondary {
+  border: 1px solid var(--green);
   background: transparent;
   color: var(--green);
-  border: 1px solid var(--green);
-}
-
-button.danger {
-  background: transparent;
-  color: var(--red);
-  border: 1px solid var(--red);
+  padding: 7px 10px;
+  cursor: pointer;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  font-weight: 700;
 }
 
 button:hover {
-  opacity: 0.85;
+  background: rgba(57, 255, 90, 0.1);
 }
 
-.feedback {
-  margin-top: 18px;
+button.primary {
+  background: var(--green);
+  color: var(--bg);
+}
+
+button.danger {
+  color: var(--red);
+  border-color: var(--red);
+}
+
+button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
 }
 
 .feedback-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 7px;
 }
 
 .feedback-card {
   background: var(--panel2);
   border: 1px solid var(--line);
-  padding: 14px;
-  min-height: 90px;
-}
-
-.label {
-  color: var(--green);
-  font-family: 'Press Start 2P', monospace;
-  font-size: 9px;
-  margin-bottom: 8px;
+  padding: 8px;
+  min-height: 68px;
 }
 
 .message {
   color: var(--muted);
-  font-size: 14px;
+  font-size: 10.5px;
+  line-height: 1.45;
 }
 
 .correct {
@@ -208,6 +236,10 @@ button:hover {
 
 .almost {
   color: var(--yellow);
+}
+
+.hidden {
+  display: none;
 }
 
 .success-flash {
@@ -247,8 +279,8 @@ button:hover {
   left: 50%;
   top: 58%;
   color: var(--green);
-  font-size: 22px;
-  font-weight: bold;
+  font-size: 16px;
+  font-weight: 700;
   pointer-events: none;
   animation: xpFloat 1s ease-out forwards;
   z-index: 9999;
@@ -261,22 +293,24 @@ button:hover {
   }
   100% {
     opacity: 0;
-    transform: translateX(-50%) translateY(-45px) scale(1.3);
+    transform: translateX(-50%) translateY(-45px) scale(1.2);
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 950px) {
   body {
-    padding: 16px;
+    padding: 8px;
   }
 
+  .stats-row,
   .arena-layout,
-  .feedback-grid {
+  .feedback-grid,
+  .learning-panel {
     grid-template-columns: 1fr;
   }
 
   h1 {
-    font-size: 18px;
+    font-size: 14px;
   }
 }
 </style>
@@ -287,31 +321,68 @@ button:hover {
 <main class="arena">
 
   <section class="topbar">
-    <h1>HTML Arena</h1>
-    <p class="desc">Learn how to build the structure of a webpage.</p>
-    <div id="mission-title"></div>
+    <h1 class="pixel">HTML Arena</h1>
+    <p class="desc">Build the structure of real webpages through guided coding missions.</p>
   </section>
 
-  <section class="panel bytebot">
-    <h2>BYTEBOT</h2>
-    <p id="bytebot-message"></p>
+  <section class="stats-row">
+    <div class="stat-box">
+      <h3>MISSION</h3>
+      <p><span id="mission-count">1</span> / 7</p>
+    </div>
+
+    <div class="stat-box">
+      <h3>XP</h3>
+      <p id="total-xp">0</p>
+    </div>
+
+    <div class="stat-box">
+      <h3>LIVES</h3>
+      <p id="lives">❤️❤️❤️</p>
+    </div>
+
+    <div class="stat-box">
+      <h3>ATTEMPTS</h3>
+      <p id="attempts">0</p>
+    </div>
+
+    <div class="stat-box">
+      <h3>STATUS</h3>
+      <p id="status">Active</p>
+    </div>
+  </section>
+
+  <section class="panel learning-panel">
+    <div>
+      <div class="label">CURRENT MISSION</div>
+      <div class="mission-name" id="mission-title">Mission loading...</div>
+    </div>
+
+    <div class="learning-copy">
+      <h2 id="skill-title">Skill loading...</h2>
+      <p id="bytebot-message">Mission instructions loading...</p>
+      <p id="why-message" style="margin-top: 6px;"></p>
+    </div>
   </section>
 
   <section class="arena-layout">
 
     <div class="panel editor-panel">
-      <h2>HTML EDITOR</h2>
-      <textarea id="code"></textarea>
+      <div class="panel-title">HTML EDITOR</div>
+
+      <textarea id="code" spellcheck="false"></textarea>
 
       <div class="buttons">
-        <button onclick="checkCode()">Run</button>
-        <button class="secondary" onclick="manualHint()">Hint</button>
-        <button class="danger" onclick="window.location.href='html-map.html'">Back to Map</button>
+        <button id="run-btn" class="primary" type="button">Run Code</button>
+        <button id="hint-btn" type="button">Hint</button>
+        <button id="next-btn" type="button" disabled>Next Mission</button>
+        <button id="back-btn" class="danger" type="button">Back to Map</button>
       </div>
     </div>
 
     <div class="panel preview-panel">
-      <h2>LIVE PAGE PREVIEW</h2>
+      <div class="panel-title">LIVE PAGE PREVIEW</div>
+      <p class="preview-note">This is what your webpage looks like.</p>
 
       <div class="preview-frame-wrap" id="preview-wrap">
         <iframe id="preview"></iframe>
@@ -321,7 +392,7 @@ button:hover {
   </section>
 
   <section class="panel feedback">
-    <h2>RESULTS / XP / HINTS</h2>
+    <div class="panel-title">RESULTS / XP / HINTS</div>
 
     <div class="feedback-grid">
       <div class="feedback-card">
@@ -343,6 +414,11 @@ button:hover {
         <div class="label">XP</div>
         <div class="message correct" id="xp-feedback">0 XP gained.</div>
       </div>
+
+      <div class="feedback-card">
+        <div class="label">LEARNED</div>
+        <div class="message" id="learned">Complete the mission to reveal what you learned.</div>
+      </div>
     </div>
   </section>
 
@@ -356,16 +432,20 @@ button:hover {
 <script>
 let level = parseInt(localStorage.getItem("html-level")) || 1;
 let attempts = 0;
+let lives = 3;
+let missionComplete = false;
 let lastWarningMessage = "";
 
 const missions = {
   1: {
     title: "Mission 1: Headings",
+    skill: "HTML Headings",
     starter: "<h1>write title here</h1>",
-    tag: "h1",
     requiredParts: ["<h1>", "</h1>"],
-    success: "SYSTEM RESTORED: Main title activated.",
+    success: "Main title activated.",
     bytebot: 'Replace <span class="highlight">"write title here"</span> with <span class="highlight">"Hello World"</span>.',
+    why: "Headings help organize a webpage and show what information is most important.",
+    learned: "You learned that <h1> creates the main heading of a webpage.",
     hint1: "Keep the <h1> and </h1> tags. Only replace the words inside.",
     hint2: "Final answer should look like: <h1>Hello World</h1>",
     check: function (code) {
@@ -375,11 +455,13 @@ const missions = {
 
   2: {
     title: "Mission 2: Paragraphs",
+    skill: "HTML Paragraphs",
     starter: "<p>write message here</p>",
-    tag: "p",
     requiredParts: ["<p>", "</p>"],
-    success: "MESSAGE SIGNAL RESTORED.",
+    success: "Message signal restored.",
     bytebot: 'Replace <span class="highlight">"write message here"</span> with <span class="highlight">"I love coding"</span>.',
+    why: "Paragraphs are used to add readable text and explanations to a webpage.",
+    learned: "You learned that <p> creates a paragraph of text.",
     hint1: "Keep the <p> and </p> tags. Only replace the words inside.",
     hint2: "Final answer should look like: <p>I love coding</p>",
     check: function (code) {
@@ -389,11 +471,13 @@ const missions = {
 
   3: {
     title: "Mission 3: Buttons",
+    skill: "HTML Buttons",
     starter: "<button>write button text</button>",
-    tag: "button",
     requiredParts: ["<button>", "</button>"],
-    success: "CONTROL BUTTON ONLINE.",
+    success: "Control button online.",
     bytebot: 'Replace <span class="highlight">"write button text"</span> with <span class="highlight">"Click Me"</span>.',
+    why: "Buttons help users take action on a webpage.",
+    learned: "You learned that <button> creates a clickable button.",
     hint1: "Keep the <button> and </button> tags. Only replace the button text.",
     hint2: "Final answer should look like: <button>Click Me</button>",
     check: function (code) {
@@ -403,11 +487,13 @@ const missions = {
 
   4: {
     title: "Mission 4: Links",
+    skill: "HTML Links",
     starter: '<a href="#">write link text</a>',
-    tag: "a",
     requiredParts: ['<a href="#">', "</a>"],
-    success: "PORTAL LINK ACTIVATED.",
+    success: "Portal link activated.",
     bytebot: 'Replace <span class="highlight">"write link text"</span> with <span class="highlight">"Visit Site"</span>.',
+    why: "Links connect pages together and help users navigate websites.",
+    learned: "You learned that <a href='...'> creates a link.",
     hint1: "Keep the <a href=\"#\"> and </a> tags. Only replace the link text.",
     hint2: 'Final answer should look like: <a href="#">Visit Site</a>',
     check: function (code) {
@@ -417,27 +503,29 @@ const missions = {
 
   5: {
     title: "Mission 5: Images",
-    starter: '<img src="write image file here">',
-    tag: "img",
-    selfClosing: true,
-    requiredParts: ["<img", "src=", ">"],
-    success: "IMAGE MODULE LOADED.",
-    bytebot: 'Replace <span class="highlight">"write image file here"</span> with <span class="highlight">"image.png"</span>.',
-    hint1: "Keep the <img src=\"\"> structure. Only replace the file name.",
-    hint2: 'Final answer should look like: <img src="image.png">',
+    skill: "HTML Images",
+    starter: '<img src="profile.png" alt="Profile picture">',
+    requiredParts: ["<img", "src=", "profile.png", "alt=", ">"],
+    success: "Image module loaded.",
+    bytebot: 'Keep the image file as <span class="highlight">"profile.png"</span> and make sure the image includes <span class="highlight">alt text</span>.',
+    why: "Images make pages more visual, and alt text helps describe images for accessibility.",
+    learned: "You learned that <img> adds images and alt text describes them.",
+    hint1: "Your image needs src=\"profile.png\" and alt=\"Profile picture\".",
+    hint2: 'Final answer should look like: <img src="profile.png" alt="Profile picture">',
     check: function (code) {
-      return code === '<imgsrc="image.png">';
+      return code === '<imgsrc="profile.png"alt="profilepicture">';
     }
   },
 
   6: {
     title: "Mission 6: Lists",
+    skill: "HTML Lists",
     starter: "<ul>\n  <li>write list item here</li>\n</ul>",
-    tag: "ul",
-    extraTags: ["li"],
     requiredParts: ["<ul>", "</ul>", "<li>", "</li>"],
-    success: "INVENTORY SYSTEM RESTORED.",
+    success: "Inventory system restored.",
     bytebot: 'Replace <span class="highlight">"write list item here"</span> with <span class="highlight">"Code"</span>.',
+    why: "Lists help organize related items so information is easier to scan.",
+    learned: "You learned that <ul> creates a list and <li> creates each list item.",
     hint1: "Keep the <ul>, <li>, </li>, and </ul> tags. Only replace the list item text.",
     hint2: "Final answer should look like: <ul><li>Code</li></ul>",
     check: function (code) {
@@ -446,18 +534,21 @@ const missions = {
   },
 
   7: {
-    title: "BOSS MODE: Profile Card",
-    starter: "<h1>Your Name</h1>\n<p>Your bio here</p>\n<img src=\"profile.png\">\n<button>Follow Me</button>",
+    title: "Boss Mode: Profile Card",
+    skill: "HTML Page Structure",
+    starter: "<h1>Your Name</h1>\n<p>Your bio here</p>\n<img src=\"profile.png\" alt=\"Profile picture\">\n<button>Follow Me</button>",
     boss: true,
-    requiredParts: ["<h1>", "</h1>", "<p>", "</p>", "<img", "src=", "profile.png", "<button>", "</button>"],
-    success: "BOSS CLEARED: CSS CIRCUIT UNLOCKED.",
-    bytebot: 'Final HTML test. Your card must include <span class="highlight">"h1, p, img, and button"</span>.',
-    hint1: "You need h1, p, img src=\"profile.png\", and button.",
-    hint2: "Make sure all required tags are present.",
+    requiredParts: ["<h1>", "</h1>", "<p>", "</p>", "<img", "src=", "profile.png", "alt=", "<button>", "</button>"],
+    success: "Boss cleared. CSS Circuit unlocked.",
+    bytebot: 'Build a simple profile card using <span class="highlight">h1, p, img, and button</span>.',
+    why: "Real webpages are built by combining multiple HTML elements into a clear structure.",
+    learned: "You learned how to combine headings, paragraphs, images, and buttons into one webpage section.",
+    hint1: "You need h1, p, img src=\"profile.png\" with alt text, and button.",
+    hint2: "Make sure all required tags are present and closed correctly.",
     check: function (code) {
       const hasH1 = code.includes("<h1>") && code.includes("</h1>");
       const hasP = code.includes("<p>") && code.includes("</p>");
-      const hasImg = code.includes('<imgsrc="profile.png">');
+      const hasImg = code.includes('<imgsrc="profile.png"') && code.includes("alt=");
       const hasButton = code.includes("<button>") && code.includes("</button>");
 
       return hasH1 && hasP && hasImg && hasButton;
@@ -465,39 +556,28 @@ const missions = {
   }
 };
 
-function loadMission() {
-  const mission = missions[level];
-  const title = document.getElementById("mission-title");
-  const result = document.getElementById("result");
-  const hint = document.getElementById("hint");
-  const warning = document.getElementById("warning");
-  const xpFeedback = document.getElementById("xp-feedback");
-  const bytebot = document.getElementById("bytebot-message");
-  const codeBox = document.getElementById("code");
+const missionCountEl = document.getElementById("mission-count");
+const totalXpEl = document.getElementById("total-xp");
+const livesEl = document.getElementById("lives");
+const attemptsEl = document.getElementById("attempts");
+const statusEl = document.getElementById("status");
+const titleEl = document.getElementById("mission-title");
+const skillTitleEl = document.getElementById("skill-title");
+const bytebotEl = document.getElementById("bytebot-message");
+const whyEl = document.getElementById("why-message");
+const codeBox = document.getElementById("code");
+const resultEl = document.getElementById("result");
+const hintEl = document.getElementById("hint");
+const warningEl = document.getElementById("warning");
+const xpFeedbackEl = document.getElementById("xp-feedback");
+const learnedEl = document.getElementById("learned");
+const previewWrap = document.getElementById("preview-wrap");
+const previewEl = document.getElementById("preview");
 
-  attempts = 0;
-  lastWarningMessage = "";
-
-  result.innerText = "Run your code to check the mission.";
-  result.className = "message";
-  hint.innerText = "Click Hint if you get stuck.";
-  warning.innerText = "No syntax warnings yet.";
-  xpFeedback.innerText = "0 XP gained.";
-
-  if (!mission) {
-    title.innerText = "HTML Arena Complete!";
-    bytebot.innerText = "CSS Circuit is ready. Head back to Mission Control.";
-    codeBox.value = "";
-    updatePreview();
-    return;
-  }
-
-  title.innerText = mission.title;
-  bytebot.innerHTML = mission.bytebot;
-  codeBox.value = mission.starter;
-
-  updatePreview();
-}
+const runBtn = document.getElementById("run-btn");
+const hintBtn = document.getElementById("hint-btn");
+const nextBtn = document.getElementById("next-btn");
+const backBtn = document.getElementById("back-btn");
 
 function normalize(input) {
   return input.replace(/\s+/g, "").toLowerCase();
@@ -508,12 +588,71 @@ function countMatches(text, pattern) {
   return matches ? matches.length : 0;
 }
 
+function updateStats() {
+  const xp = parseInt(localStorage.getItem("xp")) || 0;
+
+  missionCountEl.innerText = Math.min(level, 7);
+  totalXpEl.innerText = xp;
+  livesEl.innerText = "❤️".repeat(lives) + "🖤".repeat(3 - lives);
+  attemptsEl.innerText = attempts;
+}
+
+function loadMission() {
+  const mission = missions[level];
+
+  attempts = 0;
+  lives = 3;
+  missionComplete = false;
+  lastWarningMessage = "";
+
+  updateStats();
+
+  resultEl.innerText = "Run your code to check the mission.";
+  resultEl.className = "message";
+
+  hintEl.innerText = "Click Hint if you get stuck.";
+  warningEl.innerText = "No syntax warnings yet.";
+  warningEl.className = "message error";
+  xpFeedbackEl.innerText = "0 XP gained.";
+  learnedEl.innerText = "Complete the mission to reveal what you learned.";
+
+  nextBtn.disabled = true;
+  runBtn.disabled = false;
+  hintBtn.disabled = false;
+  statusEl.innerText = "Active";
+
+  if (!mission) {
+    titleEl.innerText = "HTML Arena Complete!";
+    skillTitleEl.innerText = "HTML Complete";
+    bytebotEl.innerText = "CSS Circuit is ready. Head back to Mission Control.";
+    whyEl.innerText = "You completed the HTML foundation.";
+    codeBox.value = "";
+    previewEl.srcdoc = "";
+    statusEl.innerText = "Complete";
+    runBtn.disabled = true;
+    hintBtn.disabled = true;
+    nextBtn.disabled = true;
+    return;
+  }
+
+  titleEl.innerText = mission.title;
+  skillTitleEl.innerText = mission.skill;
+  bytebotEl.innerHTML = mission.bytebot;
+  whyEl.innerText = mission.why;
+  codeBox.value = mission.starter;
+
+  updatePreview();
+}
+
 function setWarning(message) {
-  const warning = document.getElementById("warning");
+  warningEl.innerText = message;
 
-  warning.innerText = message;
-
-  if (message && message !== "No syntax warnings yet." && message !== "No syntax warnings." && message !== lastWarningMessage) {
+  if (
+    message &&
+    message !== "No syntax warnings yet." &&
+    message !== "No syntax warnings." &&
+    message !== lastWarningMessage
+  ) {
     playMistake();
   }
 
@@ -535,17 +674,17 @@ function checkSyntaxWarnings(rawCode) {
   const closeBracketCount = countMatches(code, />/g);
 
   if (openBracketCount === 0 || closeBracketCount === 0) {
-    setWarning("Uh-oh, you removed a tag bracket < or > — add it back!");
+    setWarning("A tag bracket < or > is missing.");
     return;
   }
 
   if (openBracketCount !== closeBracketCount) {
-    setWarning("Uh-oh, your < and > brackets are not balanced. Add the missing bracket back.");
+    setWarning("Your < and > brackets are not balanced.");
     return;
   }
 
   if (code.includes("< ") || code.includes("</ ")) {
-    setWarning("Uh-oh, there should be no space right after < or </ inside a tag.");
+    setWarning("There should be no space right after < or </ inside a tag.");
     return;
   }
 
@@ -554,62 +693,7 @@ function checkSyntaxWarnings(rawCode) {
       const part = normalize(mission.requiredParts[i]);
 
       if (!normalized.includes(part)) {
-        setWarning("Uh-oh, you removed this part: " + mission.requiredParts[i] + " — add it back!");
-        return;
-      }
-    }
-  }
-
-  if (mission.boss) {
-    setWarning("No syntax warnings.");
-    return;
-  }
-
-  if (mission.selfClosing) {
-    if (!normalized.includes("<img")) {
-      setWarning("Uh-oh, you removed the image tag. Add <img back!");
-      return;
-    }
-
-    if (!normalized.includes("src=")) {
-      setWarning("Uh-oh, you removed src=. Add it back so the image can load.");
-      return;
-    }
-
-    setWarning("No syntax warnings.");
-    return;
-  }
-
-  if (mission.tag) {
-    const tag = mission.tag;
-
-    if (tag !== "a" && !normalized.includes("<" + tag + ">")) {
-      setWarning("Uh-oh, you removed the opening tag: <" + tag + "> — add it back!");
-      return;
-    }
-
-    if (tag === "a" && !normalized.includes("<ahref=")) {
-      setWarning("Uh-oh, you removed part of the link tag. Add <a href=\"#\"> back!");
-      return;
-    }
-
-    if (!normalized.includes("</" + tag + ">") && !mission.selfClosing) {
-      setWarning("Uh-oh, you removed the closing tag: </" + tag + "> — add it back!");
-      return;
-    }
-  }
-
-  if (mission.extraTags) {
-    for (let i = 0; i < mission.extraTags.length; i++) {
-      const tag = mission.extraTags[i];
-
-      if (!normalized.includes("<" + tag + ">")) {
-        setWarning("Uh-oh, you removed the opening tag: <" + tag + "> — add it back!");
-        return;
-      }
-
-      if (!normalized.includes("</" + tag + ">")) {
-        setWarning("Uh-oh, you removed the closing tag: </" + tag + "> — add it back!");
+        setWarning("Missing required part: " + mission.requiredParts[i]);
         return;
       }
     }
@@ -618,78 +702,99 @@ function checkSyntaxWarnings(rawCode) {
   setWarning("No syntax warnings.");
 }
 
+function updatePreview() {
+  const code = codeBox.value;
+  previewEl.srcdoc = code;
+  checkSyntaxWarnings(code);
+}
+
 function checkCode() {
-  const rawCode = document.getElementById("code").value;
-  const code = normalize(rawCode);
-  const result = document.getElementById("result");
+  if (missionComplete) return;
+
   const mission = missions[level];
+  const rawCode = codeBox.value;
+  const code = normalize(rawCode);
 
   updatePreview();
 
   if (!mission) {
-    result.innerText = "HTML Arena already complete.";
-    result.className = "message correct";
+    resultEl.innerText = "HTML Arena already complete.";
+    resultEl.className = "message correct";
     return;
   }
 
+  attempts++;
+  updateStats();
+
   if (mission.check(code)) {
     const reward = mission.boss ? 50 : 10;
-    success(reward, level + 1, mission.success);
+    completeMission(reward, mission.success, mission.learned);
   } else {
-    playError();
-    attempts++;
-    showHint(mission);
-    result.innerText = "System not restored yet.";
-    result.className = "message error";
-    errorEffect();
+    loseLife();
   }
 }
 
-function showHint(mission) {
-  const hint = document.getElementById("hint");
+function loseLife() {
+  lives--;
+  updateStats();
 
-  if (attempts === 1) {
-    hint.innerText = "Hint 1: " + mission.hint1;
-  } else if (attempts >= 2) {
-    hint.innerText = "Hint 2: " + mission.hint2;
+  playError();
+
+  if (lives <= 0) {
+    resultEl.innerText = "Mission failed. Resetting this mission.";
+    resultEl.className = "message error";
+    statusEl.innerText = "Resetting";
+
+    errorEffect();
+
+    setTimeout(loadMission, 1200);
+    return;
+  }
+
+  const mission = missions[level];
+
+  resultEl.innerText = "Not restored yet. You lost one life.";
+  resultEl.className = "message error";
+  statusEl.innerText = "Try Again";
+
+  showHint(mission);
+  errorEffect();
+}
+
+function showHint(mission) {
+  if (attempts <= 1) {
+    hintEl.innerText = "Hint 1: " + mission.hint1;
+  } else {
+    hintEl.innerText = "Hint 2: " + mission.hint2;
   }
 }
 
 function manualHint() {
   const mission = missions[level];
-  if (!mission) return;
 
-  const hint = document.getElementById("hint");
+  if (!mission || missionComplete) return;
 
-  if (hint.innerText.includes("Hint 1")) {
-    hint.innerText = "Hint 2: " + mission.hint2;
+  if (hintEl.innerText.includes("Hint 1")) {
+    hintEl.innerText = "Hint 2: " + mission.hint2;
   } else {
-    hint.innerText = "Hint 1: " + mission.hint1;
+    hintEl.innerText = "Hint 1: " + mission.hint1;
   }
 }
 
-function success(xpGain, nextLevel, message) {
-  const result = document.getElementById("result");
-  const hint = document.getElementById("hint");
-  const xpFeedback = document.getElementById("xp-feedback");
-  const previewWrap = document.getElementById("preview-wrap");
+function completeMission(xpGain, message, learnedMessage) {
+  missionComplete = true;
 
-  const isBossComplete = nextLevel > 7;
-  const redirectDelay = isBossComplete ? 5800 : 1200;
+  resultEl.innerText = message + " +" + xpGain + " XP";
+  resultEl.className = "message correct";
 
-  result.innerText = message + " +" + xpGain + " XP";
-  result.className = "message correct";
-  hint.innerText = "";
-  xpFeedback.innerText = "+" + xpGain + " XP gained.";
+  hintEl.innerText = "Mission complete.";
+  xpFeedbackEl.innerText = "+" + xpGain + " XP gained.";
+  learnedEl.innerText = learnedMessage;
+  statusEl.innerText = "Complete";
+
   setWarning("No syntax warnings.");
 
   playSuccess();
-
-  if (isBossComplete) {
-    setTimeout(function () {
-      playUnlock();
-    }, 300);
-  }
 
   document.body.classList.add("success-flash");
   previewWrap.classList.add("preview-glow");
@@ -700,23 +805,37 @@ function success(xpGain, nextLevel, message) {
   }, 700);
 
   showXPPop(xpGain);
-
   addXP(xpGain);
-  level = nextLevel;
+
+  runBtn.disabled = true;
+  hintBtn.disabled = true;
+  nextBtn.disabled = false;
+
+  if (level === 7) {
+    localStorage.setItem("css-level", 1);
+    playUnlock();
+  }
+
+  level++;
   localStorage.setItem("html-level", level);
 
-  setTimeout(function () {
+  updateStats();
+}
+
+function goNextMission() {
+  if (level > 7) {
     window.location.href = "html-map.html";
-  }, redirectDelay);
+    return;
+  }
+
+  loadMission();
 }
 
 function errorEffect() {
-  const editor = document.getElementById("code");
-
-  editor.classList.add("error-shake");
+  codeBox.classList.add("error-shake");
 
   setTimeout(function () {
-    editor.classList.remove("error-shake");
+    codeBox.classList.remove("error-shake");
   }, 300);
 }
 
@@ -766,13 +885,13 @@ function playMistake() {
   playSound("mistake-sound");
 }
 
-function updatePreview() {
-  const code = document.getElementById("code").value;
-  document.getElementById("preview").srcdoc = code;
-  checkSyntaxWarnings(code);
-}
-
-document.getElementById("code").addEventListener("input", updatePreview);
+runBtn.addEventListener("click", checkCode);
+hintBtn.addEventListener("click", manualHint);
+nextBtn.addEventListener("click", goNextMission);
+backBtn.addEventListener("click", function () {
+  window.location.href = "html-map.html";
+});
+codeBox.addEventListener("input", updatePreview);
 
 loadMission();
 </script>

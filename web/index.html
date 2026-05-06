@@ -130,32 +130,23 @@
 
     .button-row {
       display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 22px;
+      margin-top: 26px;
     }
 
-    button,
-    .map-link {
+    button {
       background: var(--green);
       color: var(--bg);
       border: none;
-      padding: 14px 18px;
+      padding: 18px 30px;
       cursor: pointer;
       font-family: 'Press Start 2P', monospace;
-      font-size: 10px;
+      font-size: 12px;
+      min-width: 240px;
       text-decoration: none;
       display: inline-block;
     }
 
-    .map-link {
-      background: transparent;
-      color: var(--green);
-      border: 1px solid var(--green);
-    }
-
-    button:hover,
-    .map-link:hover {
+    button:hover {
       opacity: 0.85;
     }
 
@@ -218,6 +209,10 @@
       .status-bar {
         flex-direction: column;
       }
+
+      button {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -252,7 +247,6 @@
 
           <div class="button-row">
             <button id="start-btn" type="button">Press Start</button>
-            <a class="map-link" href="html-map.html">Enter HTML Map</a>
           </div>
         </div>
 

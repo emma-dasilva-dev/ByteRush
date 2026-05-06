@@ -1,1 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings — ByteRush</title>
 <link rel="stylesheet" href="arcade-theme.css">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+  --green: #39FF5A;
+  --red: #FF3B3B;
+  --bg: #03080F;
+  --panel: #050B12;
+  --panel2: #07111D;
+  --text: #D6FFE0;
+  --muted: #8FAF9A;
+  --line: rgba(57, 255, 90, 0.35);
+  --yellow: #D7B84F;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Consolas, Monaco, monospace;
+  padding: 32px 20px;
+  min-height: 100vh;
+}
+
+.settings-page {
+  max-width: 1150px;
+  margin: 0 auto;
+}
+
+h1, h2, button, label {
+  font-family: 'Press Start 2P', monospace;
+}
+
+h1 {
+  color: var(--green);
+  font-size: 22px;
+  margin: 0 0 12px;
+}
+
+p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.topbar,
+.panel {
+  border: 2px solid var(--line);
+  background: var(--panel);
+  padding: 22px;
+  margin-bottom: 18px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.panel h2 {
+  color: var(--green);
+  font-size: 13px;
+  margin: 0 0 16px;
+}
+
+.setting-row {
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  padding: 14px;
+  margin-top: 10px;
+}
+
+label {
+  color: var(--green);
+  font-size: 9px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+input,
+select {
+  width: 100%;
+  background: #02060B;
+  color: var(--green);
+  border: 1px solid var(--line);
+  padding: 10px;
+  font-family: Consolas, Monaco, monospace;
+}
+
+input[type="checkbox"] {
+  width: auto;
+  margin-right: 8px;
+}
+
+input[type="range"] {
+  accent-color: var(--green);
+}
+
+button {
+  background: transparent;
+  color: var(--green);
+  border: 1px solid var(--green);
+  padding: 12px 14px;
+  cursor: pointer;
+  font-size: 9px;
+  margin: 6px 6px 0 0;
+}
+
+button:hover {
+  background: var(--green);
+  color: var(--bg);
+}
+
+button.danger {
+  color: var(--red);
+  border-color: var(--red);
+}
+
+button.danger:hover {
+  background: var(--red);
+  color: var(--bg);
+}
+
+.save-message {
+  color: var(--green);
+  font-weight: bold;
+  margin-top: 14px;
+}
+
+.danger-note {
+  color: var(--red);
+  font-size: 13px;
+}
+
+.coming-soon {
+  color: var(--muted);
+  line-height: 2;
+}
+
+@media (max-width: 800px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  h1 {
+    font-size: 18px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<main class="settings-page">
+
+  <section class="topbar">
+    <h1>SETTINGS</h1>
+    <p>Control your ByteRush experience, player identity, visuals, and saved progress.</p>
+    <button onclick="window.location.href='dashboard.html'">← BACK TO DASHBOARD</button>
+  </section>
+
+  <section class="grid">
+
+    <div class="panel">
+      <h2>PLAYER</h2>
+
+      <div class="setting-row">
+        <label for="player-name">PLAYER NAME</label>
+        <input id="player-name" type="text" placeholder="Builder">
+      </div>
+
+      <div class="setting-row">
+        <label for="player-title">PLAYER TITLE</label>
+        <input id="player-title" type="text" placeholder="Code Builder">
+      </div>
+
+      <div class="setting-row">
+        <label for="avatar">AVATAR ICON</label>
+        <select id="avatar">
+          <option value="BR">BR</option>
+          <option value="⚡">⚡</option>
+          <option value="🧠">🧠</option>
+          <option value="💻">💻</option>
+          <option value="🕹️">🕹️</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>AUDIO</h2>
+
+      <div class="setting-row">
+        <label>
+          <input id="sound-effects" type="checkbox">
+          SOUND EFFECTS
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <label>
+          <input id="music" type="checkbox">
+          BACKGROUND MUSIC
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <label for="volume">MASTER VOLUME</label>
+        <input id="volume" type="range" min="0" max="100">
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>VISUAL</h2>
+
+      <div class="setting-row">
+        <label for="theme">THEME</label>
+        <select id="theme">
+          <option value="terminal">Green Terminal</option>
+          <option value="minimal">Minimal Dark</option>
+          <option value="amber">Amber Retro</option>
+        </select>
+      </div>
+
+      <div class="setting-row">
+        <label for="font-size">FONT SIZE</label>
+        <select id="font-size">
+          <option value="small">Small</option>
+          <option value="medium">Medium</option>
+          <option value="large">Large</option>
+        </select>
+      </div>
+
+      <div class="setting-row">
+        <label>
+          <input id="reduced-motion" type="checkbox">
+          REDUCED MOTION
+        </label>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>GAMEPLAY</h2>
+
+      <div class="setting-row">
+        <label>
+          <input id="auto-save" type="checkbox">
+          AUTO-SAVE
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <label>
+          <input id="syntax-warnings" type="checkbox">
+          SYNTAX WARNINGS
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <label>
+          <input id="auto-hints" type="checkbox">
+          AUTO HINTS
+        </label>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="panel">
+    <h2>COMING SOON</h2>
+    <p class="coming-soon">
+      ☐ Cloud Save<br>
+      ☐ Daily Challenges<br>
+      ☐ Multiplayer Arena<br>
+      ☐ Global Leaderboards
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2>DANGER ZONE</h2>
+    <p class="danger-note">These actions cannot be undone.</p>
+
+    <button class="danger" onclick="resetHTML()">Reset HTML</button>
+    <button class="danger" onclick="resetCSS()">Reset CSS</button>
+    <button class="danger" onclick="resetJS()">Reset JS</button>
+    <button class="danger" onclick="resetProject()">Reset Project</button>
+    <button class="danger" onclick="resetAll()">Reset Everything</button>
+  </section>
+
+  <button onclick="saveSettings()">SAVE SETTINGS</button>
+  <p id="save-message" class="save-message"></p>
+
+</main>
+
+<script>
+function loadSettings() {
+  document.getElementById("player-name").value = localStorage.getItem("player-name") || "Builder";
+  document.getElementById("player-title").value = localStorage.getItem("player-title") || "Code Builder";
+  document.getElementById("avatar").value = localStorage.getItem("player-avatar") || "BR";
+
+  document.getElementById("sound-effects").checked = localStorage.getItem("sound-effects") !== "off";
+  document.getElementById("music").checked = localStorage.getItem("music") === "on";
+  document.getElementById("volume").value = localStorage.getItem("volume") || 70;
+
+  document.getElementById("theme").value = localStorage.getItem("theme") || "terminal";
+  document.getElementById("font-size").value = localStorage.getItem("font-size") || "medium";
+  document.getElementById("reduced-motion").checked = localStorage.getItem("reduced-motion") === "on";
+
+  document.getElementById("auto-save").checked = localStorage.getItem("auto-save") !== "off";
+  document.getElementById("syntax-warnings").checked = localStorage.getItem("syntax-warnings") !== "off";
+  document.getElementById("auto-hints").checked = localStorage.getItem("auto-hints") === "on";
+}
+
+function saveSettings() {
+  localStorage.setItem("player-name", document.getElementById("player-name").value || "Builder");
+  localStorage.setItem("player-title", document.getElementById("player-title").value || "Code Builder");
+  localStorage.setItem("player-avatar", document.getElementById("avatar").value);
+
+  localStorage.setItem("sound-effects", document.getElementById("sound-effects").checked ? "on" : "off");
+  localStorage.setItem("music", document.getElementById("music").checked ? "on" : "off");
+  localStorage.setItem("volume", document.getElementById("volume").value);
+
+  localStorage.setItem("theme", document.getElementById("theme").value);
+  localStorage.setItem("font-size", document.getElementById("font-size").value);
+  localStorage.setItem("reduced-motion", document.getElementById("reduced-motion").checked ? "on" : "off");
+
+  localStorage.setItem("auto-save", document.getElementById("auto-save").checked ? "on" : "off");
+  localStorage.setItem("syntax-warnings", document.getElementById("syntax-warnings").checked ? "on" : "off");
+  localStorage.setItem("auto-hints", document.getElementById("auto-hints").checked ? "on" : "off");
+
+  document.getElementById("save-message").innerText = "Settings saved.";
+}
+
+function resetHTML() {
+  if (confirm("Reset HTML progress?")) {
+    localStorage.removeItem("html-level");
+    alert("HTML progress reset.");
+  }
+}
+
+function resetCSS() {
+  if (confirm("Reset CSS progress?")) {
+    localStorage.removeItem("css-level");
+    alert("CSS progress reset.");
+  }
+}
+
+function resetJS() {
+  if (confirm("Reset JavaScript progress?")) {
+    localStorage.removeItem("js-level");
+    alert("JavaScript progress reset.");
+  }
+}
+
+function resetProject() {
+  if (confirm("Reset Profile Card project?")) {
+    localStorage.removeItem("project-profile-step");
+    localStorage.removeItem("project-profile-code");
+    localStorage.removeItem("project-profile-complete");
+    alert("Project progress reset.");
+  }
+}
+
+function resetAll() {
+  if (confirm("Reset EVERYTHING? This will erase all ByteRush progress and settings.")) {
+    localStorage.clear();
+    alert("Everything reset.");
+    loadSettings();
+  }
+}
+
+loadSettings();
+</script>
+
+</body>
+</html>

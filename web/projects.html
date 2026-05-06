@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Projects — ByteRush</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Projects Lab | ByteRush</title>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
 :root {
-  --terminal-green: #39FF5A;
-  --danger-red: #FF3B3B;
-  --background: #03080F;
+  --green: #39FF5A;
+  --red: #FF3B3B;
+  --bg: #03080F;
   --panel: #050B12;
-  --panel-alt: #08111A;
-  --border: #183222;
-  --muted: #7FA58A;
-  --soft-text: #D7FFE0;
-  --boss: #D7B84F;
+  --panel2: #07111D;
+  --text: #E8FFF0;
+  --muted: #A8C9B1;
+  --line: rgba(57, 255, 90, 0.35);
+  --yellow: #FACC15;
 }
 
 * {
@@ -24,344 +25,351 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--terminal-green);
-  font-family: 'Press Start 2P', monospace;
-  text-align: center;
-  padding: 32px 20px;
   margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Consolas, Monaco, monospace;
+  padding: 12px;
   min-height: 100vh;
+  line-height: 1.35;
+  font-size: 13px;
+}
 
-  background-image:
-    linear-gradient(rgba(57,255,90,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(57,255,90,0.03) 1px, transparent 1px);
+h1, h2, h3, button, .project-title, .badge-label {
+  font-family: 'Press Start 2P', monospace;
+}
 
-  background-size: 42px 42px;
+.lab {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.topbar,
+.panel {
+  border: 2px solid var(--line);
+  background: var(--panel);
+  padding: 11px;
+}
+
+.topbar {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
 }
 
 h1 {
-  font-size: 20px;
-  letter-spacing: 2px;
-  margin-bottom: 14px;
-  color: var(--terminal-green);
-  text-shadow: none;
+  color: var(--green);
+  font-size: 15px;
+  margin: 0 0 5px;
 }
 
-h2, h3 {
-  color: var(--terminal-green);
-  text-shadow: none;
-}
-
-p {
-  font-size: 9px;
+.desc {
   color: var(--muted);
-  line-height: 1.7;
+  margin: 0;
+  font-size: 12px;
 }
 
 .projects-grid {
-  display: flex;
-  justify-content: center;
-  gap: 18px;
-  margin-top: 34px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
 }
 
 .project-card {
-  border: 2px solid var(--border);
-  background: var(--panel);
-  color: var(--muted);
-  padding: 18px;
-  width: 230px;
-  min-height: 135px;
+  border: 1px solid var(--line);
+  background: #02060B;
+  padding: 10px;
   cursor: pointer;
-  transition: 0.18s ease;
-  font-size: 9px;
-  line-height: 1.8;
-}
-
-.project-card strong {
-  color: var(--terminal-green);
+  min-height: 135px;
 }
 
 .project-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--terminal-green);
-  background: #112417;
-  color: var(--terminal-green);
+  border-color: var(--green);
+}
+
+.project-title {
+  color: var(--green);
+  font-size: 7px;
+  margin-bottom: 6px;
+  line-height: 1.6;
+}
+
+.project-card p {
+  color: var(--muted);
+  font-size: 11px;
+  margin: 5px 0;
+}
+
+.badge-label {
+  display: inline-block;
+  border: 1px solid var(--line);
+  color: var(--green);
+  padding: 4px 6px;
+  font-size: 6px;
+  margin-top: 5px;
 }
 
 .builder {
   display: none;
-  margin-top: 30px;
 }
 
-.step-box {
-  max-width: 850px;
-  margin: 22px auto;
-  border: 2px solid var(--border);
-  padding: 18px;
-  background: var(--panel);
-  text-align: left;
+.builder-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
 }
 
-.step-box strong {
-  color: var(--terminal-green);
+.builder-header h2 {
+  color: var(--green);
+  font-size: 11px;
+  margin: 0;
 }
 
-.highlight {
-  color: var(--danger-red);
-  font-weight: bold;
-  text-shadow: none;
-}
-
-.editor-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  width: 90%;
-  max-width: 1000px;
-  margin: 25px auto;
-}
-
-textarea,
-.preview {
-  width: 100%;
-  height: 320px;
-  border: 2px solid var(--border);
-  box-sizing: border-box;
-  background: var(--panel);
-}
-
-textarea {
-  color: var(--terminal-green);
-  padding: 15px;
-  font-family: monospace;
-  font-size: 15px;
-  resize: none;
-  outline: none;
-}
-
-textarea:focus {
-  border-color: var(--terminal-green);
-}
-
-.preview {
-  color: var(--soft-text);
-  padding: 20px;
-  overflow: auto;
-  text-align: center;
-}
-
-.preview .card {
-  max-width: 260px;
-  margin: 20px auto;
+.mode-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 button {
-  margin: 8px;
-  padding: 10px 16px;
-  border: 2px solid var(--terminal-green);
-  background: transparent;
-  color: var(--terminal-green);
+  background: var(--green);
+  color: var(--bg);
+  border: none;
+  padding: 9px 10px;
   cursor: pointer;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 8px;
-  transition: 0.15s ease;
+  font-size: 7px;
+}
+
+button.secondary {
+  background: transparent;
+  color: var(--green);
+  border: 1px solid var(--green);
+}
+
+button.danger {
+  background: transparent;
+  color: var(--red);
+  border: 1px solid var(--red);
 }
 
 button:hover {
-  background: var(--terminal-green);
-  color: var(--background);
+  opacity: 0.85;
 }
 
-button:active {
-  transform: scale(0.96);
+.work-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+textarea {
+  width: 100%;
+  height: 255px;
+  background: #02060B;
+  color: var(--green);
+  border: 1px solid var(--line);
+  padding: 11px;
+  font-size: 13px;
+  resize: vertical;
+  outline: none;
+  font-family: Consolas, Monaco, monospace;
+}
+
+iframe {
+  width: 100%;
+  height: 255px;
+  background: white;
+  border: 1px solid var(--line);
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.bytebot,
+.checklist {
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  padding: 10px;
+}
+
+.bytebot h3,
+.checklist h3,
+.panel h3 {
+  color: var(--green);
+  font-size: 8px;
+  margin: 0 0 6px;
+}
+
+.bytebot p {
+  color: var(--muted);
+  margin: 0;
+  font-size: 12px;
+}
+
+.check-item {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 4px 0;
+}
+
+.check-item.done {
+  color: var(--green);
+}
+
+.result {
+  margin-top: 10px;
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  padding: 10px;
+  color: var(--muted);
+  font-size: 13px;
 }
 
 .success {
-  color: var(--terminal-green);
-  font-weight: bold;
+  color: var(--green);
 }
 
 .error {
-  color: var(--danger-red);
-  font-weight: bold;
+  color: var(--red);
 }
 
-.progress {
-  color: var(--boss);
-  font-weight: bold;
-  font-size: 9px;
-}
-
-#result {
-  margin-top: 18px;
-  font-size: 10px;
+.warning {
+  color: var(--yellow);
 }
 
 #completion-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: rgba(3, 8, 15, 0.96);
   display: none;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   z-index: 9999;
+  text-align: center;
 }
 
 .overlay-text {
-  font-size: 26px;
-  color: var(--terminal-green);
-  text-shadow: none;
+  color: var(--green);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 20px;
+  margin-bottom: 14px;
 }
 
-.badge {
-  margin-top: 20px;
-  font-size: 16px;
-  color: var(--boss);
-  text-shadow: none;
-}
-
-.xp-reward {
-  margin-top: 12px;
+.overlay-small {
+  color: var(--yellow);
   font-size: 14px;
-  color: var(--terminal-green);
-  text-shadow: none;
 }
 
-@media (max-width: 800px) {
-  .editor-layout {
+@media (max-width: 1000px) {
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .work-layout,
+  .info-grid {
     grid-template-columns: 1fr;
-    width: 94%;
   }
 
-  h1 {
-    font-size: 16px;
-  }
-
-  .project-card {
-    width: 100%;
-    max-width: 340px;
-  }
-
-  .overlay-text {
-    font-size: 18px;
+  .topbar,
+  .builder-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 </style>
 </head>
 
-<body class="theme-projects">
+<body>
 
-<h1>PROJECTS LAB</h1>
-<p>Build real things with the skills you unlocked.</p>
+<main class="lab">
 
-<div class="projects-grid" id="project-menu">
-
-  <div class="project-card" onclick="startProject()">
-    <strong>Profile Card</strong><br>
-    Guided HTML + CSS Build
-    <p>✅ Available</p>
-  </div>
-
-  <div class="project-card">
-    <strong>Click Counter</strong><br>
-    JavaScript Project
-    <p>Coming Soon</p>
-  </div>
-
-  <div class="project-card">
-    <strong>Mini Quiz</strong><br>
-    JavaScript Project
-    <p>Coming Soon</p>
-  </div>
-
-</div>
-
-<div class="builder" id="builder">
-
-  <h2>Profile Card Project</h2>
-  <p class="progress">STEP <span id="step-number">1</span> / 5</p>
-
-  <div class="step-box">
-    <strong>🤖 ByteBot:</strong>
-    <p id="step-instruction"></p>
-  </div>
-
-  <div class="editor-layout">
-
+  <section class="topbar">
     <div>
-      <h3>Code Editor</h3>
-      <textarea id="code"></textarea>
-      <br>
-      <button onclick="runProject()">RUN</button>
-      <button onclick="checkStep()">CHECK STEP</button>
-      <button onclick="resetProject()">RESET PROJECT</button>
+      <h1>Projects Lab</h1>
+      <p class="desc">Build real mini-projects using your coding skills.</p>
     </div>
 
-    <div>
-      <h3>Live Preview</h3>
-      <div class="preview" id="preview"></div>
+    <button class="secondary" onclick="window.location.href='dashboard.html'">Go Back to Dashboard</button>
+  </section>
+
+  <section id="project-menu" class="projects-grid"></section>
+
+  <section id="builder" class="builder">
+
+    <div class="builder-header">
+      <h2 id="project-title">Project</h2>
+
+      <div class="mode-buttons">
+        <button class="secondary" onclick="backToProjects()">Back to Projects</button>
+        <button class="danger" onclick="window.location.href='dashboard.html'">Dashboard</button>
+      </div>
     </div>
 
-  </div>
+    <div class="info-grid">
+      <div class="bytebot">
+        <h3>BYTEBOT</h3>
+        <p id="instruction"></p>
+      </div>
 
-  <p id="result"></p>
+      <div class="checklist">
+        <h3>CHECKLIST</h3>
+        <div id="checklist"></div>
+      </div>
+    </div>
 
-  <button onclick="window.location.href='dashboard.html'">← BACK TO DASHBOARD</button>
+    <div class="work-layout">
+      <div class="panel">
+        <h3>CODE EDITOR</h3>
+        <textarea id="code"></textarea>
 
-</div>
+        <div class="mode-buttons">
+          <button onclick="checkProject()">Check Project</button>
+          <button class="secondary" onclick="addGuidedStep()">Next Guided Step</button>
+          <button class="danger" onclick="resetProject()">Reset</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>LIVE PREVIEW</h3>
+        <iframe id="preview"></iframe>
+      </div>
+    </div>
+
+    <div class="result" id="result">Your preview updates automatically as you type.</div>
+
+  </section>
+
+</main>
 
 <div id="completion-overlay">
-  <div class="overlay-text">🏆 PROJECT COMPLETE</div>
-  <div class="badge" id="badge-text"></div>
-  <div class="xp-reward">+80 XP</div>
+  <div class="overlay-text">PROJECT COMPLETE</div>
+  <div class="overlay-small" id="overlay-reward"></div>
 </div>
 
 <script>
-let currentStep = 1;
-
-const steps = {
-  1: {
-    instruction: 'Create the main title using <span class="highlight">&lt;h1&gt;Your Name&lt;/h1&gt;</span>.',
-    starter: '<h1>Your Name</h1>',
-    check: function(code) {
-      return code.includes("<h1>") && code.includes("</h1>");
-    }
-  },
-
-  2: {
-    instruction: 'Add a short bio using <span class="highlight">&lt;p&gt;Your bio here&lt;/p&gt;</span>.',
-    add: '\n<p>Your bio here</p>',
-    check: function(code) {
-      return code.includes("<p>") && code.includes("</p>");
-    }
-  },
-
-  3: {
-    instruction: 'Add an image using <span class="highlight">&lt;img src="profile.png"&gt;</span>.',
-    add: '\n<img src="profile.png">',
-    check: function(code) {
-      return code.includes("<img") && code.includes("profile.png");
-    }
-  },
-
-  4: {
-    instruction: 'Add a button using <span class="highlight">&lt;button&gt;Follow Me&lt;/button&gt;</span>.',
-    add: '\n<button>Follow Me</button>',
-    check: function(code) {
-      return code.includes("<button>") && code.includes("</button>");
-    }
-  },
-
-  5: {
-    instruction: 'Now style your card. Add CSS inside <span class="highlight">&lt;style&gt;&lt;/style&gt;</span>. Use border, padding, text-align, and background-color.',
-    add:
-`\n\n<style>
+const projects = [
+  {
+    id: "profile-card",
+    title: "Profile Card",
+    difficulty: "EASY",
+    reward: 80,
+    badge: "Profile Builder",
+    description: "Build a profile card using HTML and CSS.",
+    guidedSteps: [
+      "<h1>Your Name</h1>",
+      "\n<p>Your short bio goes here.</p>",
+      "\n<img src=\"profile.png\">",
+      "\n<button>Follow Me</button>",
+      `\n\n<style>
 body {
   font-family: Arial;
   text-align: center;
@@ -373,130 +381,316 @@ body {
   border: 2px solid #39FF5A;
   padding: 20px;
   background-color: #050B12;
-  border-radius: 12px;
 }
-</style>`,
-    check: function(code) {
-      return code.includes("<style>") &&
-             code.includes("border") &&
-             code.includes("padding") &&
-             code.includes("text-align") &&
-             code.includes("background-color");
-    }
-  }
-};
+</style>`
+    ],
+    starter: "<h1>Your Name</h1>",
+    requirements: [
+      { label: "Add a heading", check: code => code.includes("<h1>") && code.includes("</h1>") },
+      { label: "Add a paragraph bio", check: code => code.includes("<p>") && code.includes("</p>") },
+      { label: "Add an image", check: code => code.includes("<img") && code.includes("src=") },
+      { label: "Add a button", check: code => code.includes("<button>") && code.includes("</button>") },
+      { label: "Add CSS styling", check: code => code.includes("<style>") && code.includes("border") && code.includes("padding") }
+    ]
+  },
 
-function startProject() {
-  document.getElementById("project-menu").style.display = "none";
-  document.getElementById("builder").style.display = "block";
+  {
+    id: "click-counter",
+    title: "Click Counter",
+    difficulty: "MEDIUM",
+    reward: 120,
+    badge: "Click Master",
+    description: "Build a button that increases a number.",
+    starter:
+`<h1>Click Counter</h1>
+<p>Count: <span id="count">0</span></p>
+<button onclick="increase()">Click Me</button>
 
-  currentStep = parseInt(localStorage.getItem("project-profile-step")) || 1;
+<script>
+let number = 0;
 
-  if (currentStep > 5) currentStep = 5;
+function increase() {
+  number++;
+  document.getElementById("count").innerText = number;
+}
+<\/script>`,
+    guidedSteps: [],
+    requirements: [
+      { label: "Add a button", check: code => code.includes("<button") },
+      { label: "Create a number variable", check: code => code.includes("let") || code.includes("var") || code.includes("const") },
+      { label: "Use a function", check: code => code.includes("function") },
+      { label: "Increase the number", check: code => code.includes("++") || code.includes("+= 1") || code.includes("= number + 1") },
+      { label: "Update page text", check: code => code.includes("innerText") || code.includes("textContent") }
+    ]
+  },
 
-  if (!localStorage.getItem("project-profile-code")) {
-    document.getElementById("code").value = steps[1].starter;
+  {
+    id: "mini-quiz",
+    title: "Mini Quiz",
+    difficulty: "HARD",
+    reward: 150,
+    badge: "Quiz Creator",
+    description: "Build a quiz that checks an answer.",
+    starter:
+`<h1>Mini Quiz</h1>
+<p>What does HTML stand for?</p>
+
+<button onclick="checkAnswer('wrong')">Hyper Trainer Markup Language</button>
+<button onclick="checkAnswer('correct')">HyperText Markup Language</button>
+
+<p id="result"></p>
+
+<script>
+function checkAnswer(answer) {
+  if (answer === "correct") {
+    document.getElementById("result").innerText = "Correct!";
   } else {
-    document.getElementById("code").value = localStorage.getItem("project-profile-code");
+    document.getElementById("result").innerText = "Try again.";
   }
+}
+<\/script>`,
+    guidedSteps: [],
+    requirements: [
+      { label: "Add a question", check: code => code.includes("?") || code.includes("<p>") },
+      { label: "Add answer buttons", check: code => (code.match(/<button/g) || []).length >= 2 },
+      { label: "Use a function", check: code => code.includes("function") },
+      { label: "Use an if condition", check: code => code.includes("if") },
+      { label: "Show feedback", check: code => code.includes("Correct") || code.includes("Try again") }
+    ]
+  },
 
-  loadStep();
-  runProject();
+  {
+    id: "boss-portfolio",
+    title: "Boss Portfolio",
+    difficulty: "BOSS",
+    reward: 250,
+    badge: "Boss Developer",
+    description: "Build a mini portfolio with HTML, CSS, and JS.",
+    starter:
+`<h1>Your Name</h1>
+<p>I am learning to code with ByteRush.</p>
+
+<button onclick="showMessage()">Hire Me</button>
+<p id="message"></p>
+
+<style>
+body {
+  font-family: Arial;
+  text-align: center;
+  background-color: #03080F;
+  color: #39FF5A;
+}
+</style>
+
+<script>
+function showMessage() {
+  document.getElementById("message").innerText = "Thanks for visiting!";
+}
+<\/script>`,
+    guidedSteps: [],
+    requirements: [
+      { label: "Add a name heading", check: code => code.includes("<h1>") },
+      { label: "Add a bio paragraph", check: code => code.includes("<p>") },
+      { label: "Add CSS styling", check: code => code.includes("<style>") && code.includes("background-color") },
+      { label: "Add a button", check: code => code.includes("<button") },
+      { label: "Add JS interaction", check: code => code.includes("<script>") && code.includes("function") },
+      { label: "Update the DOM", check: code => code.includes("getElementById") && (code.includes("innerText") || code.includes("textContent")) }
+    ]
+  }
+];
+
+let activeProject = null;
+let guidedIndex = 0;
+
+const projectMenu = document.getElementById("project-menu");
+const builder = document.getElementById("builder");
+const codeBox = document.getElementById("code");
+
+function renderProjects() {
+  projectMenu.innerHTML = "";
+
+  projects.forEach(project => {
+    const complete = localStorage.getItem("project-" + project.id + "-complete") === "true";
+
+    const card = document.createElement("div");
+    card.className = "project-card";
+
+    card.innerHTML = `
+      <div class="project-title">${project.title}</div>
+      <p>${project.description}</p>
+      <span class="badge-label">${project.difficulty}</span>
+      <p>${complete ? "Completed" : "Available"}</p>
+      <p>${project.reward} XP</p>
+    `;
+
+    card.onclick = function() {
+      openProject(project.id);
+    };
+
+    projectMenu.appendChild(card);
+  });
 }
 
-function loadStep() {
-  document.getElementById("step-number").innerText = currentStep;
-  document.getElementById("step-instruction").innerHTML = steps[currentStep].instruction;
-  document.getElementById("result").innerText = "";
+function openProject(id) {
+  activeProject = projects.find(project => project.id === id);
+  guidedIndex = parseInt(localStorage.getItem("project-" + id + "-guided-index")) || 0;
+
+  document.getElementById("project-title").innerText = activeProject.title;
+  document.getElementById("instruction").innerText = getInstruction();
+
+  const savedCode = localStorage.getItem("project-" + id + "-code");
+  codeBox.value = savedCode || activeProject.starter;
+
+  projectMenu.style.display = "none";
+  builder.style.display = "block";
+
+  runProject();
+  renderChecklist();
+}
+
+function getInstruction() {
+  return "Build the project step-by-step. Use the checklist and click Next Guided Step when you need help.";
+}
+
+function addGuidedStep() {
+  if (!activeProject) return;
+
+  if (activeProject.guidedSteps.length === 0) {
+    document.getElementById("result").innerHTML = "<span class='warning'>This project does not need guided steps. Use the checklist to finish it.</span>";
+    return;
+  }
+
+  if (guidedIndex >= activeProject.guidedSteps.length) {
+    document.getElementById("result").innerHTML = "<span class='success'>All guided steps are already added.</span>";
+    return;
+  }
+
+  const nextCode = activeProject.guidedSteps[guidedIndex];
+
+  if (!codeBox.value.includes(nextCode.trim())) {
+    codeBox.value += nextCode;
+  }
+
+  guidedIndex++;
+  localStorage.setItem("project-" + activeProject.id + "-guided-index", guidedIndex);
+
+  runProject();
+
+  document.getElementById("result").innerHTML = "<span class='success'>Next guided step added.</span>";
 }
 
 function runProject() {
-  const code = document.getElementById("code").value;
-  document.getElementById("preview").innerHTML = `<div class="card">${code}</div>`;
-  localStorage.setItem("project-profile-code", code);
+  if (!activeProject) return;
+
+  const code = codeBox.value;
+  document.getElementById("preview").srcdoc = code;
+
+  localStorage.setItem("project-" + activeProject.id + "-code", code);
+  renderChecklist();
 }
 
-function checkStep() {
-  const codeBox = document.getElementById("code");
+function renderChecklist() {
+  if (!activeProject) return;
+
   const code = codeBox.value.toLowerCase();
-  const result = document.getElementById("result");
+  const checklist = document.getElementById("checklist");
+
+  checklist.innerHTML = "";
+
+  activeProject.requirements.forEach(req => {
+    const done = req.check(code);
+
+    const item = document.createElement("div");
+    item.className = "check-item" + (done ? " done" : "");
+    item.innerText = (done ? "✓ " : "□ ") + req.label;
+
+    checklist.appendChild(item);
+  });
+}
+
+function checkProject() {
+  if (!activeProject) return;
 
   runProject();
 
-  if (steps[currentStep].check(code)) {
-    if (currentStep < 5) {
-      result.innerHTML = "<span class='success'>✅ Step complete! Next part unlocked.</span>";
+  const code = codeBox.value.toLowerCase();
+  const passed = activeProject.requirements.filter(req => req.check(code)).length;
+  const total = activeProject.requirements.length;
+  const result = document.getElementById("result");
 
-      currentStep++;
-      localStorage.setItem("project-profile-step", currentStep);
-
-      if (steps[currentStep].add && !codeBox.value.includes(steps[currentStep].add.trim())) {
-        codeBox.value += steps[currentStep].add;
-      }
-
-      localStorage.setItem("project-profile-code", codeBox.value);
-
-      setTimeout(function() {
-        loadStep();
-        runProject();
-      }, 800);
-
-    } else {
-      completeProject();
-    }
+  if (passed === total) {
+    completeProject();
   } else {
-    result.innerHTML = "<span class='error'>❌ Not yet. Check the instruction carefully.</span>";
+    result.innerHTML = `<span class="error">Not complete yet. ${passed}/${total} requirements passed.</span>`;
   }
 }
 
 function completeProject() {
-  const completed = localStorage.getItem("project-profile-complete") === "true";
+  const completedKey = "project-" + activeProject.id + "-complete";
+  const alreadyCompleted = localStorage.getItem(completedKey) === "true";
   const result = document.getElementById("result");
 
-  if (!completed) {
+  if (!alreadyCompleted) {
     let xp = parseInt(localStorage.getItem("xp")) || 0;
-    xp += 80;
+    xp += activeProject.reward;
     localStorage.setItem("xp", xp);
 
     let badges = JSON.parse(localStorage.getItem("badges")) || [];
 
-    if (!badges.includes("Profile Builder")) {
-      badges.push("Profile Builder");
+    if (!badges.includes(activeProject.badge)) {
+      badges.push(activeProject.badge);
       localStorage.setItem("badges", JSON.stringify(badges));
     }
 
-    localStorage.setItem("project-profile-complete", "true");
+    localStorage.setItem(completedKey, "true");
 
-    const overlay = document.getElementById("completion-overlay");
-    const badgeText = document.getElementById("badge-text");
-
-    badgeText.innerText = "🏅 New Badge Unlocked: Profile Builder";
-    overlay.style.display = "flex";
-
-    setTimeout(function () {
-      overlay.style.display = "none";
-      result.innerHTML = "<span class='success'>🏆 Project Complete! +80 XP added.</span>";
-    }, 2800);
-
+    showOverlay(activeProject.badge, activeProject.reward);
+    result.innerHTML = `<span class="success">Project complete! +${activeProject.reward} XP. Badge unlocked: ${activeProject.badge}</span>`;
   } else {
-    result.innerHTML = "<span class='success'>🏆 Project already completed!</span>";
+    result.innerHTML = `<span class="success">Project already completed. Badge: ${activeProject.badge}</span>`;
   }
+
+  renderProjects();
+}
+
+function showOverlay(badge, xp) {
+  const overlay = document.getElementById("completion-overlay");
+  const reward = document.getElementById("overlay-reward");
+
+  reward.innerText = "Badge unlocked: " + badge + " | +" + xp + " XP";
+  overlay.style.display = "flex";
+
+  setTimeout(function() {
+    overlay.style.display = "none";
+  }, 2600);
 }
 
 function resetProject() {
-  if (confirm("Reset this project?")) {
-    localStorage.removeItem("project-profile-step");
-    localStorage.removeItem("project-profile-code");
-    localStorage.removeItem("project-profile-complete");
+  if (!activeProject) return;
 
-    currentStep = 1;
-    document.getElementById("code").value = steps[1].starter;
-    loadStep();
+  if (confirm("Reset this project?")) {
+    localStorage.removeItem("project-" + activeProject.id + "-code");
+    localStorage.removeItem("project-" + activeProject.id + "-guided-index");
+    localStorage.removeItem("project-" + activeProject.id + "-complete");
+
+    guidedIndex = 0;
+    codeBox.value = activeProject.starter;
+
     runProject();
+    document.getElementById("result").innerText = "Project reset.";
   }
 }
 
-document.getElementById("code").addEventListener("input", runProject);
+function backToProjects() {
+  builder.style.display = "none";
+  projectMenu.style.display = "grid";
+  activeProject = null;
+  renderProjects();
+}
+
+codeBox.addEventListener("input", runProject);
+
+renderProjects();
 </script>
 
 </body>

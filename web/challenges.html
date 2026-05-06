@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Challenges Mode</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ByteRush — Challenge Mode</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Press+Start+2P&display=swap');
 
 :root {
   --terminal-green: #39FF5A;
@@ -13,9 +14,9 @@
   --background: #03080F;
   --panel: #050B12;
   --panel-alt: #08111A;
-  --border: #183222;
-  --muted: #7FA58A;
-  --soft-text: #D7FFE0;
+  --border: rgba(57, 255, 90, 0.28);
+  --muted: rgba(230, 255, 233, 0.68);
+  --soft-text: #E6FFE9;
   --boss: #D7B84F;
 }
 
@@ -24,123 +25,246 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--terminal-green);
-  font-family: 'Press Start 2P', monospace;
-  text-align: center;
-  padding: 32px 20px;
   margin: 0;
   min-height: 100vh;
-
-  background-image:
-    linear-gradient(rgba(57,255,90,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(57,255,90,0.03) 1px, transparent 1px);
-
-  background-size: 42px 42px;
+  background: var(--background);
+  color: var(--soft-text);
+  font-family: "IBM Plex Mono", monospace;
+  padding: 18px;
 }
 
-h1 {
-  font-size: 20px;
-  letter-spacing: 2px;
+.challenge-shell {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.pixel {
+  font-family: "Press Start 2P", monospace;
+}
+
+.header {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  padding: 18px 20px;
   margin-bottom: 14px;
-  color: var(--terminal-green);
-  text-shadow: none;
 }
 
-p {
-  font-size: 9px;
+.header h1 {
+  margin: 0 0 10px;
+  color: var(--terminal-green);
+  font-size: 20px;
+  line-height: 1.5;
+}
+
+.header p {
+  margin: 0;
   color: var(--muted);
+  font-size: 14px;
   line-height: 1.7;
 }
 
-.challenge-box {
-  border: 2px solid var(--border);
-  padding: 20px;
-  max-width: 650px;
-  margin: 22px auto;
+.start-panel,
+.game-panel,
+.feedback-panel {
+  border: 1px solid var(--border);
   background: var(--panel);
+  padding: 18px;
+  margin-bottom: 14px;
 }
 
-.challenge-box p {
+.start-panel h2 {
+  margin: 0 0 10px;
+  color: var(--terminal-green);
+  font-size: 15px;
+}
+
+.start-panel p {
+  margin: 0 0 16px;
   color: var(--soft-text);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.stat-box {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  padding: 12px;
+}
+
+.stat-box h3 {
+  margin: 0 0 8px;
+  font-size: 8px;
+  line-height: 1.5;
+  color: var(--terminal-green);
+}
+
+.stat-box p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--soft-text);
+}
+
+.game-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 14px;
+}
+
+.challenge-card,
+.preview-card {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  padding: 16px;
+}
+
+.label {
+  font-size: 8px;
+  color: var(--terminal-green);
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.skill {
+  color: var(--boss);
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.task {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--soft-text);
+  margin-bottom: 10px;
+}
+
+.why {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin-bottom: 14px;
 }
 
 textarea {
   width: 100%;
   height: 130px;
+  resize: vertical;
   background: var(--panel-alt);
   color: var(--terminal-green);
-  border: 2px solid var(--border);
-  padding: 12px;
-  font-family: monospace;
+  border: 1px solid var(--border);
+  padding: 14px;
+  font-family: "IBM Plex Mono", monospace;
   font-size: 15px;
-  box-sizing: border-box;
+  line-height: 1.6;
   outline: none;
-  resize: none;
 }
 
 textarea:focus {
   border-color: var(--terminal-green);
 }
 
-button {
-  margin-top: 10px;
-  padding: 10px 18px;
-  border: 2px solid var(--terminal-green);
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+button,
+.exit-btn {
+  border: 1px solid var(--terminal-green);
   background: transparent;
   color: var(--terminal-green);
+  padding: 10px 14px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 8px;
-  transition: 0.15s ease;
+  text-decoration: none;
 }
 
-button:hover {
-  background: var(--terminal-green);
-  color: var(--background);
+button:hover,
+.exit-btn:hover {
+  background: rgba(57, 255, 90, 0.1);
 }
 
-button:active {
-  transform: scale(0.96);
+.preview-box {
+  min-height: 250px;
+  border: 1px solid var(--border);
+  background: var(--panel-alt);
+  padding: 18px;
+  color: var(--soft-text);
 }
 
-.timer {
-  font-size: 18px;
-  margin: 18px 0 10px;
-  color: var(--terminal-green);
+.preview-box h2 {
+  margin: 0 0 14px;
+  font-size: 24px;
 }
 
-.streak {
-  color: var(--boss);
-  font-size: 10px;
-  margin-bottom: 14px;
+.preview-box p {
+  margin: 0 0 14px;
+  font-size: 15px;
 }
 
-.meta {
-  color: var(--muted);
-  font-weight: bold;
-  font-size: 9px;
-  line-height: 1.9;
-  max-width: 780px;
-  margin: 22px auto 0;
-  border: 2px solid var(--border);
-  background: var(--panel);
+.preview-card-demo {
+  border: 2px solid var(--muted);
+  padding: 14px;
+  margin-top: 12px;
+  text-align: left;
+}
+
+.preview-card-demo button {
+  color: var(--soft-text);
+  border-color: var(--muted);
+}
+
+.feedback-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.feedback-box {
+  border: 1px solid var(--border);
+  background: var(--panel-alt);
   padding: 14px;
 }
 
-.meta span {
+.feedback-box h3 {
+  margin: 0 0 8px;
+  font-size: 8px;
   color: var(--terminal-green);
+  line-height: 1.5;
 }
 
-#result {
-  font-weight: bold;
-  margin-top: 18px;
-  font-size: 10px;
-  color: var(--terminal-green);
+.feedback-box p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
 }
 
-.error-shake {
-  animation: shake 0.3s ease-in-out;
+.hidden {
+  display: none;
+}
+
+.error {
+  color: var(--danger-red) !important;
+}
+
+.success {
+  color: var(--terminal-green) !important;
+}
+
+.shake {
+  animation: shake 0.28s ease-in-out;
   border-color: var(--danger-red);
 }
 
@@ -152,79 +276,260 @@ button:active {
   100% { transform: translateX(0); }
 }
 
-.win-glow {
-  color: var(--boss);
-}
-
-@media (max-width: 700px) {
-  body {
-    padding: 24px 14px;
+@media (max-width: 900px) {
+  .stats-row,
+  .game-grid,
+  .feedback-panel {
+    grid-template-columns: 1fr;
   }
 
-  h1 {
+  .header h1 {
     font-size: 16px;
   }
 
-  .meta {
-    font-size: 7px;
-  }
-
-  .challenge-box {
-    padding: 16px;
-  }
-
-  textarea {
-    font-size: 14px;
+  body {
+    padding: 14px;
   }
 }
 </style>
 </head>
 
-<body class="theme-challenges">
+<body>
 
-<h1>CHALLENGE MODE</h1>
-<p>Random Missions. Adaptive Timer. Big XP.</p>
+<div class="challenge-shell">
 
-<div class="meta">
-  ROUND: <span id="round">1</span> / 5 |
-  XP REWARD: <span id="reward">100</span> |
-  DIFFICULTY: <span id="difficulty">Normal</span>
+  <header class="header">
+    <h1 class="pixel">CHALLENGE MODE</h1>
+    <p>Practice real coding syntax through timed missions, feedback, hints, lives, and XP rewards.</p>
+  </header>
+
+  <section id="start-panel" class="start-panel">
+    <h2 class="pixel">READY?</h2>
+    <p>
+      Complete 5 coding challenges. Each mission teaches a real CSS skill.
+      You have 3 lives, hints, and a live preview to help you learn while playing.
+    </p>
+
+    <button id="start-btn" type="button">Start Challenge</button>
+    <a href="dashboard.html" class="exit-btn">Exit</a>
+  </section>
+
+  <section id="game-area" class="hidden">
+
+    <div class="stats-row">
+      <div class="stat-box">
+        <h3 class="pixel">ROUND</h3>
+        <p><span id="round">1</span> / 5</p>
+      </div>
+
+      <div class="stat-box">
+        <h3 class="pixel">TIME</h3>
+        <p><span id="time">20</span>s</p>
+      </div>
+
+      <div class="stat-box">
+        <h3 class="pixel">LIVES</h3>
+        <p id="lives">❤️❤️❤️</p>
+      </div>
+
+      <div class="stat-box">
+        <h3 class="pixel">STREAK</h3>
+        <p id="streak">0</p>
+      </div>
+
+      <div class="stat-box">
+        <h3 class="pixel">XP</h3>
+        <p id="reward">100</p>
+      </div>
+    </div>
+
+    <div class="game-grid">
+
+      <div class="challenge-card" id="challenge-card">
+        <div class="label pixel">CURRENT MISSION</div>
+
+        <div class="skill" id="skill">Skill appears here</div>
+        <div class="task" id="task">Task appears here</div>
+        <div class="why" id="why">Why it matters appears here.</div>
+
+        <textarea id="code" spellcheck="false"></textarea>
+
+        <div class="button-row">
+          <button id="submit-btn" type="button">Submit</button>
+          <button id="hint-btn" type="button">Hint</button>
+          <button id="skip-btn" type="button">Skip</button>
+          <a href="dashboard.html" class="exit-btn">Exit</a>
+        </div>
+      </div>
+
+      <div class="preview-card">
+        <div class="label pixel">LIVE PREVIEW</div>
+
+        <div class="preview-box">
+          <h2 id="preview-heading">Heading Text</h2>
+          <p id="preview-paragraph">Paragraph text changes when the right CSS is used.</p>
+
+          <div id="preview-card-demo" class="preview-card-demo">
+            <strong>Card Preview</strong>
+            <p>This card shows padding, border, and alignment challenges.</p>
+          </div>
+
+          <button id="preview-button" type="button">Button Preview</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="feedback-panel">
+
+      <div class="feedback-box">
+        <h3 class="pixel">FEEDBACK</h3>
+        <p id="result">Submit your answer when ready.</p>
+      </div>
+
+      <div class="feedback-box">
+        <h3 class="pixel">HINT</h3>
+        <p id="hint-text">Use the hint button if you get stuck.</p>
+      </div>
+
+    </div>
+
+  </section>
+
 </div>
-
-<div class="timer">⏱ <span id="time">20</span>s</div>
-<div class="streak">🔥 Streak: <span id="streak">0</span></div>
-
-<div class="challenge-box" id="challenge-box">
-  <p id="instruction"></p>
-  <textarea id="code"></textarea><br>
-  <button onclick="submitAnswer()">SUBMIT</button>
-  <button onclick="window.location.href='dashboard.html'">EXIT</button>
-</div>
-
-<p id="result"></p>
 
 <script>
-const allChallenges = [
-  { q: 'Type: h1 { color: blue; }', a: 'h1{color:blue;}', difficulty: "easy" },
-  { q: 'Type: p { color: red; }', a: 'p{color:red;}', difficulty: "easy" },
-  { q: 'Type: body { background-color: black; }', a: 'body{background-color:black;}', difficulty: "easy" },
-  { q: 'Type: h1 { font-size: 40px; }', a: 'h1{font-size:40px;}', difficulty: "medium" },
-  { q: 'Type: .card { padding: 20px; }', a: '.card{padding:20px;}', difficulty: "medium" },
-  { q: 'Type: .card { text-align: center; }', a: '.card{text-align:center;}', difficulty: "medium" },
-  { q: 'Type: .card { border: 2px solid blue; }', a: '.card{border:2pxsolidblue;}', difficulty: "hard" },
-  { q: 'Type: button { background-color: yellow; }', a: 'button{background-color:yellow;}', difficulty: "hard" },
-  { q: 'Type: h2 { margin: 10px; }', a: 'h2{margin:10px;}', difficulty: "hard" }
+const challenges = [
+  {
+    skill: "CSS Color",
+    task: "Make all h1 headings blue.",
+    why: "This teaches how CSS changes the color of important page headings.",
+    prompt: "Type: h1 { color: blue; }",
+    answer: "h1{color:blue;}",
+    hint: "Start with h1, then place color: blue inside curly braces.",
+    preview: function () {
+      document.getElementById("preview-heading").style.color = "blue";
+    }
+  },
+  {
+    skill: "CSS Paragraph Color",
+    task: "Make all paragraph text red.",
+    why: "This teaches how to target paragraph elements and change their style.",
+    prompt: "Type: p { color: red; }",
+    answer: "p{color:red;}",
+    hint: "Use the p selector, then set color to red.",
+    preview: function () {
+      document.getElementById("preview-paragraph").style.color = "red";
+    }
+  },
+  {
+    skill: "Page Background",
+    task: "Make the page background black.",
+    why: "This teaches how CSS controls the overall page design.",
+    prompt: "Type: body { background-color: black; }",
+    answer: "body{background-color:black;}",
+    hint: "Use body as the selector and background-color as the property.",
+    preview: function () {
+      document.querySelector(".preview-box").style.backgroundColor = "black";
+    }
+  },
+  {
+    skill: "Font Size",
+    task: "Make h1 text larger.",
+    why: "This teaches how font-size controls visual hierarchy on a page.",
+    prompt: "Type: h1 { font-size: 40px; }",
+    answer: "h1{font-size:40px;}",
+    hint: "The property is font-size and the value is 40px.",
+    preview: function () {
+      document.getElementById("preview-heading").style.fontSize = "40px";
+    }
+  },
+  {
+    skill: "Card Spacing",
+    task: "Add padding inside a card.",
+    why: "Padding creates breathing room inside boxes and makes designs easier to read.",
+    prompt: "Type: .card { padding: 20px; }",
+    answer: ".card{padding:20px;}",
+    hint: "Use .card as the selector and padding: 20px inside the braces.",
+    preview: function () {
+      document.getElementById("preview-card-demo").style.padding = "20px";
+    }
+  },
+  {
+    skill: "Text Alignment",
+    task: "Center the text inside a card.",
+    why: "Text alignment helps control how content is arranged inside a layout.",
+    prompt: "Type: .card { text-align: center; }",
+    answer: ".card{text-align:center;}",
+    hint: "The property is text-align and the value is center.",
+    preview: function () {
+      document.getElementById("preview-card-demo").style.textAlign = "center";
+    }
+  },
+  {
+    skill: "Card Border",
+    task: "Add a blue border to a card.",
+    why: "Borders help separate sections and make interface elements clearer.",
+    prompt: "Type: .card { border: 2px solid blue; }",
+    answer: ".card{border:2pxsolidblue;}",
+    hint: "The value should include width, style, and color: 2px solid blue.",
+    preview: function () {
+      document.getElementById("preview-card-demo").style.border = "2px solid blue";
+    }
+  },
+  {
+    skill: "Button Background",
+    task: "Make the button background yellow.",
+    why: "Button styles help users understand what they can click.",
+    prompt: "Type: button { background-color: yellow; }",
+    answer: "button{background-color:yellow;}",
+    hint: "Use the button selector and background-color property.",
+    preview: function () {
+      document.getElementById("preview-button").style.backgroundColor = "yellow";
+      document.getElementById("preview-button").style.color = "#03080F";
+    }
+  },
+  {
+    skill: "Margin",
+    task: "Add margin around h2 elements.",
+    why: "Margin controls space outside an element and prevents cramped layouts.",
+    prompt: "Type: h2 { margin: 10px; }",
+    answer: "h2{margin:10px;}",
+    hint: "Use h2 as the selector and margin: 10px inside curly braces.",
+    preview: function () {
+      document.getElementById("preview-heading").style.margin = "10px";
+    }
+  }
 ];
 
 let challengeSet = [];
 let current = 0;
 let time = 20;
-let timer;
+let timer = null;
+let lives = 3;
 let streak = parseInt(localStorage.getItem("streak")) || 0;
 let reward = 100;
+let hintUsed = false;
 
-let challengeWins = parseInt(localStorage.getItem("challenge-wins")) || 0;
-let challengeLosses = parseInt(localStorage.getItem("challenge-losses")) || 0;
+const startPanel = document.getElementById("start-panel");
+const gameArea = document.getElementById("game-area");
+const startBtn = document.getElementById("start-btn");
+const submitBtn = document.getElementById("submit-btn");
+const hintBtn = document.getElementById("hint-btn");
+const skipBtn = document.getElementById("skip-btn");
+
+const roundEl = document.getElementById("round");
+const timeEl = document.getElementById("time");
+const livesEl = document.getElementById("lives");
+const streakEl = document.getElementById("streak");
+const rewardEl = document.getElementById("reward");
+const skillEl = document.getElementById("skill");
+const taskEl = document.getElementById("task");
+const whyEl = document.getElementById("why");
+const codeEl = document.getElementById("code");
+const resultEl = document.getElementById("result");
+const hintTextEl = document.getElementById("hint-text");
+const challengeCard = document.getElementById("challenge-card");
 
 function normalize(text) {
   return text.replace(/\s+/g, "").toLowerCase();
@@ -234,40 +539,31 @@ function shuffle(array) {
   return array.sort(() => Math.random() - 0.5);
 }
 
-function getDifficultyMode() {
-  if (challengeWins >= challengeLosses + 3) return "Hard";
-  if (challengeLosses >= challengeWins + 2) return "Easy";
-  return "Normal";
+function resetPreview() {
+  document.getElementById("preview-heading").removeAttribute("style");
+  document.getElementById("preview-paragraph").removeAttribute("style");
+  document.getElementById("preview-card-demo").removeAttribute("style");
+  document.querySelector(".preview-box").removeAttribute("style");
+  document.getElementById("preview-button").removeAttribute("style");
 }
 
-function buildChallengeSet() {
-  const mode = getDifficultyMode();
-  let pool = [];
-
-  if (mode === "Easy") {
-    pool = allChallenges.filter(c => c.difficulty === "easy" || c.difficulty === "medium");
-  } else if (mode === "Hard") {
-    pool = allChallenges.filter(c => c.difficulty === "medium" || c.difficulty === "hard");
-  } else {
-    pool = allChallenges;
-  }
-
-  challengeSet = shuffle([...pool]).slice(0, 5);
-  document.getElementById("difficulty").innerText = mode;
+function updateLives() {
+  livesEl.innerText = "❤️".repeat(lives) + "🖤".repeat(3 - lives);
 }
 
-function getTimeForRound() {
-  const mode = getDifficultyMode();
+function startGame() {
+  startPanel.classList.add("hidden");
+  gameArea.classList.remove("hidden");
 
-  let baseTime = 20;
+  current = 0;
+  lives = 3;
+  reward = 100;
+  hintUsed = false;
 
-  if (mode === "Easy") baseTime = 25;
-  if (mode === "Normal") baseTime = 20;
-  if (mode === "Hard") baseTime = 17;
+  challengeSet = shuffle([...challenges]).slice(0, 5);
 
-  if (current < 2) return baseTime;
-  if (current < 4) return Math.max(baseTime - 2, 15);
-  return Math.max(baseTime - 5, 15);
+  updateLives();
+  loadChallenge();
 }
 
 function loadChallenge() {
@@ -276,98 +572,154 @@ function loadChallenge() {
     return;
   }
 
-  time = getTimeForRound();
-
-  document.getElementById("round").innerText = current + 1;
-  document.getElementById("time").innerText = time;
-  document.getElementById("streak").innerText = streak;
-  document.getElementById("reward").innerText = reward;
-  document.getElementById("instruction").innerText = challengeSet[current].q;
-  document.getElementById("code").value = "";
-  document.getElementById("result").innerText = "";
-  document.getElementById("difficulty").innerText = getDifficultyMode();
-
   clearInterval(timer);
+
+  hintUsed = false;
+  time = Math.max(20 - current * 2, 12);
+
+  const challenge = challengeSet[current];
+
+  roundEl.innerText = current + 1;
+  timeEl.innerText = time;
+  streakEl.innerText = streak;
+  rewardEl.innerText = reward;
+
+  skillEl.innerText = challenge.skill;
+  taskEl.innerText = challenge.task;
+  whyEl.innerText = challenge.why;
+  codeEl.value = challenge.prompt;
+
+  resultEl.className = "";
+  resultEl.innerText = "Read the task, type the code, then submit.";
+  hintTextEl.innerText = "Use the hint button if you get stuck.";
+
+  resetPreview();
 
   timer = setInterval(function () {
     time--;
-    document.getElementById("time").innerText = time;
+    timeEl.innerText = time;
 
     if (time <= 0) {
-      failGame("⏱ Time ran out!");
+      loseLife("Time ran out.");
     }
   }, 1000);
 }
 
 function submitAnswer() {
-  const user = normalize(document.getElementById("code").value);
-  const correct = challengeSet[current].a;
+  const userAnswer = normalize(codeEl.value);
+  const correctAnswer = challengeSet[current].answer;
 
-  if (user === correct) {
+  if (userAnswer === correctAnswer) {
     clearInterval(timer);
 
+    challengeSet[current].preview();
+
+    let bonus = hintUsed ? 10 : 20;
+
+    if (time >= 10) {
+      bonus += 10;
+    }
+
+    reward += bonus;
     streak++;
+
     localStorage.setItem("streak", streak);
 
-    reward += 10;
+    resultEl.className = "success";
+    resultEl.innerText = "Correct! +" + bonus + " XP bonus. Moving to the next mission...";
 
     current++;
-    loadChallenge();
+
+    setTimeout(loadChallenge, 1200);
   } else {
-    failGame("❌ Wrong answer!");
+    loseLife("Wrong answer. Check the syntax and try again.");
   }
 }
 
-function failGame(message) {
+function loseLife(message) {
   clearInterval(timer);
 
-  challengeLosses++;
-  localStorage.setItem("challenge-losses", challengeLosses);
+  lives--;
+  updateLives();
 
   streak = 0;
   localStorage.setItem("streak", streak);
+  streakEl.innerText = streak;
 
-  document.getElementById("streak").innerText = 0;
-  document.getElementById("result").style.color = "#FF3B3B";
-  document.getElementById("result").innerText = message + " Restarting run with adjusted difficulty...";
+  resultEl.className = "error";
+  resultEl.innerText = message + " You lost one life.";
 
-  const box = document.getElementById("challenge-box");
-  box.classList.add("error-shake");
+  challengeCard.classList.add("shake");
 
   setTimeout(function () {
-    box.classList.remove("error-shake");
+    challengeCard.classList.remove("shake");
   }, 300);
 
-  setTimeout(function () {
-    current = 0;
-    reward = 100;
-    document.getElementById("result").style.color = "#39FF5A";
-    buildChallengeSet();
-    loadChallenge();
-  }, 1500);
+  if (lives <= 0) {
+    setTimeout(gameOver, 900);
+  } else {
+    setTimeout(function () {
+      resultEl.className = "";
+      resultEl.innerText = "Try again. Use the hint if you need help.";
+      time = Math.max(time, 8);
+
+      timer = setInterval(function () {
+        time--;
+        timeEl.innerText = time;
+
+        if (time <= 0) {
+          loseLife("Time ran out.");
+        }
+      }, 1000);
+    }, 900);
+  }
+}
+
+function showHint() {
+  hintUsed = true;
+  hintTextEl.innerText = challengeSet[current].hint;
+}
+
+function skipChallenge() {
+  loseLife("Challenge skipped.");
+}
+
+function gameOver() {
+  clearInterval(timer);
+
+  let losses = parseInt(localStorage.getItem("challenge-losses")) || 0;
+  losses++;
+  localStorage.setItem("challenge-losses", losses);
+
+  resultEl.className = "error";
+  resultEl.innerText = "Game over. Restarting Challenge Mode...";
+
+  setTimeout(startGame, 1400);
 }
 
 function winGame() {
   clearInterval(timer);
 
-  challengeWins++;
-  localStorage.setItem("challenge-wins", challengeWins);
+  let wins = parseInt(localStorage.getItem("challenge-wins")) || 0;
+  wins++;
+  localStorage.setItem("challenge-wins", wins);
 
   let xp = parseInt(localStorage.getItem("xp")) || 0;
   xp += reward;
   localStorage.setItem("xp", xp);
 
-  document.querySelector("h1").classList.add("win-glow");
-  document.getElementById("result").style.color = "#39FF5A";
-  document.getElementById("result").innerText = "🏆 CHALLENGE CLEARED! +" + reward + " XP";
+  resultEl.className = "success";
+  resultEl.innerText = "Challenge cleared! +" + reward + " XP added.";
 
   setTimeout(function () {
     window.location.href = "dashboard.html";
-  }, 3000);
+  }, 2500);
 }
 
-buildChallengeSet();
-loadChallenge();
+startBtn.addEventListener("click", startGame);
+submitBtn.addEventListener("click", submitAnswer);
+hintBtn.addEventListener("click", showHint);
+skipBtn.addEventListener("click", skipChallenge);
 </script>
 
 </body>

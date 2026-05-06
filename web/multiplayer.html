@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multiplayer Zone — ByteRush</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+  --green: #39FF5A;
+  --red: #FF3B3B;
+  --bg: #03080F;
+  --panel: #050B12;
+  --panel2: #07111D;
+  --text: #D6FFE0;
+  --muted: #8FAF9A;
+  --line: rgba(57, 255, 90, 0.35);
+  --yellow: #D7B84F;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Consolas, Monaco, monospace;
+  padding: 28px;
+  min-height: 100vh;
+  background-image:
+    linear-gradient(rgba(57,255,90,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57,255,90,0.03) 1px, transparent 1px);
+  background-size: 42px 42px;
+}
+
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1, h2, h3, button, label {
+  font-family: 'Press Start 2P', monospace;
+}
+
+.topbar,
+.panel {
+  border: 2px solid var(--line);
+  background: var(--panel);
+  padding: 22px;
+  margin-bottom: 18px;
+}
+
+h1 {
+  color: var(--green);
+  font-size: 24px;
+  margin: 0 0 12px;
+}
+
+.subtitle {
+  color: var(--muted);
+  margin: 0;
+}
+
+.arena-banner {
+  margin-top: 18px;
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  padding: 16px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.banner-stat {
+  border: 1px solid var(--line);
+  padding: 12px;
+  color: var(--muted);
+  text-align: center;
+  font-size: 13px;
+}
+
+.banner-stat strong {
+  display: block;
+  color: var(--green);
+  margin-top: 6px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 18px;
+}
+
+.panel h2 {
+  color: var(--green);
+  font-size: 13px;
+  margin: 0 0 16px;
+}
+
+.battle-modes {
+  display: grid;
+  gap: 12px;
+}
+
+.mode-card {
+  border: 2px solid var(--line);
+  background: var(--panel2);
+  padding: 18px;
+  transition: 0.15s ease;
+  position: relative;
+}
+
+.mode-card.active {
+  border-color: var(--green);
+  background: #0B1A10;
+}
+
+.mode-card.locked {
+  opacity: 0.45;
+}
+
+.mode-card h3 {
+  color: var(--green);
+  font-size: 11px;
+  margin: 0 0 10px;
+}
+
+.mode-card p {
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.tag {
+  display: inline-block;
+  margin-top: 10px;
+  border: 1px solid var(--line);
+  color: var(--yellow);
+  padding: 5px 8px;
+  font-size: 12px;
+}
+
+.setup-row {
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  padding: 14px;
+  margin-top: 10px;
+}
+
+label {
+  color: var(--green);
+  font-size: 9px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+input,
+select {
+  width: 100%;
+  background: #02060B;
+  color: var(--green);
+  border: 1px solid var(--line);
+  padding: 11px;
+  font-family: Consolas, Monaco, monospace;
+  outline: none;
+}
+
+input:focus,
+select:focus {
+  border-color: var(--green);
+}
+
+.player-slots {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.player-input {
+  position: relative;
+}
+
+.player-input span {
+  display: block;
+  color: var(--yellow);
+  margin-bottom: 5px;
+  font-size: 13px;
+}
+
+.reward-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.reward-card {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  padding: 13px;
+  color: var(--muted);
+}
+
+.reward-card strong {
+  color: var(--yellow);
+}
+
+.match-console {
+  border: 2px solid var(--line);
+  background: #02060B;
+  padding: 16px;
+  min-height: 120px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.match-console strong {
+  color: var(--green);
+}
+
+button {
+  background: transparent;
+  color: var(--green);
+  border: 1px solid var(--green);
+  padding: 12px 14px;
+  cursor: pointer;
+  font-size: 9px;
+  margin: 8px 8px 0 0;
+}
+
+button:hover {
+  background: var(--green);
+  color: var(--bg);
+}
+
+button.primary {
+  background: var(--green);
+  color: var(--bg);
+}
+
+button.primary:hover {
+  opacity: 0.85;
+}
+
+button.danger {
+  color: var(--red);
+  border-color: var(--red);
+}
+
+button.danger:hover {
+  background: var(--red);
+  color: var(--bg);
+}
+
+.notice {
+  color: var(--red);
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+.ready {
+  color: var(--green);
+}
+
+@media (max-width: 900px) {
+  body {
+    padding: 16px;
+  }
+
+  .grid,
+  .arena-banner,
+  .player-slots {
+    grid-template-columns: 1fr;
+  }
+
+  h1 {
+    font-size: 18px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<main class="page">
+
+  <section class="topbar">
+    <h1>MULTIPLAYER ZONE</h1>
+    <p class="subtitle">Create a 2–4 player quiz race. First player to clear the target wins XP.</p>
+
+    <div class="arena-banner">
+      <div class="banner-stat">MODE<strong>Quiz Race</strong></div>
+      <div class="banner-stat">PLAYERS<strong>2–4</strong></div>
+      <div class="banner-stat">WIN CONDITION<strong>Fastest Score</strong></div>
+      <div class="banner-stat">TOP REWARD<strong>+100 XP</strong></div>
+    </div>
+
+    <button onclick="window.location.href='dashboard.html'">← BACK TO DASHBOARD</button>
+  </section>
+
+  <section class="grid">
+
+    <div class="panel">
+      <h2>BATTLE SELECT</h2>
+
+      <div class="battle-modes">
+        <div class="mode-card active">
+          <h3>QUIZ RACE</h3>
+          <p>Players answer coding questions. First to reach the target score wins the match.</p>
+          <span class="tag">AVAILABLE NOW</span>
+        </div>
+
+        <div class="mode-card locked">
+          <h3>CODE DUEL</h3>
+          <p>Head-to-head coding battles with timed mini tasks.</p>
+          <span class="tag">COMING SOON</span>
+        </div>
+
+        <div class="mode-card locked">
+          <h3>BOSS RAID</h3>
+          <p>Team up against one large coding boss challenge.</p>
+          <span class="tag">COMING SOON</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>REWARD LADDER</h2>
+
+      <div class="reward-grid">
+        <div class="reward-card">1ST PLACE <strong>+100 XP</strong></div>
+        <div class="reward-card">2ND PLACE <strong>+50 XP</strong></div>
+        <div class="reward-card">3RD PLACE <strong>+25 XP</strong></div>
+        <div class="reward-card">BADGE <strong>Quiz Champion</strong></div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="panel">
+    <h2>CREATE MATCH</h2>
+
+    <div class="setup-row">
+      <label for="player-count">NUMBER OF PLAYERS</label>
+      <select id="player-count" onchange="renderPlayerInputs()">
+        <option value="2">2 Players</option>
+        <option value="3">3 Players</option>
+        <option value="4">4 Players</option>
+      </select>
+    </div>
+
+    <div class="setup-row">
+      <label for="question-count">QUESTIONS TO WIN</label>
+      <select id="question-count">
+        <option value="3">3 Questions</option>
+        <option value="5" selected>5 Questions</option>
+        <option value="7">7 Questions</option>
+      </select>
+    </div>
+
+    <div class="setup-row">
+      <label>PLAYER ROSTER</label>
+      <div class="player-slots" id="player-inputs"></div>
+    </div>
+
+    <button class="primary" onclick="createMatch()">CREATE MATCH</button>
+    <button class="danger" onclick="resetMatch()">CLEAR MATCH</button>
+
+    <p id="setup-message" class="notice"></p>
+  </section>
+
+  <section class="panel">
+    <h2>MATCH CONSOLE</h2>
+
+    <div class="match-console" id="match-console">
+      No active match. Create a match to load players into the arena.
+    </div>
+
+    <button class="primary" onclick="startMatch()">START QUIZ RACE</button>
+  </section>
+
+</main>
+
+<script>
+function renderPlayerInputs() {
+  const count = parseInt(document.getElementById("player-count").value);
+  const container = document.getElementById("player-inputs");
+
+  container.innerHTML = "";
+
+  for (let i = 1; i <= count; i++) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "player-input";
+
+    wrapper.innerHTML = `
+      <span>PLAYER ${i}</span>
+      <input id="player-${i}" type="text" placeholder="Enter player ${i} name">
+    `;
+
+    container.appendChild(wrapper);
+  }
+}
+
+function createMatch() {
+  const count = parseInt(document.getElementById("player-count").value);
+  const questionCount = parseInt(document.getElementById("question-count").value);
+  const players = [];
+
+  for (let i = 1; i <= count; i++) {
+    const input = document.getElementById("player-" + i);
+    const name = input.value.trim() || "Player " + i;
+
+    players.push({
+      name: name,
+      score: 0,
+      finished: false,
+      place: null
+    });
+  }
+
+  const match = {
+    mode: "quiz-race",
+    players: players,
+    questionCount: questionCount,
+    currentQuestion: 0,
+    activePlayer: 0,
+    createdAt: Date.now()
+  };
+
+  localStorage.setItem("multiplayer-match", JSON.stringify(match));
+
+  document.getElementById("setup-message").innerText = "Match created. Arena is ready.";
+  document.getElementById("setup-message").className = "notice ready";
+
+  loadMatchStatus();
+}
+
+function loadMatchStatus() {
+  const savedMatch = localStorage.getItem("multiplayer-match");
+  const consoleBox = document.getElementById("match-console");
+
+  if (!savedMatch) {
+    consoleBox.innerHTML = "No active match. Create a match to load players into the arena.";
+    return;
+  }
+
+  const match = JSON.parse(savedMatch);
+
+  let playerList = "";
+
+  match.players.forEach(function(player, index) {
+    playerList += "<br>PLAYER " + (index + 1) + ": <strong>" + player.name + "</strong>";
+  });
+
+  consoleBox.innerHTML =
+    "STATUS: <strong>QUIZ RACE READY</strong><br>" +
+    "PLAYERS: <strong>" + match.players.length + "</strong><br>" +
+    "QUESTIONS TO WIN: <strong>" + match.questionCount + "</strong>" +
+    playerList;
+}
+
+function startMatch() {
+  const savedMatch = localStorage.getItem("multiplayer-match");
+
+  if (!savedMatch) {
+    document.getElementById("setup-message").innerText = "Create a match first.";
+    document.getElementById("setup-message").className = "notice";
+    return;
+  }
+
+  window.location.href = "multiplayer-quiz.html";
+}
+
+function resetMatch() {
+  if (confirm("Clear current multiplayer match?")) {
+    localStorage.removeItem("multiplayer-match");
+    document.getElementById("setup-message").innerText = "Match cleared.";
+    document.getElementById("setup-message").className = "notice";
+    loadMatchStatus();
+  }
+}
+
+renderPlayerInputs();
+loadMatchStatus();
+</script>
+
+</body>
+</html>

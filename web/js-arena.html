@@ -1,596 +1,888 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JavaScript Core | ByteRush</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JavaScript Core | ByteRush</title>
 
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-    :root {
-      --green: #39FF5A;
-      --red: #FF3B3B;
-      --bg: #03080F;
-      --panel: #050B12;
-      --panel2: #07111D;
-      --text: #D6FFE0;
-      --muted: #8FAF9A;
-      --line: rgba(57, 255, 90, 0.35);
-    }
+:root {
+  --green: #39FF5A;
+  --red: #FF3B3B;
+  --bg: #03080F;
+  --panel: #050B12;
+  --panel2: #07111D;
+  --text: #D6FFE0;
+  --muted: #8FAF9A;
+  --line: rgba(57, 255, 90, 0.35);
+  --yellow: #FACC15;
+}
 
-    * {
-      box-sizing: border-box;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: Consolas, Monaco, monospace;
-      padding: 28px;
-      line-height: 1.6;
-    }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Consolas, Monaco, monospace;
+  padding: 28px;
+  line-height: 1.6;
+}
 
-    .arena {
-      max-width: 1250px;
-      margin: 0 auto;
-    }
+.arena {
+  max-width: 1250px;
+  margin: 0 auto;
+}
 
-    .topbar {
-      border: 2px solid var(--line);
-      background: var(--panel);
-      padding: 22px;
-      margin-bottom: 20px;
-    }
+h1, h2, h3, button {
+  font-family: 'Press Start 2P', monospace;
+}
 
-    h1, h2, h3, button {
-      font-family: 'Press Start 2P', monospace;
-    }
+.topbar {
+  border: 2px solid var(--line);
+  background: var(--panel);
+  padding: 22px;
+  margin-bottom: 20px;
+}
 
-    h1 {
-      color: var(--green);
-      font-size: 22px;
-      margin: 0 0 12px;
-      letter-spacing: 1px;
-    }
+h1 {
+  color: var(--green);
+  font-size: 22px;
+  margin: 0 0 12px;
+  letter-spacing: 1px;
+}
 
-    .desc {
-      color: var(--muted);
-      font-size: 15px;
-      margin: 0;
-    }
+.desc {
+  color: var(--muted);
+  font-size: 15px;
+  margin: 0;
+}
 
-    .mission-title {
-      margin-top: 18px;
-      color: var(--green);
-      font-size: 13px;
-    }
+#mission-title {
+  margin-top: 18px;
+  color: var(--green);
+  font-size: 13px;
+}
 
-    .layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-    }
+.stats-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
 
-    .panel {
-      border: 2px solid var(--line);
-      background: var(--panel);
-      padding: 18px;
-    }
+.stat-box {
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
 
-    .bytebot {
-      margin-bottom: 18px;
-      background: var(--panel2);
-    }
+.stat-box strong {
+  color: var(--green);
+}
 
-    .bytebot h2,
-    .editor-panel h2,
-    .preview-panel h2,
-    .feedback h2 {
-      color: var(--green);
-      font-size: 12px;
-      margin: 0 0 14px;
-    }
+.panel {
+  border: 2px solid var(--line);
+  background: var(--panel);
+  padding: 18px;
+}
 
-    .bytebot p {
-      font-size: 15px;
-      margin: 0;
-      color: var(--text);
-    }
+.bytebot {
+  margin-bottom: 18px;
+  background: var(--panel2);
+}
 
-    textarea {
-      width: 100%;
-      min-height: 300px;
-      resize: vertical;
-      background: #02060B;
-      color: var(--green);
-      border: 1px solid var(--line);
-      padding: 16px;
-      font-size: 15px;
-      line-height: 1.5;
-      outline: none;
-      font-family: Consolas, Monaco, monospace;
-    }
+.bytebot h2,
+.editor-panel h2,
+.preview-panel h2,
+.feedback h2 {
+  color: var(--green);
+  font-size: 12px;
+  margin: 0 0 14px;
+}
 
-    textarea:focus {
-      border-color: var(--green);
-    }
+.bytebot p {
+  font-size: 15px;
+  margin: 0;
+}
 
-    .buttons {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 14px;
-    }
+.highlight {
+  color: var(--green);
+  font-weight: bold;
+}
 
-    button {
-      background: var(--green);
-      color: #03080F;
-      border: none;
-      padding: 13px 16px;
-      cursor: pointer;
-      font-size: 10px;
-    }
+.arena-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
 
-    button.secondary {
-      background: transparent;
-      color: var(--green);
-      border: 1px solid var(--green);
-    }
+textarea {
+  width: 100%;
+  min-height: 300px;
+  resize: vertical;
+  background: #02060B;
+  color: var(--green);
+  border: 1px solid var(--line);
+  padding: 16px;
+  font-size: 15px;
+  line-height: 1.5;
+  outline: none;
+  font-family: Consolas, Monaco, monospace;
+}
 
-    button.danger {
-      background: transparent;
-      color: var(--red);
-      border: 1px solid var(--red);
-    }
+textarea:focus {
+  border-color: var(--green);
+}
 
-    button:hover {
-      opacity: 0.85;
-    }
+.buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
 
-    .preview-box {
-      background: #02060B;
-      border: 1px solid var(--line);
-      min-height: 300px;
-      padding: 22px;
-      color: var(--text);
-    }
+button {
+  background: var(--green);
+  color: #03080F;
+  border: none;
+  padding: 13px 16px;
+  cursor: pointer;
+  font-size: 10px;
+}
 
-    .mock-card {
-      border: 1px solid var(--line);
-      background: var(--panel2);
-      padding: 18px;
-    }
+button.secondary {
+  background: transparent;
+  color: var(--green);
+  border: 1px solid var(--green);
+}
 
-    .mock-card h3 {
-      color: var(--green);
-      font-size: 11px;
-      margin: 0 0 14px;
-    }
+button.danger {
+  background: transparent;
+  color: var(--red);
+  border: 1px solid var(--red);
+}
 
-    .mock-card p {
-      font-size: 15px;
-      margin: 0 0 12px;
-    }
+button:hover {
+  opacity: 0.85;
+}
 
-    .preview-action {
-      margin-top: 12px;
-      font-family: Consolas, Monaco, monospace;
-      font-size: 14px;
-      padding: 10px 14px;
-    }
+.preview-box {
+  background: #02060B;
+  border: 1px solid var(--line);
+  min-height: 300px;
+  padding: 22px;
+  color: var(--text);
+  overflow: auto;
+}
 
-    .feedback {
-      margin-top: 18px;
-    }
+.mock-card {
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  padding: 18px;
+}
 
-    .feedback-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-    }
+.mock-card h3 {
+  color: var(--green);
+  font-size: 11px;
+  margin: 0 0 14px;
+}
 
-    .feedback-card {
-      background: var(--panel2);
-      border: 1px solid var(--line);
-      padding: 14px;
-      min-height: 90px;
-    }
+.mock-card p {
+  font-size: 15px;
+  margin: 0 0 12px;
+}
 
-    .label {
-      color: var(--green);
-      font-family: 'Press Start 2P', monospace;
-      font-size: 9px;
-      margin-bottom: 8px;
-    }
+.preview-action {
+  margin-top: 12px;
+  font-family: Consolas, Monaco, monospace;
+  font-size: 14px;
+  padding: 10px 14px;
+}
 
-    .message {
-      color: var(--muted);
-      font-size: 14px;
-    }
+.feedback {
+  margin-top: 18px;
+}
 
-    .success {
-      color: var(--green);
-    }
+.feedback-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
 
-    .error {
-      color: var(--red);
-    }
+.feedback-card {
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  padding: 14px;
+  min-height: 90px;
+}
 
-    .mission-nav {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 16px;
-    }
+.label {
+  color: var(--green);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  margin-bottom: 8px;
+}
 
-    .mission-pill {
-      border: 1px solid var(--line);
-      padding: 8px 10px;
-      color: var(--muted);
-      font-size: 12px;
-      cursor: pointer;
-      background: var(--panel2);
-    }
+.message {
+  color: var(--muted);
+  font-size: 14px;
+}
 
-    .mission-pill.active {
-      color: var(--green);
-      border-color: var(--green);
-    }
+.correct,
+.success {
+  color: var(--green);
+}
 
-    @media (max-width: 900px) {
-      body {
-        padding: 16px;
-      }
+.error {
+  color: var(--red);
+}
 
-      .layout,
-      .feedback-grid {
-        grid-template-columns: 1fr;
-      }
+.almost {
+  color: var(--yellow);
+}
 
-      h1 {
-        font-size: 18px;
-      }
-    }
-  </style>
+.success-flash {
+  animation: successFlash 0.5s ease-in-out;
+}
+
+@keyframes successFlash {
+  0% { background-color: var(--bg); }
+  50% { background-color: rgba(57, 255, 90, 0.12); }
+  100% { background-color: var(--bg); }
+}
+
+.preview-glow {
+  animation: previewGlow 0.7s ease-in-out;
+}
+
+@keyframes previewGlow {
+  0% { border-color: var(--line); }
+  50% { border-color: var(--green); }
+  100% { border-color: var(--line); }
+}
+
+.error-shake {
+  animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-6px); }
+  100% { transform: translateX(0); }
+}
+
+.xp-pop {
+  position: fixed;
+  left: 50%;
+  top: 58%;
+  color: var(--green);
+  font-size: 22px;
+  font-weight: bold;
+  pointer-events: none;
+  animation: xpFloat 1s ease-out forwards;
+  z-index: 9999;
+}
+
+@keyframes xpFloat {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-45px) scale(1.3);
+  }
+}
+
+@media (max-width: 900px) {
+  body {
+    padding: 16px;
+  }
+
+  .arena-layout,
+  .feedback-grid {
+    grid-template-columns: 1fr;
+  }
+
+  h1 {
+    font-size: 18px;
+  }
+}
+</style>
 </head>
 
 <body>
-  <main class="arena">
 
-    <section class="topbar">
-      <h1>JavaScript Core</h1>
-      <p class="desc">Learn how to make websites interactive.</p>
-      <div class="mission-title" id="missionTitle">Mission 1: Variables</div>
+<main class="arena">
 
-      <div class="mission-nav" id="missionNav"></div>
-    </section>
+  <section class="topbar">
+    <h1>JavaScript Core</h1>
+    <p class="desc">Learn how to make websites interactive.</p>
+    <div id="mission-title"></div>
 
-    <section class="panel bytebot">
-      <h2>BYTEBOT</h2>
-      <p id="missionStory">
-        Create a variable named <strong>name</strong> and set it to <strong>"ByteRush"</strong>.
-      </p>
-    </section>
+    <div class="stats-row">
+      <div class="stat-box">MISSION: <strong><span id="mission-count">1</span> / 7</strong></div>
+      <div class="stat-box">XP REWARD: <strong><span id="xp-reward">10</span></strong></div>
+      <div class="stat-box">STATUS: <strong><span id="status">In Progress</span></strong></div>
+    </div>
+  </section>
 
-    <section class="layout">
-      <div class="panel editor-panel">
-        <h2>JAVASCRIPT EDITOR</h2>
-        <textarea id="codeEditor"></textarea>
+  <section class="panel bytebot">
+    <h2>BYTEBOT</h2>
+    <p id="instruction"></p>
+  </section>
 
-        <div class="buttons">
-          <button onclick="runCode()">Run</button>
-          <button class="secondary" onclick="showHint()">Hint</button>
-          <button class="danger" onclick="goBack()">Back to Map</button>
-        </div>
+  <section class="arena-layout">
+
+    <div class="panel editor-panel">
+      <h2>JAVASCRIPT EDITOR</h2>
+      <textarea id="code"></textarea>
+
+      <div class="buttons">
+        <button onclick="checkCode()">Run</button>
+        <button class="secondary" onclick="manualHint()">Hint</button>
+        <button class="danger" onclick="window.location.href='js-map.html'">Back to Map</button>
+      </div>
+    </div>
+
+    <div class="panel preview-panel">
+      <h2>LIVE INTERACTION PREVIEW</h2>
+      <div id="preview-box" class="preview-box"></div>
+    </div>
+
+  </section>
+
+  <section class="panel feedback">
+    <h2>RESULTS / XP / HINTS</h2>
+
+    <div class="feedback-grid">
+      <div class="feedback-card">
+        <div class="label">RESULT</div>
+        <div class="message" id="result">Run your code to check the mission.</div>
       </div>
 
-      <div class="panel preview-panel">
-        <h2>LIVE INTERACTION PREVIEW</h2>
-        <div class="preview-box" id="livePreview"></div>
+      <div class="feedback-card">
+        <div class="label">HINT</div>
+        <div class="message" id="hint">Click Hint if you get stuck.</div>
       </div>
-    </section>
 
-    <section class="panel feedback">
-      <h2>RESULTS / XP / HINTS</h2>
-
-      <div class="feedback-grid">
-        <div class="feedback-card">
-          <div class="label">SUCCESS</div>
-          <div class="message" id="successMsg">Complete the mission to unlock this.</div>
-        </div>
-
-        <div class="feedback-card">
-          <div class="label">ERROR</div>
-          <div class="message error" id="errorMsg">No errors yet.</div>
-        </div>
-
-        <div class="feedback-card">
-          <div class="label">HINT</div>
-          <div class="message" id="hintMsg">Click Hint if you get stuck.</div>
-        </div>
-
-        <div class="feedback-card">
-          <div class="label">XP</div>
-          <div class="message success" id="xpMsg">0 XP gained.</div>
-        </div>
+      <div class="feedback-card">
+        <div class="label">WARNING</div>
+        <div class="message error" id="warning">No syntax warnings yet.</div>
       </div>
-    </section>
 
-  </main>
+      <div class="feedback-card">
+        <div class="label">XP</div>
+        <div class="message correct" id="xp-feedback">0 XP gained.</div>
+      </div>
+    </div>
+  </section>
 
-  <script>
-    const missions = [
-      {
-        title: "Mission 1: Variables",
-        story: "Create a variable named name and set it to \"ByteRush\".",
-        starter: "let name = \"\";\n\nshowOutput(name);",
-        hint: "A variable stores information. Set name equal to \"ByteRush\".",
-        preview: "variables",
-        check: function(code) {
-          return code.includes("let name") && code.includes("ByteRush");
-        }
-      },
-      {
-        title: "Mission 2: Functions",
-        story: "Create a function named greet that returns \"Welcome Builder\".",
-        starter: "function greet() {\n  return \"\";\n}\n\nshowOutput(greet());",
-        hint: "Your function should return the exact text: Welcome Builder",
-        preview: "functions",
-        check: function(code) {
-          return code.includes("function greet") && code.includes("return") && code.includes("Welcome Builder");
-        }
-      },
-      {
-        title: "Mission 3: Click Events",
-        story: "Make the button react when clicked by changing the message.",
-        starter: "button.onclick = function() {\n  message.innerText = \"Button activated!\";\n};",
-        hint: "Use button.onclick and change message.innerText.",
-        preview: "click",
-        check: function(code) {
-          return code.includes("button.onclick") && code.includes("message.innerText");
-        }
-      },
-      {
-        title: "Mission 4: Conditions",
-        story: "Use an if statement to check if power is greater than 50.",
-        starter: "let power = 75;\n\nif (power > 50) {\n  showOutput(\"Power level stable\");\n}",
-        hint: "Use if (power > 50) and show the success message.",
-        preview: "conditions",
-        check: function(code) {
-          return code.includes("if") && code.includes("power > 50") && code.includes("Power level stable");
-        }
-      },
-      {
-        title: "Mission 5: Loops",
-        story: "Use a loop to count from 1 to 5.",
-        starter: "for (let i = 1; i <= 5; i++) {\n  showOutput(i);\n}",
-        hint: "Use a for loop with i starting at 1 and ending at 5.",
-        preview: "loops",
-        check: function(code) {
-          return code.includes("for") && code.includes("i <= 5") && code.includes("showOutput");
-        }
-      },
-      {
-        title: "Mission 6: DOM Manipulation",
-        story: "Change the page text using JavaScript.",
-        starter: "title.innerText = \"DOM Updated\";",
-        hint: "Use title.innerText to change what appears on screen.",
-        preview: "dom",
-        check: function(code) {
-          return code.includes("title.innerText") && code.includes("DOM Updated");
-        }
-      },
-      {
-        title: "Boss Mode: Counter App",
-        story: "Build a counter. Make the button increase the number when clicked.",
-        starter: "let count = 0;\n\nbutton.onclick = function() {\n  count++;\n  counter.innerText = count;\n};",
-        hint: "Create count, increase it with count++, then update counter.innerText.",
-        preview: "boss",
-        check: function(code) {
-          return code.includes("count++") && code.includes("counter.innerText") && code.includes("button.onclick");
-        }
-      }
-    ];
+</main>
 
-    let currentMission = Number(localStorage.getItem("current-js-mission")) || 0;
+<audio id="success-sound" src="./sounds/success.mp3" preload="auto"></audio>
+<audio id="error-sound" src="./sounds/error.mp3" preload="auto"></audio>
+<audio id="unlock-sound" src="./sounds/unlock.mp3" preload="auto"></audio>
+<audio id="mistake-sound" src="./sounds/mistake.mp3" preload="auto"></audio>
 
-    const missionTitle = document.getElementById("missionTitle");
-    const missionStory = document.getElementById("missionStory");
-    const codeEditor = document.getElementById("codeEditor");
-    const livePreview = document.getElementById("livePreview");
-    const successMsg = document.getElementById("successMsg");
-    const errorMsg = document.getElementById("errorMsg");
-    const hintMsg = document.getElementById("hintMsg");
-    const xpMsg = document.getElementById("xpMsg");
-    const missionNav = document.getElementById("missionNav");
+<script>
+const cssLevel = parseInt(localStorage.getItem("css-level")) || 1;
 
-    function loadMission(index) {
-      currentMission = index;
-      localStorage.setItem("current-js-mission", currentMission);
+if (cssLevel < 8) {
+  alert("JavaScript Core is locked. Finish CSS Boss Mode first!");
+  window.location.href = "dashboard.html";
+}
 
-      const mission = missions[currentMission];
+let level = parseInt(localStorage.getItem("js-level")) || 1;
+let attempts = 0;
+let lastWarningMessage = "";
 
-      missionTitle.innerText = mission.title;
-      missionStory.innerHTML = mission.story;
-      codeEditor.value = mission.starter;
+const missions = {
+  1: {
+    title: "Mission 1: Variables",
+    starter: 'let name = "";\n\nshowOutput(name);',
+    success: "VARIABLE CORE RESTORED.",
+    bytebot: 'Create a variable named <span class="highlight">name</span> and set it to <span class="highlight">"ByteRush"</span>.',
+    hint1: 'A variable stores information. Set name equal to "ByteRush".',
+    hint2: 'Final answer should look like: let name = "ByteRush";',
+    preview: "variables",
+    reward: 10,
+    check: function(code) {
+      return code.includes("letname") && code.includes('"byterush"');
+    }
+  },
 
-      successMsg.innerText = "Complete the mission to unlock this.";
-      successMsg.className = "message";
-      errorMsg.innerText = "No errors yet.";
-      hintMsg.innerText = "Click Hint if you get stuck.";
-      xpMsg.innerText = "0 XP gained.";
+  2: {
+    title: "Mission 2: Functions",
+    starter: 'function greet() {\n  return "";\n}\n\nshowOutput(greet());',
+    success: "FUNCTION MODULE ONLINE.",
+    bytebot: 'Create a function named <span class="highlight">greet()</span> that returns <span class="highlight">"Welcome Builder"</span>.',
+    hint1: 'Use return inside the function.',
+    hint2: 'Final answer should return "Welcome Builder".',
+    preview: "functions",
+    reward: 10,
+    check: function(code) {
+      return code.includes("functiongreet") && code.includes("return") && code.includes('"welcomebuilder"');
+    }
+  },
 
-      renderPreview(mission.preview);
-      renderMissionNav();
+  3: {
+    title: "Mission 3: Click Events",
+    starter: 'button.onclick = function() {\n  message.innerText = "Button activated!";\n};',
+    success: "CLICK EVENT CONNECTED.",
+    bytebot: 'Make the button react when clicked by changing the message to <span class="highlight">"Button activated!"</span>.',
+    hint1: 'Use button.onclick to create the click event.',
+    hint2: 'Inside the function, set message.innerText to "Button activated!".',
+    preview: "click",
+    reward: 10,
+    check: function(code) {
+      return code.includes("button.onclick") && code.includes("message.innertext") && code.includes('"buttonactivated!"');
+    }
+  },
+
+  4: {
+    title: "Mission 4: Conditions",
+    starter: 'let power = 75;\n\nif (power > 50) {\n  showOutput("Power level stable");\n}',
+    success: "CONDITION SYSTEM RESTORED.",
+    bytebot: 'Use an if statement to check if <span class="highlight">power</span> is greater than <span class="highlight">50</span>.',
+    hint1: 'Use if (power > 50).',
+    hint2: 'If true, show this exact message: "Power level stable".',
+    preview: "conditions",
+    reward: 10,
+    check: function(code) {
+      return code.includes("if") && code.includes("power>50") && code.includes('"powerlevelstable"');
+    }
+  },
+
+  5: {
+    title: "Mission 5: Loops",
+    starter: 'for (let i = 1; i <= 5; i++) {\n  showOutput(i);\n}',
+    success: "LOOP ENGINE ACTIVATED.",
+    bytebot: 'Use a loop to count from <span class="highlight">1</span> to <span class="highlight">5</span>.',
+    hint1: 'Use a for loop.',
+    hint2: 'Your loop should start at 1 and run while i <= 5.',
+    preview: "loops",
+    reward: 10,
+    check: function(code) {
+      return code.includes("for") && code.includes("i<=5") && code.includes("showoutput");
+    }
+  },
+
+  6: {
+    title: "Mission 6: DOM Manipulation",
+    starter: 'title.innerText = "DOM Updated";',
+    success: "DOM CONTROL RESTORED.",
+    bytebot: 'Change the page title text to <span class="highlight">"DOM Updated"</span> using JavaScript.',
+    hint1: 'Use title.innerText.',
+    hint2: 'Set title.innerText to "DOM Updated".',
+    preview: "dom",
+    reward: 10,
+    check: function(code) {
+      return code.includes("title.innertext") && code.includes('"domupdated"');
+    }
+  },
+
+  7: {
+    title: "BOSS MODE: Counter App",
+    starter: 'let count = 0;\n\nbutton.onclick = function() {\n  count++;\n  counter.innerText = count;\n};',
+    boss: true,
+    success: "BOSS CLEARED: JAVASCRIPT CORE COMPLETE.",
+    bytebot: 'Final JavaScript test. Build a counter that increases when the button is clicked.',
+    hint1: 'Create a count variable and increase it with count++.',
+    hint2: 'Update counter.innerText after the button is clicked.',
+    preview: "boss",
+    reward: 50,
+    check: function(code) {
+      return code.includes("count++") && code.includes("counter.innertext") && code.includes("button.onclick");
+    }
+  }
+};
+
+function loadMission() {
+  const mission = missions[level];
+
+  attempts = 0;
+  lastWarningMessage = "";
+
+  document.getElementById("result").innerText = "Run your code to check the mission.";
+  document.getElementById("result").className = "message";
+  document.getElementById("hint").innerText = "Click Hint if you get stuck.";
+  document.getElementById("xp-feedback").innerText = "0 XP gained.";
+  setWarning("No syntax warnings yet.");
+
+  if (!mission) {
+    document.getElementById("mission-title").innerText = "JavaScript Core Complete!";
+    document.getElementById("instruction").innerText = "All JavaScript missions are complete. Head back to Mission Control.";
+    document.getElementById("code").value = "";
+    document.getElementById("mission-count").innerText = "Complete";
+    document.getElementById("xp-reward").innerText = "0";
+    document.getElementById("status").innerText = "Complete";
+    renderPreview("complete");
+    return;
+  }
+
+  document.getElementById("mission-title").innerText = mission.title;
+  document.getElementById("instruction").innerHTML = mission.bytebot;
+  document.getElementById("code").value = mission.starter;
+  document.getElementById("mission-count").innerText = level;
+  document.getElementById("xp-reward").innerText = mission.reward;
+  document.getElementById("status").innerText = "In Progress";
+
+  renderPreview(mission.preview);
+  updatePreview();
+}
+
+function normalize(code) {
+  return code.replace(/\s+/g, "").toLowerCase();
+}
+
+function setWarning(message) {
+  const warning = document.getElementById("warning");
+  warning.innerText = message;
+
+  if (message && message !== "No syntax warnings yet." && message !== "No syntax warnings." && message !== lastWarningMessage) {
+    playMistake();
+  }
+
+  lastWarningMessage = message;
+}
+
+function checkSyntaxWarnings(rawCode) {
+  if (rawCode.trim().length === 0) {
+    setWarning("No syntax warnings yet.");
+    return;
+  }
+
+  const openParen = (rawCode.match(/\(/g) || []).length;
+  const closeParen = (rawCode.match(/\)/g) || []).length;
+  const openBrace = (rawCode.match(/{/g) || []).length;
+  const closeBrace = (rawCode.match(/}/g) || []).length;
+  const doubleQuotes = (rawCode.match(/"/g) || []).length;
+  const singleQuotes = (rawCode.match(/'/g) || []).length;
+
+  if (openParen !== closeParen) {
+    setWarning("Parentheses are not balanced. Check your ( and ).");
+    return;
+  }
+
+  if (openBrace !== closeBrace) {
+    setWarning("Curly braces are not balanced. Check your { and }.");
+    return;
+  }
+
+  if (doubleQuotes % 2 !== 0 || singleQuotes % 2 !== 0) {
+    setWarning("One of your quotes is not closed.");
+    return;
+  }
+
+  setWarning("No syntax warnings.");
+}
+
+function renderPreview(type) {
+  const preview = document.getElementById("preview-box");
+
+  if (type === "variables") {
+    preview.innerHTML = `
+      <div class="mock-card">
+        <h3>VARIABLE OUTPUT</h3>
+        <p id="output">Waiting for variable...</p>
+      </div>
+    `;
+  }
+
+  if (type === "functions") {
+    preview.innerHTML = `
+      <div class="mock-card">
+        <h3>FUNCTION RETURN</h3>
+        <p id="output">Waiting for function...</p>
+      </div>
+    `;
+  }
+
+  if (type === "click") {
+    preview.innerHTML = `
+      <div class="mock-card">
+        <h3>CLICK EVENT TEST</h3>
+        <p id="message">Button is waiting...</p>
+        <button class="preview-action" id="button">Test Button</button>
+      </div>
+    `;
+  }
+
+  if (type === "conditions") {
+    preview.innerHTML = `
+      <div class="mock-card">
+        <h3>CONDITION CHECK</h3>
+        <p id="output">Waiting for power check...</p>
+      </div>
+    `;
+  }
+
+  if (type === "loops") {
+    preview.innerHTML = `
+      <div class="mock-card">
+        <h3>LOOP OUTPUT</h3>
+        <p id="output">Waiting for loop...</p>
+      </div>
+    `;
+  }
+
+  if (type === "dom") {
+    preview.innerHTML = `
+      <div class="mock-card">
+        <h3 id="title">Original DOM Text</h3>
+        <p>Use JavaScript to change the title above.</p>
+      </div>
+    `;
+  }
+
+  if (type === "boss") {
+    preview.innerHTML = `
+      <div class="mock-card">
+        <h3>BOSS COUNTER APP</h3>
+        <p>Counter: <span id="counter">0</span></p>
+        <button class="preview-action" id="button">Increase</button>
+      </div>
+    `;
+  }
+
+  if (type === "complete") {
+    preview.innerHTML = `
+      <div class="mock-card">
+        <h3>CORE COMPLETE</h3>
+        <p>JavaScript missions cleared.</p>
+      </div>
+    `;
+  }
+}
+
+function showOutput(value) {
+  const output = document.getElementById("output");
+
+  if (output) {
+    if (output.innerText.includes("Waiting")) {
+      output.innerText = value;
+    } else {
+      output.innerText += " " + value;
+    }
+  }
+}
+
+function updatePreview() {
+  const mission = missions[level];
+  const code = document.getElementById("code").value;
+
+  if (!mission) return;
+
+  renderPreview(mission.preview);
+  checkSyntaxWarnings(code);
+
+  try {
+    const button = document.getElementById("button");
+    const message = document.getElementById("message");
+    const title = document.getElementById("title");
+    const counter = document.getElementById("counter");
+
+    const runner = new Function(
+      "showOutput",
+      "button",
+      "message",
+      "title",
+      "counter",
+      code
+    );
+
+    runner(showOutput, button, message, title, counter);
+  } catch (error) {
+    return;
+  }
+}
+
+function checkCode() {
+  const rawCode = document.getElementById("code").value;
+  const code = normalize(rawCode);
+  const mission = missions[level];
+  const result = document.getElementById("result");
+  const preview = document.getElementById("preview-box");
+
+  updatePreview();
+
+  if (!mission) {
+    result.innerText = "JavaScript Core already complete.";
+    result.className = "message correct";
+    return;
+  }
+
+  try {
+    const button = document.getElementById("button");
+    const message = document.getElementById("message");
+    const title = document.getElementById("title");
+    const counter = document.getElementById("counter");
+
+    const runner = new Function(
+      "showOutput",
+      "button",
+      "message",
+      "title",
+      "counter",
+      rawCode
+    );
+
+    runner(showOutput, button, message, title, counter);
+
+    if (mission.check(code)) {
+      success(mission.reward, mission.success);
+    } else {
+      playError();
+      attempts++;
+      showHint(mission);
+      result.innerText = "Your code ran, but it does not match the mission goal.";
+      result.className = "message error";
+      errorEffect();
     }
 
-    function renderMissionNav() {
-      missionNav.innerHTML = "";
+  } catch (error) {
+    playError();
+    attempts++;
+    showHint(mission);
+    result.innerText = "Code error: " + error.message;
+    result.className = "message error";
+    errorEffect();
+  }
+}
 
-      missions.forEach((mission, index) => {
-        const pill = document.createElement("div");
-        pill.className = "mission-pill" + (index === currentMission ? " active" : "");
-        pill.innerText = index + 1;
-        pill.onclick = function() {
-          loadMission(index);
-        };
-        missionNav.appendChild(pill);
-      });
-    }
+function showHint(mission) {
+  const hint = document.getElementById("hint");
 
-    function renderPreview(type) {
-      if (type === "variables") {
-        livePreview.innerHTML = `
-          <div class="mock-card">
-            <h3>VARIABLE OUTPUT</h3>
-            <p id="output">Waiting for variable...</p>
-          </div>
-        `;
-      }
+  if (attempts === 1) {
+    hint.innerText = "Hint 1: " + mission.hint1;
+  } else if (attempts >= 2) {
+    hint.innerText = "Hint 2: " + mission.hint2;
+  }
+}
 
-      if (type === "functions") {
-        livePreview.innerHTML = `
-          <div class="mock-card">
-            <h3>FUNCTION RETURN</h3>
-            <p id="output">Waiting for function...</p>
-          </div>
-        `;
-      }
+function manualHint() {
+  const mission = missions[level];
+  if (!mission) return;
 
-      if (type === "click") {
-        livePreview.innerHTML = `
-          <div class="mock-card">
-            <h3>CLICK EVENT TEST</h3>
-            <p id="message">Button is waiting...</p>
-            <button class="preview-action" id="button">Test Button</button>
-          </div>
-        `;
-      }
+  const hint = document.getElementById("hint");
 
-      if (type === "conditions") {
-        livePreview.innerHTML = `
-          <div class="mock-card">
-            <h3>CONDITION CHECK</h3>
-            <p id="output">Waiting for power check...</p>
-          </div>
-        `;
-      }
+  if (hint.innerText.includes("Hint 1")) {
+    hint.innerText = "Hint 2: " + mission.hint2;
+  } else {
+    hint.innerText = "Hint 1: " + mission.hint1;
+  }
+}
 
-      if (type === "loops") {
-        livePreview.innerHTML = `
-          <div class="mock-card">
-            <h3>LOOP OUTPUT</h3>
-            <p id="output">Waiting for loop...</p>
-          </div>
-        `;
-      }
+function success(xpGain, message) {
+  const result = document.getElementById("result");
+  const preview = document.getElementById("preview-box");
+  const xpFeedback = document.getElementById("xp-feedback");
 
-      if (type === "dom") {
-        livePreview.innerHTML = `
-          <div class="mock-card">
-            <h3 id="title">Original DOM Text</h3>
-            <p>Use JavaScript to change the title above.</p>
-          </div>
-        `;
-      }
+  const isBossComplete = level + 1 > 7;
+  const redirectDelay = isBossComplete ? 5800 : 1300;
 
-      if (type === "boss") {
-        livePreview.innerHTML = `
-          <div class="mock-card">
-            <h3>BOSS COUNTER APP</h3>
-            <p>Counter: <span id="counter">0</span></p>
-            <button class="preview-action" id="button">Increase</button>
-          </div>
-        `;
-      }
-    }
+  result.innerText = message + " +" + xpGain + " XP";
+  result.className = "message correct";
+  xpFeedback.innerText = "+" + xpGain + " XP gained.";
+  document.getElementById("status").innerText = "Complete";
 
-    function showOutput(value) {
-      const output = document.getElementById("output");
+  setWarning("No syntax warnings.");
+  playSuccess();
 
-      if (output) {
-        if (output.innerText.includes("Waiting")) {
-          output.innerText = value;
-        } else {
-          output.innerText += " " + value;
-        }
-      }
-    }
+  if (isBossComplete) {
+    setTimeout(function () {
+      playUnlock();
+    }, 300);
+  }
 
-    function runCode() {
-      const mission = missions[currentMission];
-      const code = codeEditor.value;
+  document.body.classList.add("success-flash");
+  preview.classList.add("preview-glow");
 
-      renderPreview(mission.preview);
+  setTimeout(function () {
+    document.body.classList.remove("success-flash");
+    preview.classList.remove("preview-glow");
+  }, 700);
 
-      successMsg.innerText = "Checking mission...";
-      errorMsg.innerText = "No syntax errors found yet.";
+  showXPPop(xpGain);
+  addXP(xpGain);
 
-      try {
-        const button = document.getElementById("button");
-        const message = document.getElementById("message");
-        const title = document.getElementById("title");
-        const counter = document.getElementById("counter");
+  level++;
+  localStorage.setItem("js-level", level);
 
-        const runner = new Function(
-          "showOutput",
-          "button",
-          "message",
-          "title",
-          "counter",
-          code
-        );
+  setTimeout(function () {
+    window.location.href = "js-map.html";
+  }, redirectDelay);
+}
 
-        runner(showOutput, button, message, title, counter);
+function errorEffect() {
+  const editor = document.getElementById("code");
 
-        if (mission.check(code)) {
-          completeMission();
-        } else {
-          successMsg.innerText = "Not completed yet.";
-          successMsg.className = "message";
-          errorMsg.innerText = "Your code ran, but it does not match the mission goal.";
-        }
+  editor.classList.add("error-shake");
 
-      } catch (error) {
-        successMsg.innerText = "Mission failed.";
-        successMsg.className = "message error";
-        errorMsg.innerText = error.message;
-      }
-    }
+  setTimeout(function () {
+    editor.classList.remove("error-shake");
+  }, 300);
+}
 
-    function completeMission() {
-      const completedKey = "js-mission-" + currentMission + "-completed";
-      localStorage.setItem(completedKey, "true");
+function addXP(points) {
+  let xp = parseInt(localStorage.getItem("xp")) || 0;
+  xp += points;
+  localStorage.setItem("xp", xp);
+}
 
-      let unlocked = Number(localStorage.getItem("js-level")) || 1;
+function showXPPop(amount) {
+  const xp = document.createElement("div");
+  xp.className = "xp-pop";
+  xp.innerText = "+" + amount + " XP";
+  document.body.appendChild(xp);
 
-      if (currentMission + 2 > unlocked) {
-        localStorage.setItem("js-level", currentMission + 2);
-      }
+  setTimeout(function () {
+    xp.remove();
+  }, 1000);
+}
 
-      successMsg.innerText = "Mission completed. Next mission unlocked.";
-      successMsg.className = "message success";
-      errorMsg.innerText = "No errors.";
-      xpMsg.innerText = "+100 XP gained.";
+function playSound(id) {
+  const sound = document.getElementById(id);
+  if (!sound) return;
 
-      setTimeout(() => {
-        if (currentMission < missions.length - 1) {
-          loadMission(currentMission + 1);
-        }
-      }, 1200);
-    }
+  sound.currentTime = 0;
 
-    function showHint() {
-      hintMsg.innerText = missions[currentMission].hint;
-    }
+  sound.play().catch(function () {
+    console.log("Sound blocked or missing:", id);
+  });
+}
 
-    function goBack() {
-      window.location.href = "js-map.html";
-    }
+function playSuccess() {
+  playSound("success-sound");
+}
 
-    loadMission(currentMission);
-  </script>
+function playError() {
+  playSound("error-sound");
+}
+
+function playUnlock() {
+  playSound("unlock-sound");
+}
+
+function playMistake() {
+  playSound("mistake-sound");
+}
+
+document.getElementById("code").addEventListener("input", updatePreview);
+
+loadMission();
+</script>
+
 </body>
 </html>
