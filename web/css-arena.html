@@ -4,10 +4,11 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>CSS Circuit | ByteRush</title>
+
 <link rel="stylesheet" href="arcade-theme.css">
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Press+Start+2P&display=swap');
 
 :root {
   --green: #39FF5A;
@@ -15,9 +16,9 @@
   --bg: #03080F;
   --panel: #050B12;
   --panel2: #07111D;
-  --text: #D6FFE0;
-  --muted: #8FAF9A;
-  --line: rgba(57, 255, 90, 0.35);
+  --text: #E6FFE9;
+  --muted: rgba(230, 255, 233, 0.68);
+  --line: rgba(57, 255, 90, 0.28);
   --yellow: #FACC15;
 }
 
@@ -29,117 +30,161 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: Consolas, Monaco, monospace;
-  padding: 28px;
-  line-height: 1.6;
+  font-family: "IBM Plex Mono", monospace;
+  padding: 10px;
+}
+
+.pixel {
+  font-family: "Press Start 2P", monospace;
 }
 
 .arena {
-  max-width: 1250px;
+  max-width: 1240px;
+  height: calc(100vh - 20px);
   margin: 0 auto;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 8px;
 }
 
-h1, h2, h3, button {
-  font-family: 'Press Start 2P', monospace;
-}
-
-.topbar {
-  border: 2px solid var(--line);
+.top-command {
+  border: 1px solid var(--line);
   background: var(--panel);
-  padding: 22px;
-  margin-bottom: 20px;
+  padding: 10px 12px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
 }
 
 h1 {
+  margin: 0 0 4px;
   color: var(--green);
-  font-size: 22px;
-  margin: 0 0 12px;
-  letter-spacing: 1px;
+  font-size: 15px;
+  line-height: 1.4;
 }
 
 .desc {
-  color: var(--muted);
-  font-size: 15px;
   margin: 0;
-}
-
-#mission-title {
-  margin-top: 18px;
-  color: var(--green);
-  font-size: 13px;
-}
-
-.stats-row {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-top: 16px;
-}
-
-.stat-box {
-  background: var(--panel2);
-  border: 1px solid var(--line);
-  padding: 10px 12px;
-  font-size: 13px;
   color: var(--muted);
+  font-size: 11px;
 }
 
-.stat-box strong {
+.stats {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.stat-pill {
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  padding: 7px 9px;
+  min-width: 82px;
+}
+
+.stat-pill span {
+  display: block;
   color: var(--green);
+  font-size: 6px;
+  margin-bottom: 4px;
 }
 
-.streak-hot {
-  color: var(--yellow);
+.stat-pill strong {
+  font-size: 11px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.main-arena {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 230px minmax(360px, 1.1fr) minmax(370px, 1fr);
+  gap: 8px;
 }
 
 .panel {
-  border: 2px solid var(--line);
+  border: 1px solid var(--line);
   background: var(--panel);
-  padding: 18px;
+  padding: 10px;
+  min-height: 0;
 }
 
-.bytebot {
-  margin-bottom: 18px;
-  background: var(--panel2);
-}
-
-.bytebot h2,
-.editor-panel h2,
-.preview-panel h2,
-.feedback h2 {
+.panel-title,
+.label {
+  font-family: "Press Start 2P", monospace;
+  font-size: 6px;
+  line-height: 1.5;
   color: var(--green);
-  font-size: 12px;
-  margin: 0 0 14px;
+  margin-bottom: 8px;
 }
 
-.bytebot p {
-  font-size: 15px;
+.mission-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mission-title {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.skill-box {
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  padding: 10px;
+}
+
+.skill-box h2 {
+  margin: 0 0 6px;
+  color: var(--green);
+  font-size: 13px;
+}
+
+.skill-box p {
   margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.rule-box {
+  border-left: 3px solid var(--green);
+  background: rgba(57, 255, 90, 0.06);
+  padding: 9px;
+  color: var(--text);
+  font-size: 11px;
+  line-height: 1.5;
 }
 
 .highlight {
   color: var(--green);
-  font-weight: bold;
+  font-weight: 700;
 }
 
-.arena-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
+.editor-panel,
+.preview-panel {
+  display: flex;
+  flex-direction: column;
 }
 
 textarea {
   width: 100%;
-  min-height: 300px;
-  resize: vertical;
+  flex: 1;
+  min-height: 260px;
+  resize: none;
   background: #02060B;
   color: var(--green);
   border: 1px solid var(--line);
-  padding: 16px;
-  font-size: 15px;
+  padding: 11px;
+  font-size: 13px;
   line-height: 1.5;
   outline: none;
-  font-family: Consolas, Monaco, monospace;
+  font-family: "IBM Plex Mono", monospace;
 }
 
 textarea:focus {
@@ -148,108 +193,221 @@ textarea:focus {
 
 .buttons {
   display: flex;
-  gap: 10px;
+  gap: 6px;
   flex-wrap: wrap;
-  margin-top: 14px;
+  margin-top: 8px;
 }
 
 button {
-  background: var(--green);
-  color: #03080F;
-  border: none;
-  padding: 13px 16px;
-  cursor: pointer;
-  font-size: 10px;
-}
-
-button.secondary {
+  border: 1px solid var(--green);
   background: transparent;
   color: var(--green);
-  border: 1px solid var(--green);
-}
-
-button.danger {
-  background: transparent;
-  color: var(--red);
-  border: 1px solid var(--red);
+  padding: 8px 10px;
+  cursor: pointer;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  font-weight: 700;
 }
 
 button:hover {
+  background: rgba(57, 255, 90, 0.1);
+}
+
+button.primary {
+  background: var(--green);
+  color: var(--bg);
+}
+
+button.danger {
+  color: var(--red);
+  border-color: var(--red);
+}
+
+button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* =========================
+   LIVE PREVIEW
+========================= */
+
+.browser-frame {
+  flex: 1;
+  min-height: 260px;
+  background: #02060B;
+  border: 1px solid rgba(57,255,90,0.18);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.browser-top {
+  height: 32px;
+  border-bottom: 1px solid rgba(57,255,90,0.12);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.02),
+      rgba(255,255,255,0.01)
+    );
+  color: rgba(230,255,233,0.55);
+  font-size: 10px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
   opacity: 0.85;
 }
 
-.preview-box {
-  background: #02060B;
-  border: 1px solid var(--line);
-  min-height: 300px;
-  padding: 22px;
-  color: var(--text);
-  overflow: auto;
+.dot.red {
+  background: #FF3B3B;
 }
 
-.preview-box h1 {
-  color: var(--text);
-  text-shadow: none;
-  font-size: 24px;
-  font-family: Consolas, Monaco, monospace;
+.dot.yellow {
+  background: #FACC15;
+}
+
+.dot.green {
+  background: #39FF5A;
+}
+
+.preview-wrap {
+  flex: 1;
+  padding: 10px;
+  min-height: 0;
+}
+
+.preview-page {
+  width: 100%;
+  height: 100%;
+  min-height: 240px;
+  overflow: auto;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(57,255,90,0.03),
+      transparent 30%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.015),
+      rgba(255,255,255,0.005)
+    ),
+    #02060B;
+  color: #E6FFE9;
+  border: 1px solid rgba(57,255,90,0.14);
+  padding: 22px;
+  font-family: Arial, sans-serif;
+}
+
+.preview-inner {
+  max-width: 470px;
+  margin: 0 auto;
+}
+
+.preview-page h1 {
+  margin: 0 0 10px;
+  color: #E6FFE9;
+  font-size: 30px;
+  line-height: 1.1;
+  font-weight: 700;
+  font-family: Arial, sans-serif;
+}
+
+.preview-page .subtitle {
+  margin: 0 0 20px;
+  color: rgba(230,255,233,0.72);
+  font-size: 15px;
+  line-height: 1.5;
 }
 
 .preview-card {
-  width: 240px;
-  margin: 20px auto;
-  background: var(--panel2);
-  color: var(--text);
-  padding: 15px;
-  border: 1px solid var(--line);
+  width: 100%;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.025),
+      rgba(255,255,255,0.01)
+    ),
+    #07111D;
+  color: #E6FFE9;
+  padding: 18px;
+  border: 1px solid rgba(57,255,90,0.16);
+  border-radius: 14px;
+  margin-bottom: 16px;
 }
 
 .preview-card h2 {
-  color: var(--text);
-  text-shadow: none;
-  font-size: 18px;
-  font-family: Consolas, Monaco, monospace;
-  margin: 0 0 10px;
+  margin: 0 0 8px;
+  color: #E6FFE9;
+  font-size: 22px;
+  line-height: 1.2;
+  font-family: Arial, sans-serif;
 }
 
 .preview-card p {
-  opacity: 0.85;
   margin: 0;
+  color: rgba(230,255,233,0.7);
+  font-size: 15px;
+  line-height: 1.45;
 }
 
-.feedback-label {
-  color: var(--green);
-  font-weight: bold;
-  margin-top: 15px;
+.preview-button {
+  display: inline-block;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(57,255,90,0.16),
+      rgba(57,255,90,0.08)
+    );
+  color: #E6FFE9;
+  border: 1px solid rgba(57,255,90,0.18);
+  border-radius: 10px;
+  padding: 11px 15px;
+  font-weight: 700;
   font-size: 14px;
 }
 
-.feedback {
-  margin-top: 18px;
+.focus-note {
+  margin-top: 16px;
+  border: 1px dashed rgba(57,255,90,0.18);
+  background: rgba(57,255,90,0.04);
+  color: rgba(230,255,233,0.74);
+  padding: 11px 12px;
+  font-size: 13px;
+  line-height: 1.45;
 }
 
-.feedback-grid {
+.feedback-console {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  padding: 10px 12px;
+}
+
+.console-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  grid-template-columns: 1.2fr 1.4fr 1.2fr 0.9fr;
+  gap: 10px;
 }
 
-.feedback-card {
+.console-item {
   background: var(--panel2);
   border: 1px solid var(--line);
-  padding: 14px;
-  min-height: 90px;
-}
-
-.label {
-  color: var(--green);
-  font-family: 'Press Start 2P', monospace;
-  font-size: 9px;
-  margin-bottom: 8px;
+  padding: 8px;
+  min-height: 50px;
 }
 
 .message {
   color: var(--muted);
-  font-size: 14px;
+  font-size: 11px;
+  line-height: 1.45;
 }
 
 .correct {
@@ -265,10 +423,10 @@ button:hover {
 }
 
 .success-flash {
-  animation: successFlash 0.5s ease-in-out;
+  animation: flash 0.4s ease-in-out;
 }
 
-@keyframes successFlash {
+@keyframes flash {
   0% { background-color: var(--bg); }
   50% { background-color: rgba(57, 255, 90, 0.12); }
   100% { background-color: var(--bg); }
@@ -301,8 +459,8 @@ button:hover {
   left: 50%;
   top: 58%;
   color: var(--green);
-  font-size: 22px;
-  font-weight: bold;
+  font-size: 16px;
+  font-weight: 700;
   pointer-events: none;
   animation: xpFloat 1s ease-out forwards;
   z-index: 9999;
@@ -315,22 +473,131 @@ button:hover {
   }
   100% {
     opacity: 0;
-    transform: translateX(-50%) translateY(-45px) scale(1.3);
+    transform: translateX(-50%) translateY(-45px) scale(1.2);
   }
 }
 
-@media (max-width: 900px) {
-  body {
-    padding: 16px;
+.mission-modal,
+.start-modal,
+.game-over-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 8, 15, 0.88);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 18px;
+}
+
+.mission-modal.show,
+.start-modal.show,
+.game-over-modal.show {
+  display: flex;
+}
+
+.mission-box,
+.start-box,
+.game-over-box {
+  width: min(520px, 100%);
+  background: var(--panel);
+  border: 2px solid var(--green);
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 0 35px rgba(57, 255, 90, 0.25);
+  animation: popupIn 0.25s ease-out;
+}
+
+.game-over-box {
+  border-color: var(--red);
+  box-shadow: 0 0 35px rgba(255, 59, 59, 0.25);
+}
+
+@keyframes popupIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.mission-box h2,
+.start-box h2,
+.game-over-box h2 {
+  margin: 0 0 14px;
+  color: var(--green);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.game-over-box h2 {
+  color: var(--red);
+}
+
+.mission-box p,
+.start-box p,
+.game-over-box p {
+  margin: 0 0 14px;
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.learned-box,
+.start-instruction-box {
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  padding: 12px;
+  margin: 14px 0;
+}
+
+.learned-box p,
+.start-instruction-box p {
+  color: var(--muted);
+  font-size: 11px;
+  margin: 0;
+}
+
+.modal-next-btn,
+.start-btn,
+.try-again-btn {
+  margin-top: 10px;
+  background: var(--green);
+  color: var(--bg);
+  padding: 9px 14px;
+}
+
+.try-again-btn {
+  border-color: var(--red);
+  background: var(--red);
+  color: white;
+}
+
+@media (max-width: 1050px) {
+  .arena {
+    height: auto;
   }
 
-  .arena-layout,
-  .feedback-grid {
+  .top-command,
+  .main-arena,
+  .console-grid {
     grid-template-columns: 1fr;
   }
 
-  h1 {
-    font-size: 18px;
+  .stats {
+    justify-content: flex-start;
+  }
+
+  textarea,
+  .browser-frame {
+    min-height: 260px;
+  }
+
+  .preview-page {
+    min-height: 260px;
   }
 }
 </style>
@@ -340,73 +607,130 @@ button:hover {
 
 <main class="arena">
 
-  <section class="topbar">
-    <h1>CSS Circuit</h1>
-    <p class="desc">Learn how to style websites and control how they look.</p>
-    <div id="mission-title"></div>
+  <section class="top-command">
+    <div>
+      <h1 class="pixel">CSS Circuit</h1>
+      <p class="desc">Restore the visual system of the web through guided styling missions.</p>
+    </div>
 
-    <div class="stats-row">
-      <div class="stat-box">⏱ TIME: <strong><span id="timer">0</span>s</strong></div>
-      <div class="stat-box">SPEED BONUS: <strong><span id="bonus">Available</span></strong></div>
-      <div class="stat-box" id="streak-box">🔥 STREAK: <strong><span id="streak-value">0</span></strong></div>
+    <div class="stats">
+      <div class="stat-pill">
+        <span class="pixel">MISSION</span>
+        <strong><span id="mission-count-inline">1</span> / 7</strong>
+      </div>
+
+      <div class="stat-pill">
+        <span class="pixel">XP</span>
+        <strong id="total-xp">0</strong>
+      </div>
+
+      <div class="stat-pill">
+        <span class="pixel">LIVES</span>
+        <strong id="lives">❤️❤️❤️</strong>
+      </div>
+
+      <div class="stat-pill">
+        <span class="pixel">TRIES</span>
+        <strong id="attempts">0</strong>
+      </div>
+
+      <div class="stat-pill">
+        <span class="pixel">STATUS</span>
+        <strong id="status">Active</strong>
+      </div>
     </div>
   </section>
 
-  <section class="panel bytebot">
-    <h2>BYTEBOT</h2>
-    <p id="instruction"></p>
-  </section>
+  <section class="main-arena">
 
-  <section class="arena-layout">
+    <aside class="panel mission-panel">
+      <div>
+        <div class="panel-title">BYTEBOT BRIEFING</div>
+        <div class="mission-title" id="mission-title">Mission loading...</div>
+      </div>
 
-    <div class="panel editor-panel">
-      <h2>CSS EDITOR</h2>
-      <textarea id="code"></textarea>
+      <div class="skill-box">
+        <div class="label">SKILL</div>
+        <h2 id="skill-title">Skill loading...</h2>
+        <p id="bytebot-message">Mission instructions loading...</p>
+      </div>
+
+      <div class="skill-box">
+        <div class="label">WHY IT MATTERS</div>
+        <p id="why-message">Loading...</p>
+      </div>
+
+      <div class="rule-box" id="success-rule">
+        Success rule loading...
+      </div>
+    </aside>
+
+    <section class="panel editor-panel">
+      <div class="panel-title">CSS EDITOR</div>
+
+      <textarea id="code" spellcheck="false"></textarea>
 
       <div class="buttons">
-        <button onclick="checkCode()">Run</button>
-        <button class="secondary" onclick="manualHint()">Hint</button>
-        <button class="danger" onclick="window.location.href='css-map.html'">Back to Map</button>
+        <button id="run-btn" class="primary" type="button">Run Code</button>
+        <button id="hint-btn" type="button">Hint</button>
+        <button id="next-btn" type="button" disabled>Next Mission</button>
+        <button id="back-btn" class="danger" type="button">Back to Map</button>
       </div>
-    </div>
+    </section>
 
-    <div class="panel preview-panel">
-      <h2>LIVE STYLE PREVIEW</h2>
+    <section class="panel preview-panel">
+      <div class="panel-title">LIVE STYLE PREVIEW</div>
 
-      <div id="preview-box" class="preview-box">
-        <h1 id="preview-title">Hello CSS</h1>
-
-        <div id="preview-card" class="preview-card">
-          <h2>Profile Card</h2>
-          <p>Style me!</p>
+      <div class="browser-frame" id="preview-frame">
+        <div class="browser-top">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+          <span>style-preview.css</span>
         </div>
 
-        <div id="feedback-label" class="feedback-label"></div>
+        <div class="preview-wrap">
+          <div class="preview-page" id="preview-page">
+            <div class="preview-inner">
+              <h1 id="preview-title">Hello CSS</h1>
+              <p class="subtitle" id="preview-text">CSS controls color, spacing, size, layout, and visual feeling.</p>
+
+              <div class="preview-card card" id="preview-card">
+                <h2>Profile Card</h2>
+                <p>Style me with CSS.</p>
+              </div>
+
+              <button class="preview-button" id="preview-button">Repair Style</button>
+
+              <div class="focus-note" id="focus-note">Focus: watch the preview change as your CSS becomes correct.</div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
 
   </section>
 
-  <section class="panel feedback">
-    <h2>RESULTS / XP / HINTS</h2>
+  <section class="feedback-console">
+    <div class="panel-title">TERMINAL FEEDBACK</div>
 
-    <div class="feedback-grid">
-      <div class="feedback-card">
+    <div class="console-grid">
+      <div class="console-item">
         <div class="label">RESULT</div>
         <div class="message" id="result">Run your code to check the mission.</div>
       </div>
 
-      <div class="feedback-card">
+      <div class="console-item">
         <div class="label">HINT</div>
         <div class="message" id="hint">Click Hint if you get stuck.</div>
       </div>
 
-      <div class="feedback-card">
+      <div class="console-item">
         <div class="label">WARNING</div>
         <div class="message error" id="warning">No syntax warnings yet.</div>
       </div>
 
-      <div class="feedback-card">
+      <div class="console-item">
         <div class="label">XP</div>
         <div class="message correct" id="xp-feedback">0 XP gained.</div>
       </div>
@@ -415,198 +739,352 @@ button:hover {
 
 </main>
 
+<div class="start-modal" id="start-modal">
+  <div class="start-box">
+    <h2 class="pixel" id="start-modal-title">MISSION START</h2>
+
+    <p id="start-modal-skill">Get ready.</p>
+
+    <div class="start-instruction-box">
+      <div class="label">WHAT TO DO</div>
+      <p id="start-modal-task">Read the mission, write your CSS, then click Run Code.</p>
+    </div>
+
+    <button id="start-mission-btn" class="start-btn" type="button">
+      Start Mission
+    </button>
+  </div>
+</div>
+
+<div class="mission-modal" id="mission-modal">
+  <div class="mission-box">
+    <h2 class="pixel">MISSION COMPLETED</h2>
+
+    <p id="modal-success-text">Great work.</p>
+
+    <div class="learned-box">
+      <div class="label">WHAT YOU LEARNED</div>
+      <p id="modal-learned-text"></p>
+    </div>
+
+    <button id="modal-next-btn" class="modal-next-btn" type="button">
+      Next Mission
+    </button>
+  </div>
+</div>
+
+<div class="game-over-modal" id="game-over-modal">
+  <div class="game-over-box">
+    <h2 class="pixel">GAME OVER</h2>
+
+    <p>You used up all your lives. Try the mission again and use the hint if you get stuck.</p>
+
+    <button id="try-again-btn" class="try-again-btn" type="button">
+      Try Again
+    </button>
+  </div>
+</div>
+
 <audio id="success-sound" src="./sounds/success.mp3" preload="auto"></audio>
 <audio id="error-sound" src="./sounds/error.mp3" preload="auto"></audio>
 <audio id="unlock-sound" src="./sounds/unlock.mp3" preload="auto"></audio>
 <audio id="mistake-sound" src="./sounds/mistake.mp3" preload="auto"></audio>
+<audio id="game-lose-sound" src="./sounds/game-lose-sound.mp3" preload="auto"></audio>
 
 <script>
-const htmlLevel = parseInt(localStorage.getItem("html-level")) || 1;
-
-if (htmlLevel < 8) {
-  alert("CSS Circuit is locked. Finish HTML Boss Mode first!");
-  window.location.href = "index.html";
-}
-
 let level = parseInt(localStorage.getItem("css-level")) || 1;
 let attempts = 0;
-let seconds = 0;
-let timerInterval;
+let lives = 3;
+let missionComplete = false;
 let lastWarningMessage = "";
-let streak = parseInt(localStorage.getItem("streak")) || 0;
+let shouldShowStartPopup = true;
 
 const missions = {
   1: {
-    title: "Mission 1: Colors",
+    title: "Mission 1: Color System",
+    skill: "CSS Color",
     starter: "h1 {\n  color: write color here;\n}",
     selector: "h1",
     property: "color:",
     value: "blue",
-    requiredParts: ["h1", "{", "}", "color:", ";"],
-    success: "COLOR SYSTEM ONLINE.",
+    success: "Color system restored.",
     bytebot: 'Replace <span class="highlight">"write color here"</span> with <span class="highlight">"blue"</span>.',
-    hint1: "Keep the h1 selector and color property. Only replace the color value.",
-    hint2: "Final answer should look like: h1 { color: blue; }"
+    why: "Color helps guide attention and gives a webpage visual personality.",
+    rule: "Use the h1 selector and set color to blue.",
+    learned: "You learned that the color property changes text color.",
+    hint1: "Keep h1 and color. Only replace the value.",
+    hint2: "Final answer should look like: h1 { color: blue; }",
+    focus: "Focus: watch the heading turn blue.",
+    check: function (code) {
+      return code.includes("h1{color:blue;}");
+    }
   },
+
   2: {
-    title: "Mission 2: Backgrounds",
+    title: "Mission 2: Background Grid",
+    skill: "CSS Backgrounds",
     starter: "body {\n  background-color: write background here;\n}",
     selector: "body",
     property: "background-color:",
     value: "black",
-    requiredParts: ["body", "{", "}", "background-color:", ";"],
-    success: "BACKGROUND GRID RESTORED.",
+    success: "Background grid restored.",
     bytebot: 'Replace <span class="highlight">"write background here"</span> with <span class="highlight">"black"</span>.',
-    hint1: "Keep body and background-color. Only replace the background value.",
-    hint2: "Final answer should look like: body { background-color: black; }"
+    why: "Backgrounds create contrast and help sections feel clear.",
+    rule: "Use the body selector and set background-color to black.",
+    learned: "You learned that background-color changes the background of an element.",
+    hint1: "Keep body and background-color. Only replace the value.",
+    hint2: "Final answer should look like: body { background-color: black; }",
+    focus: "Focus: watch the preview background become deeper while the content stays readable.",
+    check: function (code) {
+      return code.includes("body{background-color:black;}");
+    }
   },
+
   3: {
-    title: "Mission 3: Font Size",
+    title: "Mission 3: Text Scale",
+    skill: "CSS Font Size",
     starter: "h1 {\n  font-size: write size here;\n}",
     selector: "h1",
     property: "font-size:",
     value: "40px",
-    requiredParts: ["h1", "{", "}", "font-size:", ";"],
-    success: "TEXT SIZE BOOSTED.",
+    success: "Text scale boosted.",
     bytebot: 'Replace <span class="highlight">"write size here"</span> with <span class="highlight">"40px"</span>.',
-    hint1: "Keep font-size. CSS size needs a number and unit.",
-    hint2: "Final answer should look like: h1 { font-size: 40px; }"
+    why: "Font size controls hierarchy so important text stands out.",
+    rule: "Use the h1 selector and set font-size to 40px.",
+    learned: "You learned that font-size changes how large text appears.",
+    hint1: "CSS size needs a number and a unit, like px.",
+    hint2: "Final answer should look like: h1 { font-size: 40px; }",
+    focus: "Focus: watch the heading become larger.",
+    check: function (code) {
+      return code.includes("h1{font-size:40px;}");
+    }
   },
+
   4: {
-    title: "Mission 4: Borders",
+    title: "Mission 4: Border Shield",
+    skill: "CSS Borders",
     starter: ".card {\n  border: write border here;\n}",
     selector: ".card",
     property: "border:",
-    value: "2pxsolidblue",
-    displayValue: "2px solid blue",
-    requiredParts: [".card", "{", "}", "border:", ";"],
-    success: "BORDER SHIELD ACTIVATED.",
+    value: "2px solid blue",
+    success: "Border shield activated.",
     bytebot: 'Replace <span class="highlight">"write border here"</span> with <span class="highlight">"2px solid blue"</span>.',
-    hint1: "Keep border. A border needs size, style, and color.",
-    hint2: "Final answer should look like: .card { border: 2px solid blue; }"
+    why: "Borders separate content and make cards easier to understand.",
+    rule: "Use the .card selector and set border to 2px solid blue.",
+    learned: "You learned that border needs thickness, style, and color.",
+    hint1: "A border usually needs size, style, and color.",
+    hint2: "Final answer should look like: .card { border: 2px solid blue; }",
+    focus: "Focus: watch the card border turn blue.",
+    check: function (code) {
+      return code.includes(".card{border:2pxsolidblue;}");
+    }
   },
+
   5: {
-    title: "Mission 5: Alignment",
+    title: "Mission 5: Alignment Lock",
+    skill: "CSS Text Alignment",
     starter: ".card {\n  text-align: write alignment here;\n}",
     selector: ".card",
     property: "text-align:",
     value: "center",
-    requiredParts: [".card", "{", "}", "text-align:", ";"],
-    success: "ALIGNMENT LOCKED.",
+    success: "Alignment locked.",
     bytebot: 'Replace <span class="highlight">"write alignment here"</span> with <span class="highlight">"center"</span>.',
-    hint1: "Keep text-align. It controls horizontal text placement.",
-    hint2: "Final answer should look like: .card { text-align: center; }"
+    why: "Alignment improves readability and makes layouts feel intentional.",
+    rule: "Use the .card selector and set text-align to center.",
+    learned: "You learned that text-align controls horizontal text placement.",
+    hint1: "text-align can move text left, right, or center.",
+    hint2: "Final answer should look like: .card { text-align: center; }",
+    focus: "Focus: watch the card text center itself.",
+    check: function (code) {
+      return code.includes(".card{text-align:center;}");
+    }
   },
+
   6: {
-    title: "Mission 6: Spacing",
+    title: "Mission 6: Spacing Module",
+    skill: "CSS Padding",
     starter: ".card {\n  padding: write spacing here;\n}",
     selector: ".card",
     property: "padding:",
-    value: "20px",
-    requiredParts: [".card", "{", "}", "padding:", ";"],
-    success: "SPACING MODULE RESTORED.",
-    bytebot: 'Replace <span class="highlight">"write spacing here"</span> with <span class="highlight">"20px"</span>.',
-    hint1: "Keep padding. Padding adds space inside an element.",
-    hint2: "Final answer should look like: .card { padding: 20px; }"
+    value: "30px",
+    success: "Spacing module restored.",
+    bytebot: 'Replace <span class="highlight">"write spacing here"</span> with <span class="highlight">"30px"</span>.',
+    why: "Spacing makes designs easier to read and prevents cramped layouts.",
+    rule: "Use the .card selector and set padding to 30px.",
+    learned: "You learned that padding adds space inside an element.",
+    hint1: "Padding creates space inside the card.",
+    hint2: "Final answer should look like: .card { padding: 30px; }",
+    focus: "Focus: watch the card get more breathing room.",
+    check: function (code) {
+      return code.includes(".card{padding:30px;}");
+    }
   },
+
   7: {
-    title: "BOSS MODE: Styled Profile Card",
-    starter: ".card {\n  color: white;\n  background-color: black;\n  font-size: 20px;\n  border: 2px solid blue;\n  text-align: center;\n  padding: 20px;\n}",
+    title: "Boss Mode: Styled Profile Card",
+    skill: "CSS Design Systems",
+    starter: ".card {\n  color: white;\n  background-color: black;\n  font-size: 20px;\n  border: 2px solid blue;\n  text-align: center;\n  padding: 30px;\n}",
     boss: true,
-    requiredParts: ["color:", "background-color:", "font-size:", "border:", "text-align:", "padding:", "{", "}", ";"],
-    success: "BOSS CLEARED: JS CORE UNLOCKED.",
-    bytebot: 'Final CSS test. Your card must include <span class="highlight">"color, background-color, font-size, border, text-align, and padding"</span>.',
-    hint1: "You need all six CSS properties.",
-    hint2: "Make sure each property has a value and ends with a semicolon."
+    success: "Boss cleared. JS Reactor unlocked.",
+    bytebot: 'Final CSS test. Your card must include <span class="highlight">color, background-color, font-size, border, text-align, and padding</span>.',
+    why: "Real design comes from combining multiple CSS properties into one clear visual system.",
+    rule: "Style the profile card using color, background-color, font-size, border, text-align, and padding.",
+    learned: "You learned how multiple CSS properties work together to style one card.",
+    hint1: "You need all six CSS properties: color, background-color, font-size, border, text-align, and padding.",
+    hint2: "Make sure each CSS property has a value and ends with a semicolon.",
+    focus: "Boss Mode: style the full card.",
+    check: function (code) {
+      const hasColor = code.includes("color:white;");
+      const hasBackground = code.includes("background-color:black;");
+      const hasFontSize = code.includes("font-size:20px;");
+      const hasBorder = code.includes("border:2pxsolidblue;");
+      const hasAlign = code.includes("text-align:center;");
+      const hasPadding = code.includes("padding:30px;");
+
+      return hasColor && hasBackground && hasFontSize && hasBorder && hasAlign && hasPadding;
+    }
   }
 };
+
+const missionCountInlineEl = document.getElementById("mission-count-inline");
+const totalXpEl = document.getElementById("total-xp");
+const livesEl = document.getElementById("lives");
+const attemptsEl = document.getElementById("attempts");
+const statusEl = document.getElementById("status");
+
+const titleEl = document.getElementById("mission-title");
+const skillTitleEl = document.getElementById("skill-title");
+const bytebotEl = document.getElementById("bytebot-message");
+const whyEl = document.getElementById("why-message");
+const successRuleEl = document.getElementById("success-rule");
+
+const codeBox = document.getElementById("code");
+const resultEl = document.getElementById("result");
+const hintEl = document.getElementById("hint");
+const warningEl = document.getElementById("warning");
+const xpFeedbackEl = document.getElementById("xp-feedback");
+
+const previewFrame = document.getElementById("preview-frame");
+const previewPage = document.getElementById("preview-page");
+const previewTitle = document.getElementById("preview-title");
+const previewText = document.getElementById("preview-text");
+const previewCard = document.getElementById("preview-card");
+const previewButton = document.getElementById("preview-button");
+const focusNote = document.getElementById("focus-note");
+
+const runBtn = document.getElementById("run-btn");
+const hintBtn = document.getElementById("hint-btn");
+const nextBtn = document.getElementById("next-btn");
+const backBtn = document.getElementById("back-btn");
+
+const startModal = document.getElementById("start-modal");
+const startModalTitle = document.getElementById("start-modal-title");
+const startModalSkill = document.getElementById("start-modal-skill");
+const startModalTask = document.getElementById("start-modal-task");
+const startMissionBtn = document.getElementById("start-mission-btn");
+
+const missionModal = document.getElementById("mission-modal");
+const modalSuccessText = document.getElementById("modal-success-text");
+const modalLearnedText = document.getElementById("modal-learned-text");
+const modalNextBtn = document.getElementById("modal-next-btn");
+
+const gameOverModal = document.getElementById("game-over-modal");
+const tryAgainBtn = document.getElementById("try-again-btn");
+
+function normalize(input) {
+  return input.replace(/\s+/g, "").toLowerCase();
+}
+
+function countMatches(text, pattern) {
+  const matches = text.match(pattern);
+  return matches ? matches.length : 0;
+}
+
+function updateStats() {
+  const xp = parseInt(localStorage.getItem("xp")) || 0;
+
+  missionCountInlineEl.innerText = Math.min(level, 7);
+  totalXpEl.innerText = xp;
+  livesEl.innerText = "❤️".repeat(lives) + "🖤".repeat(3 - lives);
+  attemptsEl.innerText = attempts;
+}
 
 function loadMission() {
   const mission = missions[level];
 
   attempts = 0;
+  lives = 3;
+  missionComplete = false;
   lastWarningMessage = "";
 
-  document.getElementById("result").innerText = "Run your code to check the mission.";
-  document.getElementById("result").className = "message";
-  document.getElementById("hint").innerText = "Click Hint if you get stuck.";
-  document.getElementById("xp-feedback").innerText = "0 XP gained.";
-  setWarning("No syntax warnings yet.");
-  updateStreakDisplay();
+  missionModal.classList.remove("show");
+  gameOverModal.classList.remove("show");
+
+  updateStats();
+
+  resultEl.innerText = "Run your code to check the mission.";
+  resultEl.className = "message";
+
+  hintEl.innerText = "Click Hint if you get stuck.";
+  warningEl.innerText = "No syntax warnings yet.";
+  warningEl.className = "message error";
+  xpFeedbackEl.innerText = "0 XP gained.";
+
+  nextBtn.disabled = true;
+  runBtn.disabled = false;
+  hintBtn.disabled = false;
+  statusEl.innerText = "Active";
 
   if (!mission) {
-    document.getElementById("mission-title").innerText = "CSS Circuit Complete!";
-    document.getElementById("instruction").innerText = "JS Core is ready. Head back to Mission Control.";
-    document.getElementById("code").value = "";
+    titleEl.innerText = "CSS Circuit Complete!";
+    skillTitleEl.innerText = "CSS Complete";
+    bytebotEl.innerText = "JS Reactor is ready. Head back to Mission Control.";
+    whyEl.innerText = "You completed the visual styling system.";
+    successRuleEl.innerText = "All CSS missions are complete.";
+    codeBox.value = "";
+    statusEl.innerText = "Complete";
+    runBtn.disabled = true;
+    hintBtn.disabled = true;
+    nextBtn.disabled = true;
     updatePreview();
     return;
   }
 
-  document.getElementById("mission-title").innerText = mission.title;
-  document.getElementById("instruction").innerHTML = mission.bytebot;
-  document.getElementById("code").value = mission.starter;
-
-  seconds = 0;
-  document.getElementById("timer").innerText = seconds;
-  document.getElementById("bonus").innerText = "Available";
-
-  clearInterval(timerInterval);
-  timerInterval = setInterval(function () {
-    seconds++;
-    document.getElementById("timer").innerText = seconds;
-
-    if (seconds > 15) {
-      document.getElementById("bonus").innerText = "Expired";
-    }
-  }, 1000);
+  titleEl.innerText = mission.title;
+  skillTitleEl.innerText = mission.skill;
+  bytebotEl.innerHTML = mission.bytebot;
+  whyEl.innerText = mission.why;
+  successRuleEl.innerText = mission.rule;
+  codeBox.value = mission.starter;
+  focusNote.innerText = mission.focus;
 
   updatePreview();
+
+  if (shouldShowStartPopup) {
+    showStartPopup(mission);
+  }
 }
 
-function normalize(code) {
-  return code.replace(/\s+/g, "").toLowerCase();
+function showStartPopup(mission) {
+  startModalTitle.innerText = mission.title;
+  startModalSkill.innerText = "Skill: " + mission.skill;
+  startModalTask.innerText = mission.rule + " Read the instruction, write the CSS in the editor, then click Run Code.";
+  startModal.classList.add("show");
 }
 
 function setWarning(message) {
-  const warning = document.getElementById("warning");
-  warning.innerText = message;
+  warningEl.innerText = message;
 
-  if (message && message !== "No syntax warnings yet." && message !== lastWarningMessage) {
+  if (
+    message &&
+    message !== "No syntax warnings yet." &&
+    message !== "No syntax warnings." &&
+    message !== lastWarningMessage
+  ) {
     playMistake();
   }
 
   lastWarningMessage = message;
-}
-
-function updateStreakDisplay() {
-  const streakValue = document.getElementById("streak-value");
-  const streakBox = document.getElementById("streak-box");
-
-  streakValue.innerText = streak;
-
-  if (streak >= 3) {
-    streakBox.classList.add("streak-hot");
-  } else {
-    streakBox.classList.remove("streak-hot");
-  }
-}
-
-function resetStreak() {
-  streak = 0;
-  localStorage.setItem("streak", streak);
-  updateStreakDisplay();
-}
-
-function increaseStreak() {
-  streak++;
-  localStorage.setItem("streak", streak);
-  updateStreakDisplay();
-}
-
-function getStreakBonus() {
-  if (streak === 2) return 5;
-  if (streak >= 3) return 10;
-  return 0;
 }
 
 function checkSyntaxWarnings(rawCode) {
@@ -620,305 +1098,279 @@ function checkSyntaxWarnings(rawCode) {
   const code = rawCode.trim();
   const normalized = normalize(code);
 
-  const openBraceCount = (code.match(/{/g) || []).length;
-  const closeBraceCount = (code.match(/}/g) || []).length;
+  const openBraceCount = countMatches(code, /{/g);
+  const closeBraceCount = countMatches(code, /}/g);
 
-  if (!normalized.includes("{") || !normalized.includes("}")) {
-    setWarning("Uh-oh, you removed a curly brace { or } — add it back!");
+  if (openBraceCount === 0 || closeBraceCount === 0) {
+    setWarning("A CSS curly brace { or } is missing.");
     return;
   }
 
   if (openBraceCount !== closeBraceCount) {
-    setWarning("Uh-oh, your { and } braces are not balanced. Add the missing brace back.");
+    setWarning("Your { and } braces are not balanced.");
     return;
   }
 
   if (!normalized.includes(":")) {
-    setWarning("Uh-oh, CSS properties need a colon : before the value.");
+    setWarning("CSS properties need a colon : before the value.");
     return;
   }
 
   if (!normalized.includes(";")) {
-    setWarning("Uh-oh, CSS rules need a semicolon ; at the end.");
+    setWarning("CSS rules need a semicolon ; at the end.");
     return;
   }
 
-  if (mission.requiredParts) {
-    for (let i = 0; i < mission.requiredParts.length; i++) {
-      const part = normalize(mission.requiredParts[i]);
+  if (!mission.boss) {
+    if (!normalized.includes(normalize(mission.selector))) {
+      setWarning("Missing selector: " + mission.selector);
+      return;
+    }
 
-      if (!normalized.includes(part)) {
-        setWarning("Uh-oh, you removed this part: " + mission.requiredParts[i] + " — add it back!");
-        return;
-      }
+    if (!normalized.includes(normalize(mission.property))) {
+      setWarning("Missing property: " + mission.property);
+      return;
     }
   }
 
   setWarning("No syntax warnings.");
 }
 
-function getMissionProgress(code, mission) {
-  if (!mission) return { status: "missing", message: "No mission found." };
+function resetPreviewStyles() {
+  previewPage.removeAttribute("style");
+  previewTitle.removeAttribute("style");
+  previewText.removeAttribute("style");
+  previewCard.removeAttribute("style");
+  previewButton.removeAttribute("style");
+  focusNote.removeAttribute("style");
 
-  if (mission.boss) {
-    const hasColor = code.includes("color:");
-    const hasBackground = code.includes("background-color:");
-    const hasFontSize = code.includes("font-size:");
-    const hasBorder = code.includes("border:");
-    const hasAlign = code.includes("text-align:");
-    const hasPadding = code.includes("padding:");
+  previewPage.style.background =
+    "radial-gradient(circle at top right, rgba(57,255,90,0.03), transparent 30%), linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.005)), #02060B";
+  previewPage.style.color = "#E6FFE9";
 
-    const total = [hasColor, hasBackground, hasFontSize, hasBorder, hasAlign, hasPadding].filter(Boolean).length;
+  previewTitle.style.color = "#E6FFE9";
+  previewTitle.style.fontSize = "30px";
 
-    if (total === 6) {
-      return { status: "correct", message: "Perfect! All required CSS powers are active." };
-    }
+  previewText.style.color = "rgba(230,255,233,0.72)";
 
-    return {
-      status: "almost",
-      message: "Boss progress: " + total + "/6 CSS powers active. Keep going."
-    };
-  }
+  previewCard.style.background =
+    "linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01)), #07111D";
+  previewCard.style.color = "#E6FFE9";
+  previewCard.style.border = "1px solid rgba(57,255,90,0.16)";
+  previewCard.style.padding = "18px";
+  previewCard.style.textAlign = "left";
+  previewCard.style.fontSize = "16px";
 
-  const hasSelector = code.includes(normalize(mission.selector));
-  const hasProperty = code.includes(normalize(mission.property));
-  const hasValue = code.includes(normalize(mission.value));
-  const hasColon = code.includes(":");
-  const hasSemicolon = code.includes(";");
+  previewButton.style.background =
+    "linear-gradient(180deg, rgba(57,255,90,0.16), rgba(57,255,90,0.08))";
+  previewButton.style.color = "#E6FFE9";
+  previewButton.style.borderColor = "rgba(57,255,90,0.18)";
 
-  if (!hasSelector) {
-    return {
-      status: "missing",
-      message: "Missing selector. You need: " + mission.selector
-    };
-  }
-
-  if (!hasProperty) {
-    return {
-      status: "missing",
-      message: "Missing property. You need: " + mission.property
-    };
-  }
-
-  if (!hasColon) {
-    return {
-      status: "missing",
-      message: "Missing colon. CSS needs ':' before the value."
-    };
-  }
-
-  if (!hasValue) {
-    return {
-      status: "almost",
-      message: "Almost. Structure is correct, but the value should be: " + (mission.displayValue || mission.value)
-    };
-  }
-
-  if (!hasSemicolon) {
-    return {
-      status: "almost",
-      message: "Almost. Add a semicolon ; at the end."
-    };
-  }
-
-  return {
-    status: "correct",
-    message: "Perfect! Clean CSS."
-  };
+  focusNote.style.background = "rgba(57,255,90,0.04)";
+  focusNote.style.color = "rgba(230,255,233,0.74)";
+  focusNote.style.borderColor = "rgba(57,255,90,0.18)";
 }
 
 function updatePreview() {
-  const cssCode = document.getElementById("code").value;
-  const previewBox = document.getElementById("preview-box");
-  const title = document.getElementById("preview-title");
-  const card = document.getElementById("preview-card");
+  const rawCode = codeBox.value;
+  const code = normalize(rawCode);
 
-  title.removeAttribute("style");
-  card.removeAttribute("style");
-  previewBox.removeAttribute("style");
+  resetPreviewStyles();
 
-  previewBox.className = "preview-box";
-
-  const normalized = normalize(cssCode);
-
-  if (level === 1 && normalized.includes("color:blue;")) {
-    title.style.color = "blue";
+  if (code.includes("h1{color:blue;}")) {
+    previewTitle.style.color = "#74D7FF";
   }
 
-  if (level === 2 && normalized.includes("background-color:black;")) {
-    previewBox.style.backgroundColor = "black";
+  if (code.includes("body{background-color:black;}")) {
+    previewPage.style.background = "#000000";
   }
 
-  if (level === 3 && normalized.includes("font-size:40px;")) {
-    title.style.fontSize = "40px";
+  if (code.includes("h1{font-size:40px;}")) {
+    previewTitle.style.fontSize = "40px";
   }
 
-  if (level === 4 && normalized.includes("border:2pxsolidblue;")) {
-    card.style.border = "2px solid blue";
+  if (code.includes(".card{border:2pxsolidblue;}")) {
+    previewCard.style.border = "2px solid #74D7FF";
   }
 
-  if (level === 5 && normalized.includes("text-align:center;")) {
-    card.style.textAlign = "center";
+  if (code.includes(".card{text-align:center;}")) {
+    previewCard.style.textAlign = "center";
   }
 
-  if (level === 6 && normalized.includes("padding:20px;")) {
-    card.style.padding = "20px";
+  if (code.includes(".card{padding:30px;}")) {
+    previewCard.style.padding = "30px";
   }
 
   if (level === 7) {
-    if (normalized.includes("color:white;")) card.style.color = "white";
-    if (normalized.includes("background-color:black;")) card.style.backgroundColor = "black";
-    if (normalized.includes("font-size:20px;")) card.style.fontSize = "20px";
-    if (normalized.includes("border:2pxsolidblue;")) card.style.border = "2px solid blue";
-    if (normalized.includes("text-align:center;")) card.style.textAlign = "center";
-    if (normalized.includes("padding:20px;")) card.style.padding = "20px";
+    if (code.includes("color:white;")) previewCard.style.color = "white";
+    if (code.includes("background-color:black;")) previewCard.style.background = "black";
+    if (code.includes("font-size:20px;")) previewCard.style.fontSize = "20px";
+    if (code.includes("border:2pxsolidblue;")) previewCard.style.border = "2px solid #74D7FF";
+    if (code.includes("text-align:center;")) previewCard.style.textAlign = "center";
+    if (code.includes("padding:30px;")) previewCard.style.padding = "30px";
   }
 
-  document.getElementById("feedback-label").innerText = getFeedbackLabel();
-  checkSyntaxWarnings(cssCode);
-}
-
-function getFeedbackLabel() {
-  if (level === 1) return "Focus: Watch the heading turn blue.";
-  if (level === 2) return "Focus: Watch the preview background turn black.";
-  if (level === 3) return "Focus: Watch the heading become bigger.";
-  if (level === 4) return "Focus: Watch the card border appear.";
-  if (level === 5) return "Focus: Watch the card text center.";
-  if (level === 6) return "Focus: Watch the card spacing expand.";
-  if (level === 7) return "Boss Mode: Style the full card.";
-  return "";
+  checkSyntaxWarnings(rawCode);
 }
 
 function checkCode() {
-  const rawCode = document.getElementById("code").value;
-  const code = normalize(rawCode);
+  if (missionComplete) return;
+
   const mission = missions[level];
-  const result = document.getElementById("result");
+  const rawCode = codeBox.value;
+  const code = normalize(rawCode);
 
   updatePreview();
 
   if (!mission) {
-    result.innerText = "CSS Circuit already complete.";
-    result.className = "message correct";
+    resultEl.innerText = "CSS Circuit already complete.";
+    resultEl.className = "message correct";
     return;
   }
 
-  const progress = getMissionProgress(code, mission);
+  attempts++;
+  updateStats();
 
-  if (progress.status === "correct") {
-    clearInterval(timerInterval);
-
-    increaseStreak();
-
-    let xpGain = mission.boss ? 50 : 10;
-    let speedBonus = 0;
-    let streakBonus = getStreakBonus();
-
-    if (seconds <= 15) {
-      speedBonus = 5;
-      xpGain += speedBonus;
-    }
-
-    xpGain += streakBonus;
-
-    success(xpGain, speedBonus, streakBonus, mission.success);
-  } else if (progress.status === "almost") {
-    playMistake();
-    attempts++;
-    showHint(mission);
-    result.innerText = progress.message;
-    result.className = "message almost";
+  if (mission.check(code)) {
+    const reward = mission.boss ? 50 : 10;
+    completeMission(reward, mission.success, mission.learned);
   } else {
-    resetStreak();
-    playError();
-    attempts++;
-    showHint(mission);
-    result.innerText = progress.message;
-    result.className = "message error";
-    errorEffect();
+    loseLife();
   }
 }
 
-function showHint(mission) {
-  const hint = document.getElementById("hint");
+function loseLife() {
+  lives--;
+  updateStats();
 
-  if (attempts === 1) {
-    hint.innerText = "Hint 1: " + mission.hint1;
-  } else if (attempts >= 2) {
-    hint.innerText = "Hint 2: " + mission.hint2;
+  if (lives <= 0) {
+    resultEl.innerText = "Game over. You used up all your lives.";
+    resultEl.className = "message error";
+    statusEl.innerText = "Game Over";
+
+    runBtn.disabled = true;
+    hintBtn.disabled = true;
+    nextBtn.disabled = true;
+
+    errorEffect();
+    playGameLose();
+    showGameOverPopup();
+
+    return;
+  }
+
+  playError();
+
+  const mission = missions[level];
+
+  resultEl.innerText = "Not correct yet. You lost one life.";
+  resultEl.className = "message error";
+  statusEl.innerText = "Try Again";
+
+  showHint(mission);
+  errorEffect();
+}
+
+function showGameOverPopup() {
+  gameOverModal.classList.add("show");
+}
+
+function tryAgainMission() {
+  gameOverModal.classList.remove("show");
+  shouldShowStartPopup = false;
+  loadMission();
+  shouldShowStartPopup = true;
+}
+
+function showHint(mission) {
+  if (attempts <= 1) {
+    hintEl.innerText = "Hint 1: " + mission.hint1;
+  } else {
+    hintEl.innerText = "Hint 2: " + mission.hint2;
   }
 }
 
 function manualHint() {
   const mission = missions[level];
-  if (!mission) return;
 
-  const hint = document.getElementById("hint");
+  if (!mission || missionComplete) return;
 
-  if (hint.innerText.includes("Hint 1")) {
-    hint.innerText = "Hint 2: " + mission.hint2;
+  if (hintEl.innerText.includes("Hint 1")) {
+    hintEl.innerText = "Hint 2: " + mission.hint2;
   } else {
-    hint.innerText = "Hint 1: " + mission.hint1;
+    hintEl.innerText = "Hint 1: " + mission.hint1;
   }
 }
 
-function success(xpGain, speedBonus, streakBonus, message) {
-  const result = document.getElementById("result");
-  const preview = document.getElementById("preview-box");
-  const xpFeedback = document.getElementById("xp-feedback");
+function showMissionPopup(successMessage, learnedMessage) {
+  modalSuccessText.innerText = successMessage;
+  modalLearnedText.innerText = learnedMessage;
 
-  const isBossComplete = level + 1 > 7;
-  const redirectDelay = isBossComplete ? 5800 : 1300;
-
-  let bonusText = "";
-
-  if (speedBonus > 0) {
-    bonusText += " — Speed bonus!";
+  if (level > 7) {
+    modalNextBtn.innerText = "Back to Map";
+  } else {
+    modalNextBtn.innerText = "Next Mission";
   }
 
-  if (streakBonus > 0) {
-    bonusText += " — Streak bonus +" + streakBonus + "!";
-  }
+  missionModal.classList.add("show");
+}
 
-  result.innerText = message + " +" + xpGain + " XP" + bonusText;
-  result.className = "message correct";
-  xpFeedback.innerText = "+" + xpGain + " XP gained.";
+function completeMission(xpGain, message, learnedMessage) {
+  missionComplete = true;
+
+  resultEl.innerText = message + " +" + xpGain + " XP";
+  resultEl.className = "message correct";
+
+  hintEl.innerText = "Mission complete.";
+  xpFeedbackEl.innerText = "+" + xpGain + " XP gained.";
+  statusEl.innerText = "Complete";
 
   setWarning("No syntax warnings.");
+
   playSuccess();
 
-  if (isBossComplete) {
-    setTimeout(function () {
-      playUnlock();
-    }, 300);
-  }
-
   document.body.classList.add("success-flash");
-  preview.classList.add("preview-glow");
+  previewFrame.classList.add("preview-glow");
 
   setTimeout(function () {
     document.body.classList.remove("success-flash");
-    preview.classList.remove("preview-glow");
+    previewFrame.classList.remove("preview-glow");
   }, 700);
 
   showXPPop(xpGain);
   addXP(xpGain);
 
+  runBtn.disabled = true;
+  hintBtn.disabled = true;
+  nextBtn.disabled = false;
+
+  if (level === 7) {
+    localStorage.setItem("js-level", 1);
+    playUnlock();
+  }
+
   level++;
   localStorage.setItem("css-level", level);
 
-  setTimeout(function () {
+  updateStats();
+
+  showMissionPopup(message, learnedMessage);
+}
+
+function goNextMission() {
+  if (level > 7) {
     window.location.href = "css-map.html";
-  }, redirectDelay);
+    return;
+  }
+
+  loadMission();
 }
 
 function errorEffect() {
-  const editor = document.getElementById("code");
-
-  editor.classList.add("error-shake");
+  codeBox.classList.add("error-shake");
 
   setTimeout(function () {
-    editor.classList.remove("error-shake");
+    codeBox.classList.remove("error-shake");
   }, 300);
 }
 
@@ -932,6 +1384,7 @@ function showXPPop(amount) {
   const xp = document.createElement("div");
   xp.className = "xp-pop";
   xp.innerText = "+" + amount + " XP";
+
   document.body.appendChild(xp);
 
   setTimeout(function () {
@@ -941,6 +1394,7 @@ function showXPPop(amount) {
 
 function playSound(id) {
   const sound = document.getElementById(id);
+
   if (!sound) return;
 
   sound.currentTime = 0;
@@ -966,7 +1420,43 @@ function playMistake() {
   playSound("mistake-sound");
 }
 
-document.getElementById("code").addEventListener("input", updatePreview);
+function playGameLose() {
+  const sound = document.getElementById("game-lose-sound");
+
+  if (!sound) return;
+
+  sound.currentTime = 0;
+
+  sound.play().catch(function () {
+    console.log("Sound blocked or missing: game-lose-sound");
+  });
+
+  setTimeout(function () {
+    sound.pause();
+    sound.currentTime = 0;
+  }, 4000);
+}
+
+runBtn.addEventListener("click", checkCode);
+hintBtn.addEventListener("click", manualHint);
+nextBtn.addEventListener("click", goNextMission);
+
+startMissionBtn.addEventListener("click", function () {
+  startModal.classList.remove("show");
+});
+
+modalNextBtn.addEventListener("click", function () {
+  missionModal.classList.remove("show");
+  goNextMission();
+});
+
+tryAgainBtn.addEventListener("click", tryAgainMission);
+
+backBtn.addEventListener("click", function () {
+  window.location.href = "css-map.html";
+});
+
+codeBox.addEventListener("input", updatePreview);
 
 loadMission();
 </script>
