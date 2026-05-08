@@ -157,6 +157,9 @@
     .button-row {
       display: flex;
       margin-top: 26px;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
     button {
@@ -180,6 +183,20 @@
 
     button:active {
       transform: translateY(1px);
+    }
+
+    #language-toggle {
+      min-width: 76px;
+      padding: 16px 14px;
+      background: #050B12;
+      color: var(--green);
+      border: 1px solid rgba(57,255,90,0.45);
+      font-size: 10px;
+    }
+
+    #language-toggle:hover {
+      background: rgba(57,255,90,0.08);
+      border-color: var(--green);
     }
 
     .hero-side h2 {
@@ -308,7 +325,13 @@
         flex-direction: column;
       }
 
-      button {
+      .button-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      button,
+      #language-toggle {
         width: 100%;
       }
     }
@@ -321,7 +344,7 @@
 </audio>
 
   <div id="audio-overlay">
-    <button id="enable-audio-btn">ENABLE SOUND</button>
+    <button id="enable-audio-btn" data-key="enableSound">ENABLE SOUND</button>
   </div>
 
   <div id="start-screen">
@@ -341,47 +364,46 @@
       <section class="hero">
 
         <div class="hero-main">
-          <div class="eyebrow">START YOUR</div>
+          <div class="eyebrow" data-key="eyebrow">START YOUR</div>
           <h1>BYTERUSH</h1>
-          <div class="subtitle">RETRO CODING QUEST</div>
+          <div class="subtitle" data-key="subtitle">RETRO CODING QUEST</div>
 
           <p class="description">
             <span id="typed-text"></span><span class="cursor">_</span>
           </p>
 
           <div class="button-row">
-            <button id="start-btn" type="button">Press Start</button>
+            <button id="start-btn" type="button" data-key="pressStart">PRESS START</button>
+            <button id="language-toggle" type="button">FR</button>
           </div>
         </div>
 
         <aside class="hero-side">
-          <h2>MISSION PATH</h2>
+          <h2 data-key="missionPath">MISSION PATH</h2>
 
           <div class="mode-list">
-            <div class="mode-card active" data-title="HTML ARENA" data-info="Start here. HTML teaches players how to build the structure of a webpage before styling or scripting anything.">
-              <div class="mode-title">HTML ARENA</div>
-              <p>Learn the building blocks of a webpage through simple structure missions.</p>
+            <div class="mode-card active" data-mode="html">
+              <div class="mode-title" data-key="htmlTitle">HTML ARENA</div>
+              <p data-key="htmlDesc">Learn the building blocks of a webpage through simple structure missions.</p>
             </div>
 
-            <div class="mode-card" data-title="CSS CIRCUIT" data-info="CSS Circuit teaches players how to style pages with colors, spacing, borders, layout, and visual design decisions.">
-              <div class="mode-title">CSS CIRCUIT</div>
-              <p>Style pages with colors, spacing, borders, alignment, and full card design.</p>
+            <div class="mode-card" data-mode="css">
+              <div class="mode-title" data-key="cssTitle">CSS CIRCUIT</div>
+              <p data-key="cssDesc">Style pages with colors, spacing, borders, alignment, and full card design.</p>
             </div>
 
-            <div class="mode-card" data-title="JAVASCRIPT CORE" data-info="JavaScript Core teaches players how to make websites respond through clicks, functions, variables, loops, and DOM updates.">
-              <div class="mode-title">JAVASCRIPT CORE</div>
-              <p>Make websites interactive with variables, functions, clicks, loops, DOM updates, and a counter app.</p>
+            <div class="mode-card" data-mode="js">
+              <div class="mode-title" data-key="jsTitle">JAVASCRIPT CORE</div>
+              <p data-key="jsDesc">Make websites interactive with variables, functions, clicks, loops, DOM updates, and a counter app.</p>
             </div>
           </div>
 
-          <div class="mission-info" id="mission-info">
-            <strong>HTML ARENA:</strong> Start here. HTML teaches players how to build the structure of a webpage before styling or scripting anything.
-          </div>
+          <div class="mission-info" id="mission-info"></div>
         </aside>
 
       </section>
 
-      <div class="footer">
+      <div class="footer" data-key="footer">
         © 2026 BYTERUSH — ALL SYSTEMS NOMINAL
       </div>
 
@@ -399,11 +421,101 @@
   </div>
 
   <script>
+    const translations = {
+      en: {
+        enableSound: "ENABLE SOUND",
+        systemOnline: "SYS ONLINE",
+        eyebrow: "START YOUR",
+        subtitle: "RETRO CODING QUEST",
+        pressStart: "PRESS START",
+        missionPath: "MISSION PATH",
+        footer: "© 2026 BYTERUSH — ALL SYSTEMS NOMINAL",
+
+        typedMessage:
+          "Build the structure. Style the interface. Script the interactions. Complete coding missions, unlock new arenas, and power up your web skills.",
+
+        htmlTitle: "HTML ARENA",
+        htmlDesc: "Learn the building blocks of a webpage through simple structure missions.",
+        htmlInfo: "Start here. HTML teaches players how to build the structure of a webpage before styling or scripting anything.",
+
+        cssTitle: "CSS CIRCUIT",
+        cssDesc: "Style pages with colors, spacing, borders, alignment, and full card design.",
+        cssInfo: "CSS Circuit teaches players how to style pages with colors, spacing, borders, layout, and visual design decisions.",
+
+        jsTitle: "JAVASCRIPT CORE",
+        jsDesc: "Make websites interactive with variables, functions, clicks, loops, DOM updates, and a counter app.",
+        jsInfo: "JavaScript Core teaches players how to make websites respond through clicks, functions, variables, loops, and DOM updates.",
+
+        selected: "SELECTED",
+        bootingGame: "BOOTING GAME",
+
+        bootMessages: [
+          "INITIALIZING BYTERUSH...",
+          "LOADING PLAYER DASHBOARD...",
+          "CHECKING MISSION PATH...",
+          "SYSTEM READY."
+        ]
+      },
+
+      fr: {
+        enableSound: "ACTIVER LE SON",
+        systemOnline: "SYSTÈME EN LIGNE",
+        eyebrow: "COMMENCE TON",
+        subtitle: "QUÊTE RÉTRO DE CODAGE",
+        pressStart: "COMMENCER",
+        missionPath: "PARCOURS DES MISSIONS",
+        footer: "© 2026 BYTERUSH — TOUS LES SYSTÈMES SONT OPÉRATIONNELS",
+
+        typedMessage:
+          "Construis la structure. Stylise l’interface. Programme les interactions. Termine les missions de codage, débloque de nouvelles arènes et améliore tes compétences web.",
+
+        htmlTitle: "ARÈNE HTML",
+        htmlDesc: "Apprends les bases d’une page web avec des missions simples de structure.",
+        htmlInfo: "Commence ici. HTML apprend aux joueurs à construire la structure d’une page web avant d’ajouter le style ou les interactions.",
+
+        cssTitle: "CIRCUIT CSS",
+        cssDesc: "Stylise les pages avec les couleurs, l’espacement, les bordures, l’alignement et le design de cartes.",
+        cssInfo: "Le Circuit CSS apprend aux joueurs à styliser les pages avec les couleurs, l’espacement, les bordures, la mise en page et les décisions visuelles.",
+
+        jsTitle: "CŒUR JAVASCRIPT",
+        jsDesc: "Rends les sites interactifs avec les variables, fonctions, clics, boucles, mises à jour du DOM et une application compteur.",
+        jsInfo: "Le Cœur JavaScript apprend aux joueurs à rendre les sites réactifs grâce aux clics, fonctions, variables, boucles et mises à jour du DOM.",
+
+        selected: "SÉLECTIONNÉ",
+        bootingGame: "LANCEMENT DU JEU",
+
+        bootMessages: [
+          "INITIALISATION DE BYTERUSH...",
+          "CHARGEMENT DU TABLEAU DE BORD...",
+          "VÉRIFICATION DU PARCOURS...",
+          "SYSTÈME PRÊT."
+        ]
+      }
+    };
+
     const music = document.getElementById("bg-music");
     const audioOverlay = document.getElementById("audio-overlay");
     const enableAudioBtn = document.getElementById("enable-audio-btn");
+    const typedText = document.getElementById("typed-text");
+    const startBtn = document.getElementById("start-btn");
+    const bootScreen = document.getElementById("boot-screen");
+    const bootLine = document.getElementById("boot-line");
+    const progressFill = document.getElementById("progress-fill");
+    const systemStatus = document.getElementById("system-status");
+    const missionCards = document.querySelectorAll(".mode-card");
+    const missionInfo = document.getElementById("mission-info");
+    const languageToggle = document.getElementById("language-toggle");
+
+    let currentLanguage = localStorage.getItem("byteRushLanguage") || "en";
+    let currentMode = "html";
+    let typingTimer;
+    let index = 0;
 
     music.volume = 0.25;
+
+    function t(key) {
+      return translations[currentLanguage][key];
+    }
 
     function tryPlayMusic() {
       const playPromise = music.play();
@@ -426,42 +538,74 @@
       audioOverlay.style.display = "none";
     });
 
-    const typedText = document.getElementById("typed-text");
-    const startBtn = document.getElementById("start-btn");
-    const bootScreen = document.getElementById("boot-screen");
-    const bootLine = document.getElementById("boot-line");
-    const progressFill = document.getElementById("progress-fill");
-    const systemStatus = document.getElementById("system-status");
-    const missionCards = document.querySelectorAll(".mode-card");
-    const missionInfo = document.getElementById("mission-info");
-
-    const message =
-      "Build the structure. Style the interface. Script the interactions. Complete coding missions, unlock new arenas, and power up your web skills.";
-
-    let index = 0;
-
     function typeMessage() {
-      if (index < message.length) {
-        typedText.textContent += message.charAt(index);
-        index++;
-        setTimeout(typeMessage, 24);
+      clearTimeout(typingTimer);
+      typedText.textContent = "";
+      index = 0;
+
+      const message = t("typedMessage");
+
+      function typeNextLetter() {
+        if (index < message.length) {
+          typedText.textContent += message.charAt(index);
+          index++;
+          typingTimer = setTimeout(typeNextLetter, 24);
+        }
       }
+
+      typeNextLetter();
     }
 
-    typeMessage();
+    function updateMissionInfo() {
+      if (!currentMode) return;
+
+      const titleKey = currentMode + "Title";
+      const infoKey = currentMode + "Info";
+
+      missionInfo.innerHTML = `<strong>${t(titleKey)}:</strong> ${t(infoKey)}`;
+    }
+
+    function applyLanguage(language) {
+      currentLanguage = language;
+      localStorage.setItem("byteRushLanguage", language);
+      document.documentElement.lang = language;
+
+      document.querySelectorAll("[data-key]").forEach((element) => {
+        const key = element.getAttribute("data-key");
+
+        if (translations[language][key]) {
+          element.textContent = translations[language][key];
+        }
+      });
+
+      languageToggle.textContent = language === "en" ? "FR" : "EN";
+
+      if (systemStatus.textContent.includes("SELECTED") || systemStatus.textContent.includes("SÉLECTIONNÉ")) {
+        systemStatus.textContent = `${t(currentMode + "Title")} ${t("selected")}`;
+      } else {
+        systemStatus.textContent = t("systemOnline");
+      }
+
+      updateMissionInfo();
+      typeMessage();
+    }
+
+    languageToggle.addEventListener("click", () => {
+      const nextLanguage = currentLanguage === "en" ? "fr" : "en";
+      applyLanguage(nextLanguage);
+    });
 
     missionCards.forEach((card) => {
       card.addEventListener("click", () => {
         missionCards.forEach((item) => item.classList.remove("active"));
         card.classList.add("active");
 
-        const title = card.getAttribute("data-title");
-        const info = card.getAttribute("data-info");
+        currentMode = card.getAttribute("data-mode");
 
         missionInfo.style.display = "block";
-        missionInfo.innerHTML = `<strong>${title}:</strong> ${info}`;
+        updateMissionInfo();
 
-        systemStatus.textContent = `${title} SELECTED`;
+        systemStatus.textContent = `${t(currentMode + "Title")} ${t("selected")}`;
       });
     });
 
@@ -469,14 +613,9 @@
       music.play().catch(() => {});
 
       bootScreen.style.display = "flex";
-      systemStatus.textContent = "BOOTING GAME";
+      systemStatus.textContent = t("bootingGame");
 
-      const bootMessages = [
-        "INITIALIZING BYTERUSH...",
-        "LOADING PLAYER DASHBOARD...",
-        "CHECKING MISSION PATH...",
-        "SYSTEM READY."
-      ];
+      const bootMessages = t("bootMessages");
 
       let bootIndex = 0;
       let progress = 0;
@@ -505,7 +644,10 @@
         startGame();
       }
     });
+
+    applyLanguage(currentLanguage);
   </script>
+
 <script src="audio.js"></script>
 </body>
 </html>
