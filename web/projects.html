@@ -35,7 +35,7 @@ body {
 }
 
 .lab {
-  max-width: 1180px;
+  max-width: 1060px;
   margin: 0 auto;
 }
 
@@ -47,12 +47,12 @@ body {
 .panel {
   border: 1px solid var(--line);
   background: var(--panel);
-  padding: 10px;
-  margin-bottom: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
 }
 
 h1 {
-  margin: 0 0 5px;
+  margin: 0 0 6px;
   color: var(--green);
   font-size: 15px;
   line-height: 1.4;
@@ -64,55 +64,107 @@ h1 {
   margin: 0;
 }
 
-.project-tabs {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-
-.project-card {
-  border: 1px solid var(--line);
-  background: var(--panel2);
-  padding: 10px;
-  cursor: pointer;
-}
-
-.project-card:hover,
-.project-card.active {
-  border-color: var(--green);
-  background: rgba(57, 255, 90, 0.06);
-}
-
-.project-card h2 {
-  margin: 0 0 6px;
-  color: var(--green);
-  font-size: 13px;
-}
-
-.project-card p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 11px;
-}
-
-.project-type,
 .panel-title,
 .label {
   font-family: "Press Start 2P", monospace;
   font-size: 6px;
   line-height: 1.4;
   color: var(--green);
-  margin-bottom: 6px;
+  margin: 0 0 7px;
+}
+
+.project-home {
+  display: block;
+}
+
+.project-page {
+  display: none;
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.project-card {
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  padding: 14px;
+  min-height: 210px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.project-card:hover {
+  border-color: var(--green);
+  background: rgba(57, 255, 90, 0.06);
 }
 
 .project-type {
+  font-family: "Press Start 2P", monospace;
+  font-size: 6px;
   color: var(--yellow);
+  margin-bottom: 8px;
 }
 
-.main-grid {
+.project-card h2 {
+  color: var(--text);
+  font-size: 16px;
+  margin: 0 0 8px;
+}
+
+.project-card p {
+  color: var(--muted);
+  font-size: 11px;
+  margin: 0 0 10px;
+}
+
+.project-mini-preview {
+  border: 1px solid rgba(57, 255, 90, 0.18);
+  background: #02060B;
+  padding: 10px;
+  min-height: 72px;
+  margin: 10px 0;
+}
+
+.mini-card {
+  width: 90px;
+  height: 48px;
+  border: 1px solid var(--green);
+  margin: 0 auto;
+  border-radius: 8px;
+}
+
+.mini-menu {
+  display: grid;
+  gap: 5px;
+}
+
+.mini-line {
+  height: 6px;
+  background: rgba(57, 255, 90, 0.35);
+}
+
+.mini-counter {
+  text-align: center;
+  color: var(--yellow);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.page-header-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: start;
+}
+
+.workspace {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 10px;
 }
 
 .editor-stack {
@@ -148,7 +200,7 @@ textarea:focus {
   background: #02060B;
   border: 1px solid var(--line);
   padding: 12px;
-  min-height: 475px;
+  min-height: 460px;
   display: grid;
   place-items: center;
   overflow: auto;
@@ -156,7 +208,7 @@ textarea:focus {
 
 .preview-stage {
   width: 100%;
-  min-height: 445px;
+  min-height: 430px;
   display: grid;
   place-items: center;
   background: radial-gradient(circle at top, #102018, #03080F);
@@ -174,7 +226,7 @@ textarea:focus {
   border: 2px solid var(--green);
   border-radius: 18px;
   padding: 24px;
-  box-shadow: 0 0 30px rgba(57, 255, 90, 0.25);
+  box-shadow: 0 0 30px rgba(57, 255, 90, 0.22);
 }
 
 .preview-profile-card img {
@@ -337,9 +389,10 @@ button.danger {
 }
 
 @media (max-width: 950px) {
-  .project-tabs,
-  .main-grid,
-  .guidance-grid {
+  .project-grid,
+  .workspace,
+  .guidance-grid,
+  .page-header-grid {
     grid-template-columns: 1fr;
   }
 
@@ -354,99 +407,151 @@ button.danger {
 
 <main class="lab">
 
-  <section class="topbar">
-    <h1 class="pixel">Project Lab</h1>
-    <p class="desc">Build small projects with HTML, CSS, and JavaScript. You get light guidance, but you still have to think.</p>
+  <section id="project-home" class="project-home">
 
-    <div class="buttons">
-      <button class="danger" type="button" onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
-    </div>
-  </section>
-
-  <section class="panel">
-    <div class="panel-title">CHOOSE A PROJECT</div>
-
-    <div class="project-tabs">
-      <div class="project-card active" onclick="loadProject('profile')" id="card-profile">
-        <div class="project-type">HTML + CSS</div>
-        <h2>Profile Card</h2>
-        <p>Build a cool personal card with a heading, bio, image, and button.</p>
-      </div>
-
-      <div class="project-card" onclick="loadProject('menu')" id="card-menu">
-        <div class="project-type">HTML + CSS</div>
-        <h2>Mini Menu</h2>
-        <p>Create a stylish restaurant menu with sections and prices.</p>
-      </div>
-
-      <div class="project-card" onclick="loadProject('counter')" id="card-counter">
-        <div class="project-type">HTML + CSS + JS</div>
-        <h2>Click Counter</h2>
-        <p>Build an interactive counter using JavaScript.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="main-grid">
-
-    <div class="panel">
-      <div class="panel-title">CODE BUILDERS</div>
-
-      <div class="editor-stack">
-        <div class="editor-box">
-          <div class="label">HTML</div>
-          <textarea id="html-code" spellcheck="false"></textarea>
-        </div>
-
-        <div class="editor-box">
-          <div class="label">CSS</div>
-          <textarea id="css-code" spellcheck="false"></textarea>
-        </div>
-
-        <div class="editor-box">
-          <div class="label">JAVASCRIPT</div>
-          <textarea id="js-code" spellcheck="false"></textarea>
-        </div>
-      </div>
+    <section class="topbar">
+      <h1 class="pixel">Project Lab</h1>
+      <p class="desc">Choose one project. Build it. Check it. Earn XP. Each project opens like its own page.</p>
 
       <div class="buttons">
-        <button class="primary" type="button" onclick="runProject()">Run Project</button>
-        <button type="button" onclick="checkProject()">Check Project</button>
-        <button type="button" onclick="showHint()">Hint</button>
-        <button class="danger" type="button" onclick="resetCurrentProject()">Reset</button>
+        <button class="danger" type="button" onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
       </div>
-    </div>
+    </section>
 
-    <div class="panel">
-      <div class="panel-title">LIVE PROJECT PREVIEW</div>
+    <section class="panel">
+      <div class="panel-title">CHOOSE A PROJECT</div>
 
-      <div class="preview-wrap">
-        <div class="preview-stage" id="preview-stage"></div>
+      <div class="project-grid">
+
+        <div class="project-card">
+          <div>
+            <div class="project-type">HTML + CSS</div>
+            <h2>Profile Card</h2>
+            <p>Build a personal profile card with a name, image, bio, and follow button.</p>
+
+            <div class="project-mini-preview">
+              <div class="mini-card"></div>
+            </div>
+          </div>
+
+          <button class="primary" type="button" onclick="openProject('profile')">Start Project</button>
+        </div>
+
+        <div class="project-card">
+          <div>
+            <div class="project-type">HTML + CSS</div>
+            <h2>Mini Menu</h2>
+            <p>Create a simple restaurant menu with items, prices, and clean styling.</p>
+
+            <div class="project-mini-preview">
+              <div class="mini-menu">
+                <div class="mini-line"></div>
+                <div class="mini-line"></div>
+                <div class="mini-line"></div>
+              </div>
+            </div>
+          </div>
+
+          <button class="primary" type="button" onclick="openProject('menu')">Start Project</button>
+        </div>
+
+        <div class="project-card">
+          <div>
+            <div class="project-type">HTML + CSS + JS</div>
+            <h2>Click Counter</h2>
+            <p>Build a button that counts clicks using JavaScript.</p>
+
+            <div class="project-mini-preview">
+              <div class="mini-counter">0</div>
+            </div>
+          </div>
+
+          <button class="primary" type="button" onclick="openProject('counter')">Start Project</button>
+        </div>
+
       </div>
-    </div>
+    </section>
 
   </section>
 
-  <section class="panel">
-    <div class="panel-title">GUIDANCE / REQUIREMENTS / RESULT</div>
+  <section id="project-page" class="project-page">
 
-    <div class="guidance-grid">
-      <div class="guide-card">
-        <div class="label">PROJECT GOAL</div>
-        <p id="goal-text">Build a profile card.</p>
+    <section class="topbar">
+      <div class="page-header-grid">
+        <div>
+          <h1 class="pixel" id="project-title">Project Title</h1>
+          <p class="desc" id="project-subtitle">Project instructions loading...</p>
+        </div>
+
+        <div class="buttons">
+          <button type="button" onclick="goBackToProjects()">Back to Projects</button>
+          <button class="danger" type="button" onclick="window.location.href='dashboard.html'">Dashboard</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="workspace">
+
+      <div class="panel">
+        <div class="panel-title">CODE EDITOR</div>
+
+        <div class="editor-stack">
+          <div class="editor-box">
+            <div class="label">HTML</div>
+            <textarea id="html-code" spellcheck="false"></textarea>
+          </div>
+
+          <div class="editor-box">
+            <div class="label">CSS</div>
+            <textarea id="css-code" spellcheck="false"></textarea>
+          </div>
+
+          <div class="editor-box">
+            <div class="label">JAVASCRIPT</div>
+            <textarea id="js-code" spellcheck="false"></textarea>
+          </div>
+        </div>
+
+        <div class="buttons">
+          <button class="primary" type="button" onclick="runProject()">Run Project</button>
+          <button type="button" onclick="checkProject()">Check Project</button>
+          <button type="button" onclick="showHint()">Hint</button>
+          <button class="danger" type="button" onclick="resetCurrentProject()">Reset</button>
+        </div>
       </div>
 
-      <div class="guide-card">
-        <div class="label">REQUIREMENTS</div>
-        <ul class="requirements-list" id="requirements-list"></ul>
+      <div class="panel">
+        <div class="panel-title">LIVE PREVIEW</div>
+
+        <div class="preview-wrap">
+          <div class="preview-stage" id="preview-stage"></div>
+        </div>
       </div>
 
-      <div class="guide-card">
-        <div class="label">NEXT GUIDED STEP</div>
-        <p id="step-text">Start by editing the heading.</p>
-        <p id="result-text" style="margin-top:8px;">Run and check your project when ready.</p>
+    </section>
+
+    <section class="panel">
+      <div class="panel-title">GOAL / REQUIREMENTS / RESULT</div>
+
+      <div class="guidance-grid">
+        <div class="guide-card">
+          <div class="label">PROJECT GOAL</div>
+          <p id="goal-text">Project goal loading...</p>
+        </div>
+
+        <div class="guide-card">
+          <div class="label">REQUIREMENTS</div>
+          <ul class="requirements-list" id="requirements-list"></ul>
+        </div>
+
+        <div class="guide-card">
+          <div class="label">NEXT STEP</div>
+          <p id="step-text">Next step loading...</p>
+          <p id="result-text" style="margin-top:8px;">Run and check your project when ready.</p>
+        </div>
       </div>
-    </div>
+    </section>
+
   </section>
 
 </main>
@@ -455,6 +560,12 @@ button.danger {
 <audio id="error-sound" src="./sounds/error.mp3" preload="auto"></audio>
 
 <script>
+const projectHome = document.getElementById("project-home");
+const projectPage = document.getElementById("project-page");
+
+const projectTitle = document.getElementById("project-title");
+const projectSubtitle = document.getElementById("project-subtitle");
+
 const htmlCode = document.getElementById("html-code");
 const cssCode = document.getElementById("css-code");
 const jsCode = document.getElementById("js-code");
@@ -465,20 +576,22 @@ const stepText = document.getElementById("step-text");
 const resultText = document.getElementById("result-text");
 const requirementsList = document.getElementById("requirements-list");
 
-let currentProject = "profile";
+let currentProject = "";
 let counterValue = 0;
 let completedProjects = JSON.parse(localStorage.getItem("completed-projects")) || {};
 
 const projects = {
   profile: {
-    goal: "Build a cool personal profile card with your name, short bio, image, and follow button.",
+    title: "Profile Card Project",
+    subtitle: "Build a clean profile card using HTML, CSS, and a small JavaScript interaction.",
+    goal: "Build a personal profile card with your name, image, short bio, and a follow button.",
     step: "Start by changing the name inside the <h1> tag.",
-    hint: "Make sure your HTML has <h1>, <p>, <img>, and <button>. Then use CSS to style the card.",
+    hint: "Your HTML needs <h1>, <p>, <img>, and <button>. Your CSS needs .card with border and padding.",
     xp: 25,
     requirements: [
       "Has a heading",
       "Has a paragraph",
-      "Has an image",
+      "Has an image with alt text",
       "Has a button",
       "Has card styling"
     ],
@@ -497,6 +610,7 @@ const projects = {
 }`,
     js:
 `const button = document.querySelector("button");
+
 button.addEventListener("click", function () {
   button.innerText = "Following!";
 });`,
@@ -515,9 +629,11 @@ button.addEventListener("click", function () {
   },
 
   menu: {
-    goal: "Build a mini restaurant menu with a title, menu items, prices, and stylish sections.",
-    step: "Start by changing the restaurant name in the <h1> tag.",
-    hint: "Use at least 3 menu items. Each item should have a food name and a price.",
+    title: "Mini Menu Project",
+    subtitle: "Build a restaurant menu with items, prices, and a polished menu-board look.",
+    goal: "Build a mini restaurant menu with a title, at least three items, prices, and styling.",
+    step: "Start by changing the restaurant name inside the <h1> tag.",
+    hint: "Use at least 3 elements with class='item'. Each should include a food name and price.",
     xp: 25,
     requirements: [
       "Has a restaurant title",
@@ -559,6 +675,7 @@ button.addEventListener("click", function () {
 }`,
     js:
 `const items = document.querySelectorAll(".item");
+
 items.forEach(function(item) {
   item.addEventListener("click", function() {
     item.style.color = "#39FF5A";
@@ -580,16 +697,18 @@ items.forEach(function(item) {
   },
 
   counter: {
+    title: "Click Counter Project",
+    subtitle: "Build an interactive counter using HTML, CSS, and JavaScript.",
     goal: "Build a click counter that increases when the player presses a button.",
     step: "Start by finding the number inside the <span> tag.",
-    hint: "Your JavaScript needs a variable, a button click event, and code that updates the number.",
+    hint: "Your JavaScript needs a count variable, addEventListener, and code that updates the number.",
     xp: 35,
     requirements: [
       "Has a counter number",
       "Has a button",
       "Uses addEventListener",
       "Updates the number",
-      "Has cool styling"
+      "Has counter-card styling"
     ],
     html:
 `<div class="counter-card">
@@ -633,39 +752,33 @@ function normalize(text) {
   return text.replace(/\s+/g, "").toLowerCase();
 }
 
-function getTextBetween(html, startTag, endTag, fallback) {
-  const lower = html.toLowerCase();
-  const start = lower.indexOf(startTag.toLowerCase());
-  const end = lower.indexOf(endTag.toLowerCase());
-
-  if (start === -1 || end === -1 || end <= start) return fallback;
-
-  return html.substring(start + startTag.length, end).trim() || fallback;
-}
-
-function loadProject(projectName) {
+function openProject(projectName) {
   currentProject = projectName;
   counterValue = 0;
 
-  document.querySelectorAll(".project-card").forEach(function(card) {
-    card.classList.remove("active");
-  });
-
-  document.getElementById("card-" + projectName).classList.add("active");
-
   const project = projects[projectName];
 
-  htmlCode.value = project.html;
-  cssCode.value = project.css;
-  jsCode.value = project.js;
+  projectHome.style.display = "none";
+  projectPage.style.display = "block";
 
+  projectTitle.innerText = project.title;
+  projectSubtitle.innerText = project.subtitle;
   goalText.innerText = project.goal;
   stepText.innerText = project.step;
   resultText.innerText = "Run and check your project when ready.";
   resultText.className = "";
 
+  htmlCode.value = project.html;
+  cssCode.value = project.css;
+  jsCode.value = project.js;
+
   renderRequirements(project.requirements, []);
   runProject();
+}
+
+function goBackToProjects() {
+  projectPage.style.display = "none";
+  projectHome.style.display = "block";
 }
 
 function renderRequirements(requirements, checks) {
@@ -685,17 +798,9 @@ function renderRequirements(requirements, checks) {
 }
 
 function runProject() {
-  if (currentProject === "profile") {
-    renderProfilePreview();
-  }
-
-  if (currentProject === "menu") {
-    renderMenuPreview();
-  }
-
-  if (currentProject === "counter") {
-    renderCounterPreview();
-  }
+  if (currentProject === "profile") renderProfilePreview();
+  if (currentProject === "menu") renderMenuPreview();
+  if (currentProject === "counter") renderCounterPreview();
 }
 
 function renderProfilePreview() {
@@ -716,7 +821,6 @@ function renderProfilePreview() {
 function renderMenuPreview() {
   const html = htmlCode.value;
   const title = getTextBetween(html, "<h1>", "</h1>", "Byte Bistro");
-
   const itemMatches = html.match(/<div class="item">[\s\S]*?<\/div>/g) || [];
 
   let itemsHTML = "";
@@ -766,16 +870,10 @@ function renderCounterPreview() {
 function increasePreviewCounter() {
   counterValue++;
   const countEl = document.getElementById("preview-count");
+
   if (countEl) {
     countEl.innerText = counterValue;
   }
-}
-
-function escapeHTML(text) {
-  return text
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;");
 }
 
 function checkProject() {
@@ -792,6 +890,7 @@ function checkProject() {
       resultText.innerText = "Project complete! +" + project.xp + " XP earned.";
       addXP(project.xp);
       showXPPop(project.xp);
+
       completedProjects[currentProject] = true;
       localStorage.setItem("completed-projects", JSON.stringify(completedProjects));
     } else {
@@ -814,12 +913,32 @@ function checkProject() {
 }
 
 function showHint() {
+  if (!currentProject) return;
+
   const project = projects[currentProject];
   stepText.innerText = project.hint;
 }
 
 function resetCurrentProject() {
-  loadProject(currentProject);
+  if (!currentProject) return;
+  openProject(currentProject);
+}
+
+function getTextBetween(html, startTag, endTag, fallback) {
+  const lower = html.toLowerCase();
+  const start = lower.indexOf(startTag.toLowerCase());
+  const end = lower.indexOf(endTag.toLowerCase());
+
+  if (start === -1 || end === -1 || end <= start) return fallback;
+
+  return html.substring(start + startTag.length, end).trim() || fallback;
+}
+
+function escapeHTML(text) {
+  return text
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
 }
 
 function addXP(points) {
@@ -855,8 +974,6 @@ function playSound(id) {
 htmlCode.addEventListener("input", runProject);
 cssCode.addEventListener("input", runProject);
 jsCode.addEventListener("input", runProject);
-
-loadProject("profile");
 </script>
 
 </body>
