@@ -32,91 +32,131 @@ body {
   color: var(--text);
   font-family: "IBM Plex Mono", monospace;
   padding: 10px;
-  line-height: 1.45;
-}
-
-.arena {
-  max-width: 1060px;
-  margin: 0 auto;
 }
 
 .pixel {
   font-family: "Press Start 2P", monospace;
 }
 
-.topbar,
-.panel {
+.arena {
+  max-width: 1240px;
+  height: calc(100vh - 20px);
+  margin: 0 auto;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 8px;
+}
+
+.top-command {
   border: 1px solid var(--line);
   background: var(--panel);
-  padding: 10px;
-  margin-bottom: 8px;
+  padding: 10px 12px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
 }
 
 h1 {
-  margin: 0 0 5px;
+  margin: 0 0 4px;
   color: var(--green);
   font-size: 15px;
   line-height: 1.4;
 }
 
 .desc {
+  margin: 0;
   color: var(--muted);
   font-size: 11px;
-  margin: 0;
 }
 
-.stats-row {
+.stats {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.stat-pill {
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  padding: 7px 9px;
+  min-width: 82px;
+}
+
+.stat-pill span {
+  display: block;
+  color: var(--green);
+  font-size: 6px;
+  margin-bottom: 4px;
+}
+
+.stat-pill strong {
+  font-size: 11px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.main-arena {
+  min-height: 0;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 7px;
+  grid-template-columns: 230px minmax(360px, 1.2fr) minmax(320px, 1fr);
+  gap: 8px;
+}
+
+.panel {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  padding: 10px;
+  min-height: 0;
+}
+
+.panel-title,
+.label {
+  font-family: "Press Start 2P", monospace;
+  font-size: 6px;
+  line-height: 1.5;
+  color: var(--green);
   margin-bottom: 8px;
 }
 
-.stat-box {
-  border: 1px solid var(--line);
-  background: var(--panel);
-  padding: 7px;
-}
-
-.stat-box h3,
-.label,
-.panel-title {
-  font-family: "Press Start 2P", monospace;
-  font-size: 6px;
-  line-height: 1.4;
-  color: var(--green);
-  margin: 0 0 5px;
-}
-
-.stat-box p {
-  margin: 0;
-  font-size: 11px;
-  color: var(--text);
-}
-
-.learning-panel {
-  display: grid;
-  grid-template-columns: 170px 1fr;
+.mission-panel {
+  display: flex;
+  flex-direction: column;
   gap: 10px;
-  background: var(--panel2);
 }
 
-.mission-name {
-  color: var(--green);
-  font-weight: 700;
-  font-size: 11px;
-  line-height: 1.45;
-}
-
-.learning-copy h2 {
-  margin: 0 0 4px;
+.mission-title {
   color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.skill-box {
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  padding: 10px;
+}
+
+.skill-box h2 {
+  margin: 0 0 6px;
+  color: var(--green);
   font-size: 13px;
 }
 
-.learning-copy p {
+.skill-box p {
   margin: 0;
   color: var(--muted);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.rule-box {
+  border-left: 3px solid var(--green);
+  background: rgba(57, 255, 90, 0.06);
+  padding: 9px;
+  color: var(--text);
   font-size: 11px;
   line-height: 1.5;
 }
@@ -126,48 +166,29 @@ h1 {
   font-weight: 700;
 }
 
-.arena-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+.editor-panel,
+.preview-panel {
+  display: flex;
+  flex-direction: column;
 }
 
 textarea {
   width: 100%;
-  min-height: 210px;
-  resize: vertical;
+  flex: 1;
+  min-height: 260px;
+  resize: none;
   background: #02060B;
   color: var(--green);
   border: 1px solid var(--line);
-  padding: 9px;
-  font-size: 12px;
-  line-height: 1.45;
+  padding: 11px;
+  font-size: 13px;
+  line-height: 1.5;
   outline: none;
   font-family: "IBM Plex Mono", monospace;
 }
 
 textarea:focus {
   border-color: var(--green);
-}
-
-.preview-note {
-  color: var(--muted);
-  font-size: 10px;
-  margin: 0 0 6px;
-}
-
-.preview-frame-wrap {
-  background: #02060B;
-  border: 1px solid var(--line);
-  min-height: 210px;
-  padding: 8px;
-}
-
-iframe {
-  width: 100%;
-  min-height: 190px;
-  border: none;
-  background: white;
 }
 
 .buttons {
@@ -181,7 +202,7 @@ button {
   border: 1px solid var(--green);
   background: transparent;
   color: var(--green);
-  padding: 7px 10px;
+  padding: 8px 10px;
   cursor: pointer;
   font-family: "IBM Plex Mono", monospace;
   font-size: 11px;
@@ -207,22 +228,77 @@ button:disabled {
   cursor: not-allowed;
 }
 
-.feedback-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 7px;
+.browser-frame {
+  flex: 1;
+  min-height: 260px;
+  background: #02060B;
+  border: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
 }
 
-.feedback-card {
+.browser-top {
+  height: 30px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 9px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  opacity: 0.8;
+}
+
+.dot.red {
+  background: var(--red);
+}
+
+.dot.yellow {
+  background: var(--yellow);
+}
+
+.preview-wrap {
+  flex: 1;
+  padding: 8px;
+}
+
+iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+  border: none;
+  background: white;
+}
+
+.feedback-console {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  padding: 10px 12px;
+}
+
+.console-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1.4fr 1.2fr 0.9fr;
+  gap: 10px;
+}
+
+.console-item {
   background: var(--panel2);
   border: 1px solid var(--line);
   padding: 8px;
-  min-height: 68px;
+  min-height: 50px;
 }
 
 .message {
   color: var(--muted);
-  font-size: 10.5px;
+  font-size: 11px;
   line-height: 1.45;
 }
 
@@ -236,10 +312,6 @@ button:disabled {
 
 .almost {
   color: var(--yellow);
-}
-
-.hidden {
-  display: none;
 }
 
 .success-flash {
@@ -367,20 +439,24 @@ button:disabled {
   padding: 9px 14px;
 }
 
-@media (max-width: 950px) {
-  body {
-    padding: 8px;
+@media (max-width: 1050px) {
+  .arena {
+    height: auto;
   }
 
-  .stats-row,
-  .arena-layout,
-  .feedback-grid,
-  .learning-panel {
+  .top-command,
+  .main-arena,
+  .console-grid {
     grid-template-columns: 1fr;
   }
 
-  h1 {
-    font-size: 14px;
+  .stats {
+    justify-content: flex-start;
+  }
+
+  textarea,
+  .browser-frame {
+    min-height: 240px;
   }
 }
 </style>
@@ -390,54 +466,65 @@ button:disabled {
 
 <main class="arena">
 
-  <section class="topbar">
-    <h1 class="pixel">HTML Arena</h1>
-    <p class="desc">Build the structure of real webpages through guided coding missions.</p>
-  </section>
-
-  <section class="stats-row">
-    <div class="stat-box">
-      <h3>MISSION</h3>
-      <p><span id="mission-count">1</span> / 7</p>
-    </div>
-
-    <div class="stat-box">
-      <h3>XP</h3>
-      <p id="total-xp">0</p>
-    </div>
-
-    <div class="stat-box">
-      <h3>LIVES</h3>
-      <p id="lives">❤️❤️❤️</p>
-    </div>
-
-    <div class="stat-box">
-      <h3>ATTEMPTS</h3>
-      <p id="attempts">0</p>
-    </div>
-
-    <div class="stat-box">
-      <h3>STATUS</h3>
-      <p id="status">Active</p>
-    </div>
-  </section>
-
-  <section class="panel learning-panel">
+  <section class="top-command">
     <div>
-      <div class="label">CURRENT MISSION</div>
-      <div class="mission-name" id="mission-title">Mission loading...</div>
+      <h1 class="pixel">HTML Arena</h1>
+      <p class="desc">Build the structure of real webpages through guided coding missions.</p>
     </div>
 
-    <div class="learning-copy">
-      <h2 id="skill-title">Skill loading...</h2>
-      <p id="bytebot-message">Mission instructions loading...</p>
-      <p id="why-message" style="margin-top: 6px;"></p>
+    <div class="stats">
+      <div class="stat-pill">
+        <span class="pixel">MISSION</span>
+        <strong><span id="mission-count-inline">1</span> / 7</strong>
+      </div>
+
+      <div class="stat-pill">
+        <span class="pixel">XP</span>
+        <strong id="total-xp">0</strong>
+      </div>
+
+      <div class="stat-pill">
+        <span class="pixel">LIVES</span>
+        <strong id="lives">❤️❤️❤️</strong>
+      </div>
+
+      <div class="stat-pill">
+        <span class="pixel">TRIES</span>
+        <strong id="attempts">0</strong>
+      </div>
+
+      <div class="stat-pill">
+        <span class="pixel">STATUS</span>
+        <strong id="status">Active</strong>
+      </div>
     </div>
   </section>
 
-  <section class="arena-layout">
+  <section class="main-arena">
 
-    <div class="panel editor-panel">
+    <aside class="panel mission-panel">
+      <div>
+        <div class="panel-title">BYTEBOT BRIEFING</div>
+        <div class="mission-title" id="mission-title">Mission loading...</div>
+      </div>
+
+      <div class="skill-box">
+        <div class="label">SKILL</div>
+        <h2 id="skill-title">Skill loading...</h2>
+        <p id="bytebot-message">Mission instructions loading...</p>
+      </div>
+
+      <div class="skill-box">
+        <div class="label">WHY IT MATTERS</div>
+        <p id="why-message">Loading...</p>
+      </div>
+
+      <div class="rule-box" id="success-rule">
+        Success rule loading...
+      </div>
+    </aside>
+
+    <section class="panel editor-panel">
       <div class="panel-title">HTML EDITOR</div>
 
       <textarea id="code" spellcheck="false"></textarea>
@@ -448,46 +535,49 @@ button:disabled {
         <button id="next-btn" type="button" disabled>Next Mission</button>
         <button id="back-btn" class="danger" type="button">Back to Map</button>
       </div>
-    </div>
+    </section>
 
-    <div class="panel preview-panel">
+    <section class="panel preview-panel">
       <div class="panel-title">LIVE PAGE PREVIEW</div>
-      <p class="preview-note">This is what your webpage looks like.</p>
 
-      <div class="preview-frame-wrap" id="preview-wrap">
-        <iframe id="preview"></iframe>
+      <div class="browser-frame" id="preview-frame">
+        <div class="browser-top">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot"></span>
+          <span>preview.html</span>
+        </div>
+
+        <div class="preview-wrap">
+          <iframe id="preview"></iframe>
+        </div>
       </div>
-    </div>
+    </section>
 
   </section>
 
-  <section class="panel feedback">
-    <div class="panel-title">RESULTS / XP / HINTS</div>
+  <section class="feedback-console">
+    <div class="panel-title">TERMINAL FEEDBACK</div>
 
-    <div class="feedback-grid">
-      <div class="feedback-card">
+    <div class="console-grid">
+      <div class="console-item">
         <div class="label">RESULT</div>
         <div class="message" id="result">Run your code to check the mission.</div>
       </div>
 
-      <div class="feedback-card">
+      <div class="console-item">
         <div class="label">HINT</div>
         <div class="message" id="hint">Click Hint if you get stuck.</div>
       </div>
 
-      <div class="feedback-card">
+      <div class="console-item">
         <div class="label">WARNING</div>
         <div class="message error" id="warning">No syntax warnings yet.</div>
       </div>
 
-      <div class="feedback-card">
+      <div class="console-item">
         <div class="label">XP</div>
         <div class="message correct" id="xp-feedback">0 XP gained.</div>
-      </div>
-
-      <div class="feedback-card">
-        <div class="label">LEARNED</div>
-        <div class="message" id="learned">Complete the mission to reveal what you learned.</div>
       </div>
     </div>
   </section>
@@ -532,6 +622,7 @@ const missions = {
     success: "Main title activated.",
     bytebot: 'Replace <span class="highlight">"write title here"</span> with <span class="highlight">"Hello World"</span>.',
     why: "Headings help organize a webpage and show what information is most important.",
+    rule: "Use one <h1> heading with the words Hello World inside.",
     learned: "You learned that <h1> creates the main heading of a webpage.",
     hint1: "Keep the <h1> and </h1> tags. Only replace the words inside.",
     hint2: "Final answer should look like: <h1>Hello World</h1>",
@@ -548,6 +639,7 @@ const missions = {
     success: "Message signal restored.",
     bytebot: 'Replace <span class="highlight">"write message here"</span> with <span class="highlight">"I love coding"</span>.',
     why: "Paragraphs are used to add readable text and explanations to a webpage.",
+    rule: "Use one <p> paragraph with the words I love coding inside.",
     learned: "You learned that <p> creates a paragraph of text.",
     hint1: "Keep the <p> and </p> tags. Only replace the words inside.",
     hint2: "Final answer should look like: <p>I love coding</p>",
@@ -564,6 +656,7 @@ const missions = {
     success: "Control button online.",
     bytebot: 'Replace <span class="highlight">"write button text"</span> with <span class="highlight">"Click Me"</span>.',
     why: "Buttons help users take action on a webpage.",
+    rule: "Use one <button> with the words Click Me inside.",
     learned: "You learned that <button> creates a clickable button.",
     hint1: "Keep the <button> and </button> tags. Only replace the button text.",
     hint2: "Final answer should look like: <button>Click Me</button>",
@@ -580,6 +673,7 @@ const missions = {
     success: "Portal link activated.",
     bytebot: 'Replace <span class="highlight">"write link text"</span> with <span class="highlight">"Visit Site"</span>.',
     why: "Links connect pages together and help users navigate websites.",
+    rule: 'Use one <a href="#"> link with the words Visit Site inside.',
     learned: "You learned that <a href='...'> creates a link.",
     hint1: "Keep the <a href=\"#\"> and </a> tags. Only replace the link text.",
     hint2: 'Final answer should look like: <a href="#">Visit Site</a>',
@@ -596,6 +690,7 @@ const missions = {
     success: "Image module loaded.",
     bytebot: 'Keep the image file as <span class="highlight">"profile.png"</span> and make sure the image includes <span class="highlight">alt text</span>.',
     why: "Images make pages more visual, and alt text helps describe images for accessibility.",
+    rule: 'Use an <img> tag with src="profile.png" and alt="Profile picture".',
     learned: "You learned that <img> adds images and alt text describes them.",
     hint1: "Your image needs src=\"profile.png\" and alt=\"Profile picture\".",
     hint2: 'Final answer should look like: <img src="profile.png" alt="Profile picture">',
@@ -612,6 +707,7 @@ const missions = {
     success: "Inventory system restored.",
     bytebot: 'Replace <span class="highlight">"write list item here"</span> with <span class="highlight">"Code"</span>.',
     why: "Lists help organize related items so information is easier to scan.",
+    rule: "Use a <ul> list with one <li> item that says Code.",
     learned: "You learned that <ul> creates a list and <li> creates each list item.",
     hint1: "Keep the <ul>, <li>, </li>, and </ul> tags. Only replace the list item text.",
     hint2: "Final answer should look like: <ul><li>Code</li></ul>",
@@ -629,6 +725,7 @@ const missions = {
     success: "Boss cleared. CSS Circuit unlocked.",
     bytebot: 'Build a simple profile card using <span class="highlight">h1, p, img, and button</span>.',
     why: "Real webpages are built by combining multiple HTML elements into a clear structure.",
+    rule: "Use a heading, paragraph, image, and button in one profile card.",
     learned: "You learned how to combine headings, paragraphs, images, and buttons into one webpage section.",
     hint1: "You need h1, p, img src=\"profile.png\" with alt text, and button.",
     hint2: "Make sure all required tags are present and closed correctly.",
@@ -643,22 +740,25 @@ const missions = {
   }
 };
 
-const missionCountEl = document.getElementById("mission-count");
+const missionCountInlineEl = document.getElementById("mission-count-inline");
 const totalXpEl = document.getElementById("total-xp");
 const livesEl = document.getElementById("lives");
 const attemptsEl = document.getElementById("attempts");
 const statusEl = document.getElementById("status");
+
 const titleEl = document.getElementById("mission-title");
 const skillTitleEl = document.getElementById("skill-title");
 const bytebotEl = document.getElementById("bytebot-message");
 const whyEl = document.getElementById("why-message");
+const successRuleEl = document.getElementById("success-rule");
+
 const codeBox = document.getElementById("code");
 const resultEl = document.getElementById("result");
 const hintEl = document.getElementById("hint");
 const warningEl = document.getElementById("warning");
 const xpFeedbackEl = document.getElementById("xp-feedback");
-const learnedEl = document.getElementById("learned");
-const previewWrap = document.getElementById("preview-wrap");
+
+const previewFrame = document.getElementById("preview-frame");
 const previewEl = document.getElementById("preview");
 
 const runBtn = document.getElementById("run-btn");
@@ -683,7 +783,7 @@ function countMatches(text, pattern) {
 function updateStats() {
   const xp = parseInt(localStorage.getItem("xp")) || 0;
 
-  missionCountEl.innerText = Math.min(level, 7);
+  missionCountInlineEl.innerText = Math.min(level, 7);
   totalXpEl.innerText = xp;
   livesEl.innerText = "❤️".repeat(lives) + "🖤".repeat(3 - lives);
   attemptsEl.innerText = attempts;
@@ -708,7 +808,6 @@ function loadMission() {
   warningEl.innerText = "No syntax warnings yet.";
   warningEl.className = "message error";
   xpFeedbackEl.innerText = "0 XP gained.";
-  learnedEl.innerText = "Complete the mission to reveal what you learned.";
 
   nextBtn.disabled = true;
   runBtn.disabled = false;
@@ -720,6 +819,7 @@ function loadMission() {
     skillTitleEl.innerText = "HTML Complete";
     bytebotEl.innerText = "CSS Circuit is ready. Head back to Mission Control.";
     whyEl.innerText = "You completed the HTML foundation.";
+    successRuleEl.innerText = "All HTML missions are complete.";
     codeBox.value = "";
     previewEl.srcdoc = "";
     statusEl.innerText = "Complete";
@@ -733,6 +833,7 @@ function loadMission() {
   skillTitleEl.innerText = mission.skill;
   bytebotEl.innerHTML = mission.bytebot;
   whyEl.innerText = mission.why;
+  successRuleEl.innerText = mission.rule;
   codeBox.value = mission.starter;
 
   updatePreview();
@@ -807,8 +908,8 @@ function updatePreview() {
 
     iframeDoc.body.style.background = "#02060B";
     iframeDoc.body.style.color = "white";
-    iframeDoc.body.style.fontFamily = "Arial";
-    iframeDoc.body.style.padding = "12px";
+    iframeDoc.body.style.fontFamily = "Arial, sans-serif";
+    iframeDoc.body.style.padding = "14px";
 
     const allElements = iframeDoc.body.querySelectorAll("*");
 
@@ -865,7 +966,7 @@ function loseLife() {
 
   const mission = missions[level];
 
-  resultEl.innerText = "Not restored yet. You lost one life.";
+  resultEl.innerText = "Not correct yet. You lost one life.";
   resultEl.className = "message error";
   statusEl.innerText = "Try Again";
 
@@ -914,7 +1015,6 @@ function completeMission(xpGain, message, learnedMessage) {
 
   hintEl.innerText = "Mission complete.";
   xpFeedbackEl.innerText = "+" + xpGain + " XP gained.";
-  learnedEl.innerText = learnedMessage;
   statusEl.innerText = "Complete";
 
   setWarning("No syntax warnings.");
@@ -922,11 +1022,11 @@ function completeMission(xpGain, message, learnedMessage) {
   playSuccess();
 
   document.body.classList.add("success-flash");
-  previewWrap.classList.add("preview-glow");
+  previewFrame.classList.add("preview-glow");
 
   setTimeout(function () {
     document.body.classList.remove("success-flash");
-    previewWrap.classList.remove("preview-glow");
+    previewFrame.classList.remove("preview-glow");
   }, 700);
 
   showXPPop(xpGain);
