@@ -27,7 +27,9 @@
 
     body {
       margin: 0;
-      background: var(--bg);
+      background:
+        radial-gradient(circle at top left, rgba(57, 255, 90, 0.08), transparent 28%),
+        var(--bg);
       color: var(--text);
       font-family: Consolas, Monaco, monospace;
       min-height: 100vh;
@@ -49,6 +51,7 @@
       border: 2px solid var(--line);
       background: var(--panel);
       padding: 22px;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.7);
     }
 
     .status-bar {
@@ -75,6 +78,7 @@
       height: 8px;
       background: var(--green);
       display: inline-block;
+      animation: pulse 1.2s infinite;
     }
 
     .hero {
@@ -126,6 +130,7 @@
       font-size: 17px;
       line-height: 1.7;
       margin: 0 0 24px;
+      min-height: 88px;
     }
 
     .button-row {
@@ -144,10 +149,16 @@
       min-width: 240px;
       text-decoration: none;
       display: inline-block;
+      transition: transform 0.2s ease, opacity 0.2s ease;
     }
 
     button:hover {
-      opacity: 0.85;
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(1px);
     }
 
     .hero-side h2 {
@@ -165,6 +176,15 @@
       border: 1px solid var(--line);
       background: var(--panel2);
       padding: 14px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .mode-card:hover,
+    .mode-card.active {
+      transform: translateX(5px);
+      background: #0A1724;
+      border-color: var(--green);
     }
 
     .mode-title {
@@ -180,6 +200,21 @@
       line-height: 1.5;
     }
 
+    .mission-info {
+      margin-top: 16px;
+      border: 1px solid var(--line);
+      background: #02060B;
+      padding: 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      display: none;
+    }
+
+    .mission-info strong {
+      color: var(--green);
+    }
+
     .footer {
       margin-top: 18px;
       color: var(--muted);
@@ -192,9 +227,51 @@
       animation: blink 0.8s infinite;
     }
 
+    .boot-screen {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 8, 15, 0.96);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 24px;
+    }
+
+    .boot-box {
+      width: 100%;
+      max-width: 520px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      padding: 24px;
+      color: var(--green);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 12px;
+      border: 1px solid var(--line);
+      margin-top: 18px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--green);
+      transition: width 0.2s ease;
+    }
+
     @keyframes blink {
       0%, 45% { opacity: 1; }
       46%, 100% { opacity: 0; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
     }
 
     @media (max-width: 850px) {
@@ -226,7 +303,7 @@
       <div class="status-bar">
         <div class="status-left">
           <span class="status-dot"></span>
-          SYS ONLINE
+          <span id="system-status">SYS ONLINE</span>
         </div>
         <div class="status-right">
           BYTERUSH V1.0.0
@@ -241,8 +318,7 @@
           <div class="subtitle">RETRO CODING QUEST</div>
 
           <p class="description">
-            Build the structure. Style the interface. Script the interactions.
-            Complete coding missions, unlock new arenas, and power up your web skills.<span class="cursor">_</span>
+            <span id="typed-text"></span><span class="cursor">_</span>
           </p>
 
           <div class="button-row">
@@ -254,20 +330,24 @@
           <h2>MISSION PATH</h2>
 
           <div class="mode-list">
-            <div class="mode-card">
+            <div class="mode-card active" data-title="HTML ARENA" data-info="Start here. HTML teaches players how to build the structure of a webpage before styling or scripting anything.">
               <div class="mode-title">HTML ARENA</div>
               <p>Learn the building blocks of a webpage through simple structure missions.</p>
             </div>
 
-            <div class="mode-card">
+            <div class="mode-card" data-title="CSS CIRCUIT" data-info="CSS Circuit teaches players how to style pages with colors, spacing, borders, layout, and visual design decisions.">
               <div class="mode-title">CSS CIRCUIT</div>
               <p>Style pages with colors, spacing, borders, alignment, and full card design.</p>
             </div>
 
-            <div class="mode-card">
+            <div class="mode-card" data-title="JAVASCRIPT CORE" data-info="JavaScript Core teaches players how to make websites respond through clicks, functions, variables, loops, and DOM updates.">
               <div class="mode-title">JAVASCRIPT CORE</div>
               <p>Make websites interactive with variables, functions, clicks, loops, DOM updates, and a counter app.</p>
             </div>
+          </div>
+
+          <div class="mission-info" id="mission-info">
+            <strong>HTML ARENA:</strong> Start here. HTML teaches players how to build the structure of a webpage before styling or scripting anything.
           </div>
         </aside>
 
@@ -281,7 +361,94 @@
 
   </div>
 
-  <script src="script.js"></script>
+  <div class="boot-screen" id="boot-screen">
+    <div class="boot-box">
+      <div id="boot-line">INITIALIZING BYTERUSH...</div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const typedText = document.getElementById("typed-text");
+    const startBtn = document.getElementById("start-btn");
+    const bootScreen = document.getElementById("boot-screen");
+    const bootLine = document.getElementById("boot-line");
+    const progressFill = document.getElementById("progress-fill");
+    const systemStatus = document.getElementById("system-status");
+    const missionCards = document.querySelectorAll(".mode-card");
+    const missionInfo = document.getElementById("mission-info");
+
+    const message =
+      "Build the structure. Style the interface. Script the interactions. Complete coding missions, unlock new arenas, and power up your web skills.";
+
+    let index = 0;
+
+    function typeMessage() {
+      if (index < message.length) {
+        typedText.textContent += message.charAt(index);
+        index++;
+        setTimeout(typeMessage, 24);
+      }
+    }
+
+    typeMessage();
+
+    missionCards.forEach((card) => {
+      card.addEventListener("click", () => {
+        missionCards.forEach((item) => item.classList.remove("active"));
+        card.classList.add("active");
+
+        const title = card.getAttribute("data-title");
+        const info = card.getAttribute("data-info");
+
+        missionInfo.style.display = "block";
+        missionInfo.innerHTML = `<strong>${title}:</strong> ${info}`;
+
+        systemStatus.textContent = `${title} SELECTED`;
+      });
+    });
+
+    function startGame() {
+      bootScreen.style.display = "flex";
+      systemStatus.textContent = "BOOTING GAME";
+
+      const bootMessages = [
+        "INITIALIZING BYTERUSH...",
+        "LOADING PLAYER DASHBOARD...",
+        "CHECKING MISSION PATH...",
+        "SYSTEM READY."
+      ];
+
+      let bootIndex = 0;
+      let progress = 0;
+
+      const bootTimer = setInterval(() => {
+        progress += 25;
+        progressFill.style.width = progress + "%";
+
+        bootLine.textContent = bootMessages[bootIndex];
+        bootIndex++;
+
+        if (progress >= 100) {
+          clearInterval(bootTimer);
+
+          setTimeout(() => {
+            window.location.href = "dashboard.html";
+          }, 500);
+        }
+      }, 500);
+    }
+
+    startBtn.addEventListener("click", startGame);
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        startGame();
+      }
+    });
+  </script>
 
 </body>
 </html>

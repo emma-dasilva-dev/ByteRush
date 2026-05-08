@@ -369,7 +369,9 @@ iframe {
   }
 }
 
-.mission-modal {
+.mission-modal,
+.start-modal,
+.game-over-modal {
   position: fixed;
   inset: 0;
   background: rgba(3, 8, 15, 0.88);
@@ -380,11 +382,15 @@ iframe {
   padding: 18px;
 }
 
-.mission-modal.show {
+.mission-modal.show,
+.start-modal.show,
+.game-over-modal.show {
   display: flex;
 }
 
-.mission-box {
+.mission-box,
+.start-box,
+.game-over-box {
   width: min(520px, 100%);
   background: var(--panel);
   border: 2px solid var(--green);
@@ -392,6 +398,11 @@ iframe {
   text-align: center;
   box-shadow: 0 0 35px rgba(57, 255, 90, 0.25);
   animation: popupIn 0.25s ease-out;
+}
+
+.game-over-box {
+  border-color: var(--red);
+  box-shadow: 0 0 35px rgba(255, 59, 59, 0.25);
 }
 
 @keyframes popupIn {
@@ -405,38 +416,56 @@ iframe {
   }
 }
 
-.mission-box h2 {
+.mission-box h2,
+.start-box h2,
+.game-over-box h2 {
   margin: 0 0 14px;
   color: var(--green);
   font-size: 13px;
   line-height: 1.6;
 }
 
-.mission-box p {
+.game-over-box h2 {
+  color: var(--red);
+}
+
+.mission-box p,
+.start-box p,
+.game-over-box p {
   margin: 0 0 14px;
   color: var(--text);
   font-size: 12px;
   line-height: 1.6;
 }
 
-.learned-box {
+.learned-box,
+.start-instruction-box {
   border: 1px solid var(--line);
   background: var(--panel2);
   padding: 12px;
   margin: 14px 0;
 }
 
-.learned-box p {
+.learned-box p,
+.start-instruction-box p {
   color: var(--muted);
   font-size: 11px;
   margin: 0;
 }
 
-.modal-next-btn {
+.modal-next-btn,
+.start-btn,
+.try-again-btn {
   margin-top: 10px;
   background: var(--green);
   color: var(--bg);
   padding: 9px 14px;
+}
+
+.try-again-btn {
+  border-color: var(--red);
+  background: var(--red);
+  color: white;
 }
 
 @media (max-width: 1050px) {
@@ -584,6 +613,23 @@ iframe {
 
 </main>
 
+<div class="start-modal" id="start-modal">
+  <div class="start-box">
+    <h2 class="pixel" id="start-modal-title">MISSION START</h2>
+
+    <p id="start-modal-skill">Get ready.</p>
+
+    <div class="start-instruction-box">
+      <div class="label">WHAT TO DO</div>
+      <p id="start-modal-task">Read the mission, write your code, then click Run Code.</p>
+    </div>
+
+    <button id="start-mission-btn" class="start-btn" type="button">
+      Start Mission
+    </button>
+  </div>
+</div>
+
 <div class="mission-modal" id="mission-modal">
   <div class="mission-box">
     <h2 class="pixel">MISSION COMPLETED</h2>
@@ -601,10 +647,23 @@ iframe {
   </div>
 </div>
 
+<div class="game-over-modal" id="game-over-modal">
+  <div class="game-over-box">
+    <h2 class="pixel">GAME OVER</h2>
+
+    <p>You used up all your lives. Try the mission again and use the hint if you get stuck.</p>
+
+    <button id="try-again-btn" class="try-again-btn" type="button">
+      Try Again
+    </button>
+  </div>
+</div>
+
 <audio id="success-sound" src="./sounds/success.mp3" preload="auto"></audio>
 <audio id="error-sound" src="./sounds/error.mp3" preload="auto"></audio>
 <audio id="unlock-sound" src="./sounds/unlock.mp3" preload="auto"></audio>
 <audio id="mistake-sound" src="./sounds/mistake.mp3" preload="auto"></audio>
+<audio id="game-lose-sound" src="./sounds/game-lose-sound.mp3" preload="auto"></audio>
 
 <script>
 let level = parseInt(localStorage.getItem("html-level")) || 1;
@@ -612,6 +671,7 @@ let attempts = 0;
 let lives = 3;
 let missionComplete = false;
 let lastWarningMessage = "";
+let shouldShowStartPopup = true;
 
 const missions = {
   1: {
@@ -766,10 +826,19 @@ const hintBtn = document.getElementById("hint-btn");
 const nextBtn = document.getElementById("next-btn");
 const backBtn = document.getElementById("back-btn");
 
+const startModal = document.getElementById("start-modal");
+const startModalTitle = document.getElementById("start-modal-title");
+const startModalSkill = document.getElementById("start-modal-skill");
+const startModalTask = document.getElementById("start-modal-task");
+const startMissionBtn = document.getElementById("start-mission-btn");
+
 const missionModal = document.getElementById("mission-modal");
 const modalSuccessText = document.getElementById("modal-success-text");
 const modalLearnedText = document.getElementById("modal-learned-text");
 const modalNextBtn = document.getElementById("modal-next-btn");
+
+const gameOverModal = document.getElementById("game-over-modal");
+const tryAgainBtn = document.getElementById("try-again-btn");
 
 function normalize(input) {
   return input.replace(/\s+/g, "").toLowerCase();
@@ -798,6 +867,7 @@ function loadMission() {
   lastWarningMessage = "";
 
   missionModal.classList.remove("show");
+  gameOverModal.classList.remove("show");
 
   updateStats();
 
@@ -837,6 +907,17 @@ function loadMission() {
   codeBox.value = mission.starter;
 
   updatePreview();
+
+  if (shouldShowStartPopup) {
+    showStartPopup(mission);
+  }
+}
+
+function showStartPopup(mission) {
+  startModalTitle.innerText = mission.title;
+  startModalSkill.innerText = "Skill: " + mission.skill;
+  startModalTask.innerText = mission.rule + " Read the instruction, write the code in the editor, then click Run Code.";
+  startModal.classList.add("show");
 }
 
 function setWarning(message) {
@@ -914,7 +995,7 @@ function updatePreview() {
     const allElements = iframeDoc.body.querySelectorAll("*");
 
     allElements.forEach(function (el) {
-      el.style.color = "white";
+      el.style.color = "green";
     });
   };
 
@@ -951,18 +1032,23 @@ function loseLife() {
   lives--;
   updateStats();
 
-  playError();
-
   if (lives <= 0) {
-    resultEl.innerText = "Mission failed. Resetting this mission.";
+    resultEl.innerText = "Game over. You used up all your lives.";
     resultEl.className = "message error";
-    statusEl.innerText = "Resetting";
+    statusEl.innerText = "Game Over";
+
+    runBtn.disabled = true;
+    hintBtn.disabled = true;
+    nextBtn.disabled = true;
 
     errorEffect();
+    playGameLose();
+    showGameOverPopup();
 
-    setTimeout(loadMission, 1200);
     return;
   }
+
+  playError();
 
   const mission = missions[level];
 
@@ -972,6 +1058,17 @@ function loseLife() {
 
   showHint(mission);
   errorEffect();
+}
+
+function showGameOverPopup() {
+  gameOverModal.classList.add("show");
+}
+
+function tryAgainMission() {
+  gameOverModal.classList.remove("show");
+  shouldShowStartPopup = false;
+  loadMission();
+  shouldShowStartPopup = true;
 }
 
 function showHint(mission) {
@@ -1112,14 +1209,37 @@ function playMistake() {
   playSound("mistake-sound");
 }
 
+function playGameLose() {
+  const sound = document.getElementById("game-lose-sound");
+
+  if (!sound) return;
+
+  sound.currentTime = 0;
+
+  sound.play().catch(function () {
+    console.log("Sound blocked or missing: game-lose-sound");
+  });
+
+  setTimeout(function () {
+    sound.pause();
+    sound.currentTime = 0;
+  }, 4000);
+}
+
 runBtn.addEventListener("click", checkCode);
 hintBtn.addEventListener("click", manualHint);
 nextBtn.addEventListener("click", goNextMission);
+
+startMissionBtn.addEventListener("click", function () {
+  startModal.classList.remove("show");
+});
 
 modalNextBtn.addEventListener("click", function () {
   missionModal.classList.remove("show");
   goNextMission();
 });
+
+tryAgainBtn.addEventListener("click", tryAgainMission);
 
 backBtn.addEventListener("click", function () {
   window.location.href = "html-map.html";
