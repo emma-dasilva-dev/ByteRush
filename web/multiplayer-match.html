@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Multiplayer Match | ByteRush</title>
+
+<link rel="stylesheet" href="arcade-theme.css">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Press+Start+2P&display=swap');
+
+:root {
+  --green: #39FF5A;
+  --red: #FF3B3B;
+  --bg: #03080F;
+  --panel: #050B12;
+  --panel2: #07111D;
+  --text: #E6FFE9;
+  --muted: rgba(230, 255, 233, 0.68);
+  --line: rgba(57, 255, 90, 0.28);
+  --yellow: #FACC15;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "IBM Plex Mono", monospace;
+  padding: 10px;
+  line-height: 1.45;
+}
+
+.match {
+  max-width: 1060px;
+  margin: 0 auto;
+}
+
+.pixel {
+  font-family: "Press Start 2P", monospace;
+}
+
+.topbar,
+.panel {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  padding: 10px;
+  margin-bottom: 8px;
+}
+
+h1 {
+  margin: 0 0 5px;
+  color: var(--green);
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.desc {
+  color: var(--muted);
+  font-size: 11px;
+  margin: 0;
+}
+
+.match-status {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 7px;
+  margin-top: 8px;
+}
+
+.status-box {
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  padding: 7px;
+}
+
+.label,
+.panel-title {
+  font-family: "Press Start 2P", monospace;
+  font-size: 6px;
+  line-height: 1.4;
+  color: var(--green);
+  margin: 0 0 5px;
+}
+
+.status-box p {
+  margin: 0;
+  font-size: 11px;
+  color: var(--text);
+}
+
+.players-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.player-card {
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  padding: 10px;
+}
+
+.player-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 11px;
+  margin-bottom: 8px;
+}
+
+.player-name {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.player-state {
+  color: var(--yellow);
+}
+
+.progress-track {
+  width: 100%;
+  height: 10px;
+  background: #02060B;
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.progress-bar {
+  width: 0%;
+  height: 100%;
+  background: var(--green);
+  transition: width 0.35s ease;
+}
+
+.opponent-bar {
+  background: var(--yellow);
+}
+
+.arena-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+textarea {
+  width: 100%;
+  min-height: 240px;
+  resize: vertical;
+  background: #02060B;
+  color: var(--green);
+  border: 1px solid var(--line);
+  padding: 9px;
+  font-size: 12px;
+  line-height: 1.45;
+  outline: none;
+  font-family: "IBM Plex Mono", monospace;
+}
+
+textarea:focus {
+  border-color: var(--green);
+}
+
+.challenge-box {
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  padding: 10px;
+  margin-bottom: 8px;
+}
+
+.challenge-box h2 {
+  margin: 0 0 6px;
+  color: var(--text);
+  font-size: 15px;
+}
+
+.challenge-box p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.preview-box {
+  background: #02060B;
+  border: 1px solid var(--line);
+  min-height: 240px;
+  padding: 12px;
+  color: var(--text);
+  overflow: auto;
+}
+
+.preview-box h1 {
+  color: var(--text);
+  text-shadow: none;
+  font-size: 22px;
+  font-family: "IBM Plex Mono", monospace;
+}
+
+.buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+button {
+  border: 1px solid var(--green);
+  background: transparent;
+  color: var(--green);
+  padding: 7px 10px;
+  cursor: pointer;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+button:hover {
+  background: rgba(57, 255, 90, 0.1);
+}
+
+button.primary {
+  background: var(--green);
+  color: var(--bg);
+}
+
+button.danger {
+  color: var(--red);
+  border-color: var(--red);
+}
+
+button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.feedback-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 7px;
+}
+
+.feedback-card {
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  padding: 8px;
+  min-height: 68px;
+}
+
+.message {
+  color: var(--muted);
+  font-size: 10.5px;
+  line-height: 1.45;
+}
+
+.correct {
+  color: var(--green);
+}
+
+.error {
+  color: var(--red);
+}
+
+.almost {
+  color: var(--yellow);
+}
+
+.result-panel {
+  border-color: rgba(250, 204, 21, 0.45);
+}
+
+.hidden {
+  display: none;
+}
+
+.xp-pop {
+  position: fixed;
+  left: 50%;
+  top: 58%;
+  color: var(--green);
+  font-size: 16px;
+  font-weight: 700;
+  pointer-events: none;
+  animation: xpFloat 1s ease-out forwards;
+  z-index: 9999;
+}
+
+@keyframes xpFloat {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-45px) scale(1.2);
+  }
+}
+
+.success-flash {
+  animation: successFlash 0.5s ease-in-out;
+}
+
+@keyframes successFlash {
+  0% { background-color: var(--bg); }
+  50% { background-color: rgba(57, 255, 90, 0.12); }
+  100% { background-color: var(--bg); }
+}
+
+.error-shake {
+  animation: shake 0.3s ease-in-out;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-6px); }
+  100% { transform: translateX(0); }
+}
+
+@media (max-width: 900px) {
+  .match-status,
+  .players-grid,
+  .arena-layout,
+  .feedback-grid {
+    grid-template-columns: 1fr;
+  }
+
+  h1 {
+    font-size: 14px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<main class="match">
+
+  <section class="topbar">
+    <h1 class="pixel">Multiplayer Match</h1>
+    <p class="desc">Complete the challenge before your opponent. Clean code wins.</p>
+
+    <div class="match-status">
+      <div class="status-box">
+        <div class="label">TOPIC</div>
+        <p id="match-topic">HTML + CSS Basics</p>
+      </div>
+
+      <div class="status-box">
+        <div class="label">TIME</div>
+        <p><span id="timer">30</span>s</p>
+      </div>
+
+      <div class="status-box">
+        <div class="label">REWARD</div>
+        <p id="reward">+15 XP</p>
+      </div>
+
+      <div class="status-box">
+        <div class="label">STATUS</div>
+        <p id="status">Active</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="players-grid">
+    <div class="player-card">
+      <div class="player-top">
+        <span class="player-name" id="player-name">You</span>
+        <span class="player-state" id="your-state">Typing...</span>
+      </div>
+
+      <div class="progress-track">
+        <div class="progress-bar" id="your-progress"></div>
+      </div>
+    </div>
+
+    <div class="player-card">
+      <div class="player-top">
+        <span class="player-name" id="opponent-name">Opponent</span>
+        <span class="player-state" id="opponent-state">Thinking...</span>
+      </div>
+
+      <div class="progress-track">
+        <div class="progress-bar opponent-bar" id="opponent-progress"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="result-panel" class="panel result-panel hidden">
+    <div class="panel-title">MATCH RESULT</div>
+    <div class="message" id="final-result">Result loading...</div>
+
+    <div class="buttons">
+      <button class="primary" type="button" onclick="playAgain()">Play Again</button>
+      <button type="button" onclick="window.location.href='multiplayer.html'">Multiplayer Menu</button>
+      <button class="danger" type="button" onclick="window.location.href='dashboard.html'">Dashboard</button>
+    </div>
+  </section>
+
+  <section class="arena-layout">
+
+    <div class="panel">
+      <div class="panel-title">CHALLENGE</div>
+
+      <div class="challenge-box">
+        <h2>Create a Main Heading</h2>
+        <p>Replace the starter text with a correct HTML heading that says: <strong>Hello World</strong></p>
+      </div>
+
+      <div class="panel-title">CODE EDITOR</div>
+      <textarea id="code" spellcheck="false"><h1>write title here</h1></textarea>
+
+      <div class="buttons">
+        <button class="primary" id="submit-btn" type="button" onclick="submitAnswer()">Submit Answer</button>
+        <button type="button" onclick="showHint()">Hint</button>
+        <button class="danger" type="button" onclick="leaveMatch()">Leave Match</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">LIVE PREVIEW</div>
+
+      <div class="preview-box" id="preview-box">
+        <div id="preview-output"></div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="panel">
+    <div class="panel-title">RESULTS / HINTS / WARNING</div>
+
+    <div class="feedback-grid">
+      <div class="feedback-card">
+        <div class="label">RESULT</div>
+        <div class="message" id="result">Submit your answer to check it.</div>
+      </div>
+
+      <div class="feedback-card">
+        <div class="label">HINT</div>
+        <div class="message" id="hint">Click Hint if you get stuck.</div>
+      </div>
+
+      <div class="feedback-card">
+        <div class="label">WARNING</div>
+        <div class="message error" id="warning">No syntax warnings yet.</div>
+      </div>
+
+      <div class="feedback-card">
+        <div class="label">LEARNED</div>
+        <div class="message" id="learned">Use correct HTML structure to win.</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<audio id="success-sound" src="./sounds/success.mp3" preload="auto"></audio>
+<audio id="error-sound" src="./sounds/error.mp3" preload="auto"></audio>
+<audio id="mistake-sound" src="./sounds/mistake.mp3" preload="auto"></audio>
+
+<script>
+const playerNameEl = document.getElementById("player-name");
+const opponentNameEl = document.getElementById("opponent-name");
+const matchTopicEl = document.getElementById("match-topic");
+const rewardEl = document.getElementById("reward");
+const timerEl = document.getElementById("timer");
+const statusEl = document.getElementById("status");
+
+const codeBox = document.getElementById("code");
+const previewOutput = document.getElementById("preview-output");
+const resultEl = document.getElementById("result");
+const hintEl = document.getElementById("hint");
+const warningEl = document.getElementById("warning");
+const learnedEl = document.getElementById("learned");
+
+const yourProgress = document.getElementById("your-progress");
+const opponentProgress = document.getElementById("opponent-progress");
+const yourState = document.getElementById("your-state");
+const opponentState = document.getElementById("opponent-state");
+
+const resultPanel = document.getElementById("result-panel");
+const finalResult = document.getElementById("final-result");
+const submitBtn = document.getElementById("submit-btn");
+
+let timeLeft = 30;
+let timerInterval = null;
+let opponentInterval = null;
+let opponentPercent = 0;
+let matchOver = false;
+
+function loadMatchData() {
+  const playerName = localStorage.getItem("player-name") || "You";
+  const opponent = localStorage.getItem("match-opponent") || "ByteMaster";
+  const topic = localStorage.getItem("match-topic") || "HTML + CSS Basics";
+  const reward = localStorage.getItem("match-reward") || "+15 XP";
+
+  playerNameEl.innerText = playerName;
+  opponentNameEl.innerText = opponent;
+  matchTopicEl.innerText = topic;
+  rewardEl.innerText = reward;
+}
+
+function normalize(code) {
+  return code.replace(/\s+/g, "").toLowerCase();
+}
+
+function updatePreview() {
+  previewOutput.innerHTML = codeBox.value;
+  checkWarning();
+  updateYourProgress();
+}
+
+function updateYourProgress() {
+  const code = normalize(codeBox.value);
+  let percent = 15;
+
+  if (code.includes("<h1>")) percent += 25;
+  if (code.includes("</h1>")) percent += 25;
+  if (code.includes("helloworld")) percent += 35;
+
+  if (percent > 100) percent = 100;
+
+  yourProgress.style.width = percent + "%";
+
+  if (percent >= 100) {
+    yourState.innerText = "Ready";
+  } else {
+    yourState.innerText = "Typing...";
+  }
+}
+
+function checkWarning() {
+  const raw = codeBox.value.trim();
+  const code = normalize(raw);
+
+  if (raw.length === 0) {
+    warningEl.innerText = "Your editor is empty.";
+    return;
+  }
+
+  if (!code.includes("<h1>")) {
+    warningEl.innerText = "Missing opening <h1> tag.";
+    return;
+  }
+
+  if (!code.includes("</h1>")) {
+    warningEl.innerText = "Missing closing </h1> tag.";
+    return;
+  }
+
+  warningEl.innerText = "No syntax warnings.";
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+
+  timerInterval = setInterval(function () {
+    if (matchOver) return;
+
+    timeLeft--;
+    timerEl.innerText = timeLeft;
+
+    if (timeLeft <= 0) {
+      endMatch(false, "Time is up. You lost this round.");
+    }
+  }, 1000);
+}
+
+function startOpponentProgress() {
+  clearInterval(opponentInterval);
+
+  opponentInterval = setInterval(function () {
+    if (matchOver) return;
+
+    const increase = Math.floor(Math.random() * 9) + 3;
+    opponentPercent += increase;
+
+    if (opponentPercent > 100) opponentPercent = 100;
+
+    opponentProgress.style.width = opponentPercent + "%";
+
+    if (opponentPercent < 40) {
+      opponentState.innerText = "Reading...";
+    } else if (opponentPercent < 75) {
+      opponentState.innerText = "Typing...";
+    } else if (opponentPercent < 100) {
+      opponentState.innerText = "Checking...";
+    } else {
+      opponentState.innerText = "Submitted";
+      endMatch(false, opponentNameEl.innerText + " finished first.");
+    }
+  }, 2200);
+}
+
+function submitAnswer() {
+  if (matchOver) return;
+
+  const code = normalize(codeBox.value);
+
+  updatePreview();
+
+  if (code === "<h1>helloworld</h1>") {
+    endMatch(true, "You won! Clean HTML heading submitted first.");
+  } else {
+    resultEl.innerText = "Not correct yet. Fix the heading and try again.";
+    resultEl.className = "message error";
+    learnedEl.innerText = "The correct structure is: <h1>Hello World</h1>";
+    playSound("error-sound");
+    codeBox.classList.add("error-shake");
+
+    setTimeout(function () {
+      codeBox.classList.remove("error-shake");
+    }, 300);
+  }
+}
+
+function showHint() {
+  hintEl.innerText = "Use exactly this structure: <h1>Hello World</h1>";
+}
+
+function endMatch(won, message) {
+  if (matchOver) return;
+
+  matchOver = true;
+
+  clearInterval(timerInterval);
+  clearInterval(opponentInterval);
+
+  submitBtn.disabled = true;
+  statusEl.innerText = won ? "Victory" : "Defeat";
+
+  resultPanel.classList.remove("hidden");
+  finalResult.innerText = message;
+
+  if (won) {
+    resultEl.innerText = "Victory! +" + getRewardNumber() + " XP gained.";
+    resultEl.className = "message correct";
+    learnedEl.innerText = "You practiced clean heading structure under pressure.";
+
+    addXP(getRewardNumber());
+    showXPPop(getRewardNumber());
+    playSound("success-sound");
+    document.body.classList.add("success-flash");
+
+    yourProgress.style.width = "100%";
+    yourState.innerText = "Submitted";
+  } else {
+    resultEl.innerText = "Defeat. Review the structure and try again.";
+    resultEl.className = "message error";
+    playSound("error-sound");
+  }
+
+  setTimeout(function () {
+    document.body.classList.remove("success-flash");
+  }, 700);
+}
+
+function getRewardNumber() {
+  const text = rewardEl.innerText;
+  const number = parseInt(text.replace(/\D/g, "")) || 15;
+  return number;
+}
+
+function addXP(points) {
+  let xp = parseInt(localStorage.getItem("xp")) || 0;
+  xp += points;
+  localStorage.setItem("xp", xp);
+}
+
+function showXPPop(amount) {
+  const xp = document.createElement("div");
+  xp.className = "xp-pop";
+  xp.innerText = "+" + amount + " XP";
+
+  document.body.appendChild(xp);
+
+  setTimeout(function () {
+    xp.remove();
+  }, 1000);
+}
+
+function playSound(id) {
+  const sound = document.getElementById(id);
+
+  if (!sound) return;
+
+  sound.currentTime = 0;
+
+  sound.play().catch(function () {
+    console.log("Sound blocked or missing:", id);
+  });
+}
+
+function playAgain() {
+  window.location.href = "waiting-room.html";
+}
+
+function leaveMatch() {
+  window.location.href = "multiplayer.html";
+}
+
+codeBox.addEventListener("input", updatePreview);
+
+loadMatchData();
+updatePreview();
+startTimer();
+startOpponentProgress();
+</script>
+
+</body>
+</html>
