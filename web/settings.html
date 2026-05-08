@@ -3,384 +3,425 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Settings — ByteRush</title>
+<title>Settings | ByteRush</title>
+
 <link rel="stylesheet" href="arcade-theme.css">
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-:root {
-  --green: #39FF5A;
-  --red: #FF3B3B;
-  --bg: #03080F;
-  --panel: #050B12;
-  --panel2: #07111D;
-  --text: #D6FFE0;
-  --muted: #8FAF9A;
-  --line: rgba(57, 255, 90, 0.35);
-  --yellow: #D7B84F;
+:root{
+  --green:#39FF5A;
+  --red:#FF3B3B;
+  --bg:#03080F;
+  --panel:#050B12;
+  --panel2:#07111D;
+  --text:#E7FFE9;
+  --muted:#8FAF9A;
+  --line:rgba(57,255,90,0.18);
 }
 
-* {
-  box-sizing: border-box;
+*{
+  box-sizing:border-box;
 }
 
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: Consolas, Monaco, monospace;
-  padding: 32px 20px;
-  min-height: 100vh;
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at top, rgba(57,255,90,0.08), transparent 34%),
+    linear-gradient(rgba(57,255,90,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57,255,90,0.025) 1px, transparent 1px),
+    var(--bg);
+  background-size:auto, 44px 44px, 44px 44px;
+  color:var(--text);
+  font-family:'Press Start 2P', monospace;
+  padding:28px 18px;
 }
 
-.settings-page {
-  max-width: 1150px;
-  margin: 0 auto;
+.page{
+  width:min(880px,100%);
+  margin:0 auto;
 }
 
-h1, h2, button, label {
-  font-family: 'Press Start 2P', monospace;
+.header{
+  border:1px solid var(--line);
+  background:rgba(5,11,18,0.92);
+  padding:24px;
+  border-radius:20px;
 }
 
-h1 {
-  color: var(--green);
-  font-size: 22px;
-  margin: 0 0 12px;
+.kicker{
+  color:var(--green);
+  font-size:8px;
+  margin-bottom:12px;
 }
 
-p {
-  color: var(--muted);
-  line-height: 1.6;
+h1{
+  margin:0 0 12px;
+  font-size:clamp(20px,4vw,34px);
+  line-height:1.4;
 }
 
-.topbar,
-.panel {
-  border: 2px solid var(--line);
-  background: var(--panel);
-  padding: 22px;
-  margin-bottom: 18px;
+.subtitle{
+  color:var(--muted);
+  font-size:9px;
+  line-height:1.8;
+  max-width:620px;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
+.settings-grid{
+  margin-top:18px;
+  display:grid;
+  gap:18px;
 }
 
-.panel h2 {
-  color: var(--green);
-  font-size: 13px;
-  margin: 0 0 16px;
+.card{
+  border:1px solid var(--line);
+  background:rgba(5,11,18,0.9);
+  border-radius:20px;
+  padding:22px;
 }
 
-.setting-row {
-  border: 1px solid var(--line);
-  background: var(--panel2);
-  padding: 14px;
-  margin-top: 10px;
+.card-title{
+  color:var(--green);
+  font-size:10px;
+  margin-bottom:20px;
 }
 
-label {
-  color: var(--green);
-  font-size: 9px;
-  display: block;
-  margin-bottom: 8px;
+.setting-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  padding:16px 0;
+  border-bottom:1px solid rgba(255,255,255,0.06);
 }
 
-input,
-select {
-  width: 100%;
-  background: #02060B;
-  color: var(--green);
-  border: 1px solid var(--line);
-  padding: 10px;
-  font-family: Consolas, Monaco, monospace;
+.setting-row:last-child{
+  border-bottom:none;
+  padding-bottom:0;
 }
 
-input[type="checkbox"] {
-  width: auto;
-  margin-right: 8px;
+.setting-info h3{
+  margin:0 0 10px;
+  font-size:9px;
+  color:var(--text);
 }
 
-input[type="range"] {
-  accent-color: var(--green);
+.setting-info p{
+  margin:0;
+  color:var(--muted);
+  font-size:7px;
+  line-height:1.8;
 }
 
-button {
-  background: transparent;
-  color: var(--green);
-  border: 1px solid var(--green);
-  padding: 12px 14px;
-  cursor: pointer;
-  font-size: 9px;
-  margin: 6px 6px 0 0;
+.toggle-btn{
+  min-width:120px;
+  background:transparent;
+  color:var(--green);
+  border:1px solid rgba(57,255,90,0.3);
+  border-radius:14px;
+  padding:14px 16px;
+  cursor:pointer;
+  font-family:'Press Start 2P', monospace;
+  font-size:7px;
+  transition:0.18s ease;
 }
 
-button:hover {
-  background: var(--green);
-  color: var(--bg);
+.toggle-btn:hover{
+  background:var(--green);
+  color:var(--bg);
 }
 
-button.danger {
-  color: var(--red);
-  border-color: var(--red);
+.toggle-btn.off{
+  color:var(--red);
+  border-color:rgba(255,59,59,0.4);
 }
 
-button.danger:hover {
-  background: var(--red);
-  color: var(--bg);
+.toggle-btn.off:hover{
+  background:var(--red);
+  color:var(--bg);
 }
 
-.save-message {
-  color: var(--green);
-  font-weight: bold;
-  margin-top: 14px;
+.volume-wrap{
+  width:240px;
 }
 
-.danger-note {
-  color: var(--red);
-  font-size: 13px;
+.volume-slider{
+  width:100%;
+  appearance:none;
+  height:10px;
+  border-radius:999px;
+  background:#111A24;
+  outline:none;
+  border:1px solid rgba(57,255,90,0.15);
 }
 
-.coming-soon {
-  color: var(--muted);
-  line-height: 2;
+.volume-slider::-webkit-slider-thumb{
+  appearance:none;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:var(--green);
+  cursor:pointer;
 }
 
-@media (max-width: 800px) {
-  .grid {
-    grid-template-columns: 1fr;
+.volume-value{
+  margin-top:12px;
+  color:var(--green);
+  font-size:8px;
+  text-align:right;
+}
+
+.bottom-bar{
+  margin-top:18px;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.btn{
+  border:1px solid rgba(57,255,90,0.3);
+  background:transparent;
+  color:var(--green);
+  border-radius:16px;
+  padding:14px 18px;
+  cursor:pointer;
+  font-family:'Press Start 2P', monospace;
+  font-size:8px;
+  transition:0.18s ease;
+}
+
+.btn:hover{
+  background:var(--green);
+  color:var(--bg);
+}
+
+.save-message{
+  margin-top:18px;
+  border:1px solid rgba(57,255,90,0.18);
+  background:rgba(7,17,29,0.92);
+  border-radius:16px;
+  padding:16px;
+  color:var(--green);
+  font-size:8px;
+  display:none;
+}
+
+@media(max-width:700px){
+  .setting-row{
+    flex-direction:column;
+    align-items:flex-start;
   }
 
-  h1 {
-    font-size: 18px;
+  .volume-wrap{
+    width:100%;
+  }
+
+  .bottom-bar{
+    flex-direction:column;
+  }
+
+  .btn{
+    width:100%;
   }
 }
 </style>
 </head>
 
-<body>
+<body class="theme-settings">
 
-<main class="settings-page">
+<audio id="bg-music" autoplay loop>
+  <source src="sounds/background-music.mp3" type="audio/mpeg">
+</audio>
 
-  <section class="topbar">
-    <h1>SETTINGS</h1>
-    <p>Control your ByteRush experience, player identity, visuals, and saved progress.</p>
-    <button onclick="window.location.href='dashboard.html'">← BACK TO DASHBOARD</button>
-  </section>
+<div class="page">
 
-  <section class="grid">
+  <header class="header">
+    <div class="kicker">BYTE RUSH / SYSTEM SETTINGS</div>
 
-    <div class="panel">
-      <h2>PLAYER</h2>
+    <h1>Game Settings</h1>
 
-      <div class="setting-row">
-        <label for="player-name">PLAYER NAME</label>
-        <input id="player-name" type="text" placeholder="Builder">
-      </div>
-
-      <div class="setting-row">
-        <label for="player-title">PLAYER TITLE</label>
-        <input id="player-title" type="text" placeholder="Code Builder">
-      </div>
-
-      <div class="setting-row">
-        <label for="avatar">AVATAR ICON</label>
-        <select id="avatar">
-          <option value="BR">BR</option>
-          <option value="⚡">⚡</option>
-          <option value="🧠">🧠</option>
-          <option value="💻">💻</option>
-          <option value="🕹️">🕹️</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="panel">
-      <h2>AUDIO</h2>
-
-      <div class="setting-row">
-        <label>
-          <input id="sound-effects" type="checkbox">
-          SOUND EFFECTS
-        </label>
-      </div>
-
-      <div class="setting-row">
-        <label>
-          <input id="music" type="checkbox">
-          BACKGROUND MUSIC
-        </label>
-      </div>
-
-      <div class="setting-row">
-        <label for="volume">MASTER VOLUME</label>
-        <input id="volume" type="range" min="0" max="100">
-      </div>
-    </div>
-
-    <div class="panel">
-      <h2>VISUAL</h2>
-
-      <div class="setting-row">
-        <label for="theme">THEME</label>
-        <select id="theme">
-          <option value="terminal">Green Terminal</option>
-          <option value="minimal">Minimal Dark</option>
-          <option value="amber">Amber Retro</option>
-        </select>
-      </div>
-
-      <div class="setting-row">
-        <label for="font-size">FONT SIZE</label>
-        <select id="font-size">
-          <option value="small">Small</option>
-          <option value="medium">Medium</option>
-          <option value="large">Large</option>
-        </select>
-      </div>
-
-      <div class="setting-row">
-        <label>
-          <input id="reduced-motion" type="checkbox">
-          REDUCED MOTION
-        </label>
-      </div>
-    </div>
-
-    <div class="panel">
-      <h2>GAMEPLAY</h2>
-
-      <div class="setting-row">
-        <label>
-          <input id="auto-save" type="checkbox">
-          AUTO-SAVE
-        </label>
-      </div>
-
-      <div class="setting-row">
-        <label>
-          <input id="syntax-warnings" type="checkbox">
-          SYNTAX WARNINGS
-        </label>
-      </div>
-
-      <div class="setting-row">
-        <label>
-          <input id="auto-hints" type="checkbox">
-          AUTO HINTS
-        </label>
-      </div>
-    </div>
-
-  </section>
-
-  <section class="panel">
-    <h2>COMING SOON</h2>
-    <p class="coming-soon">
-      ☐ Cloud Save<br>
-      ☐ Daily Challenges<br>
-      ☐ Multiplayer Arena<br>
-      ☐ Global Leaderboards
+    <p class="subtitle">
+      Customize your ByteRush experience, control music volume, and adjust your gameplay environment.
     </p>
-  </section>
+  </header>
 
-  <section class="panel">
-    <h2>DANGER ZONE</h2>
-    <p class="danger-note">These actions cannot be undone.</p>
+  <main class="settings-grid">
 
-    <button class="danger" onclick="resetHTML()">Reset HTML</button>
-    <button class="danger" onclick="resetCSS()">Reset CSS</button>
-    <button class="danger" onclick="resetJS()">Reset JS</button>
-    <button class="danger" onclick="resetProject()">Reset Project</button>
-    <button class="danger" onclick="resetAll()">Reset Everything</button>
-  </section>
+    <section class="card">
 
-  <button onclick="saveSettings()">SAVE SETTINGS</button>
-  <p id="save-message" class="save-message"></p>
+      <div class="card-title">AUDIO SETTINGS</div>
 
-</main>
+      <div class="setting-row">
+
+        <div class="setting-info">
+          <h3>BACKGROUND MUSIC</h3>
+          <p>
+            Turn the ByteRush soundtrack on or off during gameplay.
+          </p>
+        </div>
+
+        <button id="music-toggle" class="toggle-btn">
+          MUSIC ON
+        </button>
+
+      </div>
+
+      <div class="setting-row">
+
+        <div class="setting-info">
+          <h3>MUSIC VOLUME</h3>
+          <p>
+            Adjust the global soundtrack volume for every page in the game.
+          </p>
+        </div>
+
+        <div class="volume-wrap">
+
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value="60"
+            class="volume-slider"
+            id="volume-slider"
+          >
+
+          <div class="volume-value">
+            <span id="volume-text">60%</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <div class="save-message" id="save-message">
+      SETTINGS SAVED
+    </div>
+
+  </main>
+
+  <div class="bottom-bar">
+
+    <button class="btn" onclick="goBack()">
+      ← BACK TO DASHBOARD
+    </button>
+
+    <button class="btn" id="reset-btn">
+      RESET AUDIO SETTINGS
+    </button>
+
+  </div>
+
+</div>
 
 <script>
+const volumeSlider = document.getElementById("volume-slider");
+const volumeText = document.getElementById("volume-text");
+const musicToggle = document.getElementById("music-toggle");
+const saveMessage = document.getElementById("save-message");
+const resetBtn = document.getElementById("reset-btn");
+
+function showSaveMessage() {
+  saveMessage.style.display = "block";
+
+  clearTimeout(window.saveTimer);
+
+  window.saveTimer = setTimeout(() => {
+    saveMessage.style.display = "none";
+  }, 1600);
+}
+
+function updateToggleButton() {
+  const musicEnabled = localStorage.getItem("music-enabled") !== "false";
+
+  if (musicEnabled) {
+    musicToggle.innerText = "MUSIC ON";
+    musicToggle.classList.remove("off");
+  } else {
+    musicToggle.innerText = "MUSIC OFF";
+    musicToggle.classList.add("off");
+  }
+}
+
 function loadSettings() {
-  document.getElementById("player-name").value = localStorage.getItem("player-name") || "Builder";
-  document.getElementById("player-title").value = localStorage.getItem("player-title") || "Code Builder";
-  document.getElementById("avatar").value = localStorage.getItem("player-avatar") || "BR";
+  let savedVolume = parseFloat(localStorage.getItem("music-volume"));
 
-  document.getElementById("sound-effects").checked = localStorage.getItem("sound-effects") !== "off";
-  document.getElementById("music").checked = localStorage.getItem("music") === "on";
-  document.getElementById("volume").value = localStorage.getItem("volume") || 70;
-
-  document.getElementById("theme").value = localStorage.getItem("theme") || "terminal";
-  document.getElementById("font-size").value = localStorage.getItem("font-size") || "medium";
-  document.getElementById("reduced-motion").checked = localStorage.getItem("reduced-motion") === "on";
-
-  document.getElementById("auto-save").checked = localStorage.getItem("auto-save") !== "off";
-  document.getElementById("syntax-warnings").checked = localStorage.getItem("syntax-warnings") !== "off";
-  document.getElementById("auto-hints").checked = localStorage.getItem("auto-hints") === "on";
-}
-
-function saveSettings() {
-  localStorage.setItem("player-name", document.getElementById("player-name").value || "Builder");
-  localStorage.setItem("player-title", document.getElementById("player-title").value || "Code Builder");
-  localStorage.setItem("player-avatar", document.getElementById("avatar").value);
-
-  localStorage.setItem("sound-effects", document.getElementById("sound-effects").checked ? "on" : "off");
-  localStorage.setItem("music", document.getElementById("music").checked ? "on" : "off");
-  localStorage.setItem("volume", document.getElementById("volume").value);
-
-  localStorage.setItem("theme", document.getElementById("theme").value);
-  localStorage.setItem("font-size", document.getElementById("font-size").value);
-  localStorage.setItem("reduced-motion", document.getElementById("reduced-motion").checked ? "on" : "off");
-
-  localStorage.setItem("auto-save", document.getElementById("auto-save").checked ? "on" : "off");
-  localStorage.setItem("syntax-warnings", document.getElementById("syntax-warnings").checked ? "on" : "off");
-  localStorage.setItem("auto-hints", document.getElementById("auto-hints").checked ? "on" : "off");
-
-  document.getElementById("save-message").innerText = "Settings saved.";
-}
-
-function resetHTML() {
-  if (confirm("Reset HTML progress?")) {
-    localStorage.removeItem("html-level");
-    alert("HTML progress reset.");
+  if (isNaN(savedVolume)) {
+    savedVolume = 0.6;
+    localStorage.setItem("music-volume", savedVolume);
   }
+
+  volumeSlider.value = Math.round(savedVolume * 100);
+  volumeText.innerText = Math.round(savedVolume * 100) + "%";
+
+  updateToggleButton();
 }
 
-function resetCSS() {
-  if (confirm("Reset CSS progress?")) {
-    localStorage.removeItem("css-level");
-    alert("CSS progress reset.");
-  }
-}
+volumeSlider.addEventListener("input", () => {
+  const volume = volumeSlider.value / 100;
 
-function resetJS() {
-  if (confirm("Reset JavaScript progress?")) {
-    localStorage.removeItem("js-level");
-    alert("JavaScript progress reset.");
-  }
-}
+  localStorage.setItem("music-volume", volume);
+  volumeText.innerText = volumeSlider.value + "%";
 
-function resetProject() {
-  if (confirm("Reset Profile Card project?")) {
-    localStorage.removeItem("project-profile-step");
-    localStorage.removeItem("project-profile-code");
-    localStorage.removeItem("project-profile-complete");
-    alert("Project progress reset.");
-  }
-}
+  const bgMusic = document.getElementById("bg-music");
 
-function resetAll() {
-  if (confirm("Reset EVERYTHING? This will erase all ByteRush progress and settings.")) {
-    localStorage.clear();
-    alert("Everything reset.");
-    loadSettings();
+  if (bgMusic) {
+    bgMusic.volume = volume;
   }
+
+  showSaveMessage();
+});
+
+musicToggle.addEventListener("click", () => {
+  const musicEnabled = localStorage.getItem("music-enabled") !== "false";
+  const bgMusic = document.getElementById("bg-music");
+
+  if (musicEnabled) {
+    localStorage.setItem("music-enabled", "false");
+
+    if (bgMusic) {
+      bgMusic.pause();
+    }
+  } else {
+    localStorage.setItem("music-enabled", "true");
+
+    if (bgMusic) {
+      bgMusic.play().catch(() => {});
+    }
+  }
+
+  updateToggleButton();
+  showSaveMessage();
+});
+
+resetBtn.addEventListener("click", () => {
+  localStorage.setItem("music-volume", "0.6");
+  localStorage.setItem("music-enabled", "true");
+
+  const bgMusic = document.getElementById("bg-music");
+
+  if (bgMusic) {
+    bgMusic.volume = 0.6;
+    bgMusic.play().catch(() => {});
+  }
+
+  loadSettings();
+  showSaveMessage();
+});
+
+function goBack() {
+  window.location.href = "dashboard.html";
 }
 
 loadSettings();
 </script>
+
+<script src="audio.js"></script>
 
 </body>
 </html>

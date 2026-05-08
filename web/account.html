@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Player Profile — ByteRush</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Player Account | ByteRush</title>
+
 <link rel="stylesheet" href="arcade-theme.css">
-<body class="theme-account">
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Press+Start+2P&display=swap');
 
 :root {
   --green: #39FF5A;
@@ -16,10 +16,10 @@
   --bg: #03080F;
   --panel: #050B12;
   --panel2: #07111D;
-  --text: #D6FFE0;
-  --muted: #8FAF9A;
-  --line: rgba(57, 255, 90, 0.35);
-  --yellow: #D7B84F;
+  --text: #E6FFE9;
+  --muted: rgba(230, 255, 233, 0.65);
+  --line: rgba(57, 255, 90, 0.28);
+  --yellow: #FACC15;
 }
 
 * {
@@ -28,343 +28,544 @@
 
 body {
   margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: Consolas, Monaco, monospace;
-  padding: 32px 20px;
   min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(57,255,90,0.08), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(57,255,90,0.05), transparent 35%),
+    var(--bg);
+  color: var(--text);
+  font-family: "IBM Plex Mono", monospace;
+  padding: 22px;
 }
 
-.profile {
-  max-width: 1150px;
+.pixel {
+  font-family: "Press Start 2P", monospace;
+}
+
+.account-page {
+  max-width: 1180px;
   margin: 0 auto;
 }
 
-h1, h2, h3, button {
-  font-family: 'Press Start 2P', monospace;
+.top-bar {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 16px;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.35);
 }
 
 h1 {
+  margin: 0 0 8px;
   color: var(--green);
-  font-size: 22px;
-  margin: 0 0 12px;
+  font-size: 17px;
+  line-height: 1.5;
 }
 
-p {
+.subtitle {
+  margin: 0;
   color: var(--muted);
+  font-size: 12px;
   line-height: 1.6;
 }
 
-.topbar,
-.panel {
-  border: 2px solid var(--line);
-  background: var(--panel);
-  padding: 22px;
-  margin-bottom: 18px;
+button,
+.link-btn {
+  border: 1px solid var(--green);
+  background: transparent;
+  color: var(--green);
+  padding: 10px 12px;
+  cursor: pointer;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-block;
 }
 
-.grid {
+button:hover,
+.link-btn:hover {
+  background: rgba(57,255,90,0.1);
+}
+
+.main-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
+  grid-template-columns: 330px 1fr;
+  gap: 16px;
 }
 
-.player-card {
-  display: flex;
-  gap: 18px;
-  align-items: center;
+.card {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  padding: 18px;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.28);
+}
+
+.profile-card {
+  text-align: center;
 }
 
 .avatar {
-  width: 88px;
-  height: 88px;
+  width: 110px;
+  height: 110px;
   border: 2px solid var(--green);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--panel2);
-  color: var(--green);
-  font-size: 34px;
+  background:
+    linear-gradient(135deg, rgba(57,255,90,0.12), rgba(57,255,90,0.02)),
+    var(--panel2);
+  margin: 0 auto 14px;
+  display: grid;
+  place-items: center;
+  font-size: 42px;
+  box-shadow: 0 0 24px rgba(57,255,90,0.12);
 }
 
-.player-card h2,
-.panel h2 {
-  color: var(--green);
-  font-size: 13px;
-  margin: 0 0 12px;
+.player-name {
+  margin: 0;
+  color: var(--text);
+  font-size: 18px;
 }
 
-.stat-row,
-.progress-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
+.player-rank {
+  margin: 8px 0 0;
+  color: var(--green);
+  font-size: 11px;
+}
+
+.edit-box {
+  margin-top: 16px;
+  text-align: left;
+}
+
+label {
+  display: block;
+  color: var(--green);
+  font-size: 10px;
+  margin-bottom: 7px;
+  font-weight: 700;
+}
+
+input {
+  width: 100%;
+  background: #02060B;
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 11px;
+  font-family: "IBM Plex Mono", monospace;
+  outline: none;
+}
+
+input:focus {
+  border-color: var(--green);
+}
+
+.save-btn {
+  width: 100%;
+  margin-top: 10px;
+  background: var(--green);
+  color: var(--bg);
+}
+
+.section-title {
+  color: var(--green);
+  font-size: 8px;
+  margin: 0 0 14px;
+  line-height: 1.6;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.stat {
   border: 1px solid var(--line);
   background: var(--panel2);
-  padding: 12px;
-  margin-top: 10px;
-  color: var(--muted);
+  padding: 14px;
 }
 
-.stat-row strong,
-.progress-row strong {
+.stat span {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  margin-bottom: 8px;
+}
+
+.stat strong {
+  color: var(--text);
+  font-size: 20px;
+}
+
+.progress-area {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.track-card {
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  padding: 15px;
+}
+
+.track-card h3 {
+  margin: 0 0 8px;
   color: var(--green);
+  font-size: 14px;
+}
+
+.track-card p {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background: #02060B;
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--green);
+}
+
+.track-footer {
+  margin-top: 9px;
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 10px;
 }
 
 .badges {
-  display: flex;
-  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
 }
 
 .badge {
   border: 1px solid var(--line);
   background: var(--panel2);
-  color: var(--muted);
-  padding: 10px 12px;
-  font-size: 13px;
-}
-
-.badge.earned {
-  color: var(--green);
-  border-color: var(--green);
+  padding: 12px;
+  text-align: center;
 }
 
 .badge.locked {
-  opacity: 0.45;
+  opacity: 0.38;
 }
 
-.settings {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+.badge-icon {
+  font-size: 24px;
+  margin-bottom: 8px;
 }
 
-button {
-  background: transparent;
-  color: var(--green);
-  border: 1px solid var(--green);
-  padding: 12px 14px;
-  cursor: pointer;
-  font-size: 9px;
+.badge-title {
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 700;
 }
 
-button:hover {
-  background: var(--green);
-  color: var(--bg);
-}
-
-button.danger {
-  color: var(--red);
-  border-color: var(--red);
-}
-
-button.danger:hover {
-  background: var(--red);
-  color: var(--bg);
-}
-
-.note {
-  font-size: 13px;
+.badge-desc {
   color: var(--muted);
+  font-size: 10px;
+  line-height: 1.4;
+  margin-top: 6px;
 }
 
-@media (max-width: 800px) {
-  .grid {
+.danger-zone {
+  margin-top: 16px;
+  border-color: rgba(255,59,59,0.45);
+}
+
+.reset-btn {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.reset-btn:hover {
+  background: rgba(255,59,59,0.1);
+}
+
+@media (max-width: 900px) {
+  .main-grid,
+  .progress-area,
+  .stats-grid,
+  .badge-grid {
     grid-template-columns: 1fr;
   }
 
-  .player-card {
+  .top-bar {
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  h1 {
-    font-size: 18px;
   }
 }
 </style>
 </head>
 
-<body>
+<body class="theme-html">
+  <audio id="bg-music" autoplay loop>
+  <source src="sounds/background-music.mp3" type="audio/mpeg">
+</audio>
 
-<main class="profile">
 
-  <section class="topbar">
-    <h1>PLAYER PROFILE</h1>
-    <p>Your ByteRush progress, badges, streaks, and unlocked worlds.</p>
-    <button onclick="window.location.href='dashboard.html'">← BACK TO DASHBOARD</button>
+<main class="account-page">
+
+  <section class="top-bar">
+    <div>
+      <h1 class="pixel">Player Account</h1>
+      <p class="subtitle">Track your progress, XP, badges, and coding journey inside ByteRush.</p>
+    </div>
+
+    <a href="dashboard.html" class="link-btn">Go Back to Dashboard</a>
   </section>
 
-  <section class="grid">
+  <section class="main-grid">
 
-    <div class="panel player-card">
-      <div class="avatar">BR</div>
+    <aside class="card profile-card">
+      <div class="avatar">🧑‍💻</div>
 
-      <div>
-        <h2 id="player-name">Builder</h2>
-        <p>Rank: <strong id="rank">Rookie Coder</strong></p>
-        <p>Total XP: <strong id="xp">0</strong></p>
-        <p>Current Streak: <strong id="streak">0</strong></p>
+      <h2 class="player-name" id="player-name-display">Player</h2>
+      <p class="player-rank" id="rank-display">New Builder</p>
+
+      <div class="edit-box">
+        <label for="player-name">PLAYER NAME</label>
+        <input id="player-name" type="text" placeholder="Enter your name" />
+        <button class="save-btn" id="save-name-btn">Save Name</button>
       </div>
-    </div>
+    </aside>
 
-    <div class="panel">
-      <h2>CHALLENGE STATS</h2>
-      <div class="stat-row">Wins <strong id="wins">0</strong></div>
-      <div class="stat-row">Losses <strong id="losses">0</strong></div>
-      <div class="stat-row">Difficulty Engine <strong id="difficulty">Normal</strong></div>
-    </div>
+    <section>
 
-  </section>
+      <div class="card">
+        <h2 class="section-title pixel">ACCOUNT STATS</h2>
 
-  <section class="panel">
-    <h2>WORLD PROGRESS</h2>
+        <div class="stats-grid">
+          <div class="stat">
+            <span>Total XP</span>
+            <strong id="xp-value">0</strong>
+          </div>
 
-    <div class="progress-row">HTML Arena <strong id="html-progress">1 / 7</strong></div>
-    <div class="progress-row">CSS Circuit <strong id="css-progress">Locked</strong></div>
-    <div class="progress-row">JavaScript Core <strong id="js-progress">Locked</strong></div>
-    <div class="progress-row">Profile Card Project <strong id="project-progress">Not Started</strong></div>
-  </section>
+          <div class="stat">
+            <span>HTML Level</span>
+            <strong id="html-level-value">1</strong>
+          </div>
 
-  <section class="panel">
-    <h2>BADGES</h2>
-    <div class="badges" id="badges"></div>
-  </section>
+          <div class="stat">
+            <span>CSS Level</span>
+            <strong id="css-level-value">1</strong>
+          </div>
 
-  <section class="panel">
-    <h2>SETTINGS</h2>
-    <p class="note">Use these carefully. Reset actions cannot be undone.</p>
+          <div class="stat">
+            <span>JS Level</span>
+            <strong id="js-level-value">1</strong>
+          </div>
+        </div>
+      </div>
 
-    <div class="settings">
-      <button class="danger" onclick="resetHTML()">Reset HTML</button>
-      <button class="danger" onclick="resetCSS()">Reset CSS</button>
-      <button class="danger" onclick="resetJS()">Reset JS</button>
-      <button class="danger" onclick="resetProject()">Reset Project</button>
-      <button class="danger" onclick="resetAll()">Reset Everything</button>
-    </div>
+      <div class="progress-area">
+
+        <div class="track-card">
+          <h3>HTML Arena</h3>
+          <p>Build the structure of webpages using headings, text, links, images, and lists.</p>
+          <div class="progress-bar">
+            <div class="progress-fill" id="html-progress"></div>
+          </div>
+          <div class="track-footer">
+            <span id="html-progress-text">0%</span>
+            <span>7 Missions</span>
+          </div>
+        </div>
+
+        <div class="track-card">
+          <h3>CSS Circuit</h3>
+          <p>Style webpages with color, spacing, layout, buttons, and visual design.</p>
+          <div class="progress-bar">
+            <div class="progress-fill" id="css-progress"></div>
+          </div>
+          <div class="track-footer">
+            <span id="css-progress-text">0%</span>
+            <span>7 Missions</span>
+          </div>
+        </div>
+
+        <div class="track-card">
+          <h3>JavaScript Core</h3>
+          <p>Add interaction, logic, buttons, events, and dynamic behavior to webpages.</p>
+          <div class="progress-bar">
+            <div class="progress-fill" id="js-progress"></div>
+          </div>
+          <div class="track-footer">
+            <span id="js-progress-text">0%</span>
+            <span>7 Missions</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="card badges">
+        <h2 class="section-title pixel">BADGES</h2>
+
+        <div class="badge-grid">
+          <div class="badge" id="badge-html">
+            <div class="badge-icon">🏗️</div>
+            <div class="badge-title">HTML Builder</div>
+            <div class="badge-desc">Complete HTML Arena.</div>
+          </div>
+
+          <div class="badge" id="badge-css">
+            <div class="badge-icon">🎨</div>
+            <div class="badge-title">CSS Designer</div>
+            <div class="badge-desc">Complete CSS Circuit.</div>
+          </div>
+
+          <div class="badge" id="badge-js">
+            <div class="badge-icon">⚡</div>
+            <div class="badge-title">JS Coder</div>
+            <div class="badge-desc">Complete JavaScript Core.</div>
+          </div>
+
+          <div class="badge" id="badge-xp">
+            <div class="badge-icon">⭐</div>
+            <div class="badge-title">XP Collector</div>
+            <div class="badge-desc">Earn 100 XP.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card danger-zone">
+        <h2 class="section-title pixel">RESET AREA</h2>
+        <p class="subtitle">This clears the saved player name, XP, and mission progress on this browser.</p>
+        <br>
+        <button class="reset-btn" id="reset-btn">Reset Account</button>
+      </div>
+
+    </section>
+
   </section>
 
 </main>
 
 <script>
+const playerNameInput = document.getElementById("player-name");
+const playerNameDisplay = document.getElementById("player-name-display");
+const rankDisplay = document.getElementById("rank-display");
+
+const xpValue = document.getElementById("xp-value");
+const htmlLevelValue = document.getElementById("html-level-value");
+const cssLevelValue = document.getElementById("css-level-value");
+const jsLevelValue = document.getElementById("js-level-value");
+
+const htmlProgress = document.getElementById("html-progress");
+const cssProgress = document.getElementById("css-progress");
+const jsProgress = document.getElementById("js-progress");
+
+const htmlProgressText = document.getElementById("html-progress-text");
+const cssProgressText = document.getElementById("css-progress-text");
+const jsProgressText = document.getElementById("js-progress-text");
+
+const saveNameBtn = document.getElementById("save-name-btn");
+const resetBtn = document.getElementById("reset-btn");
+
+const badgeHtml = document.getElementById("badge-html");
+const badgeCss = document.getElementById("badge-css");
+const badgeJs = document.getElementById("badge-js");
+const badgeXp = document.getElementById("badge-xp");
+
+function getSavedNumber(key, fallback) {
+  return parseInt(localStorage.getItem(key)) || fallback;
+}
+
+function getProgressPercent(level) {
+  const completed = Math.max(0, Math.min(level - 1, 7));
+  return Math.round((completed / 7) * 100);
+}
+
 function getRank(xp) {
-  if (xp < 50) return "Rookie Coder";
-  if (xp < 150) return "Syntax Apprentice";
-  if (xp < 300) return "Code Builder";
-  if (xp < 600) return "System Hacker";
-  return "ByteRush Master";
+  if (xp >= 300) return "Master Builder";
+  if (xp >= 200) return "Code Explorer";
+  if (xp >= 100) return "Rising Coder";
+  if (xp >= 50) return "Junior Builder";
+  return "New Builder";
 }
 
-function getProgress(level) {
-  if (level > 7) return "Complete";
-  return level + " / 7";
+function updateAccount() {
+  const playerName = localStorage.getItem("player-name") || "Player";
+  const xp = getSavedNumber("xp", 0);
+
+  const htmlLevel = getSavedNumber("html-level", 1);
+  const cssLevel = getSavedNumber("css-level", 1);
+  const jsLevel = getSavedNumber("js-level", 1);
+
+  playerNameInput.value = playerName;
+  playerNameDisplay.innerText = playerName;
+  rankDisplay.innerText = getRank(xp);
+
+  xpValue.innerText = xp;
+  htmlLevelValue.innerText = Math.min(htmlLevel, 7);
+  cssLevelValue.innerText = Math.min(cssLevel, 7);
+  jsLevelValue.innerText = Math.min(jsLevel, 7);
+
+  const htmlPercent = getProgressPercent(htmlLevel);
+  const cssPercent = getProgressPercent(cssLevel);
+  const jsPercent = getProgressPercent(jsLevel);
+
+  htmlProgress.style.width = htmlPercent + "%";
+  cssProgress.style.width = cssPercent + "%";
+  jsProgress.style.width = jsPercent + "%";
+
+  htmlProgressText.innerText = htmlPercent + "%";
+  cssProgressText.innerText = cssPercent + "%";
+  jsProgressText.innerText = jsPercent + "%";
+
+  badgeHtml.classList.toggle("locked", htmlLevel <= 7);
+  badgeCss.classList.toggle("locked", cssLevel <= 7);
+  badgeJs.classList.toggle("locked", jsLevel <= 7);
+  badgeXp.classList.toggle("locked", xp < 100);
 }
 
-function getDifficultyMode(wins, losses) {
-  if (wins >= losses + 3) return "Hard";
-  if (losses >= wins + 2) return "Easy";
-  return "Normal";
-}
+saveNameBtn.addEventListener("click", function () {
+  const name = playerNameInput.value.trim();
 
-function loadProfile() {
-  const xp = parseInt(localStorage.getItem("xp")) || 0;
-  const streak = parseInt(localStorage.getItem("streak")) || 0;
-
-  const htmlLevel = parseInt(localStorage.getItem("html-level")) || 1;
-  const cssLevel = parseInt(localStorage.getItem("css-level")) || 0;
-  const jsLevel = parseInt(localStorage.getItem("js-level")) || 0;
-
-  const wins = parseInt(localStorage.getItem("challenge-wins")) || 0;
-  const losses = parseInt(localStorage.getItem("challenge-losses")) || 0;
-
-  const projectComplete = localStorage.getItem("project-profile-complete") === "true";
-  const projectStep = parseInt(localStorage.getItem("project-profile-step")) || 1;
-
-  document.getElementById("xp").innerText = xp;
-  document.getElementById("streak").innerText = streak;
-  document.getElementById("rank").innerText = getRank(xp);
-
-  document.getElementById("wins").innerText = wins;
-  document.getElementById("losses").innerText = losses;
-  document.getElementById("difficulty").innerText = getDifficultyMode(wins, losses);
-
-  document.getElementById("html-progress").innerText = getProgress(htmlLevel);
-  document.getElementById("css-progress").innerText = htmlLevel >= 8 ? getProgress(cssLevel || 1) : "Locked";
-  document.getElementById("js-progress").innerText = cssLevel >= 8 ? getProgress(jsLevel || 1) : "Locked";
-
-  if (projectComplete) {
-    document.getElementById("project-progress").innerText = "Complete";
-  } else if (localStorage.getItem("project-profile-code")) {
-    document.getElementById("project-progress").innerText = "Step " + projectStep + " / 5";
-  } else {
-    document.getElementById("project-progress").innerText = "Not Started";
+  if (name.length === 0) {
+    alert("Please enter a player name.");
+    return;
   }
 
-  loadBadges(htmlLevel, cssLevel, jsLevel, projectComplete, wins);
-}
+  localStorage.setItem("player-name", name);
+  updateAccount();
+});
 
-function loadBadges(htmlLevel, cssLevel, jsLevel, projectComplete, wins) {
-  const earnedBadges = JSON.parse(localStorage.getItem("badges")) || [];
+resetBtn.addEventListener("click", function () {
+  const confirmReset = confirm("Are you sure you want to reset this account?");
 
-  const badgeList = [
-    { name: "HTML Builder", earned: htmlLevel >= 8 },
-    { name: "CSS Stylist", earned: cssLevel >= 8 },
-    { name: "JavaScript Core", earned: jsLevel >= 8 },
-    { name: "Profile Builder", earned: projectComplete || earnedBadges.includes("Profile Builder") },
-    { name: "Challenge Winner", earned: wins > 0 }
-  ];
+  if (!confirmReset) return;
 
-  const badgeContainer = document.getElementById("badges");
-  badgeContainer.innerHTML = "";
+  localStorage.removeItem("player-name");
+  localStorage.removeItem("xp");
+  localStorage.removeItem("html-level");
+  localStorage.removeItem("css-level");
+  localStorage.removeItem("js-level");
 
-  badgeList.forEach(function(badge) {
-    const badgeEl = document.createElement("div");
-    badgeEl.className = "badge " + (badge.earned ? "earned" : "locked");
-    badgeEl.innerText = badge.earned ? "🏅 " + badge.name : "🔒 " + badge.name;
-    badgeContainer.appendChild(badgeEl);
-  });
-}
+  updateAccount();
+});
 
-function resetHTML() {
-  if (confirm("Reset HTML progress?")) {
-    localStorage.removeItem("html-level");
-    loadProfile();
-  }
-}
-
-function resetCSS() {
-  if (confirm("Reset CSS progress?")) {
-    localStorage.removeItem("css-level");
-    loadProfile();
-  }
-}
-
-function resetJS() {
-  if (confirm("Reset JavaScript progress?")) {
-    localStorage.removeItem("js-level");
-    loadProfile();
-  }
-}
-
-function resetProject() {
-  if (confirm("Reset Profile Card project?")) {
-    localStorage.removeItem("project-profile-step");
-    localStorage.removeItem("project-profile-code");
-    localStorage.removeItem("project-profile-complete");
-    loadProfile();
-  }
-}
-
-function resetAll() {
-  if (confirm("Reset EVERYTHING? This will erase all ByteRush progress.")) {
-    localStorage.clear();
-    loadProfile();
-  }
-}
-
-loadProfile();
+updateAccount();
 </script>
-
+<script src="audio.js"></script>
 </body>
 </html>

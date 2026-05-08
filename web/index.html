@@ -36,6 +36,27 @@
       overflow-x: hidden;
     }
 
+    #audio-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(3,8,15,0.94);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+    }
+
+    #enable-audio-btn {
+      background: #050B12;
+      color: #39FF5A;
+      border: 1px solid rgba(57,255,90,0.4);
+      padding: 18px 24px;
+      border-radius: 16px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 8px;
+      cursor: pointer;
+    }
+
     #start-screen {
       min-height: 100vh;
       display: flex;
@@ -295,6 +316,13 @@
 </head>
 
 <body class="theme-home">
+<audio id="bg-music" autoplay loop>
+  <source src="sounds/background-music.mp3" type="audio/mpeg">
+</audio>
+
+  <div id="audio-overlay">
+    <button id="enable-audio-btn">ENABLE SOUND</button>
+  </div>
 
   <div id="start-screen">
 
@@ -371,6 +399,33 @@
   </div>
 
   <script>
+    const music = document.getElementById("bg-music");
+    const audioOverlay = document.getElementById("audio-overlay");
+    const enableAudioBtn = document.getElementById("enable-audio-btn");
+
+    music.volume = 0.25;
+
+    function tryPlayMusic() {
+      const playPromise = music.play();
+
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            audioOverlay.style.display = "none";
+          })
+          .catch(() => {
+            audioOverlay.style.display = "flex";
+          });
+      }
+    }
+
+    tryPlayMusic();
+
+    enableAudioBtn.addEventListener("click", () => {
+      music.play();
+      audioOverlay.style.display = "none";
+    });
+
     const typedText = document.getElementById("typed-text");
     const startBtn = document.getElementById("start-btn");
     const bootScreen = document.getElementById("boot-screen");
@@ -411,6 +466,8 @@
     });
 
     function startGame() {
+      music.play().catch(() => {});
+
       bootScreen.style.display = "flex";
       systemStatus.textContent = "BOOTING GAME";
 
@@ -449,6 +506,6 @@
       }
     });
   </script>
-
+<script src="audio.js"></script>
 </body>
 </html>

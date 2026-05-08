@@ -17,7 +17,8 @@
   --panel2: #07111D;
   --text: #E6FFE9;
   --muted: rgba(230, 255, 233, 0.68);
-  --line: rgba(57, 255, 90, 0.28);
+  --line: rgba(57, 255, 90, 0.22);
+  --soft-line: rgba(255,255,255,0.08);
   --yellow: #FACC15;
 }
 
@@ -27,167 +28,154 @@
 
 body {
   margin: 0;
-  background: var(--bg);
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(57,255,90,0.08), transparent 34%),
+    linear-gradient(rgba(57,255,90,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57,255,90,0.025) 1px, transparent 1px),
+    var(--bg);
+  background-size: auto, 44px 44px, 44px 44px;
   color: var(--text);
   font-family: "IBM Plex Mono", monospace;
-  padding: 10px;
-  line-height: 1.45;
-}
-
-.lab {
-  max-width: 1060px;
-  margin: 0 auto;
+  padding: 22px;
 }
 
 .pixel {
   font-family: "Press Start 2P", monospace;
 }
 
-.topbar,
-.panel {
+.lab {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.header {
   border: 1px solid var(--line);
-  background: var(--panel);
-  padding: 12px;
-  margin-bottom: 10px;
+  background: rgba(5,11,18,0.92);
+  border-radius: 22px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+
+.kicker {
+  color: var(--green);
+  font-size: 8px;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
 }
 
 h1 {
-  margin: 0 0 6px;
-  color: var(--green);
-  font-size: 15px;
+  margin: 0 0 10px;
+  color: var(--text);
+  font-size: clamp(22px, 4vw, 34px);
   line-height: 1.4;
 }
 
 .desc {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 14px;
+  line-height: 1.8;
   margin: 0;
+  max-width: 780px;
+}
+
+.panel {
+  border: 1px solid var(--line);
+  background: rgba(5,11,18,0.92);
+  border-radius: 22px;
+  padding: 18px;
+  margin-bottom: 16px;
 }
 
 .panel-title,
-.label {
+.label,
+.project-type {
   font-family: "Press Start 2P", monospace;
-  font-size: 6px;
-  line-height: 1.4;
+  font-size: 8px;
+  line-height: 1.5;
   color: var(--green);
-  margin: 0 0 7px;
+  margin-bottom: 12px;
 }
 
-.project-home {
-  display: block;
+.project-type {
+  color: var(--yellow);
 }
 
-.project-page {
-  display: none;
-}
-
-.project-grid {
+.project-dashboard {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
 }
 
 .project-card {
-  background: var(--panel2);
-  border: 1px solid var(--line);
-  padding: 14px;
   min-height: 210px;
+  border: 1px solid var(--soft-line);
+  background: var(--panel2);
+  border-radius: 20px;
+  padding: 16px;
+  cursor: pointer;
+  transition: 0.18s ease;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
 .project-card:hover {
+  transform: translateY(-4px);
   border-color: var(--green);
-  background: rgba(57, 255, 90, 0.06);
-}
-
-.project-type {
-  font-family: "Press Start 2P", monospace;
-  font-size: 6px;
-  color: var(--yellow);
-  margin-bottom: 8px;
+  background: rgba(57,255,90,0.06);
 }
 
 .project-card h2 {
+  margin: 10px 0;
   color: var(--text);
-  font-size: 16px;
-  margin: 0 0 8px;
+  font-size: 17px;
+  line-height: 1.35;
 }
 
 .project-card p {
+  margin: 0;
   color: var(--muted);
-  font-size: 11px;
-  margin: 0 0 10px;
+  font-size: 12px;
+  line-height: 1.6;
 }
 
-.project-mini-preview {
-  border: 1px solid rgba(57, 255, 90, 0.18);
-  background: #02060B;
-  padding: 10px;
-  min-height: 72px;
-  margin: 10px 0;
-}
-
-.mini-card {
-  width: 90px;
-  height: 48px;
-  border: 1px solid var(--green);
-  margin: 0 auto;
-  border-radius: 8px;
-}
-
-.mini-menu {
-  display: grid;
-  gap: 5px;
-}
-
-.mini-line {
-  height: 6px;
-  background: rgba(57, 255, 90, 0.35);
-}
-
-.mini-counter {
-  text-align: center;
-  color: var(--yellow);
-  font-size: 24px;
+.project-badge {
+  margin-top: 14px;
+  color: var(--green);
+  font-size: 12px;
   font-weight: 700;
 }
 
-.page-header-grid {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 10px;
-  align-items: start;
-}
-
-.workspace {
+.main-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 14px;
 }
 
 .editor-stack {
   display: grid;
-  gap: 8px;
+  gap: 10px;
 }
 
 .editor-box {
   background: var(--panel2);
-  border: 1px solid var(--line);
-  padding: 8px;
+  border: 1px solid var(--soft-line);
+  border-radius: 18px;
+  padding: 12px;
 }
 
 textarea {
   width: 100%;
-  min-height: 115px;
+  min-height: 118px;
   resize: vertical;
   background: #02060B;
   color: var(--green);
   border: 1px solid var(--line);
-  padding: 9px;
-  font-size: 12px;
-  line-height: 1.45;
+  border-radius: 14px;
+  padding: 12px;
+  font-size: 13px;
+  line-height: 1.55;
   outline: none;
   font-family: "IBM Plex Mono", monospace;
 }
@@ -198,9 +186,10 @@ textarea:focus {
 
 .preview-wrap {
   background: #02060B;
-  border: 1px solid var(--line);
-  padding: 12px;
-  min-height: 460px;
+  border: 1px solid var(--soft-line);
+  border-radius: 18px;
+  padding: 14px;
+  min-height: 500px;
   display: grid;
   place-items: center;
   overflow: auto;
@@ -208,48 +197,43 @@ textarea:focus {
 
 .preview-stage {
   width: 100%;
-  min-height: 430px;
+  min-height: 470px;
   display: grid;
   place-items: center;
   background: radial-gradient(circle at top, #102018, #03080F);
-  border: 1px solid rgba(57, 255, 90, 0.16);
+  border: 1px solid rgba(57,255,90,0.14);
+  border-radius: 16px;
   padding: 18px;
 }
 
-.preview-profile-card,
-.preview-menu-card,
-.preview-counter-card {
-  width: 300px;
+.preview-card {
+  width: min(340px, 100%);
   text-align: center;
   background: #07111D;
   color: white;
   border: 2px solid var(--green);
-  border-radius: 18px;
-  padding: 24px;
-  box-shadow: 0 0 30px rgba(57, 255, 90, 0.22);
+  border-radius: 22px;
+  padding: 26px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.35);
 }
 
-.preview-profile-card img {
+.preview-card h2 {
+  color: var(--green);
+  margin: 12px 0 8px;
+  font-size: 24px;
+}
+
+.preview-card p {
+  color: rgba(255,255,255,0.78);
+  font-size: 14px;
+}
+
+.preview-card img {
   width: 105px;
   height: 105px;
   border-radius: 50%;
   border: 2px solid var(--green);
   background: #02060B;
-}
-
-.preview-profile-card h2,
-.preview-menu-card h2,
-.preview-counter-card h2 {
-  color: var(--green);
-  margin: 12px 0 8px;
-  font-size: 22px;
-}
-
-.preview-profile-card p,
-.preview-menu-card p,
-.preview-counter-card p {
-  color: rgba(255,255,255,0.78);
-  font-size: 14px;
 }
 
 .preview-btn {
@@ -263,7 +247,9 @@ textarea:focus {
   margin-top: 8px;
 }
 
-.menu-item {
+.menu-item,
+.todo-item,
+.weather-row {
   display: flex;
   justify-content: space-between;
   border-bottom: 1px solid rgba(57,255,90,0.25);
@@ -271,33 +257,46 @@ textarea:focus {
   font-size: 14px;
 }
 
-.menu-item strong {
+.menu-item strong,
+.weather-row strong {
   color: var(--yellow);
 }
 
 .counter-number {
   color: var(--yellow);
-  font-size: 38px;
+  font-size: 42px;
   font-weight: bold;
+}
+
+.todo-input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(57,255,90,0.3);
+  background: #02060B;
+  color: white;
+  margin: 8px 0;
 }
 
 .guidance-grid {
   display: grid;
   grid-template-columns: 1.1fr 1fr 1fr;
-  gap: 8px;
+  gap: 10px;
 }
 
 .guide-card {
   background: var(--panel2);
-  border: 1px solid var(--line);
-  padding: 8px;
-  min-height: 92px;
+  border: 1px solid var(--soft-line);
+  border-radius: 18px;
+  padding: 14px;
+  min-height: 110px;
 }
 
 .guide-card p,
 .requirements-list li {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
+  line-height: 1.6;
   margin: 0;
 }
 
@@ -307,7 +306,7 @@ textarea:focus {
 }
 
 .requirements-list li {
-  margin-bottom: 4px;
+  margin-bottom: 5px;
 }
 
 .correct {
@@ -324,24 +323,30 @@ textarea:focus {
 
 .buttons {
   display: flex;
-  gap: 7px;
+  gap: 8px;
   flex-wrap: wrap;
-  margin-top: 8px;
+  margin-top: 12px;
 }
 
-button {
-  border: 1px solid var(--green);
+button,
+.nav-btn {
+  border: 1px solid rgba(57,255,90,0.35);
   background: transparent;
   color: var(--green);
-  padding: 8px 11px;
+  border-radius: 14px;
+  padding: 10px 14px;
   cursor: pointer;
   font-family: "IBM Plex Mono", monospace;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
+  text-decoration: none;
+  transition: 0.18s ease;
 }
 
-button:hover {
-  background: rgba(57, 255, 90, 0.1);
+button:hover,
+.nav-btn:hover {
+  background: var(--green);
+  color: var(--bg);
 }
 
 button.primary {
@@ -349,9 +354,20 @@ button.primary {
   color: var(--bg);
 }
 
-button.danger {
+button.danger,
+.nav-btn.danger {
   color: var(--red);
-  border-color: var(--red);
+  border-color: rgba(255,59,59,0.5);
+}
+
+button.danger:hover,
+.nav-btn.danger:hover {
+  background: var(--red);
+  color: var(--bg);
+}
+
+.hidden {
+  display: none;
 }
 
 .xp-pop {
@@ -359,7 +375,7 @@ button.danger {
   left: 50%;
   top: 58%;
   color: var(--green);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   pointer-events: none;
   animation: xpFloat 1s ease-out forwards;
@@ -384,15 +400,27 @@ button.danger {
 
 @keyframes successFlash {
   0% { background-color: var(--bg); }
-  50% { background-color: rgba(57, 255, 90, 0.12); }
+  50% { background-color: rgba(57,255,90,0.12); }
   100% { background-color: var(--bg); }
 }
 
-@media (max-width: 950px) {
-  .project-grid,
-  .workspace,
-  .guidance-grid,
-  .page-header-grid {
+@media (max-width: 1050px) {
+  .project-dashboard {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .main-grid,
+  .guidance-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  body {
+    padding: 14px;
+  }
+
+  .project-dashboard {
     grid-template-columns: 1fr;
   }
 
@@ -403,97 +431,48 @@ button.danger {
 </style>
 </head>
 
-<body>
+<body class="theme-projects">
+
+<audio id="bg-music" autoplay loop>
+  <source src="sounds/background-music.mp3" type="audio/mpeg">
+</audio>
 
 <main class="lab">
 
-  <section id="project-home" class="project-home">
+  <section class="header">
+    <div class="kicker pixel">BYTE RUSH / PROJECT LAB</div>
+    <h1 class="pixel">Project Lab</h1>
+    <p class="desc">
+      Choose a project, follow the guided steps, edit the code, run the preview, and earn XP when your build meets the requirements.
+    </p>
 
-    <section class="topbar">
-      <h1 class="pixel">Project Lab</h1>
-      <p class="desc">Choose one project. Build it. Check it. Earn XP. Each project opens like its own page.</p>
-
-      <div class="buttons">
-        <button class="danger" type="button" onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="panel-title">CHOOSE A PROJECT</div>
-
-      <div class="project-grid">
-
-        <div class="project-card">
-          <div>
-            <div class="project-type">HTML + CSS</div>
-            <h2>Profile Card</h2>
-            <p>Build a personal profile card with a name, image, bio, and follow button.</p>
-
-            <div class="project-mini-preview">
-              <div class="mini-card"></div>
-            </div>
-          </div>
-
-          <button class="primary" type="button" onclick="openProject('profile')">Start Project</button>
-        </div>
-
-        <div class="project-card">
-          <div>
-            <div class="project-type">HTML + CSS</div>
-            <h2>Mini Menu</h2>
-            <p>Create a simple restaurant menu with items, prices, and clean styling.</p>
-
-            <div class="project-mini-preview">
-              <div class="mini-menu">
-                <div class="mini-line"></div>
-                <div class="mini-line"></div>
-                <div class="mini-line"></div>
-              </div>
-            </div>
-          </div>
-
-          <button class="primary" type="button" onclick="openProject('menu')">Start Project</button>
-        </div>
-
-        <div class="project-card">
-          <div>
-            <div class="project-type">HTML + CSS + JS</div>
-            <h2>Click Counter</h2>
-            <p>Build a button that counts clicks using JavaScript.</p>
-
-            <div class="project-mini-preview">
-              <div class="mini-counter">0</div>
-            </div>
-          </div>
-
-          <button class="primary" type="button" onclick="openProject('counter')">Start Project</button>
-        </div>
-
-      </div>
-    </section>
-
+    <div class="buttons">
+      <a href="dashboard.html" class="nav-btn danger">← Back to Dashboard</a>
+    </div>
   </section>
 
-  <section id="project-page" class="project-page">
+  <section id="project-dashboard" class="panel">
+    <div class="panel-title">CHOOSE A PROJECT</div>
 
-    <section class="topbar">
-      <div class="page-header-grid">
-        <div>
-          <h1 class="pixel" id="project-title">Project Title</h1>
-          <p class="desc" id="project-subtitle">Project instructions loading...</p>
-        </div>
+    <div class="project-dashboard" id="project-list"></div>
+  </section>
 
-        <div class="buttons">
-          <button type="button" onclick="goBackToProjects()">Back to Projects</button>
-          <button class="danger" type="button" onclick="window.location.href='dashboard.html'">Dashboard</button>
-        </div>
+  <section id="project-workspace" class="hidden">
+
+    <section class="panel">
+      <div class="panel-title" id="workspace-title">PROJECT</div>
+      <p class="desc" id="workspace-desc">Project details appear here.</p>
+
+      <div class="buttons">
+        <button type="button" onclick="showDashboard()">← Choose Another Project</button>
+        <button class="danger" type="button" onclick="window.location.href='dashboard.html'">Exit</button>
       </div>
     </section>
 
-    <section class="workspace">
+    <section class="main-grid">
 
       <div class="panel">
-        <div class="panel-title">CODE EDITOR</div>
+        <div class="panel-title">CODE BUILDERS</div>
 
         <div class="editor-stack">
           <div class="editor-box">
@@ -521,7 +500,7 @@ button.danger {
       </div>
 
       <div class="panel">
-        <div class="panel-title">LIVE PREVIEW</div>
+        <div class="panel-title">LIVE PROJECT PREVIEW</div>
 
         <div class="preview-wrap">
           <div class="preview-stage" id="preview-stage"></div>
@@ -531,12 +510,12 @@ button.danger {
     </section>
 
     <section class="panel">
-      <div class="panel-title">GOAL / REQUIREMENTS / RESULT</div>
+      <div class="panel-title">GUIDANCE / REQUIREMENTS / RESULT</div>
 
       <div class="guidance-grid">
         <div class="guide-card">
           <div class="label">PROJECT GOAL</div>
-          <p id="goal-text">Project goal loading...</p>
+          <p id="goal-text">Choose a project to begin.</p>
         </div>
 
         <div class="guide-card">
@@ -545,8 +524,8 @@ button.danger {
         </div>
 
         <div class="guide-card">
-          <div class="label">NEXT STEP</div>
-          <p id="step-text">Next step loading...</p>
+          <div class="label">NEXT GUIDED STEP</div>
+          <p id="step-text">Choose a project first.</p>
           <p id="result-text" style="margin-top:8px;">Run and check your project when ready.</p>
         </div>
       </div>
@@ -556,37 +535,38 @@ button.danger {
 
 </main>
 
-<audio id="success-sound" src="./sounds/success.mp3" preload="auto"></audio>
-<audio id="error-sound" src="./sounds/error.mp3" preload="auto"></audio>
+<audio id="success-sound" src="sounds/success.mp3" preload="auto"></audio>
+<audio id="error-sound" src="sounds/error.mp3" preload="auto"></audio>
 
 <script>
-const projectHome = document.getElementById("project-home");
-const projectPage = document.getElementById("project-page");
-
-const projectTitle = document.getElementById("project-title");
-const projectSubtitle = document.getElementById("project-subtitle");
-
 const htmlCode = document.getElementById("html-code");
 const cssCode = document.getElementById("css-code");
 const jsCode = document.getElementById("js-code");
 const previewStage = document.getElementById("preview-stage");
 
+const projectDashboard = document.getElementById("project-dashboard");
+const projectWorkspace = document.getElementById("project-workspace");
+const projectList = document.getElementById("project-list");
+
+const workspaceTitle = document.getElementById("workspace-title");
+const workspaceDesc = document.getElementById("workspace-desc");
 const goalText = document.getElementById("goal-text");
 const stepText = document.getElementById("step-text");
 const resultText = document.getElementById("result-text");
 const requirementsList = document.getElementById("requirements-list");
 
-let currentProject = "";
+let currentProject = null;
 let counterValue = 0;
 let completedProjects = JSON.parse(localStorage.getItem("completed-projects")) || {};
 
 const projects = {
   profile: {
-    title: "Profile Card Project",
-    subtitle: "Build a clean profile card using HTML, CSS, and a small JavaScript interaction.",
-    goal: "Build a personal profile card with your name, image, short bio, and a follow button.",
+    title: "Profile Card",
+    type: "HTML + CSS + JS",
+    short: "Build a personal profile card with a button interaction.",
+    goal: "Build a cool personal profile card with your name, short bio, image, and follow button.",
     step: "Start by changing the name inside the <h1> tag.",
-    hint: "Your HTML needs <h1>, <p>, <img>, and <button>. Your CSS needs .card with border and padding.",
+    hint: "Make sure your HTML has <h1>, <p>, <img>, and <button>. Then use CSS to style the card.",
     xp: 25,
     requirements: [
       "Has a heading",
@@ -622,18 +602,19 @@ button.addEventListener("click", function () {
         h.includes("<h1>") && h.includes("</h1>"),
         h.includes("<p>") && h.includes("</p>"),
         h.includes("<img") && h.includes("alt="),
-        h.includes("<button>") && h.includes("</button>"),
+        h.includes("<button") && h.includes("</button>"),
         c.includes(".card") && c.includes("border") && c.includes("padding")
       ];
     }
   },
 
   menu: {
-    title: "Mini Menu Project",
-    subtitle: "Build a restaurant menu with items, prices, and a polished menu-board look.",
-    goal: "Build a mini restaurant menu with a title, at least three items, prices, and styling.",
-    step: "Start by changing the restaurant name inside the <h1> tag.",
-    hint: "Use at least 3 elements with class='item'. Each should include a food name and price.",
+    title: "Mini Menu",
+    type: "HTML + CSS",
+    short: "Create a stylish restaurant menu with items and prices.",
+    goal: "Build a mini restaurant menu with a title, menu items, prices, and stylish sections.",
+    step: "Start by changing the restaurant name in the <h1> tag.",
+    hint: "Use at least 3 menu items. Each item should have a food name and a price.",
     xp: 25,
     requirements: [
       "Has a restaurant title",
@@ -674,13 +655,7 @@ button.addEventListener("click", function () {
   justify-content: space-between;
 }`,
     js:
-`const items = document.querySelectorAll(".item");
-
-items.forEach(function(item) {
-  item.addEventListener("click", function() {
-    item.style.color = "#39FF5A";
-  });
-});`,
+``,
     check: function (html, css, js) {
       const h = normalize(html);
       const c = normalize(css);
@@ -697,18 +672,19 @@ items.forEach(function(item) {
   },
 
   counter: {
-    title: "Click Counter Project",
-    subtitle: "Build an interactive counter using HTML, CSS, and JavaScript.",
+    title: "Click Counter",
+    type: "HTML + CSS + JS",
+    short: "Build an interactive counter using JavaScript.",
     goal: "Build a click counter that increases when the player presses a button.",
     step: "Start by finding the number inside the <span> tag.",
-    hint: "Your JavaScript needs a count variable, addEventListener, and code that updates the number.",
+    hint: "Your JavaScript needs a variable, a button click event, and code that updates the number.",
     xp: 35,
     requirements: [
       "Has a counter number",
       "Has a button",
       "Uses addEventListener",
       "Updates the number",
-      "Has counter-card styling"
+      "Has cool styling"
     ],
     html:
 `<div class="counter-card">
@@ -745,11 +721,173 @@ button.addEventListener("click", function () {
         c.includes(".counter-card") && c.includes("border")
       ];
     }
+  },
+
+  todo: {
+    title: "Mini To-Do App",
+    type: "HTML + CSS + JS",
+    short: "Make a simple task list interface.",
+    goal: "Build a mini to-do app with an input, button, and task list.",
+    step: "Start by changing the app title inside the <h1> tag.",
+    hint: "Your HTML needs an input, a button, and a list. Your JS should add a new task.",
+    xp: 40,
+    requirements: [
+      "Has an input",
+      "Has an add button",
+      "Has a task list",
+      "Uses addEventListener",
+      "Adds a new task"
+    ],
+    html:
+`<div class="todo-card">
+  <h1>Mission Tasks</h1>
+  <input id="task-input" placeholder="Add a task">
+  <button id="add-task">Add Task</button>
+  <ul id="task-list">
+    <li>Finish HTML mission</li>
+  </ul>
+</div>`,
+    css:
+`.todo-card {
+  border: 2px solid #39FF5A;
+  padding: 24px;
+  border-radius: 18px;
+}`,
+    js:
+`const input = document.getElementById("task-input");
+const button = document.getElementById("add-task");
+const list = document.getElementById("task-list");
+
+button.addEventListener("click", function () {
+  const item = document.createElement("li");
+  item.innerText = input.value;
+  list.appendChild(item);
+});`,
+    check: function (html, css, js) {
+      const h = normalize(html);
+      const j = normalize(js);
+
+      return [
+        h.includes("<input") && h.includes("id=\"task-input\""),
+        h.includes("<button") && h.includes("add-task"),
+        h.includes("<ul") || h.includes("<ol"),
+        j.includes("addeventlistener"),
+        j.includes("appendchild") || j.includes("createelement")
+      ];
+    }
+  },
+
+  weather: {
+    title: "Weather Card",
+    type: "HTML + CSS",
+    short: "Design a clean weather information card.",
+    goal: "Build a weather card with city name, temperature, condition, and details.",
+    step: "Start by changing the city name inside the <h1> tag.",
+    hint: "Use headings, paragraphs, and detail rows. Style the card with border, padding, and rounded corners.",
+    xp: 30,
+    requirements: [
+      "Has a city heading",
+      "Has temperature text",
+      "Has weather condition",
+      "Has at least 2 detail rows",
+      "Has weather card styling"
+    ],
+    html:
+`<div class="weather-card">
+  <h1>Cotonou</h1>
+  <h2>29°C</h2>
+  <p>Partly Cloudy</p>
+
+  <div class="weather-row">
+    <span>Humidity</span>
+    <strong>72%</strong>
+  </div>
+
+  <div class="weather-row">
+    <span>Wind</span>
+    <strong>12 km/h</strong>
+  </div>
+</div>`,
+    css:
+`.weather-card {
+  border: 2px solid #39FF5A;
+  padding: 24px;
+  border-radius: 18px;
+}
+
+.weather-row {
+  display: flex;
+  justify-content: space-between;
+}`,
+    js:
+``,
+    check: function (html, css, js) {
+      const h = normalize(html);
+      const c = normalize(css);
+      const rowCount = (h.match(/class="weather-row"/g) || []).length;
+
+      return [
+        h.includes("<h1>") && h.includes("</h1>"),
+        h.includes("°") || h.includes("temperature"),
+        h.includes("<p>") && h.includes("</p>"),
+        rowCount >= 2,
+        c.includes(".weather-card") && c.includes("border") && c.includes("padding")
+      ];
+    }
   }
 };
 
 function normalize(text) {
   return text.replace(/\s+/g, "").toLowerCase();
+}
+
+function escapeHTML(text) {
+  return text
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
+}
+
+function getTextBetween(html, startTag, endTag, fallback) {
+  const lower = html.toLowerCase();
+  const start = lower.indexOf(startTag.toLowerCase());
+  const end = lower.indexOf(endTag.toLowerCase());
+
+  if (start === -1 || end === -1 || end <= start) return fallback;
+
+  return html.substring(start + startTag.length, end).trim() || fallback;
+}
+
+function buildDashboard() {
+  projectList.innerHTML = "";
+
+  Object.keys(projects).forEach(function(key) {
+    const project = projects[key];
+    const completed = completedProjects[key];
+
+    const card = document.createElement("div");
+    card.className = "project-card";
+    card.onclick = function() {
+      openProject(key);
+    };
+
+    card.innerHTML = `
+      <div>
+        <div class="project-type">${project.type}</div>
+        <h2>${project.title}</h2>
+        <p>${project.short}</p>
+      </div>
+      <div class="project-badge">${completed ? "COMPLETED" : "+" + project.xp + " XP"}</div>
+    `;
+
+    projectList.appendChild(card);
+  });
+}
+
+function showDashboard() {
+  projectWorkspace.classList.add("hidden");
+  projectDashboard.classList.remove("hidden");
+  buildDashboard();
 }
 
 function openProject(projectName) {
@@ -758,27 +896,23 @@ function openProject(projectName) {
 
   const project = projects[projectName];
 
-  projectHome.style.display = "none";
-  projectPage.style.display = "block";
+  projectDashboard.classList.add("hidden");
+  projectWorkspace.classList.remove("hidden");
 
-  projectTitle.innerText = project.title;
-  projectSubtitle.innerText = project.subtitle;
-  goalText.innerText = project.goal;
-  stepText.innerText = project.step;
-  resultText.innerText = "Run and check your project when ready.";
-  resultText.className = "";
+  workspaceTitle.innerText = project.title;
+  workspaceDesc.innerText = project.short;
 
   htmlCode.value = project.html;
   cssCode.value = project.css;
   jsCode.value = project.js;
 
+  goalText.innerText = project.goal;
+  stepText.innerText = project.step;
+  resultText.innerText = "Run and check your project when ready.";
+  resultText.className = "";
+
   renderRequirements(project.requirements, []);
   runProject();
-}
-
-function goBackToProjects() {
-  projectPage.style.display = "none";
-  projectHome.style.display = "block";
 }
 
 function renderRequirements(requirements, checks) {
@@ -798,9 +932,13 @@ function renderRequirements(requirements, checks) {
 }
 
 function runProject() {
+  if (!currentProject) return;
+
   if (currentProject === "profile") renderProfilePreview();
   if (currentProject === "menu") renderMenuPreview();
   if (currentProject === "counter") renderCounterPreview();
+  if (currentProject === "todo") renderTodoPreview();
+  if (currentProject === "weather") renderWeatherPreview();
 }
 
 function renderProfilePreview() {
@@ -809,7 +947,7 @@ function renderProfilePreview() {
   const bio = getTextBetween(html, "<p>", "</p>", "I am learning to build websites with ByteRush.");
 
   previewStage.innerHTML = `
-    <div class="preview-profile-card">
+    <div class="preview-card">
       <img src="https://via.placeholder.com/120/07111D/39FF5A?text=BR" alt="Profile picture">
       <h2>${escapeHTML(name)}</h2>
       <p>${escapeHTML(bio)}</p>
@@ -837,17 +975,8 @@ function renderMenuPreview() {
     `;
   });
 
-  if (itemsHTML === "") {
-    itemsHTML = `
-      <div class="menu-item">
-        <span>Menu Item</span>
-        <strong>$0</strong>
-      </div>
-    `;
-  }
-
   previewStage.innerHTML = `
-    <div class="preview-menu-card">
+    <div class="preview-card">
       <h2>${escapeHTML(title)}</h2>
       <p>Fresh meals for hungry builders</p>
       ${itemsHTML}
@@ -857,7 +986,7 @@ function renderMenuPreview() {
 
 function renderCounterPreview() {
   previewStage.innerHTML = `
-    <div class="preview-counter-card">
+    <div class="preview-card">
       <h2>Click Counter</h2>
       <p>You clicked</p>
       <div class="counter-number" id="preview-count">${counterValue}</div>
@@ -876,7 +1005,62 @@ function increasePreviewCounter() {
   }
 }
 
+function renderTodoPreview() {
+  const html = htmlCode.value;
+  const title = getTextBetween(html, "<h1>", "</h1>", "Mission Tasks");
+
+  previewStage.innerHTML = `
+    <div class="preview-card">
+      <h2>${escapeHTML(title)}</h2>
+      <input class="todo-input" placeholder="Add a task">
+      <button class="preview-btn" onclick="addPreviewTask()">Add Task</button>
+      <div id="preview-task-list">
+        <div class="todo-item"><span>Finish HTML mission</span><strong>✓</strong></div>
+      </div>
+    </div>
+  `;
+}
+
+function addPreviewTask() {
+  const list = document.getElementById("preview-task-list");
+
+  if (!list) return;
+
+  const item = document.createElement("div");
+  item.className = "todo-item";
+  item.innerHTML = "<span>New Task</span><strong>✓</strong>";
+
+  list.appendChild(item);
+}
+
+function renderWeatherPreview() {
+  const html = htmlCode.value;
+  const city = getTextBetween(html, "<h1>", "</h1>", "Cotonou");
+  const temp = getTextBetween(html, "<h2>", "</h2>", "29°C");
+  const condition = getTextBetween(html, "<p>", "</p>", "Partly Cloudy");
+
+  previewStage.innerHTML = `
+    <div class="preview-card">
+      <h2>${escapeHTML(city)}</h2>
+      <div class="counter-number">${escapeHTML(temp)}</div>
+      <p>${escapeHTML(condition)}</p>
+
+      <div class="weather-row">
+        <span>Humidity</span>
+        <strong>72%</strong>
+      </div>
+
+      <div class="weather-row">
+        <span>Wind</span>
+        <strong>12 km/h</strong>
+      </div>
+    </div>
+  `;
+}
+
 function checkProject() {
+  if (!currentProject) return;
+
   runProject();
 
   const project = projects[currentProject];
@@ -890,7 +1074,6 @@ function checkProject() {
       resultText.innerText = "Project complete! +" + project.xp + " XP earned.";
       addXP(project.xp);
       showXPPop(project.xp);
-
       completedProjects[currentProject] = true;
       localStorage.setItem("completed-projects", JSON.stringify(completedProjects));
     } else {
@@ -922,23 +1105,6 @@ function showHint() {
 function resetCurrentProject() {
   if (!currentProject) return;
   openProject(currentProject);
-}
-
-function getTextBetween(html, startTag, endTag, fallback) {
-  const lower = html.toLowerCase();
-  const start = lower.indexOf(startTag.toLowerCase());
-  const end = lower.indexOf(endTag.toLowerCase());
-
-  if (start === -1 || end === -1 || end <= start) return fallback;
-
-  return html.substring(start + startTag.length, end).trim() || fallback;
-}
-
-function escapeHTML(text) {
-  return text
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;");
 }
 
 function addXP(points) {
@@ -974,7 +1140,11 @@ function playSound(id) {
 htmlCode.addEventListener("input", runProject);
 cssCode.addEventListener("input", runProject);
 jsCode.addEventListener("input", runProject);
+
+buildDashboard();
 </script>
+
+<script src="audio.js"></script>
 
 </body>
 </html>

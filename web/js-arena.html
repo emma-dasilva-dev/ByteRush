@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>JavaScript Reactor | ByteRush</title>
+<title>JavaScript Core | ByteRush</title>
 
 <link rel="stylesheet" href="arcade-theme.css">
 
@@ -20,7 +20,6 @@
   --muted: rgba(230, 255, 233, 0.68);
   --line: rgba(57, 255, 90, 0.28);
   --yellow: #FACC15;
-  --blue: #74D7FF;
 }
 
 * {
@@ -229,34 +228,23 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* =========================
-   LIVE PREVIEW
-========================= */
-
 .browser-frame {
   flex: 1;
   min-height: 260px;
   background: #02060B;
-  border: 1px solid rgba(57,255,90,0.18);
+  border: 1px solid var(--line);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 }
 
 .browser-top {
-  height: 32px;
-  border-bottom: 1px solid rgba(57,255,90,0.12);
+  height: 30px;
+  border-bottom: 1px solid var(--line);
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 0 10px;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.02),
-      rgba(255,255,255,0.01)
-    );
-  color: rgba(230,255,233,0.55);
+  padding: 0 9px;
+  color: var(--muted);
   font-size: 10px;
 }
 
@@ -264,150 +252,61 @@ button:disabled {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  opacity: 0.85;
+  background: var(--green);
+  opacity: 0.8;
 }
 
 .dot.red {
-  background: #FF3B3B;
+  background: var(--red);
 }
 
 .dot.yellow {
-  background: #FACC15;
-}
-
-.dot.green {
-  background: #39FF5A;
+  background: var(--yellow);
 }
 
 .preview-wrap {
   flex: 1;
-  padding: 10px;
+  padding: 8px;
   min-height: 0;
 }
 
-.preview-page {
+.preview-box {
   width: 100%;
   height: 100%;
-  min-height: 240px;
+  min-height: 235px;
   overflow: auto;
-  background:
-    radial-gradient(
-      circle at top right,
-      rgba(57,255,90,0.035),
-      transparent 30%
-    ),
-    radial-gradient(
-      circle at bottom left,
-      rgba(116,215,255,0.035),
-      transparent 30%
-    ),
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.015),
-      rgba(255,255,255,0.005)
-    ),
-    #02060B;
-  color: #E6FFE9;
-  border: 1px solid rgba(57,255,90,0.14);
-  padding: 22px;
-  font-family: Arial, sans-serif;
+  background: #02060B;
+  border: 1px solid rgba(57,255,90,0.16);
+  padding: 18px;
+  color: var(--text);
 }
 
-.preview-inner {
-  max-width: 470px;
-  margin: 0 auto;
+.mock-card {
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  padding: 18px;
+  min-height: 160px;
 }
 
-.preview-title {
-  margin: 0 0 10px;
-  color: #E6FFE9;
-  font-size: 26px;
-  line-height: 1.15;
-  font-weight: 700;
-  font-family: Arial, sans-serif;
+.mock-card h3 {
+  color: var(--green);
+  font-size: 12px;
+  margin: 0 0 14px;
+  font-family: "Press Start 2P", monospace;
 }
 
-.preview-subtitle {
-  margin: 0 0 18px;
-  color: rgba(230,255,233,0.72);
+.mock-card p {
+  color: var(--text);
   font-size: 15px;
+  margin: 0 0 12px;
   line-height: 1.5;
 }
 
-.preview-card {
-  width: 100%;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.025),
-      rgba(255,255,255,0.01)
-    ),
-    #07111D;
-  color: #E6FFE9;
-  padding: 18px;
-  border: 1px solid rgba(57,255,90,0.16);
-  border-radius: 14px;
-  margin-bottom: 16px;
-}
-
-.preview-card h2,
-.preview-card h3 {
-  margin: 0 0 8px;
-  color: #E6FFE9;
-  font-size: 18px;
-  line-height: 1.2;
-  font-family: Arial, sans-serif;
-}
-
-.preview-card p {
-  margin: 0 0 10px;
-  color: rgba(230,255,233,0.7);
-  font-size: 15px;
-  line-height: 1.45;
-}
-
-.output-box {
-  min-height: 42px;
-  border: 1px solid rgba(57,255,90,0.15);
-  background: rgba(57,255,90,0.045);
-  color: #E6FFE9;
-  border-radius: 12px;
-  padding: 11px 12px;
-  font-size: 14px;
-  line-height: 1.45;
-}
-
 .preview-action {
-  display: inline-block;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(57,255,90,0.16),
-      rgba(57,255,90,0.08)
-    );
-  color: #E6FFE9;
-  border: 1px solid rgba(57,255,90,0.18);
-  border-radius: 10px;
-  padding: 11px 15px;
-  font-weight: 700;
+  margin-top: 12px;
+  font-family: "IBM Plex Mono", monospace;
   font-size: 14px;
-  margin-top: 4px;
-}
-
-.counter-number {
-  color: var(--blue);
-  font-size: 24px;
-  font-weight: 800;
-}
-
-.focus-note {
-  margin-top: 16px;
-  border: 1px dashed rgba(57,255,90,0.18);
-  background: rgba(57,255,90,0.04);
-  color: rgba(230,255,233,0.74);
-  padding: 11px 12px;
-  font-size: 13px;
-  line-height: 1.45;
+  padding: 10px 14px;
 }
 
 .feedback-console {
@@ -462,9 +361,9 @@ button:disabled {
 }
 
 @keyframes previewGlow {
-  0% { border-color: rgba(57,255,90,0.18); }
+  0% { border-color: var(--line); }
   50% { border-color: var(--green); }
-  100% { border-color: rgba(57,255,90,0.18); }
+  100% { border-color: var(--line); }
 }
 
 .error-shake {
@@ -617,11 +516,8 @@ button:disabled {
   }
 
   textarea,
-  .browser-frame {
-    min-height: 260px;
-  }
-
-  .preview-page {
+  .browser-frame,
+  .preview-box {
     min-height: 260px;
   }
 }
@@ -629,13 +525,13 @@ button:disabled {
 </head>
 
 <body class="theme-js">
-
+  
 <main class="arena">
 
   <section class="top-command">
     <div>
-      <h1 class="pixel">JavaScript Reactor</h1>
-      <p class="desc">Restore the power core of the web through guided interaction missions.</p>
+      <h1 class="pixel">JavaScript Core</h1>
+      <p class="desc">Restore interactivity and make the ByteRush world respond to code.</p>
     </div>
 
     <div class="stats">
@@ -710,16 +606,12 @@ button:disabled {
         <div class="browser-top">
           <span class="dot red"></span>
           <span class="dot yellow"></span>
-          <span class="dot green"></span>
-          <span>reactor-preview.js</span>
+          <span class="dot"></span>
+          <span>interaction-preview.js</span>
         </div>
 
         <div class="preview-wrap">
-          <div class="preview-page" id="preview-page">
-            <div class="preview-inner" id="preview-content">
-              Preview loading...
-            </div>
-          </div>
+          <div id="preview-box" class="preview-box"></div>
         </div>
       </div>
     </section>
@@ -807,6 +699,13 @@ button:disabled {
 <audio id="game-lose-sound" src="./sounds/game-lose-sound.mp3" preload="auto"></audio>
 
 <script>
+const cssLevel = parseInt(localStorage.getItem("css-level")) || 1;
+
+if (cssLevel < 8) {
+  alert("JavaScript Core is locked. Finish CSS Boss Mode first!");
+  window.location.href = "dashboard.html";
+}
+
 let level = parseInt(localStorage.getItem("js-level")) || 1;
 let attempts = 0;
 let lives = 3;
@@ -816,15 +715,15 @@ let shouldShowStartPopup = true;
 
 const missions = {
   1: {
-    title: "Mission 1: Variable Core",
+    title: "Mission 1: Variables",
     skill: "JavaScript Variables",
     starter: 'let name = "";\n\nshowOutput(name);',
     success: "Variable core restored.",
     bytebot: 'Create a variable named <span class="highlight">name</span> and set it to <span class="highlight">"ByteRush"</span>.',
-    why: "Variables store information so a webpage can remember and reuse values.",
-    rule: 'Set name equal to "ByteRush", then show the output.',
-    learned: 'You learned that let creates a variable and stores a value.',
-    hint1: 'A variable stores information. Set name equal to "ByteRush".',
+    why: "Variables store information so programs can remember and reuse values.",
+    rule: 'Use let name = "ByteRush"; and show the output.',
+    learned: "You learned that variables store information in JavaScript.",
+    hint1: 'Set name equal to "ByteRush".',
     hint2: 'Final answer should look like: let name = "ByteRush";',
     preview: "variables",
     reward: 10,
@@ -834,14 +733,14 @@ const missions = {
   },
 
   2: {
-    title: "Mission 2: Function Module",
+    title: "Mission 2: Functions",
     skill: "JavaScript Functions",
     starter: 'function greet() {\n  return "";\n}\n\nshowOutput(greet());',
     success: "Function module online.",
     bytebot: 'Create a function named <span class="highlight">greet()</span> that returns <span class="highlight">"Welcome Builder"</span>.',
-    why: "Functions let you save actions and run them whenever your webpage needs them.",
-    rule: 'Make greet() return "Welcome Builder".',
-    learned: "You learned that functions group reusable actions.",
+    why: "Functions help you reuse actions instead of writing the same code again and again.",
+    rule: 'Use function greet() and return "Welcome Builder".',
+    learned: "You learned that functions group code into reusable actions.",
     hint1: 'Use return inside the function.',
     hint2: 'Final answer should return "Welcome Builder".',
     preview: "functions",
@@ -852,14 +751,14 @@ const missions = {
   },
 
   3: {
-    title: "Mission 3: Click Event",
+    title: "Mission 3: Click Events",
     skill: "JavaScript Events",
     starter: 'button.onclick = function() {\n  message.innerText = "Button activated!";\n};',
     success: "Click event connected.",
     bytebot: 'Make the button react when clicked by changing the message to <span class="highlight">"Button activated!"</span>.',
-    why: "Events allow users to interact with webpages through clicks, typing, movement, and actions.",
+    why: "Events make websites respond when users click, type, move, or choose something.",
     rule: 'Use button.onclick and set message.innerText to "Button activated!".',
-    learned: "You learned that click events make buttons respond to users.",
+    learned: "You learned that click events make pages respond to user actions.",
     hint1: 'Use button.onclick to create the click event.',
     hint2: 'Inside the function, set message.innerText to "Button activated!".',
     preview: "click",
@@ -870,14 +769,14 @@ const missions = {
   },
 
   4: {
-    title: "Mission 4: Condition Gate",
+    title: "Mission 4: Conditions",
     skill: "JavaScript Conditions",
     starter: 'let power = 75;\n\nif (power > 50) {\n  showOutput("Power level stable");\n}',
     success: "Condition system restored.",
     bytebot: 'Use an if statement to check if <span class="highlight">power</span> is greater than <span class="highlight">50</span>.',
-    why: "Conditions help webpages make decisions based on what is true or false.",
+    why: "Conditions help programs make decisions.",
     rule: 'Use if (power > 50) and show "Power level stable".',
-    learned: "You learned that if statements let code make decisions.",
+    learned: "You learned that conditions let programs choose what happens next.",
     hint1: 'Use if (power > 50).',
     hint2: 'If true, show this exact message: "Power level stable".',
     preview: "conditions",
@@ -888,16 +787,16 @@ const missions = {
   },
 
   5: {
-    title: "Mission 5: Loop Engine",
+    title: "Mission 5: Loops",
     skill: "JavaScript Loops",
     starter: 'for (let i = 1; i <= 5; i++) {\n  showOutput(i);\n}',
     success: "Loop engine activated.",
     bytebot: 'Use a loop to count from <span class="highlight">1</span> to <span class="highlight">5</span>.',
-    why: "Loops repeat actions without forcing you to write the same code again and again.",
+    why: "Loops repeat actions automatically so programs can do more with less code.",
     rule: "Use a for loop that starts at 1 and runs while i <= 5.",
-    learned: "You learned that loops repeat code automatically.",
-    hint1: "Use a for loop.",
-    hint2: "Your loop should start at 1 and run while i <= 5.",
+    learned: "You learned that loops repeat code multiple times.",
+    hint1: 'Use a for loop.',
+    hint2: 'Your loop should start at 1 and run while i <= 5.',
     preview: "loops",
     reward: 10,
     check: function(code) {
@@ -912,9 +811,9 @@ const missions = {
     success: "DOM control restored.",
     bytebot: 'Change the page title text to <span class="highlight">"DOM Updated"</span> using JavaScript.',
     why: "The DOM lets JavaScript change what users see on the page.",
-    rule: 'Set title.innerText to "DOM Updated".',
-    learned: "You learned that JavaScript can change page content through the DOM.",
-    hint1: "Use title.innerText.",
+    rule: 'Use title.innerText = "DOM Updated";',
+    learned: "You learned that JavaScript can update webpage content.",
+    hint1: 'Use title.innerText.',
     hint2: 'Set title.innerText to "DOM Updated".',
     preview: "dom",
     reward: 10,
@@ -925,16 +824,16 @@ const missions = {
 
   7: {
     title: "Boss Mode: Counter App",
-    skill: "Interactive App Logic",
+    skill: "JavaScript App Logic",
     starter: 'let count = 0;\n\nbutton.onclick = function() {\n  count++;\n  counter.innerText = count;\n};',
     boss: true,
-    success: "Boss cleared. JavaScript Reactor complete.",
+    success: "Boss cleared. JavaScript Core complete.",
     bytebot: 'Final JavaScript test. Build a counter that increases when the button is clicked.',
-    why: "Interactive apps combine variables, events, and DOM updates into one working system.",
-    rule: "Create a count variable, increase it with count++, and update counter.innerText.",
-    learned: "You learned how variables, click events, and DOM updates work together.",
-    hint1: "Create a count variable and increase it with count++.",
-    hint2: "Update counter.innerText after the button is clicked.",
+    why: "Small apps are built by combining variables, events, and DOM updates.",
+    rule: "Create count, increase it with count++, and update counter.innerText.",
+    learned: "You learned how to combine variables, events, and DOM changes into a working counter.",
+    hint1: 'Create a count variable and increase it with count++.',
+    hint2: 'Update counter.innerText after the button is clicked.',
     preview: "boss",
     reward: 50,
     check: function(code) {
@@ -962,7 +861,7 @@ const warningEl = document.getElementById("warning");
 const xpFeedbackEl = document.getElementById("xp-feedback");
 
 const previewFrame = document.getElementById("preview-frame");
-const previewContent = document.getElementById("preview-content");
+const previewBox = document.getElementById("preview-box");
 
 const runBtn = document.getElementById("run-btn");
 const hintBtn = document.getElementById("hint-btn");
@@ -983,13 +882,8 @@ const modalNextBtn = document.getElementById("modal-next-btn");
 const gameOverModal = document.getElementById("game-over-modal");
 const tryAgainBtn = document.getElementById("try-again-btn");
 
-function normalize(input) {
-  return input.replace(/\s+/g, "").toLowerCase();
-}
-
-function countMatches(text, pattern) {
-  const matches = text.match(pattern);
-  return matches ? matches.length : 0;
+function normalize(code) {
+  return code.replace(/\s+/g, "").toLowerCase();
 }
 
 function updateStats() {
@@ -1028,10 +922,10 @@ function loadMission() {
   statusEl.innerText = "Active";
 
   if (!mission) {
-    titleEl.innerText = "JavaScript Reactor Complete!";
+    titleEl.innerText = "JavaScript Core Complete!";
     skillTitleEl.innerText = "JavaScript Complete";
-    bytebotEl.innerText = "The web power core is stable. Head back to Mission Control.";
-    whyEl.innerText = "You completed the interaction system.";
+    bytebotEl.innerText = "All JavaScript missions are complete. Head back to Mission Control.";
+    whyEl.innerText = "You completed the interaction foundation.";
     successRuleEl.innerText = "All JavaScript missions are complete.";
     codeBox.value = "";
     statusEl.innerText = "Complete";
@@ -1085,12 +979,12 @@ function checkSyntaxWarnings(rawCode) {
     return;
   }
 
-  const openParen = countMatches(rawCode, /\(/g);
-  const closeParen = countMatches(rawCode, /\)/g);
-  const openBrace = countMatches(rawCode, /{/g);
-  const closeBrace = countMatches(rawCode, /}/g);
-  const doubleQuotes = countMatches(rawCode, /"/g);
-  const singleQuotes = countMatches(rawCode, /'/g);
+  const openParen = (rawCode.match(/\(/g) || []).length;
+  const closeParen = (rawCode.match(/\)/g) || []).length;
+  const openBrace = (rawCode.match(/{/g) || []).length;
+  const closeBrace = (rawCode.match(/}/g) || []).length;
+  const doubleQuotes = (rawCode.match(/"/g) || []).length;
+  const singleQuotes = (rawCode.match(/'/g) || []).length;
 
   if (openParen !== closeParen) {
     setWarning("Parentheses are not balanced. Check your ( and ).");
@@ -1112,100 +1006,76 @@ function checkSyntaxWarnings(rawCode) {
 
 function renderPreview(type) {
   if (type === "variables") {
-    previewContent.innerHTML = `
-      <h2 class="preview-title">Variable Output</h2>
-      <p class="preview-subtitle">Store information and send it into the system.</p>
-      <div class="preview-card">
-        <h3>Stored Signal</h3>
-        <div class="output-box" id="output">Waiting for variable...</div>
+    previewBox.innerHTML = `
+      <div class="mock-card">
+        <h3>VARIABLE OUTPUT</h3>
+        <p id="output">Waiting for variable...</p>
       </div>
-      <div class="focus-note">Focus: your variable value should appear in the output box.</div>
     `;
   }
 
   if (type === "functions") {
-    previewContent.innerHTML = `
-      <h2 class="preview-title">Function Return</h2>
-      <p class="preview-subtitle">Functions run saved instructions and return a result.</p>
-      <div class="preview-card">
-        <h3>Returned Message</h3>
-        <div class="output-box" id="output">Waiting for function...</div>
+    previewBox.innerHTML = `
+      <div class="mock-card">
+        <h3>FUNCTION RETURN</h3>
+        <p id="output">Waiting for function...</p>
       </div>
-      <div class="focus-note">Focus: the function should return the welcome message.</div>
     `;
   }
 
   if (type === "click") {
-    previewContent.innerHTML = `
-      <h2 class="preview-title">Click Event Test</h2>
-      <p class="preview-subtitle">Events let the page react to the player.</p>
-      <div class="preview-card">
-        <h3>Button Signal</h3>
+    previewBox.innerHTML = `
+      <div class="mock-card">
+        <h3>CLICK EVENT TEST</h3>
         <p id="message">Button is waiting...</p>
-        <button class="preview-action" id="button" type="button">Test Button</button>
+        <button class="preview-action" id="button">Test Button</button>
       </div>
-      <div class="focus-note">Focus: click the preview button after your code runs.</div>
     `;
   }
 
   if (type === "conditions") {
-    previewContent.innerHTML = `
-      <h2 class="preview-title">Condition Gate</h2>
-      <p class="preview-subtitle">A condition checks whether the reactor is stable.</p>
-      <div class="preview-card">
-        <h3>Power Check</h3>
-        <div class="output-box" id="output">Waiting for power check...</div>
+    previewBox.innerHTML = `
+      <div class="mock-card">
+        <h3>CONDITION CHECK</h3>
+        <p id="output">Waiting for power check...</p>
       </div>
-      <div class="focus-note">Focus: the output should say the power level is stable.</div>
     `;
   }
 
   if (type === "loops") {
-    previewContent.innerHTML = `
-      <h2 class="preview-title">Loop Engine</h2>
-      <p class="preview-subtitle">Loops repeat actions without rewriting code.</p>
-      <div class="preview-card">
-        <h3>Count Output</h3>
-        <div class="output-box" id="output">Waiting for loop...</div>
+    previewBox.innerHTML = `
+      <div class="mock-card">
+        <h3>LOOP OUTPUT</h3>
+        <p id="output">Waiting for loop...</p>
       </div>
-      <div class="focus-note">Focus: the output should count from 1 to 5.</div>
     `;
   }
 
   if (type === "dom") {
-    previewContent.innerHTML = `
-      <h2 class="preview-title">DOM Control</h2>
-      <p class="preview-subtitle">JavaScript can change page content directly.</p>
-      <div class="preview-card">
+    previewBox.innerHTML = `
+      <div class="mock-card">
         <h3 id="title">Original DOM Text</h3>
         <p>Use JavaScript to change the title above.</p>
       </div>
-      <div class="focus-note">Focus: the title should change to DOM Updated.</div>
     `;
   }
 
   if (type === "boss") {
-    previewContent.innerHTML = `
-      <h2 class="preview-title">Boss Counter App</h2>
-      <p class="preview-subtitle">Combine variables, events, and DOM updates.</p>
-      <div class="preview-card">
-        <h3>Counter System</h3>
-        <p>Counter: <span class="counter-number" id="counter">0</span></p>
-        <button class="preview-action" id="button" type="button">Increase</button>
+    previewBox.innerHTML = `
+      <div class="mock-card">
+        <h3>BOSS COUNTER APP</h3>
+        <p>Counter: <span id="counter">0</span></p>
+        <button class="preview-action" id="button">Increase</button>
       </div>
-      <div class="focus-note">Focus: click Increase after your code runs. The counter should go up.</div>
     `;
   }
 
   if (type === "complete") {
-    previewContent.innerHTML = `
-      <h2 class="preview-title">Reactor Stable</h2>
-      <p class="preview-subtitle">JavaScript missions cleared.</p>
-      <div class="preview-card">
-        <h3>Core Complete</h3>
-        <p>The interaction system is online.</p>
+    previewBox.innerHTML = `
+      <div class="mock-card">
+        <h3>CORE COMPLETE</h3>
+        <p>JavaScript missions cleared.</p>
       </div>
-      <div class="focus-note">Return to the map and continue building.</div>
     `;
   }
 }
@@ -1255,17 +1125,20 @@ function updatePreview() {
 function checkCode() {
   if (missionComplete) return;
 
-  const mission = missions[level];
   const rawCode = codeBox.value;
   const code = normalize(rawCode);
+  const mission = missions[level];
 
   updatePreview();
 
   if (!mission) {
-    resultEl.innerText = "JavaScript Reactor already complete.";
+    resultEl.innerText = "JavaScript Core already complete.";
     resultEl.className = "message correct";
     return;
   }
+
+  attempts++;
+  updateStats();
 
   try {
     const button = document.getElementById("button");
@@ -1284,9 +1157,6 @@ function checkCode() {
 
     runner(showOutput, button, message, title, counter);
 
-    attempts++;
-    updateStats();
-
     if (mission.check(code)) {
       completeMission(mission.reward, mission.success, mission.learned);
     } else {
@@ -1294,8 +1164,6 @@ function checkCode() {
     }
 
   } catch (error) {
-    attempts++;
-    updateStats();
     loseLife("Code error: " + error.message);
   }
 }
