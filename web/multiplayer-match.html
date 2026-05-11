@@ -28,11 +28,42 @@
 
 body {
   margin: 0;
-  background: var(--bg);
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(57,255,90,0.08), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(250,204,21,0.06), transparent 30%),
+    linear-gradient(rgba(57,255,90,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57,255,90,0.025) 1px, transparent 1px),
+    var(--bg);
+  background-size: auto, auto, 44px 44px, 44px 44px;
   color: var(--text);
   font-family: "IBM Plex Mono", monospace;
-  padding: 10px;
+  padding: 16px;
   line-height: 1.45;
+}
+
+.pixel {
+  font-family: "Press Start 2P", monospace;
+}
+
+#language-toggle {
+  position: absolute;
+  top: 18px;
+  right: 24px;
+  z-index: 1000;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  padding: 10px;
+  background: var(--panel2);
+  color: var(--yellow);
+  border: 1px solid rgba(250,204,21,0.5);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#language-toggle:hover {
+  color: var(--green);
+  background: rgba(250,204,21,0.08);
 }
 
 .match {
@@ -40,16 +71,49 @@ body {
   margin: 0 auto;
 }
 
-.pixel {
-  font-family: "Press Start 2P", monospace;
+.topbar,
+.panel,
+.player-card,
+.feedback-card {
+  border: 1px solid var(--line);
+  background: rgba(5,11,18,0.92);
+  box-shadow: 0 18px 45px rgba(0,0,0,0.35);
+  position: relative;
 }
 
-.topbar,
+.topbar {
+  padding: 14px;
+  margin-bottom: 10px;
+  border-radius: 22px;
+}
+
+.topbar::before {
+  content: "LIVE MATCH";
+  position: absolute;
+  top: -11px;
+  left: 18px;
+  background: var(--bg);
+  color: var(--yellow);
+  border: 1px solid rgba(250,204,21,0.45);
+  padding: 6px 10px;
+  font-family: "Press Start 2P", monospace;
+  font-size: 7px;
+}
+
+.topbar::after,
+.panel::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px dashed rgba(250,204,21,0.08);
+  border-radius: 16px;
+  pointer-events: none;
+}
+
 .panel {
-  border: 1px solid var(--line);
-  background: var(--panel);
-  padding: 10px;
-  margin-bottom: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 22px;
 }
 
 h1 {
@@ -57,12 +121,15 @@ h1 {
   color: var(--green);
   font-size: 15px;
   line-height: 1.4;
+  text-shadow: 3px 3px 0 rgba(250,204,21,0.16);
 }
 
 .desc {
   color: var(--muted);
   font-size: 11px;
   margin: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .match-status {
@@ -70,12 +137,28 @@ h1 {
   grid-template-columns: repeat(4, 1fr);
   gap: 7px;
   margin-top: 8px;
+  position: relative;
+  z-index: 1;
 }
 
 .status-box {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(250,204,21,0.22);
   background: var(--panel2);
-  padding: 7px;
+  padding: 8px;
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+}
+
+.status-box::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--yellow);
+  opacity: 0.75;
 }
 
 .label,
@@ -83,26 +166,32 @@ h1 {
   font-family: "Press Start 2P", monospace;
   font-size: 6px;
   line-height: 1.4;
-  color: var(--green);
+  color: var(--yellow);
   margin: 0 0 5px;
+  position: relative;
+  z-index: 1;
 }
 
 .status-box p {
   margin: 0;
   font-size: 11px;
   color: var(--text);
+  position: relative;
+  z-index: 1;
 }
 
 .players-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
+  margin-bottom: 10px;
 }
 
 .player-card {
   background: var(--panel2);
-  border: 1px solid var(--line);
+  border: 1px solid rgba(250,204,21,0.22);
   padding: 10px;
+  border-radius: 18px;
 }
 
 .player-top {
@@ -128,6 +217,7 @@ h1 {
   background: #02060B;
   border: 1px solid var(--line);
   overflow: hidden;
+  border-radius: 999px;
 }
 
 .progress-bar {
@@ -154,22 +244,29 @@ textarea {
   background: #02060B;
   color: var(--green);
   border: 1px solid var(--line);
-  padding: 9px;
+  padding: 11px;
   font-size: 12px;
   line-height: 1.45;
   outline: none;
   font-family: "IBM Plex Mono", monospace;
+  border-radius: 16px;
+  position: relative;
+  z-index: 1;
 }
 
 textarea:focus {
-  border-color: var(--green);
+  border-color: var(--yellow);
+  box-shadow: 0 0 0 2px rgba(250,204,21,0.08);
 }
 
 .challenge-box {
   background: var(--panel2);
-  border: 1px solid var(--line);
+  border: 1px solid rgba(250,204,21,0.22);
   padding: 10px;
   margin-bottom: 8px;
+  border-radius: 16px;
+  position: relative;
+  z-index: 1;
 }
 
 .challenge-box h2 {
@@ -186,11 +283,14 @@ textarea:focus {
 
 .preview-box {
   background: #02060B;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(250,204,21,0.22);
   min-height: 240px;
   padding: 12px;
   color: var(--text);
   overflow: auto;
+  border-radius: 16px;
+  position: relative;
+  z-index: 1;
 }
 
 .preview-box h1 {
@@ -205,26 +305,34 @@ textarea:focus {
   gap: 6px;
   flex-wrap: wrap;
   margin-top: 8px;
+  position: relative;
+  z-index: 1;
 }
 
 button {
-  border: 1px solid var(--green);
+  border: 1px solid rgba(250,204,21,0.5);
   background: transparent;
-  color: var(--green);
-  padding: 7px 10px;
+  color: var(--yellow);
+  padding: 8px 11px;
   cursor: pointer;
   font-family: "IBM Plex Mono", monospace;
   font-size: 11px;
   font-weight: 700;
+  border-radius: 14px;
+  transition: 0.18s ease;
 }
 
 button:hover {
-  background: rgba(57, 255, 90, 0.1);
+  background: var(--yellow);
+  color: var(--bg);
+  transform: translateY(-1px);
 }
 
 button.primary {
   background: var(--green);
   color: var(--bg);
+  border-color: var(--green);
+  box-shadow: 4px 4px 0 rgba(250,204,21,0.45);
 }
 
 button.danger {
@@ -232,22 +340,32 @@ button.danger {
   border-color: var(--red);
 }
 
+button.danger:hover {
+  background: var(--red);
+  color: var(--bg);
+}
+
 button:disabled {
   opacity: 0.35;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .feedback-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 7px;
+  position: relative;
+  z-index: 1;
 }
 
 .feedback-card {
   background: var(--panel2);
-  border: 1px solid var(--line);
+  border: 1px solid rgba(250,204,21,0.22);
   padding: 8px;
   min-height: 68px;
+  border-radius: 16px;
 }
 
 .message {
@@ -269,7 +387,7 @@ button:disabled {
 }
 
 .result-panel {
-  border-color: rgba(250, 204, 21, 0.45);
+  border-color: rgba(250,204,21,0.55);
 }
 
 .hidden {
@@ -280,7 +398,7 @@ button:disabled {
   position: fixed;
   left: 50%;
   top: 58%;
-  color: var(--green);
+  color: var(--yellow);
   font-size: 16px;
   font-weight: 700;
   pointer-events: none;
@@ -306,7 +424,7 @@ button:disabled {
 
 @keyframes successFlash {
   0% { background-color: var(--bg); }
-  50% { background-color: rgba(57, 255, 90, 0.12); }
+  50% { background-color: rgba(250,204,21,0.12); }
   100% { background-color: var(--bg); }
 }
 
@@ -323,6 +441,12 @@ button:disabled {
 }
 
 @media (max-width: 900px) {
+  #language-toggle {
+    position: static;
+    width: 100%;
+    margin-bottom: 14px;
+  }
+
   .match-status,
   .players-grid,
   .arena-layout,
@@ -339,8 +463,9 @@ button:disabled {
 
 <body>
 
-  <button id="language-toggle" style="position: absolute; top: 18px; right: 24px; z-index: 1000; font-family: 'Press Start 2P', monospace; font-size: 8px; padding: 10px; background: var(--panel2); color: var(--green); border: 1px solid var(--line); border-radius: 4px; cursor: pointer;">FR</button>
-  <audio id="bg-music" autoplay loop>
+<button id="language-toggle">FR</button>
+
+<audio id="bg-music" autoplay loop>
   <source src="sounds/background-music.mp3" type="audio/mpeg">
 </audio>
 
@@ -349,8 +474,6 @@ button:disabled {
   <section class="topbar">
     <h1 class="pixel">Multiplayer Match</h1>
     <p class="desc">Complete the challenge before your opponent. Clean code wins.</p>
-      <div style="display: flex; align-items: center; justify-content: space-between; gap: 18px;">
-      </div>
 
     <div class="match-status">
       <div class="status-box">
@@ -720,10 +843,10 @@ updatePreview();
 startTimer();
 startOpponentProgress();
 </script>
+
 <script src="audio.js"></script>
 <script src="translations.js"></script>
 <script src="language.js"></script>
-<script src="translations.js"></script>
-<script src="language.js"></script>
+
 </body>
 </html>

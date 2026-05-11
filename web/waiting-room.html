@@ -28,11 +28,42 @@
 
 body {
   margin: 0;
-  background: var(--bg);
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(57,255,90,0.08), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(250,204,21,0.06), transparent 30%),
+    linear-gradient(rgba(57,255,90,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57,255,90,0.025) 1px, transparent 1px),
+    var(--bg);
+  background-size: auto, auto, 44px 44px, 44px 44px;
   color: var(--text);
   font-family: "IBM Plex Mono", monospace;
-  padding: 12px;
+  padding: 18px;
   line-height: 1.45;
+}
+
+.pixel {
+  font-family: "Press Start 2P", monospace;
+}
+
+#language-toggle {
+  position: absolute;
+  top: 18px;
+  right: 24px;
+  z-index: 1000;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  padding: 10px;
+  background: var(--panel2);
+  color: var(--yellow);
+  border: 1px solid rgba(250,204,21,0.5);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#language-toggle:hover {
+  color: var(--green);
+  background: rgba(250,204,21,0.08);
 }
 
 .waiting-room {
@@ -40,16 +71,38 @@ body {
   margin: 0 auto;
 }
 
-.pixel {
-  font-family: "Press Start 2P", monospace;
-}
-
 .topbar,
 .panel {
   border: 1px solid var(--line);
-  background: var(--panel);
-  padding: 14px;
-  margin-bottom: 10px;
+  background: rgba(5,11,18,0.92);
+  padding: 16px;
+  margin-bottom: 12px;
+  border-radius: 22px;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.35);
+  position: relative;
+}
+
+.topbar::before {
+  content: "READY ROOM";
+  position: absolute;
+  top: -11px;
+  left: 18px;
+  background: var(--bg);
+  color: var(--yellow);
+  border: 1px solid rgba(250,204,21,0.45);
+  padding: 6px 10px;
+  font-family: "Press Start 2P", monospace;
+  font-size: 7px;
+}
+
+.topbar::after,
+.panel::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px dashed rgba(250,204,21,0.08);
+  border-radius: 16px;
+  pointer-events: none;
 }
 
 h1 {
@@ -57,33 +110,46 @@ h1 {
   color: var(--green);
   font-size: 16px;
   line-height: 1.5;
+  text-shadow: 3px 3px 0 rgba(250,204,21,0.16);
 }
 
 .desc {
   color: var(--muted);
   font-size: 12px;
   margin: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .panel-title {
   font-family: "Press Start 2P", monospace;
   font-size: 7px;
   line-height: 1.5;
-  color: var(--green);
+  color: var(--yellow);
   margin: 0 0 8px;
+  position: relative;
+  z-index: 1;
 }
 
 .match-card {
   background: var(--panel2);
-  border: 1px solid var(--line);
+  border: 1px solid rgba(250,204,21,0.22);
   padding: 18px;
   text-align: center;
+  border-radius: 18px;
+  position: relative;
+  z-index: 1;
 }
 
 .match-card h2 {
   color: var(--text);
   font-size: 20px;
   margin: 0 0 8px;
+}
+
+.match-card h2::before {
+  content: "⚔ ";
+  color: var(--yellow);
 }
 
 .match-card p {
@@ -101,21 +167,24 @@ h1 {
 }
 
 .player-card {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(250,204,21,0.24);
   background: #02060B;
   padding: 14px;
   min-height: 135px;
+  border-radius: 18px;
 }
 
 .player-avatar {
   width: 46px;
   height: 46px;
-  border: 1px solid var(--green);
+  border: 1px solid var(--yellow);
   margin: 0 auto 10px;
   display: grid;
   place-items: center;
-  color: var(--green);
+  color: var(--yellow);
   font-weight: 700;
+  border-radius: 12px;
+  background: rgba(250,204,21,0.06);
 }
 
 .player-card h3 {
@@ -146,33 +215,56 @@ h1 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
+  position: relative;
+  z-index: 1;
 }
 
 .info-box {
   background: var(--panel2);
-  border: 1px solid var(--line);
+  border: 1px solid rgba(250,204,21,0.22);
   padding: 10px;
   min-height: 72px;
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.info-box::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--yellow);
+  opacity: 0.75;
 }
 
 .info-box span {
   display: block;
-  color: var(--green);
+  color: var(--yellow);
   font-family: "Press Start 2P", monospace;
   font-size: 6px;
   margin-bottom: 6px;
+  position: relative;
+  z-index: 1;
 }
 
 .info-box strong {
   color: var(--text);
   font-size: 12px;
+  position: relative;
+  z-index: 1;
 }
 
 .countdown-box {
   text-align: center;
   background: var(--panel2);
-  border: 1px solid rgba(250, 204, 21, 0.45);
+  border: 1px solid rgba(250,204,21,0.45);
   padding: 18px;
+  border-radius: 18px;
+  position: relative;
+  z-index: 1;
 }
 
 .countdown-number {
@@ -191,14 +283,17 @@ h1 {
 .rules-list {
   display: grid;
   gap: 7px;
+  position: relative;
+  z-index: 1;
 }
 
 .rule {
   background: var(--panel2);
-  border: 1px solid var(--line);
+  border: 1px solid rgba(250,204,21,0.22);
   padding: 10px;
   color: var(--muted);
   font-size: 11px;
+  border-radius: 14px;
 }
 
 .buttons {
@@ -207,31 +302,44 @@ h1 {
   gap: 7px;
   flex-wrap: wrap;
   margin-top: 10px;
+  position: relative;
+  z-index: 1;
 }
 
 button {
-  border: 1px solid var(--green);
+  border: 1px solid rgba(250,204,21,0.5);
   background: transparent;
-  color: var(--green);
-  padding: 8px 11px;
+  color: var(--yellow);
+  padding: 9px 12px;
   cursor: pointer;
   font-family: "IBM Plex Mono", monospace;
   font-size: 11px;
   font-weight: 700;
+  border-radius: 14px;
+  transition: 0.18s ease;
 }
 
 button:hover {
-  background: rgba(57, 255, 90, 0.1);
+  background: var(--yellow);
+  color: var(--bg);
+  transform: translateY(-1px);
 }
 
 button.primary {
   background: var(--green);
   color: var(--bg);
+  border-color: var(--green);
+  box-shadow: 4px 4px 0 rgba(250,204,21,0.45);
 }
 
 button.danger {
   color: var(--red);
   border-color: var(--red);
+}
+
+button.danger:hover {
+  background: var(--red);
+  color: var(--bg);
 }
 
 .pulse {
@@ -245,6 +353,12 @@ button.danger {
 }
 
 @media (max-width: 760px) {
+  #language-toggle {
+    position: static;
+    width: 100%;
+    margin-bottom: 14px;
+  }
+
   .versus-grid,
   .info-grid {
     grid-template-columns: 1fr;
@@ -263,8 +377,9 @@ button.danger {
 
 <body>
 
-  <button id="language-toggle" style="position: absolute; top: 18px; right: 24px; z-index: 1000; font-family: 'Press Start 2P', monospace; font-size: 8px; padding: 10px; background: var(--panel2); color: var(--green); border: 1px solid var(--line); border-radius: 4px; cursor: pointer;">FR</button>
-  <audio id="bg-music" autoplay loop>
+<button id="language-toggle">FR</button>
+
+<audio id="bg-music" autoplay loop>
   <source src="sounds/background-music.mp3" type="audio/mpeg">
 </audio>
 
@@ -273,8 +388,6 @@ button.danger {
   <section class="topbar">
     <h1 class="pixel">Waiting Room</h1>
     <p class="desc">Get ready. Your coding battle is about to begin.</p>
-      <div style="display: flex; align-items: center; justify-content: space-between; gap: 18px;">
-      </div>
   </section>
 
   <section class="panel">
@@ -410,10 +523,10 @@ function cancelMatch() {
 loadMatchData();
 startCountdown();
 </script>
+
 <script src="audio.js"></script>
 <script src="translations.js"></script>
 <script src="language.js"></script>
-<script src="translations.js"></script>
-<script src="language.js"></script>
+
 </body>
 </html>

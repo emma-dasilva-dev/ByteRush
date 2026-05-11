@@ -28,11 +28,42 @@
 
 body {
   margin: 0;
-  background: var(--bg);
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(57,255,90,0.08), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(250,204,21,0.06), transparent 30%),
+    linear-gradient(rgba(57,255,90,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57,255,90,0.025) 1px, transparent 1px),
+    var(--bg);
+  background-size: auto, auto, 44px 44px, 44px 44px;
   color: var(--text);
   font-family: "IBM Plex Mono", monospace;
-  padding: 12px;
+  padding: 18px;
   line-height: 1.45;
+}
+
+.pixel {
+  font-family: "Press Start 2P", monospace;
+}
+
+#language-toggle {
+  position: absolute;
+  top: 18px;
+  right: 24px;
+  z-index: 1000;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  padding: 10px;
+  background: var(--panel2);
+  color: var(--yellow);
+  border: 1px solid rgba(250,204,21,0.5);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#language-toggle:hover {
+  color: var(--green);
+  background: rgba(250,204,21,0.08);
 }
 
 .multiplayer {
@@ -40,16 +71,38 @@ body {
   margin: 0 auto;
 }
 
-.pixel {
-  font-family: "Press Start 2P", monospace;
-}
-
 .topbar,
 .panel {
   border: 1px solid var(--line);
-  background: var(--panel);
-  padding: 14px;
-  margin-bottom: 10px;
+  background: rgba(5,11,18,0.92);
+  padding: 16px;
+  margin-bottom: 12px;
+  border-radius: 22px;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.35);
+  position: relative;
+}
+
+.topbar::before {
+  content: "CO-OP ZONE";
+  position: absolute;
+  top: -11px;
+  left: 18px;
+  background: var(--bg);
+  color: var(--yellow);
+  border: 1px solid rgba(250,204,21,0.45);
+  padding: 6px 10px;
+  font-family: "Press Start 2P", monospace;
+  font-size: 7px;
+}
+
+.topbar::after,
+.panel::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px dashed rgba(250,204,21,0.08);
+  border-radius: 16px;
+  pointer-events: none;
 }
 
 h1 {
@@ -57,12 +110,15 @@ h1 {
   color: var(--green);
   font-size: 16px;
   line-height: 1.5;
+  text-shadow: 3px 3px 0 rgba(250,204,21,0.16);
 }
 
 .desc {
   color: var(--muted);
   font-size: 12px;
   margin: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .small-status {
@@ -70,39 +126,52 @@ h1 {
   gap: 8px;
   flex-wrap: wrap;
   margin-top: 10px;
+  position: relative;
+  z-index: 1;
 }
 
 .status-pill {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(250,204,21,0.25);
   background: var(--panel2);
   color: var(--muted);
   padding: 6px 8px;
   font-size: 11px;
+  border-radius: 999px;
 }
 
 .status-pill strong {
-  color: var(--green);
+  color: var(--yellow);
 }
 
 .panel-title {
   font-family: "Press Start 2P", monospace;
   font-size: 7px;
   line-height: 1.5;
-  color: var(--green);
+  color: var(--yellow);
   margin: 0 0 8px;
+  position: relative;
+  z-index: 1;
 }
 
 .big-match {
   background: var(--panel2);
-  border: 1px solid var(--line);
+  border: 1px solid rgba(250,204,21,0.25);
   padding: 16px;
   text-align: center;
+  border-radius: 18px;
+  position: relative;
+  z-index: 1;
 }
 
 .big-match h2 {
   color: var(--text);
   font-size: 20px;
   margin: 0 0 8px;
+}
+
+.big-match h2::before {
+  content: "⚔ ";
+  color: var(--yellow);
 }
 
 .big-match p {
@@ -120,9 +189,12 @@ h1 {
 
 .sub-card {
   background: var(--panel2);
-  border: 1px solid var(--line);
+  border: 1px solid rgba(250,204,21,0.22);
   padding: 12px;
   min-height: 150px;
+  border-radius: 18px;
+  position: relative;
+  z-index: 1;
 }
 
 .sub-card h2 {
@@ -145,7 +217,7 @@ h1 {
 .stat-line {
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(57, 255, 90, 0.12);
+  border-bottom: 1px solid rgba(250,204,21,0.14);
   padding-bottom: 6px;
   font-size: 11px;
   color: var(--muted);
@@ -160,15 +232,17 @@ input {
   background: #02060B;
   color: var(--green);
   border: 1px solid var(--line);
-  padding: 8px;
+  padding: 10px;
   font-family: "IBM Plex Mono", monospace;
   font-size: 12px;
   outline: none;
   margin-bottom: 8px;
+  border-radius: 12px;
 }
 
 input:focus {
-  border-color: var(--green);
+  border-color: var(--yellow);
+  box-shadow: 0 0 0 2px rgba(250,204,21,0.08);
 }
 
 .buttons {
@@ -177,26 +251,34 @@ input:focus {
   gap: 7px;
   flex-wrap: wrap;
   margin-top: 10px;
+  position: relative;
+  z-index: 1;
 }
 
 button {
-  border: 1px solid var(--green);
+  border: 1px solid rgba(250,204,21,0.5);
   background: transparent;
-  color: var(--green);
-  padding: 8px 11px;
+  color: var(--yellow);
+  padding: 9px 12px;
   cursor: pointer;
   font-family: "IBM Plex Mono", monospace;
   font-size: 11px;
   font-weight: 700;
+  border-radius: 14px;
+  transition: 0.18s ease;
 }
 
 button:hover {
-  background: rgba(57, 255, 90, 0.1);
+  background: var(--yellow);
+  color: var(--bg);
+  transform: translateY(-1px);
 }
 
 button.primary {
   background: var(--green);
   color: var(--bg);
+  border-color: var(--green);
+  box-shadow: 4px 4px 0 rgba(250,204,21,0.45);
 }
 
 button.danger {
@@ -204,19 +286,27 @@ button.danger {
   border-color: var(--red);
 }
 
+button.danger:hover {
+  background: var(--red);
+  color: var(--bg);
+}
+
 .safe-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
+  position: relative;
+  z-index: 1;
 }
 
 .safe-item {
   background: var(--panel2);
-  border: 1px solid var(--line);
+  border: 1px solid rgba(250,204,21,0.22);
   padding: 10px;
   color: var(--muted);
   font-size: 11px;
   text-align: center;
+  border-radius: 14px;
 }
 
 .message {
@@ -226,7 +316,7 @@ button.danger {
 }
 
 .queue-panel {
-  border-color: rgba(250, 204, 21, 0.45);
+  border-color: rgba(250,204,21,0.55);
 }
 
 .hidden {
@@ -244,6 +334,12 @@ button.danger {
 }
 
 @media (max-width: 800px) {
+  #language-toggle {
+    position: static;
+    width: 100%;
+    margin-bottom: 14px;
+  }
+
   .grid-two,
   .safe-row {
     grid-template-columns: 1fr;
@@ -262,19 +358,18 @@ button.danger {
 
 <body>
 
-  <button id="language-toggle" style="position: absolute; top: 18px; right: 24px; z-index: 1000; font-family: 'Press Start 2P', monospace; font-size: 8px; padding: 10px; background: var(--panel2); color: var(--green); border: 1px solid var(--line); border-radius: 4px; cursor: pointer;">FR</button>
-  <audio id="bg-music" autoplay loop>
+<button id="language-toggle">FR</button>
+
+<audio id="bg-music" autoplay loop>
   <source src="sounds/background-music.mp3" type="audio/mpeg">
 </audio>
 
 <main class="multiplayer">
 
   <section class="topbar">
-    <div style="display: flex; align-items: center; justify-content: space-between; gap: 18px;">
-      <div>
-        <h1 class="pixel" data-key="multiplayerTitle">Multiplayer Zone</h1>
-        <p class="desc" data-key="multiplayerDesc">Friendly coding battles for kids, parents, and beginner builders.</p>
-      </div>
+    <div>
+      <h1 class="pixel" data-key="multiplayerTitle">Multiplayer Zone</h1>
+      <p class="desc" data-key="multiplayerDesc">Friendly coding battles for kids, parents, and beginner builders.</p>
     </div>
 
     <div class="small-status">
@@ -471,10 +566,10 @@ function generateRoomCode() {
 
 loadPlayerData();
 </script>
+
 <script src="audio.js"></script>
 <script src="translations.js"></script>
 <script src="language.js"></script>
-<script src="translations.js"></script>
-<script src="language.js"></script>
+
 </body>
 </html>

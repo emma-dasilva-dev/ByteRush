@@ -1,5 +1,3 @@
-
-<button id="language-toggle" style="position: absolute; top: 18px; right: 24px; z-index: 1000; font-family: 'Press Start 2P', monospace; font-size: 8px; padding: 10px; background: var(--panel2); color: var(--green); border: 1px solid var(--line); border-radius: 4px; cursor: pointer;">FR</button>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,8 +16,9 @@
   --panel2: #07111D;
   --text: #E7FFE9;
   --muted: #8FAF9A;
-  --line: rgba(57,255,90,0.18);
+  --line: rgba(57,255,90,0.22);
   --soft-line: rgba(255,255,255,0.08);
+  --yellow: #FACC15;
   --boss: #D7B84F;
 }
 
@@ -31,14 +30,35 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at top, rgba(57,255,90,0.08), transparent 34%),
+    radial-gradient(circle at top left, rgba(57,255,90,0.08), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(250,204,21,0.06), transparent 28%),
     linear-gradient(rgba(57,255,90,0.025) 1px, transparent 1px),
     linear-gradient(90deg, rgba(57,255,90,0.025) 1px, transparent 1px),
     var(--bg);
-  background-size: auto, 44px 44px, 44px 44px;
+  background-size: auto, auto, 44px 44px, 44px 44px;
   color: var(--text);
   font-family: 'Press Start 2P', monospace;
   padding: 28px 18px;
+}
+
+#language-toggle {
+  position: absolute;
+  top: 18px;
+  right: 24px;
+  z-index: 1000;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  padding: 10px;
+  background: var(--panel2);
+  color: var(--yellow);
+  border: 1px solid rgba(250,204,21,0.5);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#language-toggle:hover {
+  color: var(--green);
+  background: rgba(250,204,21,0.08);
 }
 
 .page {
@@ -52,11 +72,34 @@ body {
   padding: 22px;
   border-radius: 18px;
   text-align: left;
+  position: relative;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.35);
+}
+
+.header::before {
+  content: "WORLD 03";
+  position: absolute;
+  top: -11px;
+  left: 18px;
+  background: var(--bg);
+  color: var(--yellow);
+  border: 1px solid rgba(250,204,21,0.45);
+  padding: 6px 10px;
+  font-size: 7px;
+}
+
+.header::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px dashed rgba(250,204,21,0.1);
+  pointer-events: none;
+  border-radius: 12px;
 }
 
 .kicker {
   font-size: 8px;
-  color: var(--green);
+  color: var(--yellow);
   margin-bottom: 12px;
   letter-spacing: 1px;
 }
@@ -65,6 +108,8 @@ h1 {
   margin: 0 0 12px;
   font-size: clamp(18px, 4vw, 30px);
   line-height: 1.35;
+  color: var(--green);
+  text-shadow: 3px 3px 0 rgba(250,204,21,0.16);
 }
 
 .subtitle {
@@ -94,6 +139,19 @@ h1 {
   background: var(--panel);
   border-radius: 16px;
   padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--yellow);
+  opacity: 0.75;
 }
 
 .stat-label {
@@ -103,16 +161,18 @@ h1 {
 }
 
 .stat-value {
-  color: var(--green);
+  color: var(--yellow);
   font-size: 15px;
 }
 
 .unlock-card {
   display: none;
-  color: var(--green);
+  color: var(--yellow);
   font-size: 8px;
   line-height: 1.7;
   align-content: center;
+  border-color: rgba(250,204,21,0.5);
+  text-align: center;
 }
 
 .map-shell {
@@ -121,6 +181,17 @@ h1 {
   background: rgba(5,11,18,0.82);
   border-radius: 22px;
   padding: 20px;
+  position: relative;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.35);
+}
+
+.map-shell::before {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border: 1px dashed rgba(250,204,21,0.08);
+  border-radius: 16px;
+  pointer-events: none;
 }
 
 .map-title-row {
@@ -129,11 +200,13 @@ h1 {
   gap: 16px;
   align-items: center;
   margin-bottom: 18px;
+  position: relative;
+  z-index: 1;
 }
 
 .map-title {
   font-size: 11px;
-  color: var(--text);
+  color: var(--yellow);
 }
 
 .map-note {
@@ -146,6 +219,8 @@ h1 {
   grid-template-columns: repeat(7, 1fr);
   gap: 12px;
   align-items: stretch;
+  position: relative;
+  z-index: 1;
 }
 
 .node {
@@ -165,7 +240,7 @@ h1 {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(57,255,90,0.06), transparent 42%);
+  background: linear-gradient(135deg, rgba(250,204,21,0.09), transparent 42%);
   opacity: 0;
   transition: 0.18s ease;
 }
@@ -197,9 +272,14 @@ h1 {
 }
 
 .node.completed {
-  border-color: rgba(57,255,90,0.28);
+  border-color: rgba(57,255,90,0.35);
   color: var(--green);
   background: rgba(7,17,29,0.95);
+}
+
+.node.completed .node-number {
+  color: var(--green);
+  border-color: rgba(57,255,90,0.5);
 }
 
 .node.completed .node-status {
@@ -207,10 +287,11 @@ h1 {
 }
 
 .node.active {
-  border-color: var(--green);
+  border-color: var(--yellow);
   color: var(--text);
   cursor: pointer;
   background: rgba(17,36,23,0.72);
+  box-shadow: 5px 5px 0 rgba(250,204,21,0.16);
 }
 
 .node.active::before {
@@ -219,16 +300,16 @@ h1 {
 
 .node.active:hover {
   transform: translateY(-4px);
-  box-shadow: 0 18px 45px rgba(0,0,0,0.32);
+  box-shadow: 7px 7px 0 rgba(250,204,21,0.22);
 }
 
 .node.active .node-number {
-  border-color: var(--green);
-  color: var(--green);
+  border-color: var(--yellow);
+  color: var(--yellow);
 }
 
 .node.active .node-status {
-  color: var(--green);
+  color: var(--yellow);
 }
 
 .node.locked {
@@ -237,7 +318,7 @@ h1 {
 }
 
 .node.boss {
-  border-color: rgba(215,184,79,0.25);
+  border-color: rgba(215,184,79,0.35);
 }
 
 .node.boss.active {
@@ -260,9 +341,9 @@ h1 {
 }
 
 .btn {
-  border: 1px solid var(--green);
+  border: 1px solid var(--yellow);
   background: transparent;
-  color: var(--green);
+  color: var(--yellow);
   padding: 13px 16px;
   border-radius: 14px;
   cursor: pointer;
@@ -272,8 +353,9 @@ h1 {
 }
 
 .btn:hover {
-  background: var(--green);
+  background: var(--yellow);
   color: var(--bg);
+  transform: translateY(-2px);
 }
 
 .reset-wrap {
@@ -315,6 +397,12 @@ h1 {
     padding: 18px 12px;
   }
 
+  #language-toggle {
+    position: static;
+    width: 100%;
+    margin-bottom: 14px;
+  }
+
   .header,
   .map-shell {
     padding: 16px;
@@ -347,7 +435,10 @@ h1 {
 </head>
 
 <body class="theme-js">
-  <audio id="bg-music" autoplay loop>
+
+<button id="language-toggle">FR</button>
+
+<audio id="bg-music" autoplay loop>
   <source src="sounds/background-music.mp3" type="audio/mpeg">
 </audio>
 
@@ -355,10 +446,9 @@ h1 {
 
   <header class="header">
     <div class="kicker">BYTE RUSH / JS WORLD</div>
-    <div style="display: flex; align-items: center; justify-content: space-between; gap: 18px;">
-      <h1>JavaScript Core Map</h1>
-      <button id="language-toggle" style="padding: 10px 16px; background: var(--panel2); color: var(--green); border: 1px solid var(--line); font-family: 'Press Start 2P', monospace; font-size: 10px; cursor: pointer; border-radius: 4px;">FR</button>
-    </div>
+
+    <h1>JavaScript Core Map</h1>
+
     <p class="subtitle">
       Power the interface with logic, events, loops, and DOM control. Complete every JS mission to prove you can make the web react.
     </p>
@@ -471,7 +561,7 @@ function buildMap() {
     } else {
       node.classList.add("locked");
       statusText = "LOCKED";
-      numberText = "LOCK";
+      numberText = "🔒";
     }
 
     node.innerHTML = `
@@ -504,10 +594,10 @@ function goBack() {
 loadStats();
 buildMap();
 </script>
+
 <script src="audio.js"></script>
 <script src="translations.js"></script>
 <script src="language.js"></script>
-<script src="translations.js"></script>
-<script src="language.js"></script>
+
 </body>
 </html>

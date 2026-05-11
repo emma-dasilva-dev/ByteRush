@@ -21,6 +21,7 @@
   --soft-line: rgba(57, 255, 90, 0.10);
   --hover: rgba(255,255,255,0.035);
   --shadow: rgba(0,0,0,0.35);
+  --yellow: #FACC15;
 }
 
 * {
@@ -31,7 +32,7 @@ body {
   margin: 0;
   background:
     radial-gradient(circle at 15% 10%, rgba(57,255,90,0.08), transparent 28%),
-    radial-gradient(circle at 85% 80%, rgba(57,255,90,0.05), transparent 30%),
+    radial-gradient(circle at 85% 80%, rgba(250,204,21,0.06), transparent 30%),
     var(--bg);
   color: var(--text);
   font-family: Consolas, Monaco, monospace;
@@ -62,11 +63,11 @@ body::after {
   background: linear-gradient(
     180deg,
     transparent,
-    rgba(57,255,90,0.025),
+    rgba(250,204,21,0.025),
     transparent
   );
   animation: scan 5s linear infinite;
-  opacity: 0.55;
+  opacity: 0.45;
 }
 
 h1, h2, h3, h4, .logo, .nav-item, .mission-card strong {
@@ -93,11 +94,22 @@ h1, h2, h3, h4, .logo, .nav-item, .mission-card strong {
 .main-area,
 .stats-panel {
   border: 1px solid var(--line);
-  background: rgba(5, 11, 18, 0.88);
+  background: rgba(5, 11, 18, 0.9);
   padding: 14px;
   min-height: 0;
   box-shadow: 0 18px 45px var(--shadow);
   backdrop-filter: blur(8px);
+  position: relative;
+}
+
+.sidebar::before,
+.main-area::before,
+.stats-panel::before {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border: 1px dashed rgba(250,204,21,0.09);
+  pointer-events: none;
 }
 
 .sidebar {
@@ -114,17 +126,33 @@ h1, h2, h3, h4, .logo, .nav-item, .mission-card strong {
   margin-bottom: 18px;
   letter-spacing: 1px;
   animation: softPulse 2.8s ease-in-out infinite;
+  text-shadow: 2px 2px 0 rgba(250,204,21,0.18);
+}
+
+.logo::before {
+  content: "★ ";
+  color: var(--yellow);
 }
 
 #language-toggle {
-  margin-bottom: 12px;
-  padding: 10px;
-  background: var(--panel2);
-  color: var(--green);
-  border: 1px solid var(--line);
+  position: absolute;
+  top: 18px;
+  right: 24px;
+  z-index: 1000;
   font-family: 'Press Start 2P', monospace;
   font-size: 8px;
+  padding: 10px;
+  background: var(--panel2);
+  color: var(--yellow);
+  border: 1px solid rgba(250,204,21,0.5);
+  border-radius: 4px;
   cursor: pointer;
+}
+
+#language-toggle:hover {
+  color: var(--green);
+  border-color: var(--yellow);
+  background: rgba(250,204,21,0.08);
 }
 
 nav {
@@ -145,23 +173,29 @@ nav {
 }
 
 .nav-item::before {
+  content: "▶";
+  color: var(--yellow);
+  margin-right: 6px;
+}
+
+.nav-item::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(57,255,90,0.12), transparent);
+  background: linear-gradient(90deg, transparent, rgba(250,204,21,0.12), transparent);
   transform: translateX(-120%);
   transition: 0.45s ease;
 }
 
-.nav-item:hover::before,
-.nav-item.active::before {
+.nav-item:hover::after,
+.nav-item.active::after {
   transform: translateX(120%);
 }
 
 .nav-item:hover,
 .nav-item.active {
   color: var(--green);
-  border-color: rgba(57,255,90,0.55);
+  border-color: rgba(250,204,21,0.6);
   transform: translateX(3px);
 }
 
@@ -175,11 +209,22 @@ nav {
 .section-header {
   border: 1px solid var(--soft-line);
   background:
-    linear-gradient(135deg, rgba(57,255,90,0.035), transparent),
+    linear-gradient(135deg, rgba(250,204,21,0.05), transparent),
     #02060B;
   padding: 14px;
   position: relative;
   overflow: hidden;
+}
+
+.section-header::before {
+  content: "MISSION HUB";
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  color: var(--yellow);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  opacity: 0.9;
 }
 
 .section-header h2 {
@@ -197,15 +242,25 @@ nav {
 .hero-panel {
   border: 1px solid var(--soft-line);
   background:
-    radial-gradient(circle at top right, rgba(57,255,90,0.08), transparent 35%),
+    radial-gradient(circle at top right, rgba(250,204,21,0.08), transparent 35%),
     var(--panel2);
   padding: 14px;
   position: relative;
   overflow: hidden;
 }
 
+.hero-panel::before {
+  content: "LEVEL 01";
+  color: var(--yellow);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
 .hero-panel h3 {
-  color: var(--green);
+  color: var(--yellow);
   font-size: 10px;
   margin: 0 0 8px;
 }
@@ -231,7 +286,7 @@ nav {
   padding: 14px;
   cursor: pointer;
   color: var(--muted);
-  transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+  transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
   min-height: 0;
   position: relative;
   overflow: hidden;
@@ -239,17 +294,33 @@ nav {
   font-size: 13px;
 }
 
+.mission-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent, rgba(250,204,21,0.08), transparent);
+  transform: translateX(-120%);
+  transition: 0.45s ease;
+}
+
+.mission-card:hover::before {
+  transform: translateX(120%);
+}
+
 .mission-card:hover {
   transform: translateY(-5px) scale(1.015);
-  border-color: rgba(57,255,90,0.55);
+  border-color: rgba(250,204,21,0.6);
   background: var(--hover);
+  box-shadow: 5px 5px 0 rgba(250,204,21,0.18);
 }
 
 .card-icon {
   display: block;
-  color: var(--green);
+  color: var(--yellow);
   font-size: 20px;
   margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
 }
 
 .mission-card strong {
@@ -262,12 +333,22 @@ nav {
   z-index: 1;
 }
 
+.mission-card span:not(.card-icon) {
+  position: relative;
+  z-index: 1;
+}
+
 .mission-card p {
   margin: 8px 0 0;
-  color: var(--text);
+  color: var(--yellow);
   font-size: 13px;
   position: relative;
   z-index: 1;
+}
+
+#css-lock,
+#js-lock {
+  color: var(--red);
 }
 
 .stats-panel {
@@ -285,10 +366,22 @@ nav {
     var(--panel2);
   padding: 10px;
   min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: rgba(250,204,21,0.65);
 }
 
 .stat-box h4 {
-  color: var(--green);
+  color: var(--yellow);
   font-size: 8px;
   margin: 0 0 6px;
   position: relative;
@@ -305,7 +398,7 @@ nav {
 
 .cursor::after {
   content: "_";
-  color: var(--green);
+  color: var(--yellow);
   animation: blink 0.8s infinite;
 }
 
@@ -390,6 +483,17 @@ nav {
   .section-header h2 {
     font-size: 13px;
   }
+
+  .section-header::before,
+  .hero-panel::before {
+    display: none;
+  }
+
+  #language-toggle {
+    position: static;
+    width: 100%;
+    margin-bottom: 12px;
+  }
 }
 </style>
 </head>
@@ -400,8 +504,7 @@ nav {
   <source src="sounds/background-music.mp3" type="audio/mpeg">
 </audio>
 
-<!-- Language toggle button (if not already present) -->
-<button id="language-toggle" style="position: absolute; top: 18px; right: 24px; z-index: 1000; font-family: 'Press Start 2P', monospace; font-size: 8px; padding: 10px; background: var(--panel2); color: var(--green); border: 1px solid var(--line); border-radius: 4px; cursor: pointer;">FR</button>
+<button id="language-toggle">FR</button>
 
 <div id="home-screen">
 
@@ -519,5 +622,6 @@ nav {
 <script src="audio.js"></script>
 <script src="translations.js"></script>
 <script src="language.js"></script>
+
 </body>
 </html>
