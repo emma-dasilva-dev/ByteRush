@@ -261,6 +261,8 @@ button.danger {
 </head>
 
 <body>
+
+  <button id="language-toggle" style="position: absolute; top: 18px; right: 24px; z-index: 1000; font-family: 'Press Start 2P', monospace; font-size: 8px; padding: 10px; background: var(--panel2); color: var(--green); border: 1px solid var(--line); border-radius: 4px; cursor: pointer;">FR</button>
   <audio id="bg-music" autoplay loop>
   <source src="sounds/background-music.mp3" type="audio/mpeg">
 </audio>
@@ -273,7 +275,6 @@ button.danger {
         <h1 class="pixel" data-key="multiplayerTitle">Multiplayer Zone</h1>
         <p class="desc" data-key="multiplayerDesc">Friendly coding battles for kids, parents, and beginner builders.</p>
       </div>
-      <button id="language-toggle" style="padding: 10px 16px; background: var(--panel2); color: var(--green); border: 1px solid var(--line); font-family: 'Press Start 2P', monospace; font-size: 10px; cursor: pointer; border-radius: 4px;">FR</button>
     </div>
 
     <div class="small-status">
@@ -471,6 +472,8 @@ function generateRoomCode() {
 loadPlayerData();
 </script>
 <script src="audio.js"></script>
+<script src="translations.js"></script>
+<script src="language.js"></script>
 <script src="translations.js"></script>
 <script src="language.js"></script>
 </body>

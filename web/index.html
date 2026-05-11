@@ -1,652 +1,722 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ByteRush | Retro Coding Quest</title>
-  <link rel="stylesheet" href="arcade-theme.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ByteRush | Retro Coding Quest</title>
+<link rel="stylesheet" href="arcade-theme.css">
 
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-    :root {
-      --green: #39FF5A;
-      --red: #FF3B3B;
-      --bg: #03080F;
-      --panel: #050B12;
-      --panel2: #07111D;
-      --text: #D6FFE0;
-      --muted: #8FAF9A;
-      --line: rgba(57, 255, 90, 0.35);
-      --yellow: #FACC15;
-    }
+:root {
+  --green: #39FF5A;
+  --red: #FF3B3B;
+  --bg: #03080F;
+  --panel: #050B12;
+  --panel2: #07111D;
+  --text: #D6FFE0;
+  --muted: #8FAF9A;
+  --line: rgba(57, 255, 90, 0.35);
+  --yellow: #FACC15;
+}
 
-    * {
-      box-sizing: border-box;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    body {
-      margin: 0;
-      background:
-        radial-gradient(circle at top left, rgba(57, 255, 90, 0.08), transparent 28%),
-        var(--bg);
-      color: var(--text);
-      font-family: Consolas, Monaco, monospace;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(57,255,90,0.08), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(250,204,21,0.06), transparent 25%),
+    var(--bg);
+  color: var(--text);
+  font-family: Consolas, Monaco, monospace;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-    #audio-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(3,8,15,0.94);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 99999;
-    }
+#language-toggle {
+  position: absolute;
+  top: 18px;
+  right: 24px;
+  z-index: 1000;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  padding: 10px;
+  background: var(--panel2);
+  color: var(--yellow);
+  border: 1px solid rgba(250,204,21,0.55);
+  border-radius: 4px;
+  cursor: pointer;
+  min-width: 76px;
+}
 
-    #enable-audio-btn {
-      background: #050B12;
-      color: #39FF5A;
-      border: 1px solid rgba(57,255,90,0.4);
-      padding: 18px 24px;
-      border-radius: 16px;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 8px;
-      cursor: pointer;
-    }
+#language-toggle:hover {
+  background: rgba(250,204,21,0.08);
+  color: var(--green);
+  border-color: var(--yellow);
+}
 
-    #start-screen {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 28px;
-      position: relative;
-    }
+#audio-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3,8,15,0.94);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+}
 
-    .home-shell {
-      width: 100%;
-      max-width: 1100px;
-      border: 2px solid var(--line);
-      background: var(--panel);
-      padding: 22px;
-      box-shadow: 0 0 40px rgba(0, 0, 0, 0.7);
-    }
+#enable-audio-btn {
+  background: var(--panel);
+  color: var(--yellow);
+  border: 1px solid rgba(250,204,21,0.5);
+  padding: 18px 24px;
+  border-radius: 12px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  cursor: pointer;
+}
 
-    .status-bar {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      border: 1px solid var(--line);
-      background: var(--panel2);
-      padding: 12px 14px;
-      color: var(--muted);
-      font-size: 13px;
-      margin-bottom: 28px;
-    }
+#start-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  position: relative;
+}
 
-    .status-left,
-    .status-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+.home-shell {
+  width: 100%;
+  max-width: 1100px;
+  border: 2px solid var(--line);
+  background: linear-gradient(180deg, var(--panel), #03080F);
+  padding: 22px;
+  box-shadow: 0 0 40px rgba(0,0,0,0.7);
+  position: relative;
+}
 
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      background: var(--green);
-      display: inline-block;
-      animation: pulse 1.2s infinite;
-    }
+.home-shell::before {
+  content: "PLAYER BASE";
+  position: absolute;
+  top: -12px;
+  left: 18px;
+  background: var(--bg);
+  color: var(--yellow);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  padding: 6px 10px;
+  border: 1px solid rgba(250,204,21,0.45);
+}
 
-    .hero {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 22px;
-      align-items: stretch;
-    }
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  padding: 12px 14px;
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 28px;
+}
 
-    .hero-main,
-    .hero-side {
-      border: 1px solid var(--line);
-      background: #02060B;
-      padding: 24px;
-    }
+.status-left,
+.status-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-    .eyebrow,
-    h1,
-    h2,
-    button,
-    .mode-title {
-      font-family: 'Press Start 2P', monospace;
-    }
+.status-right {
+  color: var(--yellow);
+}
 
-    .eyebrow {
-      color: var(--muted);
-      font-size: 10px;
-      margin-bottom: 14px;
-    }
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--green);
+  display: inline-block;
+  animation: pulse 1.2s infinite;
+}
 
-    h1 {
-      color: var(--green);
-      font-size: clamp(32px, 6vw, 64px);
-      margin: 0 0 14px;
-      letter-spacing: 2px;
-      line-height: 1.2;
-    }
+.hero {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 22px;
+  align-items: stretch;
+}
 
-    .subtitle {
-      color: var(--green);
-      font-family: 'Press Start 2P', monospace;
-      font-size: 12px;
-      margin-bottom: 22px;
-    }
+.hero-main,
+.hero-side {
+  border: 1px solid var(--line);
+  background: #02060B;
+  padding: 24px;
+  position: relative;
+}
 
-    .description {
-      max-width: 620px;
-      color: var(--text);
-      font-size: 17px;
-      line-height: 1.7;
-      margin: 0 0 24px;
-      min-height: 88px;
-    }
+.hero-main::after,
+.hero-side::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px dashed rgba(250,204,21,0.12);
+  pointer-events: none;
+}
 
-    .button-row {
-      display: flex;
-      margin-top: 26px;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
+.eyebrow,
+h1,
+h2,
+button,
+.mode-title {
+  font-family: 'Press Start 2P', monospace;
+}
 
-    button {
-      background: var(--green);
-      color: var(--bg);
-      border: none;
-      padding: 18px 30px;
-      cursor: pointer;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 12px;
-      min-width: 240px;
-      text-decoration: none;
-      display: inline-block;
-      transition: transform 0.2s ease, opacity 0.2s ease;
-    }
+.eyebrow {
+  color: var(--yellow);
+  font-size: 10px;
+  margin-bottom: 14px;
+}
 
-    button:hover {
-      opacity: 0.9;
-      transform: translateY(-2px);
-    }
+h1 {
+  color: var(--green);
+  font-size: clamp(32px, 6vw, 64px);
+  margin: 0 0 14px;
+  letter-spacing: 2px;
+  line-height: 1.2;
+  text-shadow: 3px 3px 0 rgba(250,204,21,0.16);
+}
 
-    button:active {
-      transform: translateY(1px);
-    }
+.subtitle {
+  color: var(--yellow);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  margin-bottom: 22px;
+}
 
-    #language-toggle {
-      min-width: 76px;
-      padding: 16px 14px;
-      background: #050B12;
-      color: var(--green);
-      border: 1px solid rgba(57,255,90,0.45);
-      font-size: 10px;
-    }
+.description {
+  max-width: 620px;
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.7;
+  margin: 0 0 24px;
+  min-height: 88px;
+}
 
-    #language-toggle:hover {
-      background: rgba(57,255,90,0.08);
-      border-color: var(--green);
-    }
+.button-row {
+  display: flex;
+  margin-top: 26px;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
 
-    .hero-side h2 {
-      color: var(--green);
-      font-size: 12px;
-      margin: 0 0 18px;
-    }
+button {
+  background: var(--green);
+  color: var(--bg);
+  border: none;
+  padding: 18px 30px;
+  cursor: pointer;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  min-width: 240px;
+  text-decoration: none;
+  display: inline-block;
+  transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 5px 5px 0 rgba(250,204,21,0.65);
+}
 
-    .mode-list {
-      display: grid;
-      gap: 12px;
-    }
+button:hover {
+  opacity: 0.95;
+  transform: translateY(-2px);
+  box-shadow: 7px 7px 0 rgba(250,204,21,0.75);
+}
 
-    .mode-card {
-      border: 1px solid var(--line);
-      background: var(--panel2);
-      padding: 14px;
-      cursor: pointer;
-      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-    }
+button:active {
+  transform: translateY(1px);
+  box-shadow: 3px 3px 0 rgba(250,204,21,0.65);
+}
 
-    .mode-card:hover,
-    .mode-card.active {
-      transform: translateX(5px);
-      background: #0A1724;
-      border-color: var(--green);
-    }
+.hero-side h2 {
+  color: var(--yellow);
+  font-size: 12px;
+  margin: 0 0 18px;
+}
 
-    .mode-title {
-      color: var(--green);
-      font-size: 10px;
-      margin-bottom: 8px;
-    }
+.mode-list {
+  display: grid;
+  gap: 12px;
+}
 
-    .mode-card p {
-      color: var(--muted);
-      margin: 0;
-      font-size: 14px;
-      line-height: 1.5;
-    }
+.mode-card {
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  padding: 14px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  position: relative;
+}
 
-    .mission-info {
-      margin-top: 16px;
-      border: 1px solid var(--line);
-      background: #02060B;
-      padding: 14px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-      display: none;
-    }
+.mode-card::before {
+  content: "▶";
+  color: var(--yellow);
+  font-size: 10px;
+  margin-right: 8px;
+}
 
-    .mission-info strong {
-      color: var(--green);
-    }
+.mode-card:hover,
+.mode-card.active {
+  transform: translateX(5px);
+  background: #0A1724;
+  border-color: var(--yellow);
+}
 
-    .footer {
-      margin-top: 18px;
-      color: var(--muted);
-      font-size: 12px;
-      text-align: center;
-    }
+.mode-card.active {
+  box-shadow: inset 4px 0 0 var(--yellow);
+}
 
-    .cursor {
-      color: var(--green);
-      animation: blink 0.8s infinite;
-    }
+.mode-title {
+  color: var(--green);
+  font-size: 10px;
+  margin-bottom: 8px;
+  display: inline-block;
+}
 
-    .boot-screen {
-      position: fixed;
-      inset: 0;
-      background: rgba(3, 8, 15, 0.96);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      padding: 24px;
-    }
+.mode-card p {
+  color: var(--muted);
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
 
-    .boot-box {
-      width: 100%;
-      max-width: 520px;
-      border: 1px solid var(--line);
-      background: var(--panel);
-      padding: 24px;
-      color: var(--green);
-      font-size: 14px;
-      line-height: 1.8;
-    }
+.mission-info {
+  margin-top: 16px;
+  border: 1px solid rgba(250,204,21,0.45);
+  background: #02060B;
+  padding: 14px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+  display: none;
+}
 
-    .progress-track {
-      width: 100%;
-      height: 12px;
-      border: 1px solid var(--line);
-      margin-top: 18px;
-      overflow: hidden;
-    }
+.mission-info strong {
+  color: var(--yellow);
+}
 
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      background: var(--green);
-      transition: width 0.2s ease;
-    }
+.footer {
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
 
-    @keyframes blink {
-      0%, 45% { opacity: 1; }
-      46%, 100% { opacity: 0; }
-    }
+.footer::before,
+.footer::after {
+  content: " ★ ";
+  color: var(--yellow);
+}
 
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.35; }
-    }
+.cursor {
+  color: var(--yellow);
+  animation: blink 0.8s infinite;
+}
 
-    @media (max-width: 850px) {
-      .hero {
-        grid-template-columns: 1fr;
-      }
+.boot-screen {
+  position: fixed;
+  inset: 0;
+  background: rgba(3,8,15,0.96);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 24px;
+}
 
-      h1 {
-        font-size: 34px;
-      }
+.boot-box {
+  width: 100%;
+  max-width: 520px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  padding: 24px;
+  color: var(--green);
+  font-size: 14px;
+  line-height: 1.8;
+  box-shadow: 8px 8px 0 rgba(250,204,21,0.25);
+}
 
-      .status-bar {
-        flex-direction: column;
-      }
+.progress-track {
+  width: 100%;
+  height: 12px;
+  border: 1px solid var(--line);
+  margin-top: 18px;
+  overflow: hidden;
+}
 
-      .button-row {
-        flex-direction: column;
-        align-items: stretch;
-      }
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--yellow);
+  transition: width 0.2s ease;
+}
 
-      button,
-      #language-toggle {
-        width: 100%;
-      }
-    }
-  </style>
+@keyframes blink {
+  0%, 45% { opacity: 1; }
+  46%, 100% { opacity: 0; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+@media (max-width: 850px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  h1 {
+    font-size: 34px;
+  }
+
+  .status-bar {
+    flex-direction: column;
+  }
+
+  .button-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  button,
+  #language-toggle {
+    width: 100%;
+  }
+
+  #language-toggle {
+    position: static;
+    margin: 16px auto 0;
+    display: block;
+  }
+}
+</style>
 </head>
 
 <body class="theme-home">
+
+<button id="language-toggle">FR</button>
+
 <audio id="bg-music" autoplay loop>
   <source src="sounds/background-music.mp3" type="audio/mpeg">
 </audio>
 
-  <div id="audio-overlay">
-    <button id="enable-audio-btn" data-key="enableSound">ENABLE SOUND</button>
-  </div>
+<div id="audio-overlay">
+  <button id="enable-audio-btn" data-key="enableSound">ENABLE SOUND</button>
+</div>
 
-  <div id="start-screen">
+<div id="start-screen">
+  <main class="home-shell">
 
-    <main class="home-shell">
-
-      <div class="status-bar">
-        <div class="status-left">
-          <span class="status-dot"></span>
-          <span id="system-status">SYS ONLINE</span>
-        </div>
-        <div class="status-right">
-          BYTERUSH V1.0.0
-        </div>
+    <div class="status-bar">
+      <div class="status-left">
+        <span class="status-dot"></span>
+        <span id="system-status">SYS ONLINE</span>
       </div>
-
-      <section class="hero">
-
-        <div class="hero-main">
-          <div class="eyebrow" data-key="eyebrow">START YOUR</div>
-          <h1>BYTERUSH</h1>
-          <div class="subtitle" data-key="subtitle">RETRO CODING QUEST</div>
-
-          <p class="description">
-            <span id="typed-text"></span><span class="cursor">_</span>
-          </p>
-
-          <div class="button-row">
-            <button id="start-btn" type="button" data-key="pressStart">PRESS START</button>
-            <button id="language-toggle" type="button">FR</button>
-          </div>
-        </div>
-
-        <aside class="hero-side">
-          <h2 data-key="missionPath">MISSION PATH</h2>
-
-          <div class="mode-list">
-            <div class="mode-card active" data-mode="html">
-              <div class="mode-title" data-key="htmlTitle">HTML ARENA</div>
-              <p data-key="htmlDesc">Learn the building blocks of a webpage through simple structure missions.</p>
-            </div>
-
-            <div class="mode-card" data-mode="css">
-              <div class="mode-title" data-key="cssTitle">CSS CIRCUIT</div>
-              <p data-key="cssDesc">Style pages with colors, spacing, borders, alignment, and full card design.</p>
-            </div>
-
-            <div class="mode-card" data-mode="js">
-              <div class="mode-title" data-key="jsTitle">JAVASCRIPT CORE</div>
-              <p data-key="jsDesc">Make websites interactive with variables, functions, clicks, loops, DOM updates, and a counter app.</p>
-            </div>
-          </div>
-
-          <div class="mission-info" id="mission-info"></div>
-        </aside>
-
-      </section>
-
-      <div class="footer" data-key="footer">
-        © 2026 BYTERUSH — ALL SYSTEMS NOMINAL
-      </div>
-
-    </main>
-
-  </div>
-
-  <div class="boot-screen" id="boot-screen">
-    <div class="boot-box">
-      <div id="boot-line">INITIALIZING BYTERUSH...</div>
-      <div class="progress-track">
-        <div class="progress-fill" id="progress-fill"></div>
+      <div class="status-right">
+        BYTERUSH V1.0.0
       </div>
     </div>
+
+    <section class="hero">
+
+      <div class="hero-main">
+        <div class="eyebrow" data-key="eyebrow">START YOUR</div>
+        <h1>BYTERUSH</h1>
+        <div class="subtitle" data-key="subtitle">RETRO CODING QUEST</div>
+
+        <p class="description">
+          <span id="typed-text"></span><span class="cursor">_</span>
+        </p>
+
+        <div class="button-row">
+          <button id="start-btn" type="button" data-key="pressStart">PRESS START</button>
+        </div>
+      </div>
+
+      <aside class="hero-side">
+        <h2 data-key="missionPath">MISSION PATH</h2>
+
+        <div class="mode-list">
+          <div class="mode-card active" data-mode="html">
+            <div class="mode-title" data-key="htmlTitle">HTML ARENA</div>
+            <p data-key="htmlDesc">Learn the building blocks of a webpage through simple structure missions.</p>
+          </div>
+
+          <div class="mode-card" data-mode="css">
+            <div class="mode-title" data-key="cssTitle">CSS CIRCUIT</div>
+            <p data-key="cssDesc">Style pages with colors, spacing, borders, alignment, and full card design.</p>
+          </div>
+
+          <div class="mode-card" data-mode="js">
+            <div class="mode-title" data-key="jsTitle">JAVASCRIPT CORE</div>
+            <p data-key="jsDesc">Make websites interactive with variables, functions, clicks, loops, DOM updates, and a counter app.</p>
+          </div>
+        </div>
+
+        <div class="mission-info" id="mission-info"></div>
+      </aside>
+
+    </section>
+
+    <div class="footer" data-key="footer">
+      © 2026 BYTERUSH — ALL SYSTEMS NOMINAL
+    </div>
+
+  </main>
+</div>
+
+<div class="boot-screen" id="boot-screen">
+  <div class="boot-box">
+    <div id="boot-line">INITIALIZING BYTERUSH...</div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
   </div>
+</div>
 
-  <script>
-    const translations = {
-      en: {
-        enableSound: "ENABLE SOUND",
-        systemOnline: "SYS ONLINE",
-        eyebrow: "START YOUR",
-        subtitle: "RETRO CODING QUEST",
-        pressStart: "PRESS START",
-        missionPath: "MISSION PATH",
-        footer: "© 2026 BYTERUSH — ALL SYSTEMS NOMINAL",
+<script>
+const translations = {
+  en: {
+    enableSound: "ENABLE SOUND",
+    systemOnline: "SYS ONLINE",
+    eyebrow: "START YOUR",
+    subtitle: "RETRO CODING QUEST",
+    pressStart: "PRESS START",
+    missionPath: "MISSION PATH",
+    footer: "© 2026 BYTERUSH — ALL SYSTEMS NOMINAL",
 
-        typedMessage:
-          "Build the structure. Style the interface. Script the interactions. Complete coding missions, unlock new arenas, and power up your web skills.",
+    typedMessage:
+      "Build the structure. Style the interface. Script the interactions. Complete coding missions, unlock new arenas, and power up your web skills.",
 
-        htmlTitle: "HTML ARENA",
-        htmlDesc: "Learn the building blocks of a webpage through simple structure missions.",
-        htmlInfo: "Start here. HTML teaches players how to build the structure of a webpage before styling or scripting anything.",
+    htmlTitle: "HTML ARENA",
+    htmlDesc: "Learn the building blocks of a webpage through simple structure missions.",
+    htmlInfo: "Start here. HTML teaches players how to build the structure of a webpage before styling or scripting anything.",
 
-        cssTitle: "CSS CIRCUIT",
-        cssDesc: "Style pages with colors, spacing, borders, alignment, and full card design.",
-        cssInfo: "CSS Circuit teaches players how to style pages with colors, spacing, borders, layout, and visual design decisions.",
+    cssTitle: "CSS CIRCUIT",
+    cssDesc: "Style pages with colors, spacing, borders, alignment, and full card design.",
+    cssInfo: "CSS Circuit teaches players how to style pages with colors, spacing, borders, layout, and visual design decisions.",
 
-        jsTitle: "JAVASCRIPT CORE",
-        jsDesc: "Make websites interactive with variables, functions, clicks, loops, DOM updates, and a counter app.",
-        jsInfo: "JavaScript Core teaches players how to make websites respond through clicks, functions, variables, loops, and DOM updates.",
+    jsTitle: "JAVASCRIPT CORE",
+    jsDesc: "Make websites interactive with variables, functions, clicks, loops, DOM updates, and a counter app.",
+    jsInfo: "JavaScript Core teaches players how to make websites respond through clicks, functions, variables, loops, and DOM updates.",
 
-        selected: "SELECTED",
-        bootingGame: "BOOTING GAME",
+    selected: "SELECTED",
+    bootingGame: "BOOTING GAME",
 
-        bootMessages: [
-          "INITIALIZING BYTERUSH...",
-          "LOADING PLAYER DASHBOARD...",
-          "CHECKING MISSION PATH...",
-          "SYSTEM READY."
-        ]
-      },
+    bootMessages: [
+      "INITIALIZING BYTERUSH...",
+      "LOADING PLAYER DASHBOARD...",
+      "CHECKING MISSION PATH...",
+      "SYSTEM READY."
+    ]
+  },
 
-      fr: {
-        enableSound: "ACTIVER LE SON",
-        systemOnline: "SYSTÈME EN LIGNE",
-        eyebrow: "COMMENCE TON",
-        subtitle: "QUÊTE RÉTRO DE CODAGE",
-        pressStart: "COMMENCER",
-        missionPath: "PARCOURS DES MISSIONS",
-        footer: "© 2026 BYTERUSH — TOUS LES SYSTÈMES SONT OPÉRATIONNELS",
+  fr: {
+    enableSound: "ACTIVER LE SON",
+    systemOnline: "SYSTÈME EN LIGNE",
+    eyebrow: "COMMENCE TON",
+    subtitle: "QUÊTE RÉTRO DE CODAGE",
+    pressStart: "COMMENCER",
+    missionPath: "PARCOURS DES MISSIONS",
+    footer: "© 2026 BYTERUSH — TOUS LES SYSTÈMES SONT OPÉRATIONNELS",
 
-        typedMessage:
-          "Construis la structure. Stylise l’interface. Programme les interactions. Termine les missions de codage, débloque de nouvelles arènes et améliore tes compétences web.",
+    typedMessage:
+      "Construis la structure. Stylise l’interface. Programme les interactions. Termine les missions de codage, débloque de nouvelles arènes et améliore tes compétences web.",
 
-        htmlTitle: "ARÈNE HTML",
-        htmlDesc: "Apprends les bases d’une page web avec des missions simples de structure.",
-        htmlInfo: "Commence ici. HTML apprend aux joueurs à construire la structure d’une page web avant d’ajouter le style ou les interactions.",
+    htmlTitle: "ARÈNE HTML",
+    htmlDesc: "Apprends les bases d’une page web avec des missions simples de structure.",
+    htmlInfo: "Commence ici. HTML apprend aux joueurs à construire la structure d’une page web avant d’ajouter le style ou les interactions.",
 
-        cssTitle: "CIRCUIT CSS",
-        cssDesc: "Stylise les pages avec les couleurs, l’espacement, les bordures, l’alignement et le design de cartes.",
-        cssInfo: "Le Circuit CSS apprend aux joueurs à styliser les pages avec les couleurs, l’espacement, les bordures, la mise en page et les décisions visuelles.",
+    cssTitle: "CIRCUIT CSS",
+    cssDesc: "Stylise les pages avec les couleurs, l’espacement, les bordures, l’alignement et le design de cartes.",
+    cssInfo: "Le Circuit CSS apprend aux joueurs à styliser les pages avec les couleurs, l’espacement, les bordures, la mise en page et les décisions visuelles.",
 
-        jsTitle: "CŒUR JAVASCRIPT",
-        jsDesc: "Rends les sites interactifs avec les variables, fonctions, clics, boucles, mises à jour du DOM et une application compteur.",
-        jsInfo: "Le Cœur JavaScript apprend aux joueurs à rendre les sites réactifs grâce aux clics, fonctions, variables, boucles et mises à jour du DOM.",
+    jsTitle: "CŒUR JAVASCRIPT",
+    jsDesc: "Rends les sites interactifs avec les variables, fonctions, clics, boucles, mises à jour du DOM et une application compteur.",
+    jsInfo: "Le Cœur JavaScript apprend aux joueurs à rendre les sites réactifs grâce aux clics, fonctions, variables, boucles et mises à jour du DOM.",
 
-        selected: "SÉLECTIONNÉ",
-        bootingGame: "LANCEMENT DU JEU",
+    selected: "SÉLECTIONNÉ",
+    bootingGame: "LANCEMENT DU JEU",
 
-        bootMessages: [
-          "INITIALISATION DE BYTERUSH...",
-          "CHARGEMENT DU TABLEAU DE BORD...",
-          "VÉRIFICATION DU PARCOURS...",
-          "SYSTÈME PRÊT."
-        ]
-      }
-    };
+    bootMessages: [
+      "INITIALISATION DE BYTERUSH...",
+      "CHARGEMENT DU TABLEAU DE BORD...",
+      "VÉRIFICATION DU PARCOURS...",
+      "SYSTÈME PRÊT."
+    ]
+  }
+};
 
-    const music = document.getElementById("bg-music");
-    const audioOverlay = document.getElementById("audio-overlay");
-    const enableAudioBtn = document.getElementById("enable-audio-btn");
-    const typedText = document.getElementById("typed-text");
-    const startBtn = document.getElementById("start-btn");
-    const bootScreen = document.getElementById("boot-screen");
-    const bootLine = document.getElementById("boot-line");
-    const progressFill = document.getElementById("progress-fill");
-    const systemStatus = document.getElementById("system-status");
-    const missionCards = document.querySelectorAll(".mode-card");
-    const missionInfo = document.getElementById("mission-info");
-    const languageToggle = document.getElementById("language-toggle");
+const music = document.getElementById("bg-music");
+const audioOverlay = document.getElementById("audio-overlay");
+const enableAudioBtn = document.getElementById("enable-audio-btn");
+const typedText = document.getElementById("typed-text");
+const startBtn = document.getElementById("start-btn");
+const bootScreen = document.getElementById("boot-screen");
+const bootLine = document.getElementById("boot-line");
+const progressFill = document.getElementById("progress-fill");
+const systemStatus = document.getElementById("system-status");
+const missionCards = document.querySelectorAll(".mode-card");
+const missionInfo = document.getElementById("mission-info");
+const languageToggle = document.getElementById("language-toggle");
 
-    let currentLanguage = localStorage.getItem("byteRushLanguage") || "en";
-    let currentMode = "html";
-    let typingTimer;
-    let index = 0;
+let currentLanguage = localStorage.getItem("byteRushLanguage") || "en";
+let currentMode = "html";
+let typingTimer;
+let index = 0;
 
-    music.volume = 0.25;
+music.volume = 0.25;
 
-    function t(key) {
-      return translations[currentLanguage][key];
-    }
+function t(key) {
+  return translations[currentLanguage][key];
+}
 
-    function tryPlayMusic() {
-      const playPromise = music.play();
+function tryPlayMusic() {
+  const playPromise = music.play();
 
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            audioOverlay.style.display = "none";
-          })
-          .catch(() => {
-            audioOverlay.style.display = "flex";
-          });
-      }
-    }
-
-    tryPlayMusic();
-
-    enableAudioBtn.addEventListener("click", () => {
-      music.play();
-      audioOverlay.style.display = "none";
-    });
-
-    function typeMessage() {
-      clearTimeout(typingTimer);
-      typedText.textContent = "";
-      index = 0;
-
-      const message = t("typedMessage");
-
-      function typeNextLetter() {
-        if (index < message.length) {
-          typedText.textContent += message.charAt(index);
-          index++;
-          typingTimer = setTimeout(typeNextLetter, 24);
-        }
-      }
-
-      typeNextLetter();
-    }
-
-    function updateMissionInfo() {
-      if (!currentMode) return;
-
-      const titleKey = currentMode + "Title";
-      const infoKey = currentMode + "Info";
-
-      missionInfo.innerHTML = `<strong>${t(titleKey)}:</strong> ${t(infoKey)}`;
-    }
-
-    function applyLanguage(language) {
-      currentLanguage = language;
-      localStorage.setItem("byteRushLanguage", language);
-      document.documentElement.lang = language;
-
-      document.querySelectorAll("[data-key]").forEach((element) => {
-        const key = element.getAttribute("data-key");
-
-        if (translations[language][key]) {
-          element.textContent = translations[language][key];
-        }
+  if (playPromise !== undefined) {
+    playPromise
+      .then(() => {
+        audioOverlay.style.display = "none";
+      })
+      .catch(() => {
+        audioOverlay.style.display = "flex";
       });
+  }
+}
 
-      languageToggle.textContent = language === "en" ? "FR" : "EN";
+tryPlayMusic();
 
-      if (systemStatus.textContent.includes("SELECTED") || systemStatus.textContent.includes("SÉLECTIONNÉ")) {
-        systemStatus.textContent = `${t(currentMode + "Title")} ${t("selected")}`;
-      } else {
-        systemStatus.textContent = t("systemOnline");
-      }
+enableAudioBtn.addEventListener("click", () => {
+  music.play();
+  audioOverlay.style.display = "none";
+});
 
-      updateMissionInfo();
-      typeMessage();
+function typeMessage() {
+  clearTimeout(typingTimer);
+  typedText.textContent = "";
+  index = 0;
+
+  const message = t("typedMessage");
+
+  function typeNextLetter() {
+    if (index < message.length) {
+      typedText.textContent += message.charAt(index);
+      index++;
+      typingTimer = setTimeout(typeNextLetter, 24);
     }
+  }
 
-    languageToggle.addEventListener("click", () => {
-      const nextLanguage = currentLanguage === "en" ? "fr" : "en";
-      applyLanguage(nextLanguage);
-    });
+  typeNextLetter();
+}
 
-    missionCards.forEach((card) => {
-      card.addEventListener("click", () => {
-        missionCards.forEach((item) => item.classList.remove("active"));
-        card.classList.add("active");
+function updateMissionInfo() {
+  const titleKey = currentMode + "Title";
+  const infoKey = currentMode + "Info";
 
-        currentMode = card.getAttribute("data-mode");
+  missionInfo.innerHTML = `<strong>${t(titleKey)}:</strong> ${t(infoKey)}`;
+}
 
-        missionInfo.style.display = "block";
-        updateMissionInfo();
+function applyLanguage(language) {
+  currentLanguage = language;
+  localStorage.setItem("byteRushLanguage", language);
+  document.documentElement.lang = language;
 
-        systemStatus.textContent = `${t(currentMode + "Title")} ${t("selected")}`;
-      });
-    });
+  document.querySelectorAll("[data-key]").forEach((element) => {
+    const key = element.getAttribute("data-key");
 
-    function startGame() {
-      music.play().catch(() => {});
+    if (translations[language][key]) {
+      element.textContent = translations[language][key];
+    }
+  });
 
-      bootScreen.style.display = "flex";
-      systemStatus.textContent = t("bootingGame");
+  languageToggle.textContent = language === "en" ? "FR" : "EN";
 
-      const bootMessages = t("bootMessages");
+  if (
+    systemStatus.textContent.includes("SELECTED") ||
+    systemStatus.textContent.includes("SÉLECTIONNÉ")
+  ) {
+    systemStatus.textContent = `${t(currentMode + "Title")} ${t("selected")}`;
+  } else {
+    systemStatus.textContent = t("systemOnline");
+  }
 
-      let bootIndex = 0;
-      let progress = 0;
+  updateMissionInfo();
+  typeMessage();
+}
 
-      const bootTimer = setInterval(() => {
-        progress += 25;
-        progressFill.style.width = progress + "%";
+languageToggle.addEventListener("click", () => {
+  const nextLanguage = currentLanguage === "en" ? "fr" : "en";
+  applyLanguage(nextLanguage);
+});
 
-        bootLine.textContent = bootMessages[bootIndex];
-        bootIndex++;
+missionCards.forEach((card) => {
+  card.addEventListener("click", () => {
+    missionCards.forEach((item) => item.classList.remove("active"));
+    card.classList.add("active");
 
-        if (progress >= 100) {
-          clearInterval(bootTimer);
+    currentMode = card.getAttribute("data-mode");
 
-          setTimeout(() => {
-            window.location.href = "dashboard.html";
-          }, 500);
-        }
+    missionInfo.style.display = "block";
+    updateMissionInfo();
+
+    systemStatus.textContent = `${t(currentMode + "Title")} ${t("selected")}`;
+  });
+});
+
+function startGame() {
+  music.play().catch(() => {});
+
+  bootScreen.style.display = "flex";
+  systemStatus.textContent = t("bootingGame");
+
+  const bootMessages = t("bootMessages");
+
+  let bootIndex = 0;
+  let progress = 0;
+
+  progressFill.style.width = "0%";
+
+  const bootTimer = setInterval(() => {
+    progress += 25;
+    progressFill.style.width = progress + "%";
+
+    bootLine.textContent = bootMessages[bootIndex];
+    bootIndex++;
+
+    if (progress >= 100) {
+      clearInterval(bootTimer);
+
+      setTimeout(() => {
+        window.location.href = "dashboard.html";
       }, 500);
     }
+  }, 500);
+}
 
-    startBtn.addEventListener("click", startGame);
+startBtn.addEventListener("click", startGame);
 
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
-        startGame();
-      }
-    });
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    startGame();
+  }
+});
 
-    applyLanguage(currentLanguage);
-  </script>
+applyLanguage(currentLanguage);
+</script>
 
 <script src="audio.js"></script>
 <script src="translations.js"></script>
