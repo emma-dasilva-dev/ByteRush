@@ -271,6 +271,9 @@ button.danger {
   <section class="topbar">
     <h1 class="pixel">Waiting Room</h1>
     <p class="desc">Get ready. Your coding battle is about to begin.</p>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 18px;">
+        <button id="language-toggle" style="padding: 10px 16px; background: var(--panel2); color: var(--green); border: 1px solid var(--line); font-family: 'Press Start 2P', monospace; font-size: 10px; cursor: pointer; border-radius: 4px;">FR</button>
+      </div>
   </section>
 
   <section class="panel">
@@ -407,5 +410,7 @@ loadMatchData();
 startCountdown();
 </script>
 <script src="audio.js"></script>
+<script src="translations.js"></script>
+<script src="language.js"></script>
 </body>
 </html>

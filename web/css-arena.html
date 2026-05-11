@@ -608,34 +608,37 @@ button:disabled {
 <main class="arena">
 
   <section class="top-command">
-    <div>
-      <h1 class="pixel">CSS Circuit</h1>
-      <p class="desc">Restore the visual system of the web through guided styling missions.</p>
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <div>
+        <h1 class="pixel" data-key="cssArenaPageTitle">CSS Circuit</h1>
+        <p class="desc" data-key="cssArenaPageDesc">Restore the visual system of the web through guided styling missions.</p>
+      </div>
+      <button id="language-toggle" style="margin-left: 18px; padding: 6px 14px; font-size: 11px; font-family: 'IBM Plex Mono', monospace; border: 1px solid var(--green); background: var(--panel2); color: var(--green); cursor: pointer; border-radius: 4px;">FR</button>
     </div>
 
     <div class="stats">
       <div class="stat-pill">
-        <span class="pixel">MISSION</span>
+        <span class="pixel" data-key="mission">MISSION</span>
         <strong><span id="mission-count-inline">1</span> / 7</strong>
       </div>
 
       <div class="stat-pill">
-        <span class="pixel">XP</span>
+        <span class="pixel" data-key="xp">XP</span>
         <strong id="total-xp">0</strong>
       </div>
 
       <div class="stat-pill">
-        <span class="pixel">LIVES</span>
+        <span class="pixel" data-key="lives">LIVES</span>
         <strong id="lives">❤️❤️❤️</strong>
       </div>
 
       <div class="stat-pill">
-        <span class="pixel">TRIES</span>
+        <span class="pixel" data-key="tries">TRIES</span>
         <strong id="attempts">0</strong>
       </div>
 
       <div class="stat-pill">
-        <span class="pixel">STATUS</span>
+        <span class="pixel" data-key="status">STATUS</span>
         <strong id="status">Active</strong>
       </div>
     </div>
@@ -645,41 +648,41 @@ button:disabled {
 
     <aside class="panel mission-panel">
       <div>
-        <div class="panel-title">BYTEBOT BRIEFING</div>
+        <div class="panel-title" data-key="bytebotBriefing">BYTEBOT BRIEFING</div>
         <div class="mission-title" id="mission-title">Mission loading...</div>
       </div>
 
       <div class="skill-box">
-        <div class="label">SKILL</div>
+        <div class="label" data-key="skill">SKILL</div>
         <h2 id="skill-title">Skill loading...</h2>
         <p id="bytebot-message">Mission instructions loading...</p>
       </div>
 
       <div class="skill-box">
-        <div class="label">WHY IT MATTERS</div>
+        <div class="label" data-key="whyItMatters">WHY IT MATTERS</div>
         <p id="why-message">Loading...</p>
       </div>
 
-      <div class="rule-box" id="success-rule">
+      <div class="rule-box" id="success-rule" data-key="successRule">
         Success rule loading...
       </div>
     </aside>
 
     <section class="panel editor-panel">
-      <div class="panel-title">CSS EDITOR</div>
+      <div class="panel-title" data-key="cssEditor">CSS EDITOR</div>
 
       <textarea id="code" spellcheck="false"></textarea>
 
       <div class="buttons">
-        <button id="run-btn" class="primary" type="button">Run Code</button>
-        <button id="hint-btn" type="button">Hint</button>
-        <button id="next-btn" type="button" disabled>Next Mission</button>
-        <button id="back-btn" class="danger" type="button">Back to Map</button>
+        <button id="run-btn" class="primary" type="button" data-key="runCode">Run Code</button>
+        <button id="hint-btn" type="button" data-key="hint">Hint</button>
+        <button id="next-btn" type="button" disabled data-key="nextMission">Next Mission</button>
+        <button id="back-btn" class="danger" type="button" data-key="backToMap">Back to Map</button>
       </div>
     </section>
 
     <section class="panel preview-panel">
-      <div class="panel-title">LIVE STYLE PREVIEW</div>
+      <div class="panel-title" data-key="liveStylePreview">LIVE STYLE PREVIEW</div>
 
       <div class="browser-frame" id="preview-frame">
         <div class="browser-top">
@@ -712,26 +715,26 @@ button:disabled {
   </section>
 
   <section class="feedback-console">
-    <div class="panel-title">TERMINAL FEEDBACK</div>
+    <div class="panel-title" data-key="terminalFeedback">TERMINAL FEEDBACK</div>
 
     <div class="console-grid">
       <div class="console-item">
-        <div class="label">RESULT</div>
+        <div class="label" data-key="result">RESULT</div>
         <div class="message" id="result">Run your code to check the mission.</div>
       </div>
 
       <div class="console-item">
-        <div class="label">HINT</div>
+        <div class="label" data-key="hint">HINT</div>
         <div class="message" id="hint">Click Hint if you get stuck.</div>
       </div>
 
       <div class="console-item">
-        <div class="label">WARNING</div>
+        <div class="label" data-key="warning">WARNING</div>
         <div class="message error" id="warning">No syntax warnings yet.</div>
       </div>
 
       <div class="console-item">
-        <div class="label">XP</div>
+        <div class="label" data-key="xp">XP</div>
         <div class="message correct" id="xp-feedback">0 XP gained.</div>
       </div>
     </div>
@@ -741,16 +744,16 @@ button:disabled {
 
 <div class="start-modal" id="start-modal">
   <div class="start-box">
-    <h2 class="pixel" id="start-modal-title">MISSION START</h2>
+    <h2 class="pixel" id="start-modal-title" data-key="missionStart">MISSION START</h2>
 
     <p id="start-modal-skill">Get ready.</p>
 
     <div class="start-instruction-box">
-      <div class="label">WHAT TO DO</div>
+      <div class="label" data-key="whatToDo">WHAT TO DO</div>
       <p id="start-modal-task">Read the mission, write your CSS, then click Run Code.</p>
     </div>
 
-    <button id="start-mission-btn" class="start-btn" type="button">
+    <button id="start-mission-btn" class="start-btn" type="button" data-key="startMission">
       Start Mission
     </button>
   </div>
@@ -758,16 +761,16 @@ button:disabled {
 
 <div class="mission-modal" id="mission-modal">
   <div class="mission-box">
-    <h2 class="pixel">MISSION COMPLETED</h2>
+    <h2 class="pixel" data-key="missionCompleted">MISSION COMPLETED</h2>
 
     <p id="modal-success-text">Great work.</p>
 
     <div class="learned-box">
-      <div class="label">WHAT YOU LEARNED</div>
+      <div class="label" data-key="whatYouLearned">WHAT YOU LEARNED</div>
       <p id="modal-learned-text"></p>
     </div>
 
-    <button id="modal-next-btn" class="modal-next-btn" type="button">
+    <button id="modal-next-btn" class="modal-next-btn" type="button" data-key="nextMission">
       Next Mission
     </button>
   </div>
@@ -775,11 +778,11 @@ button:disabled {
 
 <div class="game-over-modal" id="game-over-modal">
   <div class="game-over-box">
-    <h2 class="pixel">GAME OVER</h2>
+    <h2 class="pixel" data-key="gameOver">GAME OVER</h2>
 
-    <p>You used up all your lives. Try the mission again and use the hint if you get stuck.</p>
+    <p data-key="gameOverUsedLives">You used up all your lives. Try the mission again and use the hint if you get stuck.</p>
 
-    <button id="try-again-btn" class="try-again-btn" type="button">
+    <button id="try-again-btn" class="try-again-btn" type="button" data-key="tryAgain">
       Try Again
     </button>
   </div>
@@ -791,7 +794,21 @@ button:disabled {
 <audio id="mistake-sound" src="./sounds/mistake.mp3" preload="auto"></audio>
 <audio id="game-lose-sound" src="./sounds/game-lose-sound.mp3" preload="auto"></audio>
 
+<script src="translations.js"></script>
+<script src="language.js"></script>
 <script>
+// === TRADUCTION HELPERS ===
+function getCurrentLang() {
+  return localStorage.getItem("byteRushLanguage") || "en";
+}
+function t(key) {
+  const lang = getCurrentLang();
+  if (typeof translations !== "undefined" && translations[lang] && translations[lang][key]) {
+    return translations[lang][key];
+  }
+  return key;
+}
+
 let level = parseInt(localStorage.getItem("css-level")) || 1;
 let attempts = 0;
 let lives = 3;
@@ -1002,12 +1019,44 @@ function countMatches(text, pattern) {
 
 function updateStats() {
   const xp = parseInt(localStorage.getItem("xp")) || 0;
-
   missionCountInlineEl.innerText = Math.min(level, 7);
   totalXpEl.innerText = xp;
   livesEl.innerText = "❤️".repeat(lives) + "🖤".repeat(3 - lives);
   attemptsEl.innerText = attempts;
 }
+
+// Met à jour dynamiquement tous les textes JS lors du changement de langue
+function updateDynamicTexts() {
+  // Statuts principaux
+  statusEl.innerText = missionComplete ? t("complete") : t("active");
+  // Feedbacks et messages
+  resultEl.innerText = t("runCodeCheckMission");
+  hintEl.innerText = t("clickHintStuck");
+  warningEl.innerText = t("noSyntaxWarningsYet");
+  xpFeedbackEl.innerText = t("zeroXpGained");
+  // Boutons modaux
+  startModalTitle.innerText = t("missionStart");
+  startMissionBtn.innerText = t("startMission");
+  modalNextBtn.innerText = t("nextMission");
+  tryAgainBtn.innerText = t("tryAgain");
+  // Modaux
+  document.querySelector('[data-key="missionCompleted"]').innerText = t("missionCompleted");
+  document.querySelector('[data-key="gameOver"]').innerText = t("gameOver");
+  document.querySelector('[data-key="gameOverUsedLives"]').innerText = t("gameOverUsedLives");
+  document.querySelector('[data-key="whatYouLearned"]').innerText = t("whatYouLearned");
+  // Labels
+  document.querySelector('[data-key="result"]').innerText = t("result");
+  document.querySelector('[data-key="hint"]').innerText = t("hint");
+  document.querySelector('[data-key="warning"]').innerText = t("warning");
+  document.querySelector('[data-key="xp"]').innerText = t("xp");
+}
+
+window.addEventListener("storage", function (e) {
+  if (e.key === "byteRushLanguage") {
+    updateDynamicTexts();
+    loadMission(); // recharge la mission pour appliquer la langue sur tous les textes
+  }
+});
 
 function loadMission() {
   const mission = missions[level];
@@ -1021,28 +1070,20 @@ function loadMission() {
   gameOverModal.classList.remove("show");
 
   updateStats();
+  updateDynamicTexts();
 
-  resultEl.innerText = "Run your code to check the mission.";
-  resultEl.className = "message";
-
-  hintEl.innerText = "Click Hint if you get stuck.";
-  warningEl.innerText = "No syntax warnings yet.";
-  warningEl.className = "message error";
-  xpFeedbackEl.innerText = "0 XP gained.";
-
-  nextBtn.disabled = true;
+  nextBtn.disabled = false;
   runBtn.disabled = false;
   hintBtn.disabled = false;
-  statusEl.innerText = "Active";
 
   if (!mission) {
-    titleEl.innerText = "CSS Circuit Complete!";
-    skillTitleEl.innerText = "CSS Complete";
-    bytebotEl.innerText = "JS Reactor is ready. Head back to Mission Control.";
-    whyEl.innerText = "You completed the visual styling system.";
-    successRuleEl.innerText = "All CSS missions are complete.";
+    titleEl.innerText = t("cssArenaComplete");
+    skillTitleEl.innerText = t("cssComplete");
+    bytebotEl.innerText = t("jsReactorReady") || "JS Reactor is ready. Head back to Mission Control.";
+    whyEl.innerText = t("cssFoundationComplete") || "You completed the visual styling system.";
+    successRuleEl.innerText = t("allCssMissionsComplete") || "All CSS missions are complete.";
     codeBox.value = "";
-    statusEl.innerText = "Complete";
+    statusEl.innerText = t("complete");
     runBtn.disabled = true;
     hintBtn.disabled = true;
     nextBtn.disabled = true;
@@ -1050,13 +1091,13 @@ function loadMission() {
     return;
   }
 
-  titleEl.innerText = mission.title;
-  skillTitleEl.innerText = mission.skill;
-  bytebotEl.innerHTML = mission.bytebot;
-  whyEl.innerText = mission.why;
-  successRuleEl.innerText = mission.rule;
+  titleEl.innerText = t("cssMission" + level + "Title") || mission.title;
+  skillTitleEl.innerText = t("cssMission" + level + "Skill") || mission.skill;
+  bytebotEl.innerHTML = t("cssMission" + level + "Bytebot") || mission.bytebot;
+  whyEl.innerText = t("cssMission" + level + "Why") || mission.why;
+  successRuleEl.innerText = t("cssMission" + level + "Rule") || mission.rule;
   codeBox.value = mission.starter;
-  focusNote.innerText = mission.focus;
+  focusNote.innerText = t("cssMission" + level + "Focus") || mission.focus;
 
   updatePreview();
 

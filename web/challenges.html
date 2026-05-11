@@ -405,9 +405,14 @@ button:hover,
 <div class="challenge-shell">
 
   <header class="header">
-    <div class="kicker pixel">BYTE RUSH / TRAINING ZONE</div>
-    <h1 class="pixel">Challenge Mode</h1>
-    <p>Complete fast coding missions, protect your lives, build your streak, and earn XP by writing real CSS syntax.</p>
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 18px;">
+      <div>
+        <div class="kicker pixel" data-key="challengesKicker">BYTE RUSH / TRAINING ZONE</div>
+        <h1 class="pixel" data-key="challengesTitle">Challenge Mode</h1>
+        <p data-key="challengesDesc">Complete fast coding missions, protect your lives, build your streak, and earn XP by writing real CSS syntax.</p>
+      </div>
+      <button id="language-toggle" style="padding: 10px 16px; background: var(--panel2); color: var(--green); border: 1px solid var(--line); font-family: 'Press Start 2P', monospace; font-size: 10px; cursor: pointer; border-radius: 4px;">FR</button>
+    </div>
   </header>
 
   <section id="start-panel" class="start-panel">

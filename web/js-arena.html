@@ -529,12 +529,14 @@ button:disabled {
 <main class="arena">
 
   <section class="top-command">
-    <div>
-      <h1 class="pixel">JavaScript Core</h1>
-      <p class="desc">Restore interactivity and make the ByteRush world respond to code.</p>
-    </div>
-
-    <div class="stats">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <h1 class="pixel" data-key="jsCore">JavaScript Core</h1>
+              <p class="desc" data-key="jsArenaDesc">Restore interactivity and make the ByteRush world respond to code.</p>
+            </div>
+            <button id="language-toggle" style="margin-left: 18px; padding: 6px 14px; font-size: 11px; font-family: 'IBM Plex Mono', monospace; border: 1px solid var(--green); background: var(--panel2); color: var(--green); cursor: pointer; border-radius: 4px;">FR</button>
+          </div>
+          <div class="stats">
       <div class="stat-pill">
         <span class="pixel">MISSION</span>
         <strong><span id="mission-count-inline">1</span> / 7</strong>

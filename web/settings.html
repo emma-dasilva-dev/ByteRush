@@ -239,32 +239,31 @@ h1{
 <div class="page">
 
   <header class="header">
-    <div class="kicker">BYTE RUSH / SYSTEM SETTINGS</div>
-
-    <h1>Game Settings</h1>
-
-    <p class="subtitle">
-      Customize your ByteRush experience, control music volume, and adjust your gameplay environment.
-    </p>
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 18px;">
+      <div>
+        <div class="kicker" data-key="settingsKicker">BYTE RUSH / SYSTEM SETTINGS</div>
+        <h1 data-key="settingsTitle">Game Settings</h1>
+        <p class="subtitle" data-key="settingsDesc">Customize your ByteRush experience, control music volume, and adjust your gameplay environment.</p>
+      </div>
+      <button id="language-toggle" style="padding: 10px 16px; background: var(--panel2); color: var(--green); border: 1px solid var(--line); font-family: 'Press Start 2P', monospace; font-size: 10px; cursor: pointer; border-radius: 4px;">FR</button>
+    </div>
   </header>
 
   <main class="settings-grid">
 
     <section class="card">
 
-      <div class="card-title">AUDIO SETTINGS</div>
+      <div class="card-title" data-key="audioSettings">AUDIO SETTINGS</div>
 
       <div class="setting-row">
 
         <div class="setting-info">
-          <h3>BACKGROUND MUSIC</h3>
-          <p>
-            Turn the ByteRush soundtrack on or off during gameplay.
-          </p>
+          <h3 data-key="backgroundMusic">BACKGROUND MUSIC</h3>
+          <p data-key="backgroundMusicDesc">Turn the ByteRush soundtrack on or off during gameplay.</p>
         </div>
 
         <button id="music-toggle" class="toggle-btn">
-          MUSIC ON
+          <span data-key="musicOn">MUSIC ON</span>
         </button>
 
       </div>
@@ -272,10 +271,8 @@ h1{
       <div class="setting-row">
 
         <div class="setting-info">
-          <h3>MUSIC VOLUME</h3>
-          <p>
-            Adjust the global soundtrack volume for every page in the game.
-          </p>
+          <h3 data-key="musicVolume">MUSIC VOLUME</h3>
+          <p data-key="musicVolumeDesc">Adjust the global soundtrack volume for every page in the game.</p>
         </div>
 
         <div class="volume-wrap">
@@ -300,7 +297,7 @@ h1{
     </section>
 
     <div class="save-message" id="save-message">
-      SETTINGS SAVED
+      <span data-key="settingsSaved">SETTINGS SAVED</span>
     </div>
 
   </main>
@@ -308,11 +305,11 @@ h1{
   <div class="bottom-bar">
 
     <button class="btn" onclick="goBack()">
-      ← BACK TO DASHBOARD
+      <span data-key="backToDashboard">← BACK TO DASHBOARD</span>
     </button>
 
     <button class="btn" id="reset-btn">
-      RESET AUDIO SETTINGS
+      <span data-key="resetAudioSettings">RESET AUDIO SETTINGS</span>
     </button>
 
   </div>
@@ -422,6 +419,7 @@ loadSettings();
 </script>
 
 <script src="audio.js"></script>
-
+<script src="translations.js"></script>
+<script src="language.js"></script>
 </body>
 </html>

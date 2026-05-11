@@ -352,9 +352,12 @@ h1 {
 <div class="page">
 
   <header class="header">
-    <div class="kicker">BYTE RUSH / CSS WORLD</div>
-    <h1>CSS Circuit Map</h1>
-    <p class="subtitle">
+    <div class="kicker" data-key="cssMapKicker">BYTE RUSH / CSS WORLD</div>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 18px;">
+        <h1 data-key="cssMapTitle">CSS Circuit Map</h1>
+        <button id="language-toggle" style="padding: 10px 16px; background: var(--panel2); color: var(--green); border: 1px solid var(--line); font-family: 'Press Start 2P', monospace; font-size: 10px; cursor: pointer; border-radius: 4px;">FR</button>
+      </div>
+    <p class="subtitle" data-key="cssMapSubtitle">
       Restore the visual layer of the digital world. Complete every CSS mission to unlock the JS Core.
     </p>
   </header>

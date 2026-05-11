@@ -348,71 +348,83 @@ h1 {
   <audio id="bg-music" autoplay loop>
   <source src="sounds/background-music.mp3" type="audio/mpeg">
 </audio>
-<button id="language-toggle">
-  FR
-</button>
 <div class="page">
 
   <header class="header">
-    <div class="kicker">BYTE RUSH / HTML WORLD</div>
-    <h1>HTML Arena Map</h1>
-    <p class="subtitle">
-      Repair the structure of the web one mission at a time. Complete every HTML mission to unlock the CSS Circuit.
-    </p>
+    <div class="kicker" data-key="htmlMapKicker">BYTE RUSH / HTML WORLD</div>
+    <h1 data-key="htmlMapTitle">HTML Arena Map</h1>
+    <p class="subtitle" data-key="htmlMapSubtitle">Repair the structure of the web one mission at a time. Complete every HTML mission to unlock the CSS Circuit.</p>
   </header>
 
   <section class="top-grid">
     <div class="stats">
       <div class="stat-card">
-        <div class="stat-label">XP</div>
+        <div class="stat-label" data-key="xp">XP</div>
         <div class="stat-value" id="xp">0</div>
       </div>
 
       <div class="stat-card">
-        <div class="stat-label">COMPLETED</div>
+        <div class="stat-label" data-key="completed">COMPLETED</div>
         <div class="stat-value"><span id="completed">0</span>/7</div>
       </div>
 
       <div class="stat-card">
-        <div class="stat-label">CURRENT</div>
+        <div class="stat-label" data-key="current">CURRENT</div>
         <div class="stat-value" id="current">1</div>
       </div>
     </div>
 
-    <div id="unlock-message" class="unlock-card">
-      CSS CIRCUIT UNLOCKED
-    </div>
+    <div id="unlock-message" class="unlock-card" data-key="cssUnlocked">CSS CIRCUIT UNLOCKED</div>
   </section>
 
   <main class="map-shell">
     <div class="map-title-row">
-      <div class="map-title">Mission Path</div>
-      <div class="map-note">Click the active mission to continue</div>
+      <div class="map-title" data-key="missionPath">Mission Path</div>
+      <div class="map-note" data-key="clickActiveMission">Click the active mission to continue</div>
     </div>
 
     <div class="map" id="map"></div>
   </main>
 
   <div class="actions">
-    <button class="btn" onclick="goBack()">← BACK TO DASHBOARD</button>
+    <button class="btn" onclick="goBack()" data-key="backToDashboard">← BACK TO DASHBOARD</button>
 
     <div class="reset-wrap">
-      <button onclick="resetProgress()" class="btn reset-btn">RESET PROGRESS</button>
-      <div class="reset-warning">This erases HTML progress and XP.</div>
+      <button onclick="resetProgress()" class="btn reset-btn" data-key="resetProgress">RESET PROGRESS</button>
+      <div class="reset-warning" data-key="resetWarning">This erases HTML progress and XP.</div>
     </div>
   </div>
 
 </div>
 
+buildMap();
+<script src="audio.js"></script>
+<script src="translations.js"></script>
+<script src="language.js"></script>
 <script>
+function getCurrentLang() {
+  return localStorage.getItem("byteRushLanguage") || "en";
+}
+function translate(key) {
+  const lang = getCurrentLang();
+  if (
+    typeof translations !== "undefined" &&
+    translations[lang] &&
+    translations[lang][key]
+  ) {
+    return translations[lang][key];
+  }
+  return key;
+}
+
 const missions = [
-  "Headings",
-  "Paragraphs",
-  "Buttons",
-  "Links",
-  "Images",
-  "Lists",
-  "Boss Mode"
+  "missionHeadings",
+  "missionParagraphs",
+  "missionButtons",
+  "missionLinks",
+  "missionImages",
+  "missionLists",
+  "missionBossMode"
 ];
 
 let level = parseInt(localStorage.getItem("html-level")) || 1;
@@ -422,7 +434,7 @@ const map = document.getElementById("map");
 
 function loadStats() {
   const completed = Math.min(level - 1, missions.length);
-  const currentMission = level > missions.length ? "DONE" : level;
+  const currentMission = level > missions.length ? translate("done") : level;
 
   document.getElementById("xp").innerText = xp;
   document.getElementById("completed").innerText = completed;
@@ -441,7 +453,6 @@ function buildMap() {
 
     const node = document.createElement("div");
     node.classList.add("node");
-
     if (isBoss) node.classList.add("boss");
 
     let statusText = "";
@@ -449,24 +460,30 @@ function buildMap() {
 
     if (missionNumber < level) {
       node.classList.add("completed");
-      statusText = "COMPLETED";
+      statusText = translate("completedStatus");
       numberText = "✓";
     } else if (missionNumber === level) {
       node.classList.add("active");
-      statusText = isBoss ? "FINAL TEST" : "START MISSION";
+      statusText = isBoss
+        ? translate("finalTest")
+        : translate("startMission");
 
       node.onclick = function() {
         window.location.href = "html-arena.html";
       };
     } else {
       node.classList.add("locked");
-      statusText = "LOCKED";
-      numberText = "LOCK";
+      statusText = translate("locked").toUpperCase();
+      numberText = translate("lock").toUpperCase();
     }
 
     node.innerHTML = `
       <div class="node-number">${numberText}</div>
-      <div class="node-title">${isBoss ? "BOSS MODE" : "MISSION " + missionNumber}<br>${name}</div>
+      <div class="node-title">
+        ${isBoss ? translate("bossMode") : translate("mission") + " " + missionNumber}
+        <br>
+        ${translate(name)}
+      </div>
       <div class="node-status">${statusText}</div>
     `;
 
@@ -475,8 +492,7 @@ function buildMap() {
 }
 
 function resetProgress() {
-  const confirmReset = confirm("Reset ALL HTML progress?");
-
+  const confirmReset = confirm(translate("resetHtmlConfirm"));
   if (confirmReset) {
     localStorage.removeItem("html-level");
     localStorage.removeItem("xp");
