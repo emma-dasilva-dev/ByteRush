@@ -32,7 +32,7 @@ body {
   margin: 0;
   background:
     radial-gradient(circle at 15% 10%, rgba(57,255,90,0.08), transparent 28%),
-    radial-gradient(circle at 85% 80%, rgba(250,204,21,0.06), transparent 30%),
+    radial-gradient(circle at 85% 80%, rgba(250,204,21,0.08), transparent 30%),
     var(--bg);
   color: var(--text);
   font-family: Consolas, Monaco, monospace;
@@ -108,7 +108,7 @@ h1, h2, h3, h4, .logo, .nav-item, .mission-card strong {
   content: "";
   position: absolute;
   inset: 7px;
-  border: 1px dashed rgba(250,204,21,0.09);
+  border: 1px dashed rgba(250,204,21,0.11);
   pointer-events: none;
 }
 
@@ -123,15 +123,49 @@ h1, h2, h3, h4, .logo, .nav-item, .mission-card strong {
   color: var(--green);
   text-decoration: none;
   font-size: 12px;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
   letter-spacing: 1px;
   animation: softPulse 2.8s ease-in-out infinite;
-  text-shadow: 2px 2px 0 rgba(250,204,21,0.18);
+  text-shadow: 2px 2px 0 rgba(250,204,21,0.22);
 }
 
 .logo::before {
   content: "★ ";
   color: var(--yellow);
+}
+
+.player-mini {
+  border: 1px solid rgba(250,204,21,0.28);
+  background: var(--panel2);
+  padding: 11px;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.player-avatar {
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--yellow);
+  display: grid;
+  place-items: center;
+  margin-bottom: 8px;
+  background: #02060B;
+  color: var(--yellow);
+  font-size: 20px;
+}
+
+.player-mini-title {
+  color: var(--yellow);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  margin-bottom: 6px;
+}
+
+.player-mini-name {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
 }
 
 #language-toggle {
@@ -182,7 +216,7 @@ nav {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(250,204,21,0.12), transparent);
+  background: linear-gradient(90deg, transparent, rgba(250,204,21,0.14), transparent);
   transform: translateX(-120%);
   transition: 0.45s ease;
 }
@@ -195,7 +229,7 @@ nav {
 .nav-item:hover,
 .nav-item.active {
   color: var(--green);
-  border-color: rgba(250,204,21,0.6);
+  border-color: rgba(250,204,21,0.65);
   transform: translateX(3px);
 }
 
@@ -207,9 +241,9 @@ nav {
 }
 
 .section-header {
-  border: 1px solid var(--soft-line);
+  border: 1px solid rgba(250,204,21,0.28);
   background:
-    linear-gradient(135deg, rgba(250,204,21,0.05), transparent),
+    linear-gradient(135deg, rgba(250,204,21,0.065), transparent),
     #02060B;
   padding: 14px;
   position: relative;
@@ -224,13 +258,14 @@ nav {
   color: var(--yellow);
   font-family: 'Press Start 2P', monospace;
   font-size: 7px;
-  opacity: 0.9;
+  opacity: 0.95;
 }
 
 .section-header h2 {
   color: var(--green);
   font-size: 15px;
   margin: 0 0 8px;
+  text-shadow: 2px 2px 0 rgba(250,204,21,0.12);
 }
 
 .section-header p {
@@ -240,9 +275,9 @@ nav {
 }
 
 .hero-panel {
-  border: 1px solid var(--soft-line);
+  border: 1px solid rgba(250,204,21,0.28);
   background:
-    radial-gradient(circle at top right, rgba(250,204,21,0.08), transparent 35%),
+    radial-gradient(circle at top right, rgba(250,204,21,0.1), transparent 35%),
     var(--panel2);
   padding: 14px;
   position: relative;
@@ -276,12 +311,31 @@ nav {
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   min-height: 0;
+  position: relative;
+}
+
+.cards-grid::before {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 50%;
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(250,204,21,0.28) 0,
+    rgba(250,204,21,0.28) 8px,
+    transparent 8px,
+    transparent 16px
+  );
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .mission-card {
   border: 1px solid var(--soft-line);
   background:
-    linear-gradient(145deg, rgba(255,255,255,0.025), transparent),
+    linear-gradient(145deg, rgba(250,204,21,0.035), transparent),
     #02060B;
   padding: 14px;
   cursor: pointer;
@@ -298,7 +352,7 @@ nav {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(120deg, transparent, rgba(250,204,21,0.08), transparent);
+  background: linear-gradient(120deg, transparent, rgba(250,204,21,0.1), transparent);
   transform: translateX(-120%);
   transition: 0.45s ease;
 }
@@ -309,9 +363,26 @@ nav {
 
 .mission-card:hover {
   transform: translateY(-5px) scale(1.015);
-  border-color: rgba(250,204,21,0.6);
+  border-color: rgba(250,204,21,0.75);
   background: var(--hover);
-  box-shadow: 5px 5px 0 rgba(250,204,21,0.18);
+  box-shadow: 6px 6px 0 rgba(250,204,21,0.2);
+}
+
+.mission-card.daily {
+  border-color: rgba(250,204,21,0.65);
+  background:
+    radial-gradient(circle at top right, rgba(250,204,21,0.12), transparent 40%),
+    #02060B;
+}
+
+.mission-card.daily::after {
+  content: "BONUS";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: var(--yellow);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 6px;
 }
 
 .card-icon {
@@ -346,6 +417,34 @@ nav {
   z-index: 1;
 }
 
+.card-progress {
+  margin-top: 10px;
+  height: 8px;
+  border: 1px solid rgba(250,204,21,0.32);
+  background: #02060B;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.card-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--yellow);
+}
+
+.card-progress-fill.green {
+  background: var(--green);
+}
+
+.card-progress-label {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 10px;
+  position: relative;
+  z-index: 1;
+}
+
 #css-lock,
 #js-lock {
   color: var(--red);
@@ -360,9 +459,9 @@ nav {
 }
 
 .stat-box {
-  border: 1px solid var(--soft-line);
+  border: 1px solid rgba(250,204,21,0.18);
   background:
-    linear-gradient(135deg, rgba(255,255,255,0.025), transparent),
+    linear-gradient(135deg, rgba(250,204,21,0.035), transparent),
     var(--panel2);
   padding: 10px;
   min-height: 0;
@@ -377,7 +476,7 @@ nav {
   left: 0;
   width: 4px;
   height: 100%;
-  background: rgba(250,204,21,0.65);
+  background: rgba(250,204,21,0.75);
 }
 
 .stat-box h4 {
@@ -467,6 +566,10 @@ nav {
   .cards-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .cards-grid::before {
+    display: none;
+  }
 }
 
 @media (max-width: 700px) {
@@ -513,6 +616,12 @@ nav {
     <aside class="sidebar">
       <a href="index.html" class="logo">ByteRush</a>
 
+      <div class="player-mini">
+        <div class="player-avatar">🧑‍💻</div>
+        <div class="player-mini-title">PLAYER</div>
+        <div class="player-mini-name" id="mini-player-name">Builder</div>
+      </div>
+
       <nav>
         <a href="index.html" class="nav-item active" data-key="home">Home</a>
         <a href="account.html" class="nav-item" data-key="account">Account</a>
@@ -543,6 +652,11 @@ nav {
           <strong data-key="htmlArena">HTML Arena</strong>
           <span data-key="buildStructure">Build the structure</span>
           <p data-key="unlocked">Unlocked</p>
+
+          <div class="card-progress">
+            <div class="card-progress-fill green" id="html-card-progress"></div>
+          </div>
+          <div class="card-progress-label" id="html-card-label">0% complete</div>
         </div>
 
         <div class="mission-card" id="css-card" onclick="window.location.href='css-map.html'">
@@ -550,6 +664,11 @@ nav {
           <strong data-key="cssCircuit">CSS Circuit</strong>
           <span data-key="styleInterface">Style the interface</span>
           <p id="css-lock" data-key="locked">Locked</p>
+
+          <div class="card-progress">
+            <div class="card-progress-fill" id="css-card-progress"></div>
+          </div>
+          <div class="card-progress-label" id="css-card-label">Locked</div>
         </div>
 
         <div class="mission-card" id="js-card" onclick="window.location.href='js-map.html'">
@@ -557,6 +676,11 @@ nav {
           <strong data-key="jsCore">JavaScript Core</strong>
           <span data-key="addInteraction">Add interaction</span>
           <p id="js-lock" data-key="locked">Locked</p>
+
+          <div class="card-progress">
+            <div class="card-progress-fill" id="js-card-progress"></div>
+          </div>
+          <div class="card-progress-label" id="js-card-label">Locked</div>
         </div>
 
         <div class="mission-card" onclick="window.location.href='projects.html'">
@@ -564,6 +688,11 @@ nav {
           <strong data-key="projects">Projects</strong>
           <span data-key="buildMiniGames">Build mini games</span>
           <p data-key="available">Available</p>
+
+          <div class="card-progress">
+            <div class="card-progress-fill" id="project-card-progress"></div>
+          </div>
+          <div class="card-progress-label">Build real projects</div>
         </div>
 
         <div class="mission-card" onclick="window.location.href='challenges.html'">
@@ -571,7 +700,8 @@ nav {
           <strong data-key="challenges">Challenges</strong>
           <span data-key="testSkills">Test your skills</span>
           <p data-key="checkItOut">Check it out</p>
-        </div>
+
+          
 
       </div>
     </main>
@@ -622,6 +752,56 @@ nav {
 <script src="audio.js"></script>
 <script src="translations.js"></script>
 <script src="language.js"></script>
+
+<script>
+function getLevelProgress(level) {
+  const completed = Math.max(0, Math.min(level - 1, 7));
+  return Math.round((completed / 7) * 100);
+}
+
+function updateDashboardProgressBars() {
+  const playerName = localStorage.getItem("player-name") || "Builder";
+  const htmlLevel = parseInt(localStorage.getItem("html-level")) || 1;
+  const cssLevel = parseInt(localStorage.getItem("css-level")) || 1;
+  const jsLevel = parseInt(localStorage.getItem("js-level")) || 1;
+
+  const htmlPercent = getLevelProgress(htmlLevel);
+  const cssPercent = getLevelProgress(cssLevel);
+  const jsPercent = getLevelProgress(jsLevel);
+
+  const miniPlayerName = document.getElementById("mini-player-name");
+  const htmlBar = document.getElementById("html-card-progress");
+  const cssBar = document.getElementById("css-card-progress");
+  const jsBar = document.getElementById("js-card-progress");
+  const projectBar = document.getElementById("project-card-progress");
+  const challengeBar = document.getElementById("challenge-card-progress");
+
+  const htmlLabel = document.getElementById("html-card-label");
+  const cssLabel = document.getElementById("css-card-label");
+  const jsLabel = document.getElementById("js-card-label");
+
+  if (miniPlayerName) miniPlayerName.innerText = playerName;
+
+  if (htmlBar) htmlBar.style.width = htmlPercent + "%";
+  if (cssBar) cssBar.style.width = cssPercent + "%";
+  if (jsBar) jsBar.style.width = jsPercent + "%";
+
+  if (projectBar) projectBar.style.width = "40%";
+  if (challengeBar) challengeBar.style.width = "65%";
+
+  if (htmlLabel) htmlLabel.innerText = htmlPercent + "% complete";
+
+  if (cssLabel) {
+    cssLabel.innerText = htmlLevel >= 8 ? cssPercent + "% complete" : "Locked";
+  }
+
+  if (jsLabel) {
+    jsLabel.innerText = cssLevel >= 8 ? jsPercent + "% complete" : "Locked";
+  }
+}
+
+updateDashboardProgressBars();
+</script>
 
 </body>
 </html>
