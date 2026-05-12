@@ -1,616 +1,899 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HTML Arena Map | ByteRush</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HTML World Map | ByteRush</title>
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Press+Start+2P&display=swap");
 
-:root {
-  --green: #39FF5A;
-  --red: #FF3B3B;
-  --bg: #03080F;
-  --panel: #050B12;
-  --panel2: #07111D;
-  --text: #E7FFE9;
-  --muted: #8FAF9A;
-  --line: rgba(57,255,90,0.22);
-  --soft-line: rgba(255,255,255,0.08);
-  --yellow: #FACC15;
-  --boss: #D7B84F;
-}
+    :root {
+      --bg: #03080F;
+      --panel: #050B12;
+      --inner: #07111D;
+      --green: #39FF5A;
+      --yellow: #FACC15;
+      --red: #FF3B3B;
+      --text: #E6FFE9;
+      --muted: rgba(230, 255, 233, 0.68);
+      --line: rgba(57, 255, 90, 0.24);
+      --sealed: rgba(230, 255, 233, 0.24);
+      --shadow-green: rgba(57, 255, 90, 0.22);
+      --shadow-yellow: rgba(250, 204, 21, 0.22);
+    }
 
-* {
-  box-sizing: border-box;
-}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, rgba(57,255,90,0.08), transparent 32%),
-    radial-gradient(circle at bottom right, rgba(250,204,21,0.06), transparent 28%),
-    linear-gradient(rgba(57,255,90,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(57,255,90,0.025) 1px, transparent 1px),
-    var(--bg);
-  background-size: auto, auto, 44px 44px, 44px 44px;
-  color: var(--text);
-  font-family: 'Press Start 2P', monospace;
-  padding: 28px 18px;
-}
+    body {
+      min-height: 100vh;
+      background:
+        linear-gradient(rgba(57, 255, 90, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(57, 255, 90, 0.025) 1px, transparent 1px),
+        radial-gradient(circle at top left, rgba(57, 255, 90, 0.08), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(250, 204, 21, 0.05), transparent 34%),
+        var(--bg);
+      background-size: 42px 42px, 42px 42px, auto, auto;
+      color: var(--text);
+      font-family: "IBM Plex Mono", monospace;
+      overflow-x: hidden;
+    }
 
-#language-toggle {
-  position: absolute;
-  top: 18px;
-  right: 24px;
-  z-index: 1000;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 8px;
-  padding: 10px;
-  background: var(--panel2);
-  color: var(--yellow);
-  border: 1px solid rgba(250,204,21,0.5);
-  border-radius: 4px;
-  cursor: pointer;
-}
+    .page-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0;
+    }
 
-#language-toggle:hover {
-  color: var(--green);
-  background: rgba(250,204,21,0.08);
-}
+    .world-panel {
+      background: linear-gradient(180deg, rgba(5, 11, 18, 0.98), rgba(5, 11, 18, 0.9));
+      border: 1px solid rgba(57, 255, 90, 0.24);
+      box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.04), 0 20px 70px rgba(0, 0, 0, 0.42);
+      border-radius: 18px;
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
 
-.page {
-  width: min(980px, 100%);
-  margin: 0 auto;
-}
+    .world-panel::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border: 1px dashed rgba(250, 204, 21, 0.35);
+      border-radius: 14px;
+      pointer-events: none;
+    }
 
-.header {
-  border: 1px solid var(--line);
-  background: rgba(5,11,18,0.92);
-  padding: 22px;
-  border-radius: 18px;
-  text-align: left;
-  position: relative;
-  box-shadow: 0 18px 45px rgba(0,0,0,0.35);
-}
+    .world-header {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      background: rgba(7, 17, 29, 0.78);
+      border: 1px solid rgba(57, 255, 90, 0.2);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
 
-.header::before {
-  content: "WORLD 01";
-  position: absolute;
-  top: -11px;
-  left: 18px;
-  background: var(--bg);
-  color: var(--yellow);
-  border: 1px solid rgba(250,204,21,0.45);
-  padding: 6px 10px;
-  font-size: 7px;
-}
+    .eyebrow {
+      font-family: "Press Start 2P", monospace;
+      color: var(--yellow);
+      font-size: 10px;
+      line-height: 1.8;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
 
-.header::after {
-  content: "";
-  position: absolute;
-  inset: 8px;
-  border: 1px dashed rgba(250,204,21,0.1);
-  pointer-events: none;
-  border-radius: 12px;
-}
+    h1 {
+      font-family: "Press Start 2P", monospace;
+      font-size: clamp(20px, 3vw, 34px);
+      line-height: 1.25;
+      color: var(--text);
+      text-shadow: 0 0 18px rgba(57, 255, 90, 0.18);
+      margin-bottom: 10px;
+    }
 
-.kicker {
-  font-size: 8px;
-  color: var(--yellow);
-  margin-bottom: 12px;
-  letter-spacing: 1px;
-}
+    .world-subtitle {
+      color: var(--muted);
+      max-width: 720px;
+      font-size: 15px;
+      line-height: 1.6;
+    }
 
-h1 {
-  margin: 0 0 12px;
-  font-size: clamp(18px, 4vw, 30px);
-  line-height: 1.35;
-  color: var(--green);
-  text-shadow: 3px 3px 0 rgba(250,204,21,0.16);
-}
+    .world-badge {
+      justify-self: end;
+      min-width: 150px;
+      background: #03080F;
+      border: 1px solid rgba(250, 204, 21, 0.42);
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+    }
 
-.subtitle {
-  margin: 0;
-  color: var(--muted);
-  font-size: 9px;
-  line-height: 1.8;
-  max-width: 720px;
-}
+    .world-badge span {
+      display: block;
+      font-family: "Press Start 2P", monospace;
+      font-size: 9px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
 
-.top-grid {
-  display: grid;
-  grid-template-columns: 1fr 220px;
-  gap: 16px;
-  margin-top: 16px;
-}
+    .world-badge strong {
+      display: block;
+      font-family: "Press Start 2P", monospace;
+      font-size: 18px;
+      color: var(--yellow);
+    }
 
-.stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-}
+    .stats-row {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
 
-.stat-card,
-.unlock-card {
-  border: 1px solid var(--line);
-  background: var(--panel);
-  border-radius: 16px;
-  padding: 16px;
-  position: relative;
-  overflow: hidden;
-}
+    .stat-card {
+      background: rgba(7, 17, 29, 0.88);
+      border: 1px solid rgba(57, 255, 90, 0.2);
+      border-radius: 12px;
+      padding: 13px 14px;
+      min-height: 72px;
+    }
 
-.stat-card::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 4px;
-  height: 100%;
-  background: var(--yellow);
-  opacity: 0.75;
-}
+    .stat-card .label {
+      display: block;
+      font-family: "Press Start 2P", monospace;
+      font-size: 8px;
+      line-height: 1.6;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
 
-.stat-label {
-  color: var(--muted);
-  font-size: 7px;
-  margin-bottom: 10px;
-}
+    .stat-card .value {
+      display: block;
+      font-family: "Press Start 2P", monospace;
+      font-size: 11px;
+      line-height: 1.6;
+      color: var(--green);
+    }
 
-.stat-value {
-  color: var(--yellow);
-  font-size: 15px;
-}
+    .map-wrap {
+      position: relative;
+      z-index: 2;
+      background:
+        linear-gradient(rgba(57, 255, 90, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(57, 255, 90, 0.035) 1px, transparent 1px),
+        rgba(3, 8, 15, 0.72);
+      background-size: 34px 34px;
+      border: 1px solid rgba(57, 255, 90, 0.18);
+      border-radius: 16px;
+      padding: 26px 22px;
+      min-height: 505px;
+      overflow: hidden;
+    }
 
-.unlock-card {
-  display: none;
-  color: var(--yellow);
-  font-size: 8px;
-  line-height: 1.7;
-  align-content: center;
-  border-color: rgba(250,204,21,0.5);
-  text-align: center;
-}
+    .map-wrap::after {
+      content: "STRUCTURE SIGNAL: UNSTABLE / RESTORE REQUIRED";
+      position: absolute;
+      left: 22px;
+      bottom: 14px;
+      font-family: "Press Start 2P", monospace;
+      font-size: 8px;
+      color: rgba(230, 255, 233, 0.24);
+      letter-spacing: 0.04em;
+    }
 
-.map-shell {
-  margin-top: 18px;
-  border: 1px solid var(--line);
-  background: rgba(5,11,18,0.82);
-  border-radius: 22px;
-  padding: 20px;
-  position: relative;
-  box-shadow: 0 18px 45px rgba(0,0,0,0.35);
-}
+    .path-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
 
-.map-shell::before {
-  content: "";
-  position: absolute;
-  inset: 9px;
-  border: 1px dashed rgba(250,204,21,0.08);
-  border-radius: 16px;
-  pointer-events: none;
-}
+    .path-layer line {
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-dasharray: 10 9;
+      opacity: 0.85;
+      filter: none;
+    }
 
-.map-title-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  align-items: center;
-  margin-bottom: 18px;
-  position: relative;
-  z-index: 1;
-}
+    .path-layer line.cleared {
+      stroke: var(--green);
+      filter: drop-shadow(0 0 5px rgba(57, 255, 90, 0.35));
+    }
 
-.map-title {
-  font-size: 11px;
-  color: var(--yellow);
-}
+    .path-layer line.active {
+      stroke: var(--yellow);
+      filter: drop-shadow(0 0 5px rgba(250, 204, 21, 0.35));
+    }
 
-.map-note {
-  font-size: 7px;
-  color: var(--muted);
-}
+    .path-layer line.sealed {
+      stroke: rgba(230, 255, 233, 0.16);
+      opacity: 0.55;
+    }
 
-.map {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 12px;
-  align-items: stretch;
-  position: relative;
-  z-index: 1;
-}
+    .mission-map {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(190px, 1fr));
+      grid-template-rows: repeat(4, auto);
+      gap: 28px 42px;
+      align-items: center;
+      max-width: 940px;
+      margin: 0 auto;
+      padding-bottom: 42px;
+    }
 
-.node {
-  min-height: 132px;
-  border: 1px solid var(--soft-line);
-  background: var(--panel2);
-  border-radius: 18px;
-  padding: 14px;
-  color: var(--muted);
-  text-align: left;
-  transition: 0.18s ease;
-  position: relative;
-  overflow: hidden;
-}
+    .mission-node {
+      position: relative;
+      min-height: 150px;
+      background: linear-gradient(180deg, rgba(7, 17, 29, 0.98), rgba(5, 11, 18, 0.96));
+      border: 1px solid rgba(57, 255, 90, 0.22);
+      border-radius: 14px;
+      padding: 13px;
+      color: var(--text);
+      transition: transform 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+    }
 
-.node::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(250,204,21,0.09), transparent 42%);
-  opacity: 0;
-  transition: 0.18s ease;
-}
+    .mission-node::before {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      border: 1px dashed rgba(250, 204, 21, 0.18);
+      border-radius: 10px;
+      pointer-events: none;
+    }
 
-.node-number {
-  position: relative;
-  width: 30px;
-  height: 30px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--soft-line);
-  border-radius: 10px;
-  font-size: 8px;
-  margin-bottom: 16px;
-}
+    .mission-node.cleared {
+      border-color: rgba(57, 255, 90, 0.66);
+      box-shadow: 0 0 18px var(--shadow-green);
+    }
 
-.node-title {
-  position: relative;
-  font-size: 8px;
-  line-height: 1.7;
-  color: inherit;
-}
+    .mission-node.active {
+      border-color: rgba(250, 204, 21, 0.78);
+      box-shadow: 0 0 20px var(--shadow-yellow);
+      cursor: pointer;
+    }
 
-.node-status {
-  position: absolute;
-  left: 14px;
-  bottom: 14px;
-  font-size: 7px;
-}
+    .mission-node.active:hover {
+      transform: translateY(-3px);
+      border-color: var(--yellow);
+    }
 
-.node.completed {
-  border-color: rgba(57,255,90,0.35);
-  color: var(--green);
-  background: rgba(7,17,29,0.95);
-}
+    .mission-node.sealed {
+      opacity: 0.46;
+      border-color: rgba(230, 255, 233, 0.14);
+      filter: grayscale(0.55);
+    }
 
-.node.completed .node-number {
-  color: var(--green);
-  border-color: rgba(57,255,90,0.5);
-}
+    .mission-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
 
-.node.completed .node-status {
-  color: var(--green);
-}
+    .mission-number,
+    .mission-status {
+      font-family: "Press Start 2P", monospace;
+      font-size: 8px;
+      line-height: 1.5;
+    }
 
-.node.active {
-  border-color: var(--yellow);
-  color: var(--text);
-  cursor: pointer;
-  background: rgba(17,36,23,0.72);
-  box-shadow: 5px 5px 0 rgba(250,204,21,0.16);
-}
+    .mission-number {
+      color: var(--muted);
+    }
 
-.node.active::before {
-  opacity: 1;
-}
+    .mission-status {
+      color: var(--yellow);
+      text-align: right;
+    }
 
-.node.active:hover {
-  transform: translateY(-4px);
-  box-shadow: 7px 7px 0 rgba(250,204,21,0.22);
-}
+    .mission-node.cleared .mission-status {
+      color: var(--green);
+    }
 
-.node.active .node-number {
-  border-color: var(--yellow);
-  color: var(--yellow);
-}
+    .mission-node.sealed .mission-status {
+      color: var(--sealed);
+    }
 
-.node.active .node-status {
-  color: var(--yellow);
-}
+    .mission-name {
+      font-family: "Press Start 2P", monospace;
+      font-size: 11px;
+      line-height: 1.55;
+      color: var(--text);
+      margin-bottom: 9px;
+      min-height: 34px;
+    }
 
-.node.locked {
-  opacity: 0.42;
-  cursor: not-allowed;
-}
+    .mission-node.active .mission-name {
+      color: var(--yellow);
+    }
 
-.node.boss {
-  border-color: rgba(215,184,79,0.35);
-}
+    .mission-node.cleared .mission-name {
+      color: var(--green);
+    }
 
-.node.boss.active {
-  border-color: var(--boss);
-  background: rgba(43,36,17,0.7);
-}
+    .mission-meta {
+      display: grid;
+      gap: 6px;
+      font-size: 13px;
+      line-height: 1.35;
+      color: var(--muted);
+    }
 
-.node.boss.active .node-number,
-.node.boss.active .node-status {
-  border-color: var(--boss);
-  color: var(--boss);
-}
+    .mission-meta strong {
+      color: var(--text);
+      font-weight: 700;
+    }
 
-.actions {
-  margin-top: 18px;
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  align-items: center;
-}
+    .mission-node.sealed .mission-meta strong {
+      color: rgba(230, 255, 233, 0.42);
+    }
 
-.btn {
-  border: 1px solid var(--yellow);
-  background: transparent;
-  color: var(--yellow);
-  padding: 13px 16px;
-  border-radius: 14px;
-  cursor: pointer;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 8px;
-  transition: 0.18s ease;
-}
+    .node-1 { grid-column: 1; grid-row: 1; }
+    .node-2 { grid-column: 2; grid-row: 1; }
+    .node-3 { grid-column: 3; grid-row: 1; }
 
-.btn:hover {
-  background: var(--yellow);
-  color: var(--bg);
-  transform: translateY(-2px);
-}
+    .node-4 { grid-column: 1; grid-row: 2; }
+    .node-5 { grid-column: 2; grid-row: 2; }
+    .node-6 { grid-column: 3; grid-row: 2; }
 
-.reset-wrap {
-  text-align: right;
-}
+    .node-7 { grid-column: 1; grid-row: 3; }
+    .node-8 { grid-column: 2; grid-row: 3; }
+    .node-9 { grid-column: 3; grid-row: 3; }
 
-.reset-btn {
-  border-color: rgba(255,59,59,0.6);
-  color: var(--red);
-}
+    .node-10 {
+      grid-column: 3;
+      grid-row: 4;
+    }
 
-.reset-btn:hover {
-  background: var(--red);
-  color: var(--bg);
-}
+    .boss-node {
+      min-height: 158px;
+      border-width: 1px;
+    }
 
-.reset-warning {
-  margin-top: 8px;
-  color: rgba(255,59,59,0.65);
-  font-size: 6px;
-}
+    .boss-node .mission-name {
+      color: var(--yellow);
+    }
 
-@media (max-width: 900px) {
-  .top-grid {
-    grid-template-columns: 1fr;
-  }
+    .bottom-actions {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
 
-  .map {
-    grid-template-columns: repeat(2, 1fr);
-  }
+    .action-card {
+      background: rgba(7, 17, 29, 0.86);
+      border: 1px solid rgba(57, 255, 90, 0.18);
+      border-radius: 14px;
+      padding: 14px;
+    }
 
-  .stats {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
+    .btn {
+      width: 100%;
+      border: 1px solid rgba(57, 255, 90, 0.45);
+      background: rgba(3, 8, 15, 0.95);
+      color: var(--green);
+      font-family: "Press Start 2P", monospace;
+      font-size: 10px;
+      line-height: 1.4;
+      padding: 13px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+    }
 
-@media (max-width: 560px) {
-  body {
-    padding: 18px 12px;
-  }
+    .btn:hover {
+      transform: translateY(-2px);
+      border-color: var(--green);
+    }
 
-  #language-toggle {
-    position: static;
-    width: 100%;
-    margin-bottom: 14px;
-  }
+    .btn.reset {
+      border-color: rgba(255, 59, 59, 0.48);
+      color: var(--red);
+    }
 
-  .header,
-  .map-shell {
-    padding: 16px;
-  }
+    .btn.reset:hover {
+      border-color: var(--red);
+    }
 
-  .stats {
-    grid-template-columns: 1fr;
-  }
+    .warning {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      margin-top: 10px;
+    }
 
-  .map {
-    grid-template-columns: 1fr;
-  }
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(5, 11, 18, 0.96);
+      border: 1px solid rgba(250, 204, 21, 0.55);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 13px 16px;
+      font-size: 14px;
+      line-height: 1.45;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      z-index: 20;
+      max-width: min(520px, calc(100% - 32px));
+      text-align: center;
+    }
 
-  .node {
-    min-height: 110px;
-  }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
 
-  .actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
+    @media (max-width: 900px) {
+      .world-header {
+        grid-template-columns: 1fr;
+      }
 
-  .btn,
-  .reset-wrap {
-    width: 100%;
-    text-align: center;
-  }
-}
-</style>
+      .world-badge {
+        justify-self: stretch;
+      }
+
+      .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .mission-map {
+        grid-template-columns: repeat(2, minmax(180px, 1fr));
+        gap: 22px;
+      }
+
+      .node-1, .node-2, .node-3,
+      .node-4, .node-5, .node-6,
+      .node-7, .node-8, .node-9,
+      .node-10 {
+        grid-column: auto;
+        grid-row: auto;
+      }
+
+      .path-layer {
+        display: none;
+      }
+
+      .map-wrap {
+        min-height: auto;
+      }
+
+      .map-wrap::after {
+        display: none;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .page-shell {
+        width: min(100% - 20px, 1180px);
+        padding: 10px 0;
+      }
+
+      .world-panel {
+        padding: 12px;
+        border-radius: 14px;
+      }
+
+      .world-panel::before {
+        inset: 8px;
+      }
+
+      .world-header {
+        padding: 14px;
+      }
+
+      .stats-row {
+        grid-template-columns: 1fr;
+      }
+
+      .map-wrap {
+        padding: 18px 14px;
+      }
+
+      .mission-map {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        padding-bottom: 0;
+      }
+
+      .mission-node {
+        min-height: auto;
+      }
+
+      .bottom-actions {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+    }
+  </style>
 </head>
 
-<body class="theme-html">
+<body>
+  <main class="page-shell">
+    <section class="world-panel">
+      <header class="world-header">
+        <div>
+          <p class="eyebrow">WORLD 01 — HTML WORLD</p>
+          <h1>STRUCTURE RUINS</h1>
+          <p class="world-subtitle">
+            The skeleton of the web is fractured. Restore each structure point, reconnect the path lines,
+            and rebuild the broken digital world one HTML quest at a time.
+          </p>
+        </div>
 
-<button id="language-toggle">FR</button>
+        <div class="world-badge">
+          <span>WORLD STATUS</span>
+          <strong id="badgePercent">0%</strong>
+        </div>
+      </header>
 
-<audio id="bg-music" autoplay loop>
-  <source src="sounds/background-music.mp3" type="audio/mpeg">
-</audio>
+      <section class="stats-row" aria-label="Player world stats">
+        <div class="stat-card">
+          <span class="label">XP</span>
+          <span class="value" id="xpValue">0</span>
+        </div>
 
-<div class="page">
+        <div class="stat-card">
+          <span class="label">CLEARED</span>
+          <span class="value" id="clearedValue">0/10</span>
+        </div>
 
-  <header class="header">
-    <div class="kicker" data-key="htmlMapKicker">BYTE RUSH / HTML WORLD</div>
-    <h1 data-key="htmlMapTitle">HTML Arena Map</h1>
-    <p class="subtitle" data-key="htmlMapSubtitle">Repair the structure of the web one mission at a time. Complete every HTML mission to unlock the CSS Circuit.</p>
-  </header>
+        <div class="stat-card">
+          <span class="label">ACTIVE QUEST</span>
+          <span class="value" id="activeQuestValue">Signal Tower</span>
+        </div>
 
-  <section class="top-grid">
-    <div class="stats">
-      <div class="stat-card">
-        <div class="stat-label" data-key="xp">XP</div>
-        <div class="stat-value" id="xp">0</div>
-      </div>
+        <div class="stat-card">
+          <span class="label">WORLD STATUS</span>
+          <span class="value" id="worldStatusValue">0% RESTORED</span>
+        </div>
+      </section>
 
-      <div class="stat-card">
-        <div class="stat-label" data-key="completed">COMPLETED</div>
-        <div class="stat-value"><span id="completed">0</span>/7</div>
-      </div>
+      <section class="map-wrap" id="mapWrap" aria-label="HTML world mission map">
+        <svg class="path-layer" id="pathLayer"></svg>
+        <div class="mission-map" id="missionMap"></div>
+      </section>
 
-      <div class="stat-card">
-        <div class="stat-label" data-key="current">CURRENT</div>
-        <div class="stat-value" id="current">1</div>
-      </div>
-    </div>
+      <section class="bottom-actions">
+        <div class="action-card">
+          <button class="btn" id="returnBtn">RETURN TO BASE</button>
+        </div>
 
-    <div id="unlock-message" class="unlock-card" data-key="cssUnlocked">CSS CIRCUIT UNLOCKED</div>
-  </section>
-
-  <main class="map-shell">
-    <div class="map-title-row">
-      <div class="map-title" data-key="missionPath">Mission Path</div>
-      <div class="map-note" data-key="clickActiveMission">Click the active mission to continue</div>
-    </div>
-
-    <div class="map" id="map"></div>
+        <div class="action-card">
+          <button class="btn reset" id="resetBtn">RESET WORLD</button>
+          <p class="warning">This erases HTML world progress and XP earned in this world.</p>
+        </div>
+      </section>
+    </section>
   </main>
 
-  <div class="actions">
-    <button class="btn" onclick="goBack()" data-key="backToDashboard">← BACK TO DASHBOARD</button>
+  <div class="toast" id="toast"></div>
 
-    <div class="reset-wrap">
-      <button onclick="resetProgress()" class="btn reset-btn" data-key="resetProgress">RESET PROGRESS</button>
-      <div class="reset-warning" data-key="resetWarning">This erases HTML progress and XP.</div>
-    </div>
-  </div>
+  <script>
+    const missions = [
+      {
+        id: 1,
+        skill: "Headings",
+        name: "Signal Tower",
+        goal: "Restore the main title beacon",
+        reward: 20
+      },
+      {
+        id: 2,
+        skill: "Paragraphs",
+        name: "Message Logs",
+        goal: "Recover broken text data",
+        reward: 20
+      },
+      {
+        id: 3,
+        skill: "Buttons",
+        name: "Control Switch",
+        goal: "Create a command button",
+        reward: 20
+      },
+      {
+        id: 4,
+        skill: "Links",
+        name: "Portal Gate",
+        goal: "Connect zones together",
+        reward: 20
+      },
+      {
+        id: 5,
+        skill: "Images",
+        name: "Memory Frame",
+        goal: "Restore lost images",
+        reward: 20
+      },
+      {
+        id: 6,
+        skill: "Lists",
+        name: "Supply Inventory",
+        goal: "Organize resources",
+        reward: 20
+      },
+      {
+        id: 7,
+        skill: "Tables",
+        name: "Data Terminal",
+        goal: "Build a clean data grid",
+        reward: 20
+      },
+      {
+        id: 8,
+        skill: "Forms",
+        name: "Identity Scanner",
+        goal: "Create player input forms",
+        reward: 20
+      },
+      {
+        id: 9,
+        skill: "Semantic HTML",
+        name: "Structure Engine",
+        goal: "Repair modern page structure",
+        reward: 20
+      },
+      {
+        id: 10,
+        skill: "Mini Webpage",
+        name: "Web Core Boss",
+        goal: "Build a complete webpage",
+        reward: 50,
+        boss: true
+      }
+    ];
 
-</div>
+    const connections = [
+      [1, 2],
+      [2, 3],
+      [1, 4],
+      [4, 5],
+      [5, 6],
+      [4, 7],
+      [7, 8],
+      [8, 9],
+      [9, 10]
+    ];
 
-<script src="audio.js"></script>
-<script src="translations.js"></script>
-<script src="language.js"></script>
+    const missionMap = document.getElementById("missionMap");
+    const pathLayer = document.getElementById("pathLayer");
+    const mapWrap = document.getElementById("mapWrap");
 
-<script>
-function getCurrentLang() {
-  return localStorage.getItem("byteRushLanguage") || "en";
-}
+    const xpValue = document.getElementById("xpValue");
+    const clearedValue = document.getElementById("clearedValue");
+    const activeQuestValue = document.getElementById("activeQuestValue");
+    const worldStatusValue = document.getElementById("worldStatusValue");
+    const badgePercent = document.getElementById("badgePercent");
 
-function translate(key) {
-  const lang = getCurrentLang();
+    const returnBtn = document.getElementById("returnBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const toast = document.getElementById("toast");
 
-  if (
-    typeof translations !== "undefined" &&
-    translations[lang] &&
-    translations[lang][key]
-  ) {
-    return translations[lang][key];
-  }
-
-  return key;
-}
-
-const missions = [
-  "missionHeadings",
-  "missionParagraphs",
-  "missionButtons",
-  "missionLinks",
-  "missionImages",
-  "missionLists",
-  "missionBossMode"
-];
-
-let level = parseInt(localStorage.getItem("html-level")) || 1;
-let xp = parseInt(localStorage.getItem("xp")) || 0;
-
-const map = document.getElementById("map");
-
-function loadStats() {
-  const completed = Math.min(level - 1, missions.length);
-  const currentMission = level > missions.length ? translate("done") : level;
-
-  document.getElementById("xp").innerText = xp;
-  document.getElementById("completed").innerText = completed;
-  document.getElementById("current").innerText = currentMission;
-
-  document.getElementById("unlock-message").style.display =
-    level > missions.length ? "grid" : "none";
-}
-
-function buildMap() {
-  map.innerHTML = "";
-
-  missions.forEach(function(name, index) {
-    const missionNumber = index + 1;
-    const isBoss = missionNumber === missions.length;
-
-    const node = document.createElement("div");
-    node.classList.add("node");
-
-    if (isBoss) {
-      node.classList.add("boss");
+    function getStoredNumber(key, fallback) {
+      const value = Number(localStorage.getItem(key));
+      return Number.isFinite(value) && value > 0 ? value : fallback;
     }
 
-    let statusText = "";
-    let numberText = missionNumber;
+    function getCurrentLevel() {
+      const level = getStoredNumber("html-level", 1);
+      return Math.min(Math.max(level, 1), 11);
+    }
 
-    if (missionNumber < level) {
-      node.classList.add("completed");
-      statusText = translate("completedStatus");
-      numberText = "✓";
-    } else if (missionNumber === level) {
-      node.classList.add("active");
-      statusText = isBoss ? translate("finalTest") : translate("startMission");
+    function getXP() {
+      const xp = Number(localStorage.getItem("xp"));
+      return Number.isFinite(xp) && xp >= 0 ? xp : 0;
+    }
 
-      node.onclick = function() {
-        window.location.href = "html-arena.html";
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2200);
+    }
+
+    function getMissionState(missionId, currentLevel) {
+      if (missionId < currentLevel) return "cleared";
+      if (missionId === currentLevel && currentLevel <= 10) return "active";
+      return "sealed";
+    }
+
+    function renderStats() {
+      const currentLevel = getCurrentLevel();
+      const cleared = Math.min(currentLevel - 1, 10);
+      const percent = Math.round((cleared / 10) * 100);
+      const activeMission = missions.find(mission => mission.id === currentLevel);
+
+      xpValue.textContent = getXP();
+      clearedValue.textContent = `${cleared}/10`;
+      activeQuestValue.textContent = activeMission ? activeMission.name : "WORLD RESTORED";
+      worldStatusValue.textContent = `${percent}% RESTORED`;
+      badgePercent.textContent = `${percent}%`;
+    }
+
+    function createMissionNode(mission) {
+      const currentLevel = getCurrentLevel();
+      const state = getMissionState(mission.id, currentLevel);
+
+      const node = document.createElement("article");
+      node.className = `mission-node node-${mission.id} ${state} ${mission.boss ? "boss-node" : ""}`;
+      node.dataset.mission = mission.id;
+
+      if (state === "active") {
+        node.setAttribute("role", "button");
+        node.setAttribute("tabindex", "0");
+        node.setAttribute("aria-label", `Enter quest: ${mission.name}`);
+
+        node.addEventListener("click", () => {
+          localStorage.setItem("active-html-mission", String(mission.id));
+          window.location.href = "html-arena.html";
+        });
+
+        node.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            localStorage.setItem("active-html-mission", String(mission.id));
+            window.location.href = "html-arena.html";
+          }
+        });
+      } else if (state === "sealed") {
+        node.addEventListener("click", () => {
+          showToast(`Clear Mission ${String(mission.id - 1).padStart(2, "0")} to unlock this zone.`);
+        });
+      }
+
+      if (state === "cleared") {
+        node.innerHTML = `
+          <div class="mission-top">
+            <span class="mission-number">✓ CLEARED</span>
+            <span class="mission-status">CLEARED</span>
+          </div>
+          <h2 class="mission-name">${mission.name}</h2>
+          <div class="mission-meta">
+            <p><strong>Skill:</strong> ${mission.skill}</p>
+            <p><strong>Reward:</strong> Claimed</p>
+          </div>
+        `;
+      }
+
+      if (state === "active") {
+        node.innerHTML = `
+          <div class="mission-top">
+            <span class="mission-number">${mission.boss ? "FINAL TRIAL" : `MISSION ${String(mission.id).padStart(2, "0")}`}</span>
+            <span class="mission-status">ENTER QUEST</span>
+          </div>
+          <h2 class="mission-name">${mission.name}</h2>
+          <div class="mission-meta">
+            <p><strong>Skill:</strong> ${mission.skill}</p>
+            <p><strong>Goal:</strong> ${mission.goal}</p>
+            <p><strong>Reward:</strong> +${mission.reward} XP</p>
+          </div>
+        `;
+      }
+
+      if (state === "sealed") {
+        node.innerHTML = `
+          <div class="mission-top">
+            <span class="mission-number">${mission.boss ? "FINAL TRIAL" : `MISSION ${String(mission.id).padStart(2, "0")}`}</span>
+            <span class="mission-status">SEALED</span>
+          </div>
+          <h2 class="mission-name">???</h2>
+          <div class="mission-meta">
+            <p><strong>Skill:</strong> Sealed</p>
+            <p>Clear Mission ${String(mission.id - 1).padStart(2, "0")} to unlock</p>
+          </div>
+        `;
+      }
+
+      return node;
+    }
+
+    function renderMap() {
+      missionMap.innerHTML = "";
+      missions.forEach(mission => {
+        missionMap.appendChild(createMissionNode(mission));
+      });
+
+      renderStats();
+
+      requestAnimationFrame(drawPaths);
+    }
+
+    function getNodeCenter(missionId) {
+      const node = missionMap.querySelector(`[data-mission="${missionId}"]`);
+      const wrapRect = mapWrap.getBoundingClientRect();
+      const nodeRect = node.getBoundingClientRect();
+
+      return {
+        x: nodeRect.left - wrapRect.left + nodeRect.width / 2,
+        y: nodeRect.top - wrapRect.top + nodeRect.height / 2
       };
-    } else {
-      node.classList.add("locked");
-      statusText = translate("locked").toUpperCase();
-      numberText = "🔒";
     }
 
-    node.innerHTML = `
-      <div class="node-number">${numberText}</div>
-      <div class="node-title">
-        ${isBoss ? translate("bossMode") : translate("mission") + " " + missionNumber}
-        <br>
-        ${translate(name)}
-      </div>
-      <div class="node-status">${statusText}</div>
-    `;
+    function getPathState(from, to) {
+      const currentLevel = getCurrentLevel();
 
-    map.appendChild(node);
-  });
-}
+      if (from < currentLevel && to < currentLevel) return "cleared";
+      if (from < currentLevel && to === currentLevel) return "active";
+      return "sealed";
+    }
 
-function resetProgress() {
-  const confirmReset = confirm(translate("resetHtmlConfirm"));
+    function drawPaths() {
+      if (window.innerWidth <= 900) {
+        pathLayer.innerHTML = "";
+        return;
+      }
 
-  if (confirmReset) {
-    localStorage.removeItem("html-level");
-    localStorage.removeItem("xp");
+      const wrapRect = mapWrap.getBoundingClientRect();
 
-    level = 1;
-    xp = 0;
+      pathLayer.setAttribute("viewBox", `0 0 ${wrapRect.width} ${wrapRect.height}`);
+      pathLayer.innerHTML = "";
 
-    loadStats();
-    buildMap();
-  }
-}
+      connections.forEach(([from, to]) => {
+        const start = getNodeCenter(from);
+        const end = getNodeCenter(to);
 
-function goBack() {
-  window.location.href = "dashboard.html";
-}
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", start.x);
+        line.setAttribute("y1", start.y);
+        line.setAttribute("x2", end.x);
+        line.setAttribute("y2", end.y);
+        line.setAttribute("class", getPathState(from, to));
 
-loadStats();
-buildMap();
-</script>
+        pathLayer.appendChild(line);
+      });
+    }
 
+    returnBtn.addEventListener("click", () => {
+      window.location.href = "dashboard.html";
+    });
+
+    resetBtn.addEventListener("click", () => {
+      const confirmReset = confirm("Reset HTML World progress? This will erase HTML world progress and XP earned in this world.");
+
+      if (!confirmReset) return;
+
+      localStorage.setItem("html-level", "1");
+      localStorage.setItem("xp", "0");
+      localStorage.removeItem("active-html-mission");
+
+      renderMap();
+      showToast("HTML World reset. Structure Ruins is unstable again.");
+    });
+
+    window.addEventListener("resize", () => {
+      requestAnimationFrame(drawPaths);
+    });
+
+    renderMap();
+  </script>
 </body>
 </html>

@@ -1,1419 +1,1706 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>HTML Arena | ByteRush</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ByteRush | HTML Arena</title>
 
-<link rel="stylesheet" href="arcade-theme.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Press+Start+2P&display=swap');
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Press+Start+2P&display=swap');
+    :root {
+      --green: #39FF5A;
+      --yellow: #FACC15;
+      --red: #FF3B3B;
+      --bg: #03080F;
+      --panel: #050B12;
+      --panel2: #07111D;
+      --text: #E6FFE9;
+      --muted: rgba(230, 255, 233, 0.68);
+      --line: rgba(57, 255, 90, 0.28);
+      --yellowLine: rgba(250, 204, 21, 0.58);
+      --shadow: rgba(0, 0, 0, 0.42);
+    }
 
-:root {
-  --green: #39FF5A;
-  --red: #FF3B3B;
-  --bg: #03080F;
-  --panel: #050B12;
-  --panel2: #07111D;
-  --text: #E6FFE9;
-  --muted: rgba(230, 255, 233, 0.68);
-  --line: rgba(57, 255, 90, 0.28);
-  --yellow: #FACC15;
-}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-* {
-  box-sizing: border-box;
-}
+    body {
+      min-height: 100vh;
+      background:
+        linear-gradient(rgba(57,255,90,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(57,255,90,0.035) 1px, transparent 1px),
+        radial-gradient(circle at top left, rgba(57,255,90,0.09), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(250,204,21,0.065), transparent 28%),
+        var(--bg);
+      background-size: 38px 38px, 38px 38px, auto, auto;
+      color: var(--text);
+      font-family: "IBM Plex Mono", monospace;
+      overflow-x: hidden;
+    }
 
-body {
-  margin: 0;
-  background:
-    radial-gradient(circle at 12% 8%, rgba(57,255,90,0.08), transparent 26%),
-    radial-gradient(circle at 88% 82%, rgba(250,204,21,0.06), transparent 28%),
-    linear-gradient(rgba(57,255,90,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(57,255,90,0.025) 1px, transparent 1px),
-    var(--bg);
-  background-size: auto, auto, 42px 42px, 42px 42px;
-  color: var(--text);
-  font-family: "IBM Plex Mono", monospace;
-  padding: 10px;
-}
+    .page {
+      width: min(1220px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 18px 0;
+      display: grid;
+      gap: 14px;
+    }
 
-.pixel {
-  font-family: "Press Start 2P", monospace;
-}
+    .pixel {
+      font-family: "Press Start 2P", monospace;
+      letter-spacing: 0.5px;
+    }
 
-#language-toggle {
-  color: var(--yellow) !important;
-  border-color: rgba(250,204,21,0.55) !important;
-}
+    .top-bar,
+    .arena,
+    .mission-strip {
+      background: linear-gradient(180deg, rgba(7,17,29,0.98), rgba(5,11,18,0.98));
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 50px var(--shadow);
+      position: relative;
+    }
 
-.arena {
-  max-width: 1240px;
-  height: calc(100vh - 20px);
-  margin: 0 auto;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  gap: 8px;
-}
+    .top-bar::before,
+    .arena::before,
+    .mission-strip::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border: 1px dashed var(--yellowLine);
+      pointer-events: none;
+      opacity: 0.8;
+    }
 
-.top-command,
-.panel,
-.feedback-console {
-  border: 1px solid var(--line);
-  background: rgba(5, 11, 18, 0.92);
-  box-shadow: 0 18px 45px rgba(0,0,0,0.35);
-  position: relative;
-}
+    .top-bar {
+      border-radius: 18px;
+      padding: 20px 22px;
+      display: grid;
+      gap: 12px;
+    }
 
-.top-command::before,
-.panel::before,
-.feedback-console::before {
-  content: "";
-  position: absolute;
-  inset: 7px;
-  border: 1px dashed rgba(250,204,21,0.08);
-  pointer-events: none;
-}
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
 
-.top-command {
-  padding: 10px 12px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 16px;
-  align-items: center;
-}
+    .world-title {
+      font-size: 11px;
+      color: var(--green);
+      line-height: 1.7;
+    }
 
-h1 {
-  margin: 0 0 4px;
-  color: var(--green);
-  font-size: 15px;
-  line-height: 1.4;
-  text-shadow: 2px 2px 0 rgba(250,204,21,0.16);
-}
+    .mission-title {
+      font-size: 12px;
+      color: var(--yellow);
+      line-height: 1.7;
+      margin-top: 4px;
+    }
 
-.desc {
-  margin: 0;
+    .stats {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .stat-pill {
+      min-height: 34px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 11px;
+      border: 1px solid rgba(57,255,90,0.22);
+      background: rgba(3,8,15,0.74);
+      border-radius: 999px;
+      color: var(--text);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 8px;
+    }
+
+    .lives {
+      color: var(--red);
+      letter-spacing: 2px;
+      font-size: 14px;
+    }
+
+    .objective {
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress-track {
+      height: 8px;
+      background: rgba(230,255,233,0.08);
+      border: 1px solid rgba(57,255,90,0.18);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress-fill {
+      width: 10%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), var(--yellow));
+      border-radius: 999px;
+      transition: width 0.35s ease;
+    }
+
+    .arena {
+      border-radius: 20px;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 45% 55%;
+      min-height: 500px;
+    }
+
+    .panel {
+      position: relative;
+      z-index: 1;
+      background: rgba(3,8,15,0.34);
+      border: 1px solid rgba(57,255,90,0.19);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      min-width: 0;
+    }
+
+    .editor-panel {
+      border-radius: 14px 0 0 14px;
+      border-right: none;
+    }
+
+    .preview-panel {
+      border-radius: 0 14px 14px 0;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(57,255,90,0.16);
+      padding-bottom: 12px;
+    }
+
+    .panel-title {
+      font-size: 10px;
+      color: var(--green);
+      line-height: 1.6;
+    }
+
+    .system-state {
+      font-size: 8px;
+      color: var(--yellow);
+      border: 1px solid rgba(250,204,21,0.4);
+      background: rgba(250,204,21,0.06);
+      border-radius: 999px;
+      padding: 8px 9px;
+      white-space: nowrap;
+    }
+
+    .instruction {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+      min-height: 42px;
+    }
+
+    .repair-pieces {
+      display: none;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .repair-pieces.show {
+      display: flex;
+    }
+
+    .repair-chip {
+      font-family: "Press Start 2P", monospace;
+      font-size: 8px;
+      color: var(--yellow);
+      background: rgba(250,204,21,0.08);
+      border: 1px solid rgba(250,204,21,0.45);
+      border-radius: 10px;
+      padding: 10px;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    .repair-chip:hover {
+      transform: translateY(-2px);
+      background: rgba(250,204,21,0.13);
+    }
+
+    textarea {
+      width: 100%;
+      flex: 1;
+      min-height: 255px;
+      resize: none;
+      background:
+        linear-gradient(rgba(57,255,90,0.025) 1px, transparent 1px),
+        var(--panel2);
+      background-size: 100% 28px;
+      border: 1px solid rgba(57,255,90,0.28);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 16px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 15px;
+      line-height: 1.55;
+      outline: none;
+      box-shadow: inset 0 0 28px rgba(0,0,0,0.35);
+    }
+
+    textarea:focus {
+      border-color: rgba(250,204,21,0.75);
+    }
+
+    .button-row {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      font-family: "Press Start 2P", monospace;
+      font-size: 8px;
+      line-height: 1.4;
+      color: var(--text);
+      background: rgba(7,17,29,0.92);
+      border: 1px solid rgba(57,255,90,0.3);
+      border-radius: 10px;
+      padding: 11px 12px;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      border-color: var(--yellow);
+      color: var(--yellow);
+    }
+
+    .primary-btn {
+      background: rgba(57,255,90,0.11);
+      border-color: rgba(57,255,90,0.55);
+      color: var(--green);
+    }
+
+    .danger-btn {
+      background: rgba(255,59,59,0.08);
+      border-color: rgba(255,59,59,0.45);
+      color: #ff9a9a;
+    }
+
+    .map-btn {
+      margin-left: auto;
+    }
+
+    .feedback {
+      min-height: 42px;
+      border: 1px solid rgba(57,255,90,0.15);
+      background: rgba(7,17,29,0.7);
+      border-radius: 12px;
+      padding: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .feedback.success {
+      color: var(--green);
+      border-color: rgba(57,255,90,0.5);
+      background: rgba(57,255,90,0.06);
+    }
+
+    .feedback.error {
+      color: #ffb4b4;
+      border-color: rgba(255,59,59,0.5);
+      background: rgba(255,59,59,0.06);
+    }
+
+    .feedback.scan {
+      color: var(--yellow);
+      border-color: rgba(250,204,21,0.55);
+      background: rgba(250,204,21,0.07);
+    }
+
+    .preview-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid rgba(57,255,90,0.16);
+      border-radius: 12px;
+      background: rgba(3,8,15,0.5);
+    }
+
+    .status-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 12px rgba(255,59,59,0.45);
+    }
+
+    .dot.repair {
+      background: var(--yellow);
+      box-shadow: 0 0 12px rgba(250,204,21,0.42);
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+
+    .dot.online {
+      background: var(--green);
+      box-shadow: 0 0 15px rgba(57,255,90,0.46);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.55; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.12); }
+    }
+
+    .preview-label {
+  font-size: 9px;
   color: var(--muted);
-  font-size: 11px;
+  margin-bottom: 6px;
 }
 
-.stats {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-.stat-pill {
-  border: 1px solid rgba(250,204,21,0.35);
-  background: var(--panel2);
-  padding: 7px 9px;
-  min-width: 82px;
-  position: relative;
-  overflow: hidden;
-}
-
-.stat-pill::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 4px;
-  height: 100%;
-  background: var(--yellow);
-  opacity: 0.75;
-}
-
-.stat-pill span {
-  display: block;
-  color: var(--yellow);
-  font-size: 6px;
-  margin-bottom: 4px;
-}
-
-.stat-pill strong {
-  font-size: 11px;
-  color: var(--text);
-  font-weight: 700;
-}
-
-.main-arena {
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 230px minmax(360px, 1.2fr) minmax(320px, 1fr);
-  gap: 8px;
-}
-
-.panel {
-  padding: 10px;
-  min-height: 0;
-}
-
-.panel-title,
-.label {
-  font-family: "Press Start 2P", monospace;
-  font-size: 6px;
-  line-height: 1.5;
-  color: var(--yellow);
-  margin-bottom: 8px;
-}
-
-.mission-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.mission-title {
-  color: var(--text);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.4;
-}
-
-.skill-box {
-  background: var(--panel2);
-  border: 1px solid rgba(250,204,21,0.22);
-  padding: 10px;
-  position: relative;
-  z-index: 1;
-}
-
-.skill-box h2 {
-  margin: 0 0 6px;
-  color: var(--green);
-  font-size: 13px;
-}
-
-.skill-box p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.55;
-}
-
-.rule-box {
-  border-left: 3px solid var(--yellow);
-  background: rgba(250,204,21,0.07);
-  padding: 9px;
-  color: var(--text);
-  font-size: 11px;
-  line-height: 1.5;
-  position: relative;
-  z-index: 1;
-}
-
-.highlight {
-  color: var(--yellow);
-  font-weight: 700;
-}
-
-.editor-panel,
-.preview-panel {
-  display: flex;
-  flex-direction: column;
-}
-
-textarea {
-  width: 100%;
-  flex: 1;
-  min-height: 260px;
-  resize: none;
-  background: #02060B;
-  color: var(--green);
-  border: 1px solid var(--line);
-  padding: 11px;
-  font-size: 13px;
-  line-height: 1.5;
-  outline: none;
-  font-family: "IBM Plex Mono", monospace;
-  box-shadow: inset 0 0 0 1px rgba(250,204,21,0.04);
-}
-
-textarea:focus {
-  border-color: var(--yellow);
-  box-shadow: 0 0 0 2px rgba(250,204,21,0.08);
-}
-
-.buttons {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
-
-button {
-  border: 1px solid var(--yellow);
-  background: transparent;
-  color: var(--yellow);
-  padding: 8px 10px;
-  cursor: pointer;
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 11px;
-  font-weight: 700;
-  transition: 0.18s ease;
-}
-
-button:hover {
-  background: rgba(250,204,21,0.1);
-  transform: translateY(-1px);
-}
-
-button.primary {
-  background: var(--green);
-  color: var(--bg);
-  border-color: var(--green);
-  box-shadow: 4px 4px 0 rgba(250,204,21,0.45);
-}
-
-button.primary:hover {
-  box-shadow: 5px 5px 0 rgba(250,204,21,0.65);
-}
-
-button.danger {
-  color: var(--red);
-  border-color: var(--red);
-}
-
-button.danger:hover {
-  background: rgba(255,59,59,0.12);
-}
-
-button:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.browser-frame {
-  flex: 1;
-  min-height: 260px;
-  background: #02060B;
-  border: 1px solid var(--line);
-  display: flex;
-  flex-direction: column;
-}
-
-.browser-top {
-  height: 30px;
-  border-bottom: 1px solid var(--line);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 9px;
-  color: var(--muted);
-  font-size: 10px;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--green);
-  opacity: 0.8;
-}
-
-.dot.red {
-  background: var(--red);
-}
-
-.dot.yellow {
-  background: var(--yellow);
-}
-
-.preview-wrap {
-  flex: 1;
-  padding: 8px;
-}
-
-iframe {
-  width: 100%;
-  height: 100%;
-  min-height: 220px;
-  border: none;
-  background: #02060B;
-}
-
-.feedback-console {
-  padding: 10px 12px;
-}
-
-.console-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 1.4fr 1.2fr 0.9fr;
-  gap: 10px;
-}
-
-.console-item {
-  background: var(--panel2);
-  border: 1px solid rgba(250,204,21,0.2);
-  padding: 8px;
-  min-height: 50px;
-}
-
-.message {
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.45;
-}
-
-.correct {
-  color: var(--green);
-}
-
-.error {
-  color: var(--red);
-}
-
-.almost {
-  color: var(--yellow);
-}
-
-.success-flash {
-  animation: flash 0.4s ease-in-out;
-}
-
-@keyframes flash {
-  0% { background-color: var(--bg); }
-  50% { background-color: rgba(57, 255, 90, 0.12); }
-  100% { background-color: var(--bg); }
-}
-
-.preview-glow {
-  animation: previewGlow 0.7s ease-in-out;
-}
-
-@keyframes previewGlow {
-  0% { border-color: var(--line); }
-  50% { border-color: var(--yellow); }
-  100% { border-color: var(--line); }
-}
-
-.error-shake {
-  animation: shake 0.3s ease-in-out;
-}
-
-@keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-6px); }
-  50% { transform: translateX(6px); }
-  75% { transform: translateX(-6px); }
-  100% { transform: translateX(0); }
-}
-
-.xp-pop {
-  position: fixed;
-  left: 50%;
-  top: 58%;
-  color: var(--yellow);
-  font-size: 16px;
-  font-weight: 700;
-  pointer-events: none;
-  animation: xpFloat 1s ease-out forwards;
-  z-index: 9999;
-}
-
-@keyframes xpFloat {
-  0% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-45px) scale(1.2);
-  }
-}
-
-.mission-modal,
-.start-modal,
-.game-over-modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(3, 8, 15, 0.88);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 99999;
-  padding: 18px;
-}
-
-.mission-modal.show,
-.start-modal.show,
-.game-over-modal.show {
-  display: flex;
-}
-
-.mission-box,
-.start-box,
-.game-over-box {
-  width: min(520px, 100%);
-  background: var(--panel);
-  border: 2px solid var(--yellow);
-  padding: 24px;
-  text-align: center;
-  box-shadow: 8px 8px 0 rgba(250,204,21,0.18);
-  animation: popupIn 0.25s ease-out;
-}
-
-.game-over-box {
-  border-color: var(--red);
-  box-shadow: 8px 8px 0 rgba(255, 59, 59, 0.22);
-}
-
-@keyframes popupIn {
-  from {
-    opacity: 0;
-    transform: scale(0.92) translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-.mission-box h2,
-.start-box h2,
-.game-over-box h2 {
-  margin: 0 0 14px;
-  color: var(--yellow);
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-.game-over-box h2 {
-  color: var(--red);
-}
-
-.mission-box p,
-.start-box p,
-.game-over-box p {
-  margin: 0 0 14px;
-  color: var(--text);
-  font-size: 12px;
-  line-height: 1.6;
-}
-
-.learned-box,
-.start-instruction-box {
-  border: 1px solid rgba(250,204,21,0.35);
-  background: var(--panel2);
-  padding: 12px;
-  margin: 14px 0;
-}
-
-.learned-box p,
-.start-instruction-box p {
-  color: var(--muted);
-  font-size: 11px;
-  margin: 0;
-}
-
-.modal-next-btn,
-.start-btn,
-.try-again-btn {
-  margin-top: 10px;
-  background: var(--green);
-  color: var(--bg);
-  padding: 9px 14px;
-  border-color: var(--green);
-}
-
-.try-again-btn {
-  border-color: var(--red);
-  background: var(--red);
-  color: white;
-}
-
-@media (max-width: 1050px) {
-  .arena {
-    height: auto;
-  }
-
-  .top-command,
-  .main-arena,
-  .console-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .stats {
-    justify-content: flex-start;
-  }
-
-  textarea,
-  .browser-frame {
-    min-height: 240px;
-  }
-}
-</style>
-</head>
-
-<body class="theme-html">
-
-<button id="language-toggle" style="position: absolute; top: 18px; right: 24px; z-index: 1000; font-family: 'Press Start 2P', monospace; font-size: 8px; padding: 10px; background: var(--panel2); color: var(--green); border: 1px solid var(--line); border-radius: 4px; cursor: pointer;">FR</button>
-
-<main class="arena">
-
-  <section class="top-command">
-    <div style="display: flex; align-items: center; justify-content: space-between;">
-      <div>
-        <h1 class="pixel" data-key="htmlArenaPageTitle">HTML Arena</h1>
-        <p class="desc" data-key="htmlArenaPageDesc">Build the structure of real webpages through guided coding missions.</p>
-      </div>
-    </div>
-
-    <div class="stats">
-      <div class="stat-pill">
-        <span class="pixel" data-key="mission">MISSION</span>
-        <strong><span id="mission-count-inline">1</span> / 7</strong>
-      </div>
-
-      <div class="stat-pill">
-        <span class="pixel">XP</span>
-        <strong id="total-xp">0</strong>
-      </div>
-
-      <div class="stat-pill">
-        <span class="pixel" data-key="lives">LIVES</span>
-        <strong id="lives">❤️❤️❤️</strong>
-      </div>
-
-      <div class="stat-pill">
-        <span class="pixel" data-key="tries">TRIES</span>
-        <strong id="attempts">0</strong>
-      </div>
-
-      <div class="stat-pill">
-        <span class="pixel" data-key="status">STATUS</span>
-        <strong id="status">Active</strong>
-      </div>
-    </div>
-  </section>
-
-  <section class="main-arena">
-
-    <aside class="panel mission-panel">
-      <div>
-        <div class="panel-title" data-key="bytebotBriefing">BYTEBOT BRIEFING</div>
-        <div class="mission-title" id="mission-title">Mission loading...</div>
-      </div>
-
-      <div class="skill-box">
-        <div class="label" data-key="skill">SKILL</div>
-        <h2 id="skill-title">Skill loading...</h2>
-        <p id="bytebot-message">Mission instructions loading...</p>
-      </div>
-
-      <div class="skill-box">
-        <div class="label" data-key="whyItMatters">WHY IT MATTERS</div>
-        <p id="why-message">Loading...</p>
-      </div>
-
-      <div class="rule-box" id="success-rule">
-        Success rule loading...
-      </div>
-    </aside>
-
-    <section class="panel editor-panel">
-      <div class="panel-title" data-key="htmlEditor">HTML EDITOR</div>
-
-      <textarea id="code" spellcheck="false"></textarea>
-
-      <div class="buttons">
-        <button id="run-btn" class="primary" type="button" data-key="runCode">Run Code</button>
-        <button id="hint-btn" type="button" data-key="hint">Hint</button>
-        <button id="next-btn" type="button" disabled data-key="nextMission">Next Mission</button>
-        <button id="back-btn" class="danger" type="button" data-key="backToMap">Back to Map</button>
-      </div>
-    </section>
-
-    <section class="panel preview-panel">
-      <div class="panel-title" data-key="livePagePreview">LIVE PAGE PREVIEW</div>
-
-      <div class="browser-frame" id="preview-frame">
-        <div class="browser-top">
-          <span class="dot red"></span>
-          <span class="dot yellow"></span>
-          <span class="dot"></span>
-          <span>preview.html</span>
-        </div>
-
-        <div class="preview-wrap">
-          <iframe id="preview"></iframe>
-        </div>
-      </div>
-    </section>
-
-  </section>
-
-  <section class="feedback-console">
-    <div class="panel-title" data-key="terminalFeedback">TERMINAL FEEDBACK</div>
-
-    <div class="console-grid">
-      <div class="console-item">
-        <div class="label" data-key="result">RESULT</div>
-        <div class="message" id="result">Run your code to check the mission.</div>
-      </div>
-
-      <div class="console-item">
-        <div class="label" data-key="hint">HINT</div>
-        <div class="message" id="hint">Click Hint if you get stuck.</div>
-      </div>
-
-      <div class="console-item">
-        <div class="label" data-key="warning">WARNING</div>
-        <div class="message error" id="warning">No syntax warnings yet.</div>
-      </div>
-
-      <div class="console-item">
-        <div class="label">XP</div>
-        <div class="message correct" id="xp-feedback">0 XP gained.</div>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<div class="start-modal" id="start-modal">
-  <div class="start-box">
-    <h2 class="pixel" id="start-modal-title" data-key="missionStart">MISSION START</h2>
-
-    <p id="start-modal-skill">Get ready.</p>
-
-    <div class="start-instruction-box">
-      <div class="label" data-key="whatToDo">WHAT TO DO</div>
-      <p id="start-modal-task">Read the mission, write your code, then click Run Code.</p>
-    </div>
-
-    <button id="start-mission-btn" class="start-btn" type="button" data-key="startMission">
-      Start Mission
-    </button>
-  </div>
-</div>
-
-<div class="mission-modal" id="mission-modal">
-  <div class="mission-box">
-    <h2 class="pixel" data-key="missionCompleted">MISSION COMPLETED</h2>
-
-    <p id="modal-success-text">Great work.</p>
-
-    <div class="learned-box">
-      <div class="label" data-key="whatYouLearned">WHAT YOU LEARNED</div>
-      <p id="modal-learned-text"></p>
-    </div>
-
-    <button id="modal-next-btn" class="modal-next-btn" type="button" data-key="nextMission">
-      Next Mission
-    </button>
-  </div>
-</div>
-
-<div class="game-over-modal" id="game-over-modal">
-  <div class="game-over-box">
-    <h2 class="pixel" data-key="gameOver">GAME OVER</h2>
-
-    <p data-key="gameOverUsedLives">You used up all your lives. Try the mission again and use the hint if you get stuck.</p>
-
-    <button id="try-again-btn" class="try-again-btn" type="button" data-key="tryAgain">
-      Try Again
-    </button>
-  </div>
-</div>
-
-<audio id="success-sound" src="./sounds/success.mp3" preload="auto"></audio>
-<audio id="error-sound" src="./sounds/error.mp3" preload="auto"></audio>
-<audio id="unlock-sound" src="./sounds/unlock.mp3" preload="auto"></audio>
-<audio id="mistake-sound" src="./sounds/mistake.mp3" preload="auto"></audio>
-<audio id="game-lose-sound" src="./sounds/game-lose-sound.mp3" preload="auto"></audio>
-
-
-<script src="translations.js"></script>
-<script src="language.js"></script>
-<script>
-// === TRANSLATION HELPERS ===
-function getCurrentLang() {
-  return localStorage.getItem("byteRushLanguage") || "en";
-}
-
-function translate(key) {
-  const lang = getCurrentLang();
-  if (
-    typeof translations !== "undefined" &&
-    translations[lang] &&
-    translations[lang][key]
-  ) {
-    return translations[lang][key];
-  }
-  return key;
-}
-
-// === MISSION TEXT KEYS ===
-const missionTextKeys = {
-  1: {
-    title: "htmlMission1Title",
-    skill: "htmlMission1Skill",
-    success: "htmlMission1Success",
-    bytebot: "htmlMission1Bytebot",
-    why: "htmlMission1Why",
-    rule: "htmlMission1Rule",
-    learned: "htmlMission1Learned",
-    hint1: "htmlMission1Hint1",
-    hint2: "htmlMission1Hint2"
-  },
-  2: {
-    title: "htmlMission2Title",
-    skill: "htmlMission2Skill",
-    success: "htmlMission2Success",
-    bytebot: "htmlMission2Bytebot",
-    why: "htmlMission2Why",
-    rule: "htmlMission2Rule",
-    learned: "htmlMission2Learned",
-    hint1: "htmlMission2Hint1",
-    hint2: "htmlMission2Hint2"
-  },
-  3: {
-    title: "htmlMission3Title",
-    skill: "htmlMission3Skill",
-    success: "htmlMission3Success",
-    bytebot: "htmlMission3Bytebot",
-    why: "htmlMission3Why",
-    rule: "htmlMission3Rule",
-    learned: "htmlMission3Learned",
-    hint1: "htmlMission3Hint1",
-    hint2: "htmlMission3Hint2"
-  },
-  4: {
-    title: "htmlMission4Title",
-    skill: "htmlMission4Skill",
-    success: "htmlMission4Success",
-    bytebot: "htmlMission4Bytebot",
-    why: "htmlMission4Why",
-    rule: "htmlMission4Rule",
-    learned: "htmlMission4Learned",
-    hint1: "htmlMission4Hint1",
-    hint2: "htmlMission4Hint2"
-  },
-  5: {
-    title: "htmlMission5Title",
-    skill: "htmlMission5Skill",
-    success: "htmlMission5Success",
-    bytebot: "htmlMission5Bytebot",
-    why: "htmlMission5Why",
-    rule: "htmlMission5Rule",
-    learned: "htmlMission5Learned",
-    hint1: "htmlMission5Hint1",
-    hint2: "htmlMission5Hint2"
-  },
-  6: {
-    title: "htmlMission6Title",
-    skill: "htmlMission6Skill",
-    success: "htmlMission6Success",
-    bytebot: "htmlMission6Bytebot",
-    why: "htmlMission6Why",
-    rule: "htmlMission6Rule",
-    learned: "htmlMission6Learned",
-    hint1: "htmlMission6Hint1",
-    hint2: "htmlMission6Hint2"
-  },
-  7: {
-    title: "htmlMission7Title",
-    skill: "htmlMission7Skill",
-    success: "htmlMission7Success",
-    bytebot: "htmlMission7Bytebot",
-    why: "htmlMission7Why",
-    rule: "htmlMission7Rule",
-    learned: "htmlMission7Learned",
-    hint1: "htmlMission7Hint1",
-    hint2: "htmlMission7Hint2"
-  }
-};
-
-let level = parseInt(localStorage.getItem("html-level")) || 1;
-let attempts = 0;
-let lives = 3;
-let missionComplete = false;
-let lastWarningMessage = "";
-let shouldShowStartPopup = true;
-
-const missions = {
-  1: {
-    title: "Mission 1: Headings",
-    skill: "HTML Headings",
-    starter: "<h1>write title here</h1>",
-    requiredParts: ["<h1>", "</h1>"],
-    success: "Main title activated.",
-    bytebot: 'Replace <span class="highlight">"write title here"</span> with <span class="highlight">"Hello World"</span>.',
-    why: "Headings help organize a webpage and show what information is most important.",
-    rule: "Use one <h1> heading with the words Hello World inside.",
-    learned: "You learned that <h1> creates the main heading of a webpage.",
-    hint1: "Keep the <h1> and </h1> tags. Only replace the words inside.",
-    hint2: "Final answer should look like: <h1>Hello World</h1>",
-    check: function (code) {
-      return code === "<h1>helloworld</h1>";
+    .preview-state {
+      font-size: 10px;
+      color: var(--yellow);
     }
-  },
 
-  2: {
-    title: "Mission 2: Paragraphs",
-    skill: "HTML Paragraphs",
-    starter: "<p>write message here</p>",
-    requiredParts: ["<p>", "</p>"],
-    success: "Message signal restored.",
-    bytebot: 'Replace <span class="highlight">"write message here"</span> with <span class="highlight">"I love coding"</span>.',
-    why: "Paragraphs are used to add readable text and explanations to a webpage.",
-    rule: "Use one <p> paragraph with the words I love coding inside.",
-    learned: "You learned that <p> creates a paragraph of text.",
-    hint1: "Keep the <p> and </p> tags. Only replace the words inside.",
-    hint2: "Final answer should look like: <p>I love coding</p>",
-    check: function (code) {
-      return code === "<p>ilovecoding</p>";
+    .preview-screen {
+      flex: 1;
+      min-height: 330px;
+      border-radius: 16px;
+      border: 1px solid rgba(57,255,90,0.25);
+      background:
+        radial-gradient(circle at center, rgba(57,255,90,0.055), transparent 45%),
+        rgba(7,17,29,0.98);
+      padding: 18px;
+      overflow: auto;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      transition: 0.25s ease;
     }
-  },
 
-  3: {
-    title: "Mission 3: Buttons",
-    skill: "HTML Buttons",
-    starter: "<button>write button text</button>",
-    requiredParts: ["<button>", "</button>"],
-    success: "Control button online.",
-    bytebot: 'Replace <span class="highlight">"write button text"</span> with <span class="highlight">"Click Me"</span>.',
-    why: "Buttons help users take action on a webpage.",
-    rule: "Use one <button> with the words Click Me inside.",
-    learned: "You learned that <button> creates a clickable button.",
-    hint1: "Keep the <button> and </button> tags. Only replace the button text.",
-    hint2: "Final answer should look like: <button>Click Me</button>",
-    check: function (code) {
-      return code === "<button>clickme</button>";
+    .preview-screen.online {
+      border-color: rgba(57,255,90,0.65);
+      box-shadow: inset 0 0 30px rgba(57,255,90,0.08), 0 0 22px rgba(57,255,90,0.08);
     }
-  },
 
-  4: {
-    title: "Mission 4: Links",
-    skill: "HTML Links",
-    starter: '<a href="#">write link text</a>',
-    requiredParts: ['<a href="#">', "</a>"],
-    success: "Portal link activated.",
-    bytebot: 'Replace <span class="highlight">"write link text"</span> with <span class="highlight">"Visit Site"</span>.',
-    why: "Links connect pages together and help users navigate websites.",
-    rule: 'Use one <a href="#"> link with the words Visit Site inside.',
-    learned: "You learned that <a href='...'> creates a link.",
-    hint1: "Keep the <a href=\"#\"> and </a> tags. Only replace the link text.",
-    hint2: 'Final answer should look like: <a href="#">Visit Site</a>',
-    check: function (code) {
-      return code === '<ahref="#">visitsite</a>';
+    .preview-world {
+      width: 100%;
+      min-height: 100%;
+      border: 1px dashed rgba(230,255,233,0.16);
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      text-align: center;
+      color: var(--muted);
+      background: rgba(3,8,15,0.35);
     }
-  },
 
-  5: {
-    title: "Mission 5: Images",
-    skill: "HTML Images",
-    starter: '<img src="profile.png" alt="Profile picture">',
-    requiredParts: ["<img", "src=", "profile.png", "alt=", ">"],
-    success: "Image module loaded.",
-    bytebot: 'Keep the image file as <span class="highlight">"profile.png"</span> and make sure the image includes <span class="highlight">alt text</span>.',
-    why: "Images make pages more visual, and alt text helps describe images for accessibility.",
-    rule: 'Use an <img> tag with src="profile.png" and alt="Profile picture".',
-    learned: "You learned that <img> adds images and alt text describes them.",
-    hint1: "Your image needs src=\"profile.png\" and alt=\"Profile picture\".",
-    hint2: 'Final answer should look like: <img src="profile.png" alt="Profile picture">',
-    check: function (code) {
-      return code === '<imgsrc="profile.png"alt="profilepicture">';
+    .preview-world h1,
+    .preview-world h2,
+    .preview-world h3 {
+      color: var(--green);
+      margin-bottom: 12px;
+      line-height: 1.3;
     }
-  },
 
-  6: {
-    title: "Mission 6: Lists",
-    skill: "HTML Lists",
-    starter: "<ul>\n  <li>write list item here</li>\n</ul>",
-    requiredParts: ["<ul>", "</ul>", "<li>", "</li>"],
-    success: "Inventory system restored.",
-    bytebot: 'Replace <span class="highlight">"write list item here"</span> with <span class="highlight">"Code"</span>.',
-    why: "Lists help organize related items so information is easier to scan.",
-    rule: "Use a <ul> list with one <li> item that says Code.",
-    learned: "You learned that <ul> creates a list and <li> creates each list item.",
-    hint1: "Keep the <ul>, <li>, </li>, and </ul> tags. Only replace the list item text.",
-    hint2: "Final answer should look like: <ul><li>Code</li></ul>",
-    check: function (code) {
-      return code === "<ul><li>code</li></ul>";
+    .preview-world p {
+      line-height: 1.6;
+      margin: 8px 0;
     }
-  },
 
-  7: {
-    title: "Boss Mode: Profile Card",
-    skill: "HTML Page Structure",
-    starter: "<h1>Ton nom</h1>\n<p>Ta bio ici</p>\n<img src=\"profile.png\" alt=\"Photo de profil\">\n<button>Suivre</button>",
-    boss: true,
-    requiredParts: ["<h1>", "</h1>", "<p>", "</p>", "<img", "src=", "profile.png", "alt=", "<button>", "</button>"],
-    success: "Boss cleared. CSS Circuit unlocked.",
-    bytebot: 'Build a simple profile card using <span class="highlight">h1, p, img, and button</span>.',
-    why: "Real webpages are built by combining multiple HTML elements into a clear structure.",
-    rule: "Use a heading, paragraph, image, and button in one profile card.",
-    learned: "You learned how to combine headings, paragraphs, images, and buttons into one webpage section.",
-    hint1: "You need h1, p, img src=\"profile.png\" with alt text, and button.",
-    hint2: "Make sure all required tags are present and closed correctly.",
-    check: function (code) {
-      const hasH1 = code.includes("<h1>") && code.includes("</h1>");
-      const hasP = code.includes("<p>") && code.includes("</p>");
-      const hasImg = code.includes('<imgsrc="profile.png"') && code.includes("alt=");
-      const hasButton = code.includes("<button>") && code.includes("</button>");
-
-      return hasH1 && hasP && hasImg && hasButton;
+    .preview-world button {
+      margin-top: 12px;
+      color: var(--green);
     }
-  }
-};
 
-const missionCountInlineEl = document.getElementById("mission-count-inline");
-const totalXpEl = document.getElementById("total-xp");
-const livesEl = document.getElementById("lives");
-const attemptsEl = document.getElementById("attempts");
-const statusEl = document.getElementById("status");
+    .preview-world a {
+      color: var(--yellow);
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(250,204,21,0.6);
+    }
 
-const titleEl = document.getElementById("mission-title");
-const skillTitleEl = document.getElementById("skill-title");
-const bytebotEl = document.getElementById("bytebot-message");
-const whyEl = document.getElementById("why-message");
-const successRuleEl = document.getElementById("success-rule");
+    .preview-world img {
+      max-width: 210px;
+      border-radius: 14px;
+      border: 1px solid rgba(57,255,90,0.32);
+      margin: 10px auto;
+      display: block;
+    }
 
-const codeBox = document.getElementById("code");
-const resultEl = document.getElementById("result");
-const hintEl = document.getElementById("hint");
-const warningEl = document.getElementById("warning");
-const xpFeedbackEl = document.getElementById("xp-feedback");
+    .preview-world ul,
+    .preview-world ol {
+      text-align: left;
+      display: inline-block;
+      line-height: 1.8;
+      color: var(--text);
+    }
 
-const previewFrame = document.getElementById("preview-frame");
-const previewEl = document.getElementById("preview");
+    .preview-world table {
+      border-collapse: collapse;
+      color: var(--text);
+      min-width: 260px;
+      margin: 10px auto;
+    }
 
-const runBtn = document.getElementById("run-btn");
-const hintBtn = document.getElementById("hint-btn");
-const nextBtn = document.getElementById("next-btn");
-const backBtn = document.getElementById("back-btn");
+    .preview-world td,
+    .preview-world th {
+      border: 1px solid rgba(57,255,90,0.35);
+      padding: 10px;
+    }
 
-const startModal = document.getElementById("start-modal");
-const startModalTitle = document.getElementById("start-modal-title");
-const startModalSkill = document.getElementById("start-modal-skill");
-const startModalTask = document.getElementById("start-modal-task");
-const startMissionBtn = document.getElementById("start-mission-btn");
+    .preview-world input {
+      background: rgba(3,8,15,0.9);
+      color: var(--text);
+      border: 1px solid rgba(57,255,90,0.35);
+      padding: 10px;
+      border-radius: 8px;
+      margin: 6px;
+      font-family: "IBM Plex Mono", monospace;
+    }
 
-const missionModal = document.getElementById("mission-modal");
-const modalSuccessText = document.getElementById("modal-success-text");
-const modalLearnedText = document.getElementById("modal-learned-text");
-const modalNextBtn = document.getElementById("modal-next-btn");
+    .broken-title {
+      color: #ffb4b4;
+      font-family: "Press Start 2P", monospace;
+      font-size: 11px;
+      line-height: 1.9;
+    }
 
-const gameOverModal = document.getElementById("game-over-modal");
-const tryAgainBtn = document.getElementById("try-again-btn");
+    .broken-sub {
+      color: var(--muted);
+      margin-top: 12px;
+      line-height: 1.6;
+    }
 
-function normalize(input) {
-  return input.replace(/\s+/g, "").toLowerCase();
-}
+    .system-card {
+      border: 1px solid rgba(57,255,90,0.25);
+      background: rgba(5,11,18,0.84);
+      border-radius: 14px;
+      padding: 18px;
+      width: 100%;
+      max-width: 460px;
+    }
 
-function countMatches(text, pattern) {
-  const matches = text.match(pattern);
-  return matches ? matches.length : 0;
-}
+    .system-card.restored {
+      border-color: rgba(57,255,90,0.65);
+      animation: successFlash 0.7s ease;
+    }
 
-function updateStats() {
-  const xp = parseInt(localStorage.getItem("xp")) || 0;
+    @keyframes successFlash {
+      0% { box-shadow: 0 0 0 rgba(57,255,90,0); }
+      45% { box-shadow: 0 0 30px rgba(57,255,90,0.22); }
+      100% { box-shadow: 0 0 0 rgba(57,255,90,0); }
+    }
 
-  missionCountInlineEl.innerText = Math.min(level, 7);
-  totalXpEl.innerText = xp;
-  livesEl.innerText = "❤️".repeat(lives) + "🖤".repeat(3 - lives);
-  attemptsEl.innerText = attempts;
-}
+    .mission-strip {
+      border-radius: 18px;
+      padding: 18px 20px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 15px;
+      align-items: center;
+    }
 
-function loadMission() {
-  const mission = missions[level];
+    .mission-icon {
+      position: relative;
+      z-index: 1;
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      border: 1px solid rgba(250,204,21,0.42);
+      background: rgba(250,204,21,0.075);
+      font-size: 25px;
+    }
 
-  attempts = 0;
-  lives = 3;
-  missionComplete = false;
-  lastWarningMessage = "";
+    .mission-info {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 9px;
+    }
 
-  missionModal.classList.remove("show");
-  gameOverModal.classList.remove("show");
+    .mission-meta-title {
+      color: var(--yellow);
+      font-size: 10px;
+      line-height: 1.6;
+    }
 
-  updateStats();
+    .meta-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
 
-  resultEl.innerText = "Run your code to check the mission.";
-  resultEl.className = "message";
+    .meta-grid strong {
+      color: var(--green);
+      font-weight: 600;
+    }
 
-  hintEl.innerText = "Click Hint if you get stuck.";
-  warningEl.innerText = "No syntax warnings yet.";
-  warningEl.className = "message error";
-  xpFeedbackEl.innerText = "0 XP gained.";
+    .system-voice {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
 
-  nextBtn.disabled = true;
-  runBtn.disabled = false;
-  hintBtn.disabled = false;
-  statusEl.innerText = "Active";
+    .system-voice span {
+      color: var(--green);
+    }
 
-  if (!mission) {
-    titleEl.innerText = "HTML Arena Complete!";
-    skillTitleEl.innerText = "HTML Complete";
-    bytebotEl.innerText = "CSS Circuit is ready. Head back to Mission Control.";
-    whyEl.innerText = "You completed the HTML foundation.";
-    successRuleEl.innerText = "All HTML missions are complete.";
-    codeBox.value = "";
-    previewEl.srcdoc = "";
-    statusEl.innerText = "Complete";
-    runBtn.disabled = true;
-    hintBtn.disabled = true;
-    nextBtn.disabled = true;
-    return;
-  }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(3,8,15,0.78);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 30;
+      padding: 20px;
+    }
 
-  titleEl.innerText = mission.title;
-  skillTitleEl.innerText = mission.skill;
-  bytebotEl.innerHTML = mission.bytebot;
-  whyEl.innerText = mission.why;
-  successRuleEl.innerText = mission.rule;
-  codeBox.value = mission.starter;
+    .modal-backdrop.show {
+      display: flex;
+    }
 
-  updatePreview();
+    .modal {
+      width: min(520px, 100%);
+      background: linear-gradient(180deg, var(--panel2), var(--panel));
+      border: 1px solid rgba(57,255,90,0.35);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.65);
+      position: relative;
+      animation: modalPop 0.24s ease;
+    }
 
-  if (shouldShowStartPopup) {
-    showStartPopup(mission);
-  }
-}
+    .modal::before {
+      content: "";
+      position: absolute;
+      inset: 9px;
+      border: 1px dashed var(--yellowLine);
+      border-radius: 14px;
+      pointer-events: none;
+    }
 
-function showStartPopup(mission) {
-  startModalTitle.innerText = mission.title;
-  startModalSkill.innerText = "Skill: " + mission.skill;
-  startModalTask.innerText = mission.rule + " Read the instruction, write the code in the editor, then click Run Code.";
-  startModal.classList.add("show");
-}
+    @keyframes modalPop {
+      from { transform: scale(0.96) translateY(8px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
 
-function setWarning(message) {
-  warningEl.innerText = message;
+    .modal-content {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 14px;
+      text-align: center;
+    }
 
-  if (
-    message &&
-    message !== "No syntax warnings yet." &&
-    message !== "No syntax warnings." &&
-    message !== lastWarningMessage
-  ) {
-    playMistake();
-  }
+    .modal-title {
+      font-size: 14px;
+      color: var(--green);
+      line-height: 1.7;
+    }
 
-  lastWarningMessage = message;
-}
+    .modal-subtitle {
+      color: var(--yellow);
+      font-size: 11px;
+      line-height: 1.8;
+    }
 
-function checkSyntaxWarnings(rawCode) {
-  const mission = missions[level];
+    .modal-text {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
 
-  if (!mission || rawCode.trim().length === 0) {
-    setWarning("No syntax warnings yet.");
-    return;
-  }
+    .modal-actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
 
-  const code = rawCode.trim();
-  const normalized = normalize(code);
+    .completed-state {
+      min-height: 75vh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
 
-  const openBracketCount = countMatches(code, /</g);
-  const closeBracketCount = countMatches(code, />/g);
+    .completed-card {
+      width: min(680px, 100%);
+      background: linear-gradient(180deg, var(--panel2), var(--panel));
+      border: 1px solid rgba(57,255,90,0.35);
+      border-radius: 22px;
+      padding: 28px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+    }
 
-  if (openBracketCount === 0 || closeBracketCount === 0) {
-    setWarning("A tag bracket < or > is missing.");
-    return;
-  }
+    .completed-card h1 {
+      color: var(--green);
+      font-size: 16px;
+      line-height: 1.8;
+      margin-bottom: 14px;
+    }
 
-  if (openBracketCount !== closeBracketCount) {
-    setWarning("Your < and > brackets are not balanced.");
-    return;
-  }
+    .completed-card p {
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
 
-  if (code.includes("< ") || code.includes("</ ")) {
-    setWarning("There should be no space right after < or </ inside a tag.");
-    return;
-  }
+    @media (max-width: 900px) {
+      body {
+        overflow-y: auto;
+      }
 
-  if (mission.requiredParts) {
-    for (let i = 0; i < mission.requiredParts.length; i++) {
-      const part = normalize(mission.requiredParts[i]);
+      .arena {
+        grid-template-columns: 1fr;
+      }
 
-      if (!normalized.includes(part)) {
-        setWarning("Missing required part: " + mission.requiredParts[i]);
-        return;
+      .editor-panel,
+      .preview-panel {
+        border-radius: 14px;
+        border-right: 1px solid rgba(57,255,90,0.19);
+      }
+
+      .preview-screen {
+        min-height: 290px;
+      }
+
+      .map-btn {
+        margin-left: 0;
       }
     }
-  }
 
-  setWarning("No syntax warnings.");
-}
+    @media (max-width: 560px) {
+      .page {
+        width: min(100% - 18px, 1220px);
+        padding: 10px 0;
+      }
 
-function updatePreview() {
-  const code = codeBox.value;
+      .top-bar,
+      .arena,
+      .mission-strip {
+        border-radius: 14px;
+      }
 
-  previewEl.srcdoc = code;
+      .top-bar {
+        padding: 17px;
+      }
 
-  previewEl.onload = function () {
-    const iframeDoc =
-      previewEl.contentDocument || previewEl.contentWindow.document;
+      .arena {
+        padding: 12px;
+      }
 
-    iframeDoc.body.style.background = "#02060B";
-    iframeDoc.body.style.color = "white";
-    iframeDoc.body.style.fontFamily = "Arial, sans-serif";
-    iframeDoc.body.style.padding = "14px";
+      .panel {
+        padding: 13px;
+      }
 
-    const allElements = iframeDoc.body.querySelectorAll("*");
+      textarea {
+        font-size: 14px;
+        min-height: 230px;
+      }
 
-    allElements.forEach(function (el) {
-      el.style.color = "red";
+      .mission-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .mission-icon {
+        width: 48px;
+        height: 48px;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .button-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .button-row .map-btn {
+        grid-column: span 2;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app" class="page">
+    <section class="top-bar">
+      <div class="top-row">
+        <div>
+          <div class="world-title pixel">WORLD 01 / STRUCTURE RUINS</div>
+          <div id="missionTitle" class="mission-title pixel">MISSION 01 — SIGNAL TOWER</div>
+        </div>
+
+        <div class="stats">
+          <div class="stat-pill">
+            <span class="stat-label pixel">PLAYER</span>
+            <span id="playerName">Builder</span>
+          </div>
+
+          <div class="stat-pill">
+            <span class="stat-label pixel">XP</span>
+            <span id="xpValue">0</span>
+          </div>
+
+          <div class="stat-pill">
+            <span class="stat-label pixel">LIVES</span>
+            <span id="livesValue" class="lives">❤️❤️❤️</span>
+          </div>
+
+          <div class="stat-pill">
+            <span class="stat-label pixel">WEB RECOVERY</span>
+            <span id="recoveryValue">10%</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="objectiveText" class="objective">
+        Restore the main title beacon using a heading tag.
+      </div>
+
+      <div class="progress-track">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+    </section>
+
+    <main class="arena">
+      <section class="panel editor-panel">
+        <div class="panel-header">
+          <div class="panel-title pixel">⚙ CODE REPAIR TERMINAL</div>
+          <div id="editorState" class="system-state pixel">REPAIR MODE</div>
+        </div>
+
+        <div id="instructionText" class="instruction">
+          Repair the broken HTML structure.
+        </div>
+
+        <div id="repairPieces" class="repair-pieces"></div>
+
+        <textarea id="codeEditor" spellcheck="false"></textarea>
+
+        <div class="button-row">
+          <button id="runBtn" class="primary-btn">RUN</button>
+          <button id="checkBtn">CHECK</button>
+          <button id="hintBtn">HINT</button>
+          <button id="resetBtn">RESET</button>
+          <button id="mapBtn" class="map-btn">RETURN TO MAP</button>
+        </div>
+
+        <div id="feedbackBox" class="feedback">
+          SYSTEM VOICE: Awaiting repair command.
+        </div>
+      </section>
+
+      <section class="panel preview-panel">
+        <div class="panel-header">
+          <div class="panel-title pixel">🖥 LIVE SYSTEM PREVIEW</div>
+          <div id="previewMode" class="system-state pixel">OFFLINE</div>
+        </div>
+
+        <div class="preview-status">
+          <div class="status-left">
+            <span id="statusDot" class="dot"></span>
+            <div>
+              <div class="preview-label pixel">SIGNAL STATUS</div>
+              <div id="statusText" class="preview-state pixel">SYSTEM OFFLINE</div>
+            </div>
+          </div>
+
+          <div id="afterRepairLabel" class="preview-label pixel">AFTER REPAIR: ONLINE</div>
+        </div>
+
+        <div id="previewScreen" class="preview-screen">
+          <div id="previewWorld" class="preview-world">
+            <div class="system-card">
+              <div class="broken-title">MODULE MISSING</div>
+              <div class="broken-sub">Run your repair code to inspect the system.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <section class="mission-strip">
+      <div id="missionIcon" class="mission-icon">📡</div>
+
+      <div class="mission-info">
+        <div id="stripMissionName" class="mission-meta-title pixel">SIGNAL TOWER</div>
+
+        <div class="meta-grid">
+          <div><strong>Skill:</strong> <span id="skillText">Headings</span></div>
+          <div><strong>Reward:</strong> <span id="rewardText">+20 XP</span></div>
+          <div><strong>Difficulty:</strong> <span id="difficultyText">EASY</span></div>
+        </div>
+
+        <div id="shortHintText" class="system-voice">
+          Hint: Use an h1 tag for the main page title.
+        </div>
+
+        <div id="systemVoiceText" class="system-voice">
+          <span>&gt; SYSTEM VOICE:</span> “Restore the lost signal heading.”
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="completeModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-content">
+        <div class="modal-title pixel">MISSION CLEARED</div>
+        <div id="completeMissionName" class="modal-subtitle pixel">SIGNAL TOWER RESTORED</div>
+        <div id="learnedText" class="modal-text">You learned how to create a main heading with HTML.</div>
+        <div id="xpRewardText" class="modal-subtitle pixel">+20 XP</div>
+        <div class="modal-text">NEXT QUEST UNLOCKED</div>
+
+        <div class="modal-actions">
+          <button id="completeMapBtn">RETURN TO MAP</button>
+          <button id="nextQuestBtn" class="primary-btn">NEXT QUEST</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="gameOverModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-content">
+        <div class="modal-title pixel" style="color: var(--red);">GAME OVER</div>
+        <div class="modal-subtitle pixel">SYSTEM UNSTABLE</div>
+        <div class="modal-text">
+          The repair failed too many times. Restart this mission and rebuild the system.
+        </div>
+
+        <div class="modal-actions">
+          <button id="tryAgainBtn" class="primary-btn">TRY AGAIN</button>
+          <button id="gameOverMapBtn">RETURN TO MAP</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <audio id="successSound" src="success-sound.mp3" preload="auto"></audio>
+  <audio id="errorSound" src="error-sound.mp3" preload="auto"></audio>
+  <audio id="gameOverSound" src="game-lose-sound.mp3" preload="auto"></audio>
+
+  <script>
+    const missions = [
+      {
+        level: 1,
+        icon: "📡",
+        name: "SIGNAL TOWER",
+        missionTitle: "MISSION 01 — SIGNAL TOWER",
+        skill: "Headings",
+        reward: 20,
+        difficulty: "EASY",
+        objective: "Restore the main title beacon using a heading tag.",
+        instruction: "The tower has lost its title signal. Use an h1 heading with any title text inside it.",
+        shortHint: "Hint: Use an h1 tag for the main page title.",
+        voice: "Restore the lost signal heading.",
+        learned: "You learned that <h1> creates the most important heading on a page.",
+        starter: "<h1>__________</h1>",
+        pieces: ["<h1>", "</h1>", "ByteRush Online"],
+        hints: [
+          "The main title needs the strongest heading tag.",
+          "Use an opening <h1> and a closing </h1>.",
+          "Example structure: <h1>Signal Restored</h1>"
+        ],
+        offline: {
+          title: "TITLE MODULE MISSING",
+          sub: "SIGNAL NOT DETECTED"
+        },
+        validate(code) {
+          if (!hasTagPair(code, "h1")) return fail("Almost there. The heading needs both <h1> and </h1>.");
+          const text = getInnerText(code, "h1");
+          if (!text || text.includes("__________")) return fail("The h1 tag is connected, but the title text is still missing.");
+          return pass();
+        }
+      },
+      {
+        level: 2,
+        icon: "📝",
+        name: "MESSAGE LOGS",
+        missionTitle: "MISSION 02 — MESSAGE LOGS",
+        skill: "Paragraphs",
+        reward: 20,
+        difficulty: "EASY",
+        objective: "Repair the corrupted communication logs using paragraph tags.",
+        instruction: "The message logs are floating without structure. Wrap each message in paragraph tags.",
+        shortHint: "Hint: Paragraphs use <p> and </p>.",
+        voice: "Restore the broken data logs.",
+        learned: "You learned that <p> tags create readable paragraphs of text.",
+        starter: "System message one\nSystem message two",
+        hints: [
+          "Each message needs its own paragraph structure.",
+          "A paragraph starts with <p> and ends with </p>.",
+          "Example: <p>System message restored.</p>"
+        ],
+        offline: {
+          title: "LOG FORMAT CORRUPTED",
+          sub: "COMMUNICATION DATA UNREADABLE"
+        },
+        validate(code) {
+          const count = countTagPairs(code, "p");
+          if (count < 1) return fail("The logs still need at least one complete <p> paragraph.");
+          if (!hasClosingTag(code, "p")) return fail("A paragraph is open, but the closing </p> tag is missing.");
+          return pass();
+        }
+      },
+      {
+        level: 3,
+        icon: "🔘",
+        name: "CONTROL SWITCH",
+        missionTitle: "MISSION 03 — CONTROL SWITCH",
+        skill: "Buttons",
+        reward: 20,
+        difficulty: "EASY",
+        objective: "Create a button to activate the control panel.",
+        instruction: "The control panel is inactive. Build a button with clear text inside it.",
+        shortHint: "Hint: Buttons need opening and closing button tags.",
+        voice: "Activate the machinery control switch.",
+        learned: "You learned that <button> creates an interactive control.",
+        starter: "",
+        hints: [
+          "The control switch is a button element.",
+          "Use <button> and </button> with text inside.",
+          "Example: <button>Activate</button>"
+        ],
+        offline: {
+          title: "CONTROL PANEL INACTIVE",
+          sub: "NO SWITCH DETECTED"
+        },
+        validate(code) {
+          if (!hasTagPair(code, "button")) return fail("The system needs a complete <button>...</button> control.");
+          const text = getInnerText(code, "button");
+          if (!text) return fail("The button exists, but it needs visible text inside it.");
+          return pass();
+        }
+      },
+      {
+        level: 4,
+        icon: "🌀",
+        name: "PORTAL GATE",
+        missionTitle: "MISSION 04 — PORTAL GATE",
+        skill: "Links",
+        reward: 20,
+        difficulty: "MEDIUM",
+        objective: "Reconnect the portal gate using an anchor link.",
+        instruction: "The portal needs a path. Create an anchor tag with an href and link text.",
+        shortHint: "Hint: Links use <a href=\"...\"></a>.",
+        voice: "Reconnect the broken pathway.",
+        learned: "You learned that anchor tags create links between places on the web.",
+        starter: '<a href="">Portal Link</a>',
+        hints: [
+          "The anchor needs an href attribute.",
+          "The href should not be empty.",
+          "Example: <a href=\"html-map.html\">Open Portal</a>"
+        ],
+        offline: {
+          title: "PORTAL DISCONNECTED",
+          sub: "NO PATHWAY FOUND"
+        },
+        validate(code) {
+          if (!hasTagPair(code, "a")) return fail("The portal needs a complete <a>...</a> link.");
+          if (!/<a\b[^>]*href\s*=\s*["'][^"']+["'][^>]*>/i.test(code)) return fail("The anchor tag needs an href with a real destination.");
+          const text = getInnerText(code, "a");
+          if (!text) return fail("The portal link needs visible text between the anchor tags.");
+          return pass();
+        }
+      },
+      {
+        level: 5,
+        icon: "🖼️",
+        name: "MEMORY FRAME",
+        missionTitle: "MISSION 05 — MEMORY FRAME",
+        skill: "Images",
+        reward: 20,
+        difficulty: "MEDIUM",
+        objective: "Recover the lost memory frame using an image tag.",
+        instruction: "The image frame is broken. Insert an img tag with src and alt attributes.",
+        shortHint: "Hint: Images use <img src=\"...\" alt=\"...\">.",
+        voice: "Recover the lost visual memory.",
+        learned: "You learned that images need src for the file path and alt for description.",
+        starter: '<img src="" alt="">',
+        hints: [
+          "The memory frame needs an img tag.",
+          "The img tag needs src and alt attributes.",
+          "Example: <img src=\"memory.png\" alt=\"Recovered memory\">"
+        ],
+        offline: {
+          title: "MEMORY FRAME EMPTY",
+          sub: "IMAGE SOURCE MISSING"
+        },
+        validate(code) {
+          if (!/<img\b/i.test(code)) return fail("The frame needs an <img> tag.");
+          if (!/<img\b[^>]*src\s*=\s*["'][^"']+["']/i.test(code)) return fail("The img tag needs a src value.");
+          if (!/<img\b[^>]*alt\s*=\s*["'][^"']+["']/i.test(code)) return fail("The img tag needs alt text to describe the image.");
+          return pass();
+        }
+      },
+      {
+        level: 6,
+        icon: "📦",
+        name: "SUPPLY INVENTORY",
+        missionTitle: "MISSION 06 — SUPPLY INVENTORY",
+        skill: "Lists",
+        reward: 20,
+        difficulty: "MEDIUM",
+        objective: "Organize the scattered supply inventory using list structure.",
+        instruction: "The inventory is messy. Create a list with at least two list items.",
+        shortHint: "Hint: Use <ul> or <ol> with <li> items inside.",
+        voice: "Organize the repair supplies.",
+        learned: "You learned that lists organize related items using li elements.",
+        starter: "Energy Core\nRepair Cable\nSignal Key",
+        hints: [
+          "Use a list container first: <ul> or <ol>.",
+          "Each supply item should be inside an <li> tag.",
+          "Example: <ul><li>Energy Core</li><li>Repair Cable</li></ul>"
+        ],
+        offline: {
+          title: "INVENTORY SCATTERED",
+          sub: "SUPPLY ORDER LOST"
+        },
+        validate(code) {
+          const hasList = hasTagPair(code, "ul") || hasTagPair(code, "ol");
+          if (!hasList) return fail("The inventory needs a list container: <ul> or <ol>.");
+          const items = countTagPairs(code, "li");
+          if (items < 2) return fail("The inventory needs at least two complete <li> items.");
+          return pass();
+        }
+      },
+      {
+        level: 7,
+        icon: "▦",
+        name: "DATA TERMINAL",
+        missionTitle: "MISSION 07 — DATA TERMINAL",
+        skill: "Tables",
+        reward: 20,
+        difficulty: "MEDIUM",
+        objective: "Restore the data terminal using table structure.",
+        instruction: "The system database lost its grid. Build a table with rows and cells.",
+        shortHint: "Hint: Tables use <table>, <tr>, and <td>.",
+        voice: "Restore the broken data grid.",
+        learned: "You learned that tables organize information into rows and cells.",
+        starter: "<table>\n\n</table>",
+        hints: [
+          "The terminal needs a table container.",
+          "Inside the table, add a row with <tr> and cells with <td>.",
+          "Example: <table><tr><td>Core</td><td>Online</td></tr></table>"
+        ],
+        offline: {
+          title: "DATABASE GRID BROKEN",
+          sub: "ROWS AND CELLS MISSING"
+        },
+        validate(code) {
+          if (!hasTagPair(code, "table")) return fail("The database needs a complete <table> structure.");
+          if (!hasTagPair(code, "tr")) return fail("The table needs at least one complete <tr> row.");
+          if (!hasTagPair(code, "td") && !hasTagPair(code, "th")) return fail("The row needs at least one <td> or <th> cell.");
+          return pass();
+        }
+      },
+      {
+        level: 8,
+        icon: "🪪",
+        name: "IDENTITY SCANNER",
+        missionTitle: "MISSION 08 — IDENTITY SCANNER",
+        skill: "Forms",
+        reward: 20,
+        difficulty: "MEDIUM",
+        objective: "Repair the scanner interface using a form and input field.",
+        instruction: "The scanner needs a form field. Build a form with at least one input.",
+        shortHint: "Hint: Forms collect information with <form> and <input>.",
+        voice: "Restore user access.",
+        learned: "You learned that forms collect user input through fields.",
+        starter: "<form>\n\n</form>",
+        hints: [
+          "Start with a form container.",
+          "Add an input field inside the form.",
+          "Example: <form><input type=\"text\" placeholder=\"Enter ID\"></form>"
+        ],
+        offline: {
+          title: "SCANNER ACCESS DAMAGED",
+          sub: "INPUT FIELD NOT FOUND"
+        },
+        validate(code) {
+          if (!hasTagPair(code, "form")) return fail("The scanner needs a complete <form>...</form> structure.");
+          if (!/<input\b/i.test(code)) return fail("The form needs at least one <input> field.");
+          return pass();
+        }
+      },
+      {
+        level: 9,
+        icon: "🏗️",
+        name: "STRUCTURE ENGINE",
+        missionTitle: "MISSION 09 — STRUCTURE ENGINE",
+        skill: "Semantic HTML",
+        reward: 20,
+        difficulty: "HARD",
+        objective: "Rebuild the page architecture using semantic HTML sections.",
+        instruction: "The webpage framework is broken. Add header, nav, main, and footer sections.",
+        shortHint: "Hint: Semantic tags give a webpage meaningful structure.",
+        voice: "Reconstruct the web framework.",
+        learned: "You learned that semantic HTML gives meaning to page sections.",
+        starter: "<header></header>\n\n<main></main>\n\n<footer></footer>",
+        hints: [
+          "The structure engine needs four major sections.",
+          "Check for header, nav, main, and footer.",
+          "Example: <header></header><nav></nav><main></main><footer></footer>"
+        ],
+        offline: {
+          title: "WEB FRAMEWORK COLLAPSED",
+          sub: "SEMANTIC SECTIONS MISSING"
+        },
+        validate(code) {
+          const required = ["header", "nav", "main", "footer"];
+          for (const tag of required) {
+            if (!hasTagPair(code, tag)) return fail(`The framework is missing a complete <${tag}> section.`);
+          }
+          return pass();
+        }
+      },
+      {
+        level: 10,
+        icon: "🌐",
+        name: "WEB CORE BOSS",
+        missionTitle: "MISSION 10 — WEB CORE BOSS",
+        skill: "Mini Webpage",
+        reward: 50,
+        difficulty: "BOSS",
+        objective: "Rebuild the Web Core by combining headings, images, navigation, and controls.",
+        instruction: "Final repair: create a mini webpage with a heading, image, navigation link, paragraph, and button.",
+        shortHint: "Hint: The Web Core needs multiple HTML systems working together.",
+        voice: "Bring the Web Core back online.",
+        learned: "You learned how multiple HTML elements work together to form a real webpage.",
+        starter: "",
+        hints: [
+          "Start with a heading and paragraph.",
+          "Add an image, a link, and a button.",
+          "Example structure: <h1>...</h1><p>...</p><img src=\"core.png\" alt=\"core\"><a href=\"html-map.html\">Map</a><button>Launch</button>"
+        ],
+        offline: {
+          title: "WEB CORE OFFLINE",
+          sub: "MULTI-STAGE REPAIR REQUIRED"
+        },
+        validate(code) {
+          if (!hasTagPair(code, "h1")) return fail("Stage 1 unstable. Restore the heading system with <h1>...</h1>.");
+          if (!hasTagPair(code, "p")) return fail("Stage 2 unstable. Add a paragraph to stabilize the core message.");
+          if (!/<img\b[^>]*src\s*=\s*["'][^"']+["'][^>]*alt\s*=\s*["'][^"']+["']/i.test(code) &&
+              !/<img\b[^>]*alt\s*=\s*["'][^"']+["'][^>]*src\s*=\s*["'][^"']+["']/i.test(code)) {
+            return fail("Stage 3 unstable. Add an image with both src and alt.");
+          }
+          if (!/<a\b[^>]*href\s*=\s*["'][^"']+["'][^>]*>/i.test(code) || !hasTagPair(code, "a")) {
+            return fail("Stage 4 unstable. Add a working anchor link with href.");
+          }
+          if (!hasTagPair(code, "button")) return fail("Final control missing. Add a button to activate the Web Core.");
+          return pass();
+        }
+      }
+    ];
+
+    const app = document.getElementById("app");
+
+    const missionTitle = document.getElementById("missionTitle");
+    const playerName = document.getElementById("playerName");
+    const xpValue = document.getElementById("xpValue");
+    const livesValue = document.getElementById("livesValue");
+    const recoveryValue = document.getElementById("recoveryValue");
+    const progressFill = document.getElementById("progressFill");
+    const objectiveText = document.getElementById("objectiveText");
+    const instructionText = document.getElementById("instructionText");
+    const codeEditor = document.getElementById("codeEditor");
+    const feedbackBox = document.getElementById("feedbackBox");
+    const editorState = document.getElementById("editorState");
+    const previewMode = document.getElementById("previewMode");
+    const statusDot = document.getElementById("statusDot");
+    const statusText = document.getElementById("statusText");
+    const previewScreen = document.getElementById("previewScreen");
+    const previewWorld = document.getElementById("previewWorld");
+    const missionIcon = document.getElementById("missionIcon");
+    const stripMissionName = document.getElementById("stripMissionName");
+    const skillText = document.getElementById("skillText");
+    const rewardText = document.getElementById("rewardText");
+    const difficultyText = document.getElementById("difficultyText");
+    const shortHintText = document.getElementById("shortHintText");
+    const systemVoiceText = document.getElementById("systemVoiceText");
+    const repairPieces = document.getElementById("repairPieces");
+
+    const runBtn = document.getElementById("runBtn");
+    const checkBtn = document.getElementById("checkBtn");
+    const hintBtn = document.getElementById("hintBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const mapBtn = document.getElementById("mapBtn");
+
+    const completeModal = document.getElementById("completeModal");
+    const completeMissionName = document.getElementById("completeMissionName");
+    const learnedText = document.getElementById("learnedText");
+    const xpRewardText = document.getElementById("xpRewardText");
+    const completeMapBtn = document.getElementById("completeMapBtn");
+    const nextQuestBtn = document.getElementById("nextQuestBtn");
+
+    const gameOverModal = document.getElementById("gameOverModal");
+    const tryAgainBtn = document.getElementById("tryAgainBtn");
+    const gameOverMapBtn = document.getElementById("gameOverMapBtn");
+
+    const successSound = document.getElementById("successSound");
+    const errorSound = document.getElementById("errorSound");
+    const gameOverSound = document.getElementById("gameOverSound");
+
+    let currentLevel = Number(localStorage.getItem("html-level")) || 1;
+    let xp = Number(localStorage.getItem("xp")) || 0;
+    let lives = 3;
+    let hintIndex = 0;
+    let missionComplete = false;
+    let currentMission = null;
+
+    function init() {
+      if (currentLevel > 10) {
+        showCompletedWorld();
+        return;
+      }
+
+      currentMission = missions.find(m => m.level === currentLevel) || missions[0];
+
+      const storedName = localStorage.getItem("player-name");
+      playerName.textContent = storedName && storedName.trim() ? storedName.trim() : "Builder";
+
+      lives = 3;
+      hintIndex = 0;
+      missionComplete = false;
+
+      loadMission(currentMission);
+    }
+
+    function loadMission(mission) {
+      missionTitle.textContent = mission.missionTitle;
+      xpValue.textContent = xp;
+      updateLives();
+
+      const recovery = mission.level * 10;
+      recoveryValue.textContent = recovery + "%";
+      progressFill.style.width = recovery + "%";
+
+      objectiveText.textContent = mission.objective;
+      instructionText.textContent = mission.instruction;
+
+      codeEditor.value = mission.starter;
+
+      missionIcon.textContent = mission.icon;
+      stripMissionName.textContent = mission.name;
+      skillText.textContent = mission.skill;
+      rewardText.textContent = "+" + mission.reward + " XP";
+      difficultyText.textContent = mission.difficulty;
+      shortHintText.textContent = mission.shortHint;
+      systemVoiceText.innerHTML = `<span>&gt; SYSTEM VOICE:</span> “${mission.voice}”`;
+
+      feedback("SYSTEM VOICE: Awaiting repair command.", "normal");
+      setState("REPAIR MODE", "OFFLINE");
+      renderOffline(mission);
+
+      loadRepairPieces(mission);
+    }
+
+    function loadRepairPieces(mission) {
+      repairPieces.innerHTML = "";
+      repairPieces.classList.remove("show");
+
+      if (!mission.pieces) return;
+
+      repairPieces.classList.add("show");
+
+      mission.pieces.forEach(piece => {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "repair-chip";
+        chip.textContent = piece;
+        chip.addEventListener("click", () => insertAtCursor(piece));
+        repairPieces.appendChild(chip);
+      });
+    }
+
+    function insertAtCursor(text) {
+      const start = codeEditor.selectionStart;
+      const end = codeEditor.selectionEnd;
+      const before = codeEditor.value.substring(0, start);
+      const after = codeEditor.value.substring(end);
+      codeEditor.value = before + text + after;
+      codeEditor.focus();
+      codeEditor.selectionStart = codeEditor.selectionEnd = start + text.length;
+    }
+
+    function updateLives() {
+      livesValue.textContent = "❤️".repeat(lives) + "♡".repeat(3 - lives);
+    }
+
+    function setState(editor, preview, dotClass = "") {
+      editorState.textContent = editor;
+      previewMode.textContent = preview;
+      statusText.textContent = preview === "ONLINE" || preview === "RESTORED" ? "SYSTEM ONLINE" : preview === "SCANNING" || preview === "VALIDATING" ? preview + "..." : "SYSTEM OFFLINE";
+
+      statusDot.className = "dot";
+      if (dotClass) statusDot.classList.add(dotClass);
+
+      if (preview === "ONLINE" || preview === "RESTORED") {
+        statusDot.classList.add("online");
+        previewScreen.classList.add("online");
+      } else if (preview === "SCANNING" || preview === "VALIDATING") {
+        statusDot.classList.add("repair");
+        previewScreen.classList.remove("online");
+      } else {
+        previewScreen.classList.remove("online");
+      }
+    }
+
+    function feedback(message, type = "normal") {
+      feedbackBox.textContent = message;
+      feedbackBox.className = "feedback";
+
+      if (type === "success") feedbackBox.classList.add("success");
+      if (type === "error") feedbackBox.classList.add("error");
+      if (type === "scan") feedbackBox.classList.add("scan");
+    }
+
+    function renderOffline(mission) {
+      previewWorld.innerHTML = `
+        <div class="system-card">
+          <div class="broken-title">${escapeHTML(mission.offline.title)}</div>
+          <div class="broken-sub">${escapeHTML(mission.offline.sub)}</div>
+        </div>
+      `;
+    }
+
+    function runPreview() {
+      if (missionComplete) return;
+
+      const code = codeEditor.value.trim();
+
+      if (!code) {
+        renderOffline(currentMission);
+        feedback("SYSTEM VOICE: No repair code detected yet.", "normal");
+        setState("REPAIR MODE", "OFFLINE");
+        return;
+      }
+
+      setState("REPAIR MODE", "REPAIR MODE", "repair");
+      feedback("SYSTEM VOICE: Preview updated. Check the repair when ready.", "normal");
+
+      previewWorld.innerHTML = `
+        <div class="system-card">
+          ${sanitizePreview(code)}
+        </div>
+      `;
+
+      addPreviewInteractions();
+    }
+
+    function addPreviewInteractions() {
+      const buttons = previewWorld.querySelectorAll("button");
+      buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          btn.textContent = "SYSTEM ACTIVATED";
+          btn.style.color = "var(--green)";
+        });
+      });
+
+      const links = previewWorld.querySelectorAll("a");
+      links.forEach(link => {
+        link.addEventListener("click", e => {
+          e.preventDefault();
+          link.textContent = "PORTAL CONNECTED";
+        });
+      });
+    }
+
+    async function checkMission() {
+      if (missionComplete) return;
+
+      setState("SCANNING", "SCANNING", "repair");
+      feedback("SCANNING CODE...", "scan");
+      await wait(650);
+
+      setState("VALIDATING", "VALIDATING", "repair");
+      feedback("VALIDATING STRUCTURE...", "scan");
+      await wait(700);
+
+      const result = currentMission.validate(codeEditor.value);
+
+      if (result.ok) {
+        completeMission();
+      } else {
+        failMissionCheck(result.message);
+      }
+    }
+
+    function completeMission() {
+      missionComplete = true;
+
+      setState("RESTORED", "ONLINE", "online");
+      feedback("SYSTEM RESTORED. Mission repair complete.", "success");
+      renderSuccessPreview();
+
+      playSound(successSound);
+
+      xp += currentMission.reward;
+      localStorage.setItem("xp", String(xp));
+      xpValue.textContent = xp;
+
+      const nextLevel = currentMission.level >= 10 ? 11 : currentMission.level + 1;
+      localStorage.setItem("html-level", String(nextLevel));
+
+      completeMissionName.textContent = `${currentMission.name} RESTORED`;
+      learnedText.textContent = currentMission.learned;
+      xpRewardText.textContent = `+${currentMission.reward} XP`;
+
+      if (currentMission.level >= 10) {
+        nextQuestBtn.textContent = "WORLD RESTORED";
+      } else {
+        nextQuestBtn.textContent = "NEXT QUEST";
+      }
+
+      setTimeout(() => {
+        completeModal.classList.add("show");
+      }, 700);
+    }
+
+    function failMissionCheck(message) {
+      lives -= 1;
+      updateLives();
+
+      playSound(errorSound);
+
+      setState("REPAIR MODE", "OFFLINE");
+      feedback("SYSTEM UNSTABLE. " + message, "error");
+
+      if (lives <= 0) {
+        setTimeout(() => {
+          playSound(gameOverSound);
+          gameOverModal.classList.add("show");
+        }, 450);
+      }
+    }
+
+    function renderSuccessPreview() {
+      const code = codeEditor.value.trim();
+
+      let stageMarkup = "";
+
+      if (currentMission.level === 10) {
+        stageMarkup = `
+          <div style="text-align:left; margin-bottom:14px; color:var(--muted); line-height:1.8;">
+            <div>✅ Stage 1: Heading system restored</div>
+            <div>✅ Stage 2: Message layer stabilized</div>
+            <div>✅ Stage 3: Image module reconnected</div>
+            <div>✅ Stage 4: Navigation pathway repaired</div>
+            <div>✅ Final Control: Web Core activated</div>
+          </div>
+        `;
+      }
+
+      previewWorld.innerHTML = `
+        <div class="system-card restored">
+          ${stageMarkup}
+          ${sanitizePreview(code)}
+          <div style="margin-top:16px; color:var(--green); font-family:'Press Start 2P', monospace; font-size:10px; line-height:1.8;">
+            SYSTEM ONLINE
+          </div>
+        </div>
+      `;
+
+      addPreviewInteractions();
+    }
+
+    function showHint() {
+      if (missionComplete) return;
+
+      const hints = currentMission.hints;
+      const hint = hints[Math.min(hintIndex, hints.length - 1)];
+
+      feedback("HINT " + (Math.min(hintIndex + 1, hints.length)) + ": " + hint, "scan");
+
+      if (hintIndex < hints.length - 1) {
+        hintIndex++;
+      }
+    }
+
+    function resetMission() {
+      lives = 3;
+      hintIndex = 0;
+      missionComplete = false;
+      updateLives();
+      codeEditor.value = currentMission.starter;
+      feedback("SYSTEM VOICE: Mission reset. Repair attempt ready.", "normal");
+      setState("REPAIR MODE", "OFFLINE");
+      renderOffline(currentMission);
+      completeModal.classList.remove("show");
+      gameOverModal.classList.remove("show");
+    }
+
+    function goToMap() {
+      window.location.href = "html-map.html";
+    }
+
+    function goNextQuest() {
+      completeModal.classList.remove("show");
+
+      currentLevel = Number(localStorage.getItem("html-level")) || 1;
+
+      if (currentLevel > 10) {
+        showCompletedWorld();
+        return;
+      }
+
+      currentMission = missions.find(m => m.level === currentLevel);
+      lives = 3;
+      hintIndex = 0;
+      missionComplete = false;
+      loadMission(currentMission);
+    }
+
+    function showCompletedWorld() {
+      app.innerHTML = `
+        <section class="completed-state">
+          <div class="completed-card">
+            <h1 class="pixel">WORLD 01 RESTORED</h1>
+            <p>
+              Structure Ruins is back online. You restored the foundations of the web with HTML.
+              Return to the map to continue your ByteRush journey.
+            </p>
+            <button onclick="window.location.href='html-map.html'" class="primary-btn">RETURN TO MAP</button>
+          </div>
+        </section>
+      `;
+    }
+
+    function sanitizePreview(code) {
+      let safe = code;
+
+      safe = safe.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "");
+      safe = safe.replace(/\son\w+\s*=\s*["'][^"']*["']/gi, "");
+      safe = safe.replace(/javascript:/gi, "");
+
+      return safe;
+    }
+
+    function escapeHTML(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function wait(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function playSound(audio) {
+      if (!audio) return;
+
+      try {
+        audio.currentTime = 0;
+        audio.play().catch(() => {});
+      } catch (e) {}
+    }
+
+    function normalize(code) {
+      return String(code).replace(/\s+/g, " ").trim();
+    }
+
+    function hasTagPair(code, tag) {
+      const pattern = new RegExp(`<${tag}\\b[^>]*>[\\s\\S]*?<\\/${tag}>`, "i");
+      return pattern.test(code);
+    }
+
+    function hasClosingTag(code, tag) {
+      const pattern = new RegExp(`<\\/${tag}>`, "i");
+      return pattern.test(code);
+    }
+
+    function countTagPairs(code, tag) {
+      const pattern = new RegExp(`<${tag}\\b[^>]*>[\\s\\S]*?<\\/${tag}>`, "gi");
+      const matches = code.match(pattern);
+      return matches ? matches.length : 0;
+    }
+
+    function getInnerText(code, tag) {
+      const pattern = new RegExp(`<${tag}\\b[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i");
+      const match = code.match(pattern);
+      if (!match) return "";
+      return match[1].replace(/<[^>]*>/g, "").trim();
+    }
+
+    function pass() {
+      return { ok: true, message: "" };
+    }
+
+    function fail(message) {
+      return { ok: false, message };
+    }
+
+    runBtn.addEventListener("click", runPreview);
+    checkBtn.addEventListener("click", checkMission);
+    hintBtn.addEventListener("click", showHint);
+    resetBtn.addEventListener("click", resetMission);
+    mapBtn.addEventListener("click", goToMap);
+
+    completeMapBtn.addEventListener("click", goToMap);
+    nextQuestBtn.addEventListener("click", goNextQuest);
+
+    tryAgainBtn.addEventListener("click", resetMission);
+    gameOverMapBtn.addEventListener("click", goToMap);
+
+    codeEditor.addEventListener("keydown", function(e) {
+      if (e.key === "Tab") {
+        e.preventDefault();
+        insertAtCursor("  ");
+      }
     });
-  };
 
-  checkSyntaxWarnings(code);
-}
-
-function checkCode() {
-  if (missionComplete) return;
-
-  const mission = missions[level];
-  const rawCode = codeBox.value;
-  const code = normalize(rawCode);
-
-  updatePreview();
-
-  if (!mission) {
-    resultEl.innerText = "HTML Arena already complete.";
-    resultEl.className = "message correct";
-    return;
-  }
-
-  attempts++;
-  updateStats();
-
-  if (mission.check(code)) {
-    const reward = mission.boss ? 50 : 10;
-    completeMission(reward, mission.success, mission.learned);
-  } else {
-    loseLife();
-  }
-}
-
-function loseLife() {
-  lives--;
-  updateStats();
-
-  if (lives <= 0) {
-    resultEl.innerText = "Game over. You used up all your lives.";
-    resultEl.className = "message error";
-    statusEl.innerText = "Game Over";
-
-    runBtn.disabled = true;
-    hintBtn.disabled = true;
-    nextBtn.disabled = true;
-
-    errorEffect();
-    playGameLose();
-    showGameOverPopup();
-
-    return;
-  }
-
-  playError();
-
-  const mission = missions[level];
-
-  resultEl.innerText = "Not correct yet. You lost one life.";
-  resultEl.className = "message error";
-  statusEl.innerText = "Try Again";
-
-  showHint(mission);
-  errorEffect();
-}
-
-function showGameOverPopup() {
-  gameOverModal.classList.add("show");
-}
-
-function tryAgainMission() {
-  gameOverModal.classList.remove("show");
-  shouldShowStartPopup = false;
-  loadMission();
-  shouldShowStartPopup = true;
-}
-
-function showHint(mission) {
-  if (attempts <= 1) {
-    hintEl.innerText = "Hint 1: " + mission.hint1;
-  } else {
-    hintEl.innerText = "Hint 2: " + mission.hint2;
-  }
-}
-
-function manualHint() {
-  const mission = missions[level];
-
-  if (!mission || missionComplete) return;
-
-  if (hintEl.innerText.includes("Hint 1")) {
-    hintEl.innerText = "Hint 2: " + mission.hint2;
-  } else {
-    hintEl.innerText = "Hint 1: " + mission.hint1;
-  }
-}
-
-function showMissionPopup(successMessage, learnedMessage) {
-  modalSuccessText.innerText = successMessage;
-  modalLearnedText.innerText = learnedMessage;
-
-  if (level > 7) {
-    modalNextBtn.innerText = "Back to Map";
-  } else {
-    modalNextBtn.innerText = "Next Mission";
-  }
-
-  missionModal.classList.add("show");
-}
-
-function completeMission(xpGain, message, learnedMessage) {
-  missionComplete = true;
-
-  resultEl.innerText = message + " +" + xpGain + " XP";
-  resultEl.className = "message correct";
-
-  hintEl.innerText = "Mission complete.";
-  xpFeedbackEl.innerText = "+" + xpGain + " XP gained.";
-  statusEl.innerText = "Complete";
-
-  setWarning("No syntax warnings.");
-
-  playSuccess();
-
-  document.body.classList.add("success-flash");
-  previewFrame.classList.add("preview-glow");
-
-  setTimeout(function () {
-    document.body.classList.remove("success-flash");
-    previewFrame.classList.remove("preview-glow");
-  }, 700);
-
-  showXPPop(xpGain);
-  addXP(xpGain);
-
-  runBtn.disabled = true;
-  hintBtn.disabled = true;
-  nextBtn.disabled = false;
-
-  if (level === 7) {
-    localStorage.setItem("css-level", 1);
-    playUnlock();
-  }
-
-  level++;
-  localStorage.setItem("html-level", level);
-
-  updateStats();
-
-  showMissionPopup(message, learnedMessage);
-}
-
-function goNextMission() {
-  if (level > 7) {
-    window.location.href = "html-map.html";
-    return;
-  }
-
-  loadMission();
-}
-
-function errorEffect() {
-  codeBox.classList.add("error-shake");
-
-  setTimeout(function () {
-    codeBox.classList.remove("error-shake");
-  }, 300);
-}
-
-function addXP(points) {
-  let xp = parseInt(localStorage.getItem("xp")) || 0;
-  xp += points;
-  localStorage.setItem("xp", xp);
-}
-
-function showXPPop(amount) {
-  const xp = document.createElement("div");
-  xp.className = "xp-pop";
-  xp.innerText = "+" + amount + " XP";
-
-  document.body.appendChild(xp);
-
-  setTimeout(function () {
-    xp.remove();
-  }, 1000);
-}
-
-function playSound(id) {
-  const sound = document.getElementById(id);
-
-  if (!sound) return;
-
-  sound.currentTime = 0;
-
-  sound.play().catch(function () {
-    console.log("Sound blocked or missing:", id);
-  });
-}
-
-function playSuccess() {
-  playSound("success-sound");
-}
-
-function playError() {
-  playSound("error-sound");
-}
-
-function playUnlock() {
-  playSound("unlock-sound");
-}
-
-function playMistake() {
-  playSound("mistake-sound");
-}
-
-function playGameLose() {
-  const sound = document.getElementById("game-lose-sound");
-
-  if (!sound) return;
-
-  sound.currentTime = 0;
-
-  sound.play().catch(function () {
-    console.log("Sound blocked or missing: game-lose-sound");
-  });
-
-  setTimeout(function () {
-    sound.pause();
-    sound.currentTime = 0;
-  }, 4000);
-}
-
-runBtn.addEventListener("click", checkCode);
-hintBtn.addEventListener("click", manualHint);
-nextBtn.addEventListener("click", goNextMission);
-
-startMissionBtn.addEventListener("click", function () {
-  startModal.classList.remove("show");
-});
-
-modalNextBtn.addEventListener("click", function () {
-  missionModal.classList.remove("show");
-  goNextMission();
-});
-
-tryAgainBtn.addEventListener("click", tryAgainMission);
-
-backBtn.addEventListener("click", function () {
-  window.location.href = "html-map.html";
-});
-
-codeBox.addEventListener("input", updatePreview);
-
-loadMission();
-</script>
-<script src="translations.js"></script>
-<script src="language.js"></script>
+    init();
+  </script>
 </body>
 </html>

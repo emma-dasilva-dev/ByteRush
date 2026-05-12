@@ -1,601 +1,1024 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CSS Circuit Map | ByteRush</title>
-
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
-:root {
-  --green: #39FF5A;
-  --red: #FF3B3B;
-  --bg: #03080F;
-  --panel: #050B12;
-  --panel2: #07111D;
-  --text: #E7FFE9;
-  --muted: #8FAF9A;
-  --line: rgba(57,255,90,0.22);
-  --soft-line: rgba(255,255,255,0.08);
-  --yellow: #FACC15;
-  --boss: #D7B84F;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, rgba(57,255,90,0.08), transparent 32%),
-    radial-gradient(circle at bottom right, rgba(250,204,21,0.06), transparent 28%),
-    linear-gradient(rgba(57,255,90,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(57,255,90,0.025) 1px, transparent 1px),
-    var(--bg);
-  background-size: auto, auto, 44px 44px, 44px 44px;
-  color: var(--text);
-  font-family: 'Press Start 2P', monospace;
-  padding: 28px 18px;
-}
-
-#language-toggle {
-  position: absolute;
-  top: 18px;
-  right: 24px;
-  z-index: 1000;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 8px;
-  padding: 10px;
-  background: var(--panel2);
-  color: var(--yellow);
-  border: 1px solid rgba(250,204,21,0.5);
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-#language-toggle:hover {
-  color: var(--green);
-  background: rgba(250,204,21,0.08);
-}
-
-.page {
-  width: min(980px, 100%);
-  margin: 0 auto;
-}
-
-.header {
-  border: 1px solid var(--line);
-  background: rgba(5,11,18,0.92);
-  padding: 22px;
-  border-radius: 18px;
-  text-align: left;
-  position: relative;
-  box-shadow: 0 18px 45px rgba(0,0,0,0.35);
-}
-
-.header::before {
-  content: "WORLD 02";
-  position: absolute;
-  top: -11px;
-  left: 18px;
-  background: var(--bg);
-  color: var(--yellow);
-  border: 1px solid rgba(250,204,21,0.45);
-  padding: 6px 10px;
-  font-size: 7px;
-}
-
-.header::after {
-  content: "";
-  position: absolute;
-  inset: 8px;
-  border: 1px dashed rgba(250,204,21,0.1);
-  pointer-events: none;
-  border-radius: 12px;
-}
-
-.kicker {
-  font-size: 8px;
-  color: var(--yellow);
-  margin-bottom: 12px;
-  letter-spacing: 1px;
-}
-
-h1 {
-  margin: 0 0 12px;
-  font-size: clamp(18px, 4vw, 30px);
-  line-height: 1.35;
-  color: var(--green);
-  text-shadow: 3px 3px 0 rgba(250,204,21,0.16);
-}
-
-.subtitle {
-  margin: 0;
-  color: var(--muted);
-  font-size: 9px;
-  line-height: 1.8;
-  max-width: 720px;
-}
-
-.top-grid {
-  display: grid;
-  grid-template-columns: 1fr 220px;
-  gap: 16px;
-  margin-top: 16px;
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-}
-
-.stat-card,
-.unlock-card {
-  border: 1px solid var(--line);
-  background: var(--panel);
-  border-radius: 16px;
-  padding: 16px;
-  position: relative;
-  overflow: hidden;
-}
-
-.stat-card::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 4px;
-  height: 100%;
-  background: var(--yellow);
-  opacity: 0.75;
-}
-
-.stat-label {
-  color: var(--muted);
-  font-size: 7px;
-  margin-bottom: 10px;
-}
-
-.stat-value {
-  color: var(--yellow);
-  font-size: 15px;
-}
-
-.unlock-card {
-  display: none;
-  color: var(--yellow);
-  font-size: 8px;
-  line-height: 1.7;
-  align-content: center;
-  border-color: rgba(250,204,21,0.5);
-  text-align: center;
-}
-
-.map-shell {
-  margin-top: 18px;
-  border: 1px solid var(--line);
-  background: rgba(5,11,18,0.82);
-  border-radius: 22px;
-  padding: 20px;
-  position: relative;
-  box-shadow: 0 18px 45px rgba(0,0,0,0.35);
-}
-
-.map-shell::before {
-  content: "";
-  position: absolute;
-  inset: 9px;
-  border: 1px dashed rgba(250,204,21,0.08);
-  border-radius: 16px;
-  pointer-events: none;
-}
-
-.map-title-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  align-items: center;
-  margin-bottom: 18px;
-  position: relative;
-  z-index: 1;
-}
-
-.map-title {
-  font-size: 11px;
-  color: var(--yellow);
-}
-
-.map-note {
-  font-size: 7px;
-  color: var(--muted);
-}
-
-.map {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 12px;
-  align-items: stretch;
-  position: relative;
-  z-index: 1;
-}
-
-.node {
-  min-height: 132px;
-  border: 1px solid var(--soft-line);
-  background: var(--panel2);
-  border-radius: 18px;
-  padding: 14px;
-  color: var(--muted);
-  text-align: left;
-  transition: 0.18s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.node::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(250,204,21,0.09), transparent 42%);
-  opacity: 0;
-  transition: 0.18s ease;
-}
-
-.node-number {
-  position: relative;
-  width: 30px;
-  height: 30px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--soft-line);
-  border-radius: 10px;
-  font-size: 8px;
-  margin-bottom: 16px;
-}
-
-.node-title {
-  position: relative;
-  font-size: 8px;
-  line-height: 1.7;
-  color: inherit;
-}
-
-.node-status {
-  position: absolute;
-  left: 14px;
-  bottom: 14px;
-  font-size: 7px;
-}
-
-.node.completed {
-  border-color: rgba(57,255,90,0.35);
-  color: var(--green);
-  background: rgba(7,17,29,0.95);
-}
-
-.node.completed .node-number {
-  color: var(--green);
-  border-color: rgba(57,255,90,0.5);
-}
-
-.node.completed .node-status {
-  color: var(--green);
-}
-
-.node.active {
-  border-color: var(--yellow);
-  color: var(--text);
-  cursor: pointer;
-  background: rgba(17,36,23,0.72);
-  box-shadow: 5px 5px 0 rgba(250,204,21,0.16);
-}
-
-.node.active::before {
-  opacity: 1;
-}
-
-.node.active:hover {
-  transform: translateY(-4px);
-  box-shadow: 7px 7px 0 rgba(250,204,21,0.22);
-}
-
-.node.active .node-number {
-  border-color: var(--yellow);
-  color: var(--yellow);
-}
-
-.node.active .node-status {
-  color: var(--yellow);
-}
-
-.node.locked {
-  opacity: 0.42;
-  cursor: not-allowed;
-}
-
-.node.boss {
-  border-color: rgba(215,184,79,0.35);
-}
-
-.node.boss.active {
-  border-color: var(--boss);
-  background: rgba(43,36,17,0.7);
-}
-
-.node.boss.active .node-number,
-.node.boss.active .node-status {
-  border-color: var(--boss);
-  color: var(--boss);
-}
-
-.actions {
-  margin-top: 18px;
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  align-items: center;
-}
-
-.btn {
-  border: 1px solid var(--yellow);
-  background: transparent;
-  color: var(--yellow);
-  padding: 13px 16px;
-  border-radius: 14px;
-  cursor: pointer;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 8px;
-  transition: 0.18s ease;
-}
-
-.btn:hover {
-  background: var(--yellow);
-  color: var(--bg);
-  transform: translateY(-2px);
-}
-
-.reset-wrap {
-  text-align: right;
-}
-
-.reset-btn {
-  border-color: rgba(255,59,59,0.6);
-  color: var(--red);
-}
-
-.reset-btn:hover {
-  background: var(--red);
-  color: var(--bg);
-}
-
-.reset-warning {
-  margin-top: 8px;
-  color: rgba(255,59,59,0.65);
-  font-size: 6px;
-}
-
-@media (max-width: 900px) {
-  .top-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .map {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .stats {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 560px) {
-  body {
-    padding: 18px 12px;
-  }
-
-  #language-toggle {
-    position: static;
-    width: 100%;
-    margin-bottom: 14px;
-  }
-
-  .header,
-  .map-shell {
-    padding: 16px;
-  }
-
-  .stats {
-    grid-template-columns: 1fr;
-  }
-
-  .map {
-    grid-template-columns: 1fr;
-  }
-
-  .node {
-    min-height: 110px;
-  }
-
-  .actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .btn,
-  .reset-wrap {
-    width: 100%;
-    text-align: center;
-  }
-}
-</style>
-</head>
-
-<body class="theme-css">
-
-<button id="language-toggle">FR</button>
-
-<audio id="bg-music" autoplay loop>
-  <source src="sounds/background-music.mp3" type="audio/mpeg">
-</audio>
-
-<div class="page">
-
-  <header class="header">
-    <div class="kicker">BYTE RUSH / CSS WORLD</div>
-    <h1>CSS Circuit Map</h1>
-    <p class="subtitle">
-      Restore the visual layer of the digital world. Complete every CSS mission to unlock the JS Core.
-    </p>
-  </header>
-
-  <section class="top-grid">
-    <div class="stats">
-      <div class="stat-card">
-        <div class="stat-label">XP</div>
-        <div class="stat-value" id="xp">0</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-label">COMPLETED</div>
-        <div class="stat-value"><span id="completed">0</span>/7</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-label">CURRENT</div>
-        <div class="stat-value" id="current">1</div>
-      </div>
-    </div>
-
-    <div id="unlock-message" class="unlock-card">
-      JS CORE UNLOCKED
-    </div>
-  </section>
-
-  <main class="map-shell">
-    <div class="map-title-row">
-      <div class="map-title">Circuit Path</div>
-      <div class="map-note">Click the active mission to continue</div>
-    </div>
-
-    <div class="map" id="map"></div>
-  </main>
-
-  <div class="actions">
-    <button class="btn" onclick="goBack()">← BACK TO DASHBOARD</button>
-
-    <div class="reset-wrap">
-      <button onclick="resetProgress()" class="btn reset-btn">RESET CSS PROGRESS</button>
-      <div class="reset-warning">This erases CSS progress only.</div>
-    </div>
-  </div>
-
-</div>
-
-<script>
-const htmlLevel = parseInt(localStorage.getItem("html-level")) || 1;
-
-if (htmlLevel < 8) {
-  alert("CSS Circuit is locked. Finish HTML first!");
-  window.location.href = "dashboard.html";
-}
-
-const missions = [
-  "Colors",
-  "Backgrounds",
-  "Font Size",
-  "Borders",
-  "Alignment",
-  "Spacing",
-  "Boss Mode"
-];
-
-let level = parseInt(localStorage.getItem("css-level")) || 1;
-let xp = parseInt(localStorage.getItem("xp")) || 0;
-
-const map = document.getElementById("map");
-
-function loadStats() {
-  const completed = Math.min(level - 1, missions.length);
-  const currentMission = level > missions.length ? "DONE" : level;
-
-  document.getElementById("xp").innerText = xp;
-  document.getElementById("completed").innerText = completed;
-  document.getElementById("current").innerText = currentMission;
-
-  document.getElementById("unlock-message").style.display =
-    level > missions.length ? "grid" : "none";
-}
-
-function buildMap() {
-  map.innerHTML = "";
-
-  missions.forEach(function(name, index) {
-    const missionNumber = index + 1;
-    const isBoss = missionNumber === missions.length;
-
-    const node = document.createElement("div");
-    node.classList.add("node");
-
-    if (isBoss) node.classList.add("boss");
-
-    let statusText = "";
-    let numberText = missionNumber;
-
-    if (missionNumber < level) {
-      node.classList.add("completed");
-      statusText = "COMPLETED";
-      numberText = "✓";
-    } else if (missionNumber === level) {
-      node.classList.add("active");
-      statusText = isBoss ? "FINAL TEST" : "START MISSION";
-
-      node.onclick = function() {
-        window.location.href = "css-arena.html";
-      };
-    } else {
-      node.classList.add("locked");
-      statusText = "LOCKED";
-      numberText = "🔒";
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSS Circuit Map | ByteRush</title>
+
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Press+Start+2P&display=swap");
+
+    :root {
+      --bg: #03080F;
+      --panel: #050B12;
+      --inner: #07111D;
+      --green: #39FF5A;
+      --yellow: #FACC15;
+      --red: #FF3B3B;
+      --text: #E6FFE9;
+      --muted: rgba(230, 255, 233, 0.68);
+      --line: rgba(57, 255, 90, 0.24);
+      --powered: rgba(230, 255, 233, 0.24);
+      --shadow-green: rgba(57, 255, 90, 0.22);
+      --shadow-yellow: rgba(250, 204, 21, 0.22);
+      --shadow-red: rgba(255, 59, 59, 0.16);
     }
 
-    node.innerHTML = `
-      <div class="node-number">${numberText}</div>
-      <div class="node-title">${isBoss ? "BOSS MODE" : "MISSION " + missionNumber}<br>${name}</div>
-      <div class="node-status">${statusText}</div>
-    `;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    map.appendChild(node);
-  });
-}
+    body {
+      min-height: 100vh;
+      background:
+        linear-gradient(rgba(57, 255, 90, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(57, 255, 90, 0.025) 1px, transparent 1px),
+        radial-gradient(circle at top left, rgba(57, 255, 90, 0.08), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(250, 204, 21, 0.05), transparent 34%),
+        var(--bg);
+      background-size: 42px 42px, 42px 42px, auto, auto;
+      color: var(--text);
+      font-family: "IBM Plex Mono", monospace;
+      overflow-x: hidden;
+    }
 
-function resetProgress() {
-  const confirmReset = confirm("Reset CSS progress?");
+    .page-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0;
+    }
 
-  if (confirmReset) {
-    localStorage.removeItem("css-level");
+    .world-panel {
+      background: linear-gradient(180deg, rgba(5, 11, 18, 0.98), rgba(5, 11, 18, 0.9));
+      border: 1px solid rgba(57, 255, 90, 0.24);
+      box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.04), 0 20px 70px rgba(0, 0, 0, 0.42);
+      border-radius: 18px;
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
 
-    level = 1;
+    .world-panel::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border: 1px dashed rgba(250, 204, 21, 0.35);
+      border-radius: 14px;
+      pointer-events: none;
+    }
 
-    loadStats();
-    buildMap();
-  }
-}
+    .world-panel::after {
+      content: "";
+      position: absolute;
+      top: -120px;
+      right: -90px;
+      width: 260px;
+      height: 260px;
+      border: 1px solid rgba(250, 204, 21, 0.14);
+      border-radius: 50%;
+      box-shadow:
+        0 0 0 18px rgba(250, 204, 21, 0.018),
+        0 0 0 38px rgba(57, 255, 90, 0.012);
+      pointer-events: none;
+    }
 
-function goBack() {
-  window.location.href = "dashboard.html";
-}
+    .world-header {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      background: rgba(7, 17, 29, 0.78);
+      border: 1px solid rgba(57, 255, 90, 0.2);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
 
-loadStats();
-buildMap();
-</script>
+    .eyebrow {
+      font-family: "Press Start 2P", monospace;
+      color: var(--yellow);
+      font-size: 10px;
+      line-height: 1.8;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
 
-<script src="audio.js"></script>
-<script src="translations.js"></script>
-<script src="language.js"></script>
+    h1 {
+      font-family: "Press Start 2P", monospace;
+      font-size: clamp(20px, 3vw, 34px);
+      line-height: 1.25;
+      color: var(--text);
+      text-shadow: 0 0 18px rgba(57, 255, 90, 0.18);
+      margin-bottom: 10px;
+    }
 
+    .world-subtitle {
+      color: var(--muted);
+      max-width: 740px;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .world-badge {
+      justify-self: end;
+      min-width: 160px;
+      background: #03080F;
+      border: 1px solid rgba(250, 204, 21, 0.42);
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .world-badge::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border: 1px dashed rgba(57, 255, 90, 0.2);
+      border-radius: 8px;
+      pointer-events: none;
+    }
+
+    .world-badge span {
+      display: block;
+      font-family: "Press Start 2P", monospace;
+      font-size: 9px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .world-badge strong {
+      display: block;
+      font-family: "Press Start 2P", monospace;
+      font-size: 18px;
+      color: var(--yellow);
+    }
+
+    .stats-row {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .stat-card {
+      background: rgba(7, 17, 29, 0.88);
+      border: 1px solid rgba(57, 255, 90, 0.2);
+      border-radius: 12px;
+      padding: 13px 14px;
+      min-height: 72px;
+    }
+
+    .stat-card .label {
+      display: block;
+      font-family: "Press Start 2P", monospace;
+      font-size: 8px;
+      line-height: 1.6;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .stat-card .value {
+      display: block;
+      font-family: "Press Start 2P", monospace;
+      font-size: 11px;
+      line-height: 1.6;
+      color: var(--green);
+    }
+
+    .map-wrap {
+      position: relative;
+      z-index: 2;
+      background:
+        linear-gradient(rgba(57, 255, 90, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(57, 255, 90, 0.035) 1px, transparent 1px),
+        rgba(3, 8, 15, 0.72);
+      background-size: 34px 34px;
+      border: 1px solid rgba(57, 255, 90, 0.18);
+      border-radius: 16px;
+      padding: 26px 22px;
+      min-height: 540px;
+      overflow: hidden;
+    }
+
+    .map-wrap::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 17% 18%, rgba(250, 204, 21, 0.05), transparent 18%),
+        radial-gradient(circle at 82% 72%, rgba(57, 255, 90, 0.05), transparent 18%);
+      pointer-events: none;
+    }
+
+    .map-wrap::after {
+      content: "VISUAL SYSTEM: DEGRADED / CIRCUIT REPAIR REQUIRED";
+      position: absolute;
+      left: 22px;
+      bottom: 14px;
+      font-family: "Press Start 2P", monospace;
+      font-size: 8px;
+      color: rgba(230, 255, 233, 0.24);
+      letter-spacing: 0.04em;
+    }
+
+    .path-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .path-layer line {
+      stroke-width: 3;
+      stroke-linecap: square;
+      stroke-dasharray: 13 8;
+      opacity: 0.86;
+    }
+
+    .path-layer line.cleared {
+      stroke: var(--green);
+      filter: drop-shadow(0 0 5px rgba(57, 255, 90, 0.35));
+    }
+
+    .path-layer line.active {
+      stroke: var(--yellow);
+      filter: drop-shadow(0 0 5px rgba(250, 204, 21, 0.35));
+    }
+
+    .path-layer line.powered-down {
+      stroke: rgba(230, 255, 233, 0.16);
+      opacity: 0.52;
+    }
+
+    .mission-map {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(190px, 1fr));
+      grid-template-rows: repeat(5, auto);
+      gap: 24px 42px;
+      align-items: center;
+      max-width: 940px;
+      margin: 0 auto;
+      padding-bottom: 42px;
+    }
+
+    .mission-node {
+      position: relative;
+      min-height: 148px;
+      background: linear-gradient(180deg, rgba(7, 17, 29, 0.98), rgba(5, 11, 18, 0.96));
+      border: 1px solid rgba(57, 255, 90, 0.22);
+      border-radius: 14px;
+      padding: 13px;
+      color: var(--text);
+      transition: transform 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+      overflow: hidden;
+    }
+
+    .mission-node::before {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      border: 1px dashed rgba(250, 204, 21, 0.18);
+      border-radius: 10px;
+      pointer-events: none;
+    }
+
+    .mission-node::after {
+      content: "";
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(230, 255, 233, 0.18);
+      box-shadow: 0 0 0 4px rgba(230, 255, 233, 0.04);
+    }
+
+    .mission-node.cleared {
+      border-color: rgba(57, 255, 90, 0.66);
+      box-shadow: 0 0 18px var(--shadow-green);
+    }
+
+    .mission-node.cleared::after {
+      background: var(--green);
+      box-shadow: 0 0 10px rgba(57, 255, 90, 0.5);
+    }
+
+    .mission-node.active {
+      border-color: rgba(250, 204, 21, 0.78);
+      box-shadow: 0 0 20px var(--shadow-yellow);
+      cursor: pointer;
+    }
+
+    .mission-node.active::after {
+      background: var(--yellow);
+      box-shadow: 0 0 10px rgba(250, 204, 21, 0.55);
+    }
+
+    .mission-node.active:hover {
+      transform: translateY(-3px);
+      border-color: var(--yellow);
+    }
+
+    .mission-node.powered-down {
+      opacity: 0.46;
+      border-color: rgba(230, 255, 233, 0.14);
+      filter: grayscale(0.58);
+    }
+
+    .mission-node.powered-down::after {
+      background: rgba(230, 255, 233, 0.14);
+      box-shadow: none;
+    }
+
+    .mission-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .mission-number,
+    .mission-status {
+      font-family: "Press Start 2P", monospace;
+      font-size: 8px;
+      line-height: 1.5;
+    }
+
+    .mission-number {
+      color: var(--muted);
+    }
+
+    .mission-status {
+      color: var(--yellow);
+      text-align: right;
+    }
+
+    .mission-node.cleared .mission-status {
+      color: var(--green);
+    }
+
+    .mission-node.powered-down .mission-status {
+      color: var(--powered);
+    }
+
+    .mission-name {
+      font-family: "Press Start 2P", monospace;
+      font-size: 11px;
+      line-height: 1.55;
+      color: var(--text);
+      margin-bottom: 9px;
+      min-height: 34px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .mission-node.active .mission-name {
+      color: var(--yellow);
+    }
+
+    .mission-node.cleared .mission-name {
+      color: var(--green);
+    }
+
+    .mission-meta {
+      display: grid;
+      gap: 6px;
+      font-size: 13px;
+      line-height: 1.35;
+      color: var(--muted);
+      position: relative;
+      z-index: 2;
+    }
+
+    .mission-meta strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .mission-node.powered-down .mission-meta strong {
+      color: rgba(230, 255, 233, 0.42);
+    }
+
+    .node-1 { grid-column: 1; grid-row: 1; }
+    .node-2 { grid-column: 2; grid-row: 1; }
+    .node-3 { grid-column: 3; grid-row: 1; }
+
+    .node-4 { grid-column: 2; grid-row: 2; }
+    .node-5 { grid-column: 3; grid-row: 2; }
+
+    .node-6 { grid-column: 1; grid-row: 3; }
+    .node-7 { grid-column: 2; grid-row: 3; }
+    .node-8 { grid-column: 3; grid-row: 3; }
+
+    .node-9 { grid-column: 3; grid-row: 4; }
+    .node-10 { grid-column: 3; grid-row: 5; }
+
+    .boss-node {
+      min-height: 164px;
+      border-width: 1px;
+      background:
+        radial-gradient(circle at 72% 34%, rgba(250, 204, 21, 0.12), transparent 26%),
+        linear-gradient(180deg, rgba(7, 17, 29, 0.98), rgba(5, 11, 18, 0.96));
+    }
+
+    .boss-node::before {
+      border-color: rgba(250, 204, 21, 0.3);
+    }
+
+    .boss-node .mission-name {
+      color: var(--yellow);
+    }
+
+    .boss-node .reactor-ring {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      width: 42px;
+      height: 42px;
+      border: 1px solid rgba(250, 204, 21, 0.38);
+      border-radius: 50%;
+      box-shadow:
+        inset 0 0 12px rgba(250, 204, 21, 0.08),
+        0 0 18px rgba(250, 204, 21, 0.08);
+      pointer-events: none;
+    }
+
+    .boss-node .reactor-ring::before,
+    .boss-node .reactor-ring::after {
+      content: "";
+      position: absolute;
+      inset: 9px;
+      border: 1px dashed rgba(57, 255, 90, 0.32);
+      border-radius: 50%;
+    }
+
+    .boss-node .reactor-ring::after {
+      inset: 17px;
+      border-style: solid;
+      background: rgba(250, 204, 21, 0.18);
+    }
+
+    .bottom-actions {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .action-card {
+      background: rgba(7, 17, 29, 0.86);
+      border: 1px solid rgba(57, 255, 90, 0.18);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .btn {
+      width: 100%;
+      border: 1px solid rgba(57, 255, 90, 0.45);
+      background: rgba(3, 8, 15, 0.95);
+      color: var(--green);
+      font-family: "Press Start 2P", monospace;
+      font-size: 10px;
+      line-height: 1.4;
+      padding: 13px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      border-color: var(--green);
+    }
+
+    .btn.reset {
+      border-color: rgba(255, 59, 59, 0.48);
+      color: var(--red);
+    }
+
+    .btn.reset:hover {
+      border-color: var(--red);
+    }
+
+    .warning {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      margin-top: 10px;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(5, 11, 18, 0.96);
+      border: 1px solid rgba(250, 204, 21, 0.55);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 13px 16px;
+      font-size: 14px;
+      line-height: 1.45;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      z-index: 20;
+      max-width: min(520px, calc(100% - 32px));
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 900px) {
+      .world-header {
+        grid-template-columns: 1fr;
+      }
+
+      .world-badge {
+        justify-self: stretch;
+      }
+
+      .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .mission-map {
+        grid-template-columns: repeat(2, minmax(180px, 1fr));
+        gap: 22px;
+      }
+
+      .node-1, .node-2, .node-3,
+      .node-4, .node-5, .node-6,
+      .node-7, .node-8, .node-9,
+      .node-10 {
+        grid-column: auto;
+        grid-row: auto;
+      }
+
+      .path-layer {
+        display: none;
+      }
+
+      .map-wrap {
+        min-height: auto;
+      }
+
+      .map-wrap::after {
+        display: none;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .page-shell {
+        width: min(100% - 20px, 1180px);
+        padding: 10px 0;
+      }
+
+      .world-panel {
+        padding: 12px;
+        border-radius: 14px;
+      }
+
+      .world-panel::before {
+        inset: 8px;
+      }
+
+      .world-header {
+        padding: 14px;
+      }
+
+      .stats-row {
+        grid-template-columns: 1fr;
+      }
+
+      .map-wrap {
+        padding: 18px 14px;
+      }
+
+      .mission-map {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        padding-bottom: 0;
+      }
+
+      .mission-node {
+        min-height: auto;
+      }
+
+      .bottom-actions {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page-shell">
+    <section class="world-panel">
+      <header class="world-header">
+        <div>
+          <p class="eyebrow">WORLD 02 — CSS CIRCUIT</p>
+          <h1>DESIGN CIRCUIT</h1>
+          <p class="world-subtitle">
+            The visual layer of the digital world is damaged. Restore the interface current,
+            repair broken design systems, and bring the CSS Circuit back online.
+          </p>
+        </div>
+
+        <div class="world-badge">
+          <span>CIRCUIT STATUS</span>
+          <strong id="badgePercent">0%</strong>
+        </div>
+      </header>
+
+      <section class="stats-row" aria-label="Player circuit stats">
+        <div class="stat-card">
+          <span class="label">XP</span>
+          <span class="value" id="xpValue">0</span>
+        </div>
+
+        <div class="stat-card">
+          <span class="label">CLEARED</span>
+          <span class="value" id="clearedValue">0/10</span>
+        </div>
+
+        <div class="stat-card">
+          <span class="label">ACTIVE QUEST</span>
+          <span class="value" id="activeQuestValue">Color Reactor</span>
+        </div>
+
+        <div class="stat-card">
+          <span class="label">CIRCUIT STATUS</span>
+          <span class="value" id="circuitStatusValue">0% RESTORED</span>
+        </div>
+      </section>
+
+      <section class="map-wrap" id="mapWrap" aria-label="CSS Circuit mission map">
+        <svg class="path-layer" id="pathLayer"></svg>
+        <div class="mission-map" id="missionMap"></div>
+      </section>
+
+      <section class="bottom-actions">
+        <div class="action-card">
+          <button class="btn" id="returnBtn">RETURN TO BASE</button>
+        </div>
+
+        <div class="action-card">
+          <button class="btn reset" id="resetBtn">RESET CIRCUIT</button>
+          <p class="warning">This erases CSS Circuit progress only. HTML progress stays safe.</p>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const htmlLevel = Number(localStorage.getItem("html-level")) || 1;
+
+    if (htmlLevel < 11) {
+      alert("CSS Circuit is locked. Restore HTML World first.");
+      window.location.href = "dashboard.html";
+    }
+
+    const missions = [
+      {
+        id: 1,
+        skill: "Colors",
+        name: "Color Reactor",
+        goal: "Restore interface colors",
+        reward: 20
+      },
+      {
+        id: 2,
+        skill: "Backgrounds",
+        name: "World Skin",
+        goal: "Repair page surfaces",
+        reward: 20
+      },
+      {
+        id: 3,
+        skill: "Font Size",
+        name: "Signal Strength",
+        goal: "Control text hierarchy",
+        reward: 20
+      },
+      {
+        id: 4,
+        skill: "Borders",
+        name: "Shield Frames",
+        goal: "Protect interface cards",
+        reward: 20
+      },
+      {
+        id: 5,
+        skill: "Alignment",
+        name: "Balance Grid",
+        goal: "Align screen elements",
+        reward: 20
+      },
+      {
+        id: 6,
+        skill: "Spacing",
+        name: "Breathing Room",
+        goal: "Fix crowded layouts",
+        reward: 20
+      },
+      {
+        id: 7,
+        skill: "Flexbox",
+        name: "Flex Engine",
+        goal: "Build responsive rows",
+        reward: 20
+      },
+      {
+        id: 8,
+        skill: "Hover Effects",
+        name: "Motion Pulse",
+        goal: "Add interaction feedback",
+        reward: 20
+      },
+      {
+        id: 9,
+        skill: "Animations",
+        name: "Energy Waves",
+        goal: "Animate UI systems",
+        reward: 20
+      },
+      {
+        id: 10,
+        skill: "Full Card UI",
+        name: "Design Core Boss",
+        goal: "Build a premium interface",
+        reward: 50,
+        boss: true
+      }
+    ];
+
+    const connections = [
+      [1, 2],
+      [2, 3],
+      [1, 4],
+      [3, 5],
+      [4, 5],
+      [4, 6],
+      [5, 8],
+      [6, 7],
+      [7, 8],
+      [8, 9],
+      [9, 10]
+    ];
+
+    const missionMap = document.getElementById("missionMap");
+    const pathLayer = document.getElementById("pathLayer");
+    const mapWrap = document.getElementById("mapWrap");
+
+    const xpValue = document.getElementById("xpValue");
+    const clearedValue = document.getElementById("clearedValue");
+    const activeQuestValue = document.getElementById("activeQuestValue");
+    const circuitStatusValue = document.getElementById("circuitStatusValue");
+    const badgePercent = document.getElementById("badgePercent");
+
+    const returnBtn = document.getElementById("returnBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const toast = document.getElementById("toast");
+
+    function getStoredNumber(key, fallback) {
+      const value = Number(localStorage.getItem(key));
+      return Number.isFinite(value) && value > 0 ? value : fallback;
+    }
+
+    function getCurrentLevel() {
+      const level = getStoredNumber("css-level", 1);
+      return Math.min(Math.max(level, 1), 11);
+    }
+
+    function getXP() {
+      const xp = Number(localStorage.getItem("xp"));
+      return Number.isFinite(xp) && xp >= 0 ? xp : 0;
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2200);
+    }
+
+    function getMissionState(missionId, currentLevel) {
+      if (missionId < currentLevel) return "cleared";
+      if (missionId === currentLevel && currentLevel <= 10) return "active";
+      return "powered-down";
+    }
+
+    function renderStats() {
+      const currentLevel = getCurrentLevel();
+      const cleared = Math.min(currentLevel - 1, 10);
+      const percent = Math.round((cleared / 10) * 100);
+      const activeMission = missions.find(mission => mission.id === currentLevel);
+
+      xpValue.textContent = getXP();
+      clearedValue.textContent = `${cleared}/10`;
+      activeQuestValue.textContent = activeMission ? activeMission.name : "CIRCUIT RESTORED";
+      circuitStatusValue.textContent = `${percent}% RESTORED`;
+      badgePercent.textContent = `${percent}%`;
+    }
+
+    function createMissionNode(mission) {
+      const currentLevel = getCurrentLevel();
+      const state = getMissionState(mission.id, currentLevel);
+
+      const node = document.createElement("article");
+      node.className = `mission-node node-${mission.id} ${state} ${mission.boss ? "boss-node" : ""}`;
+      node.dataset.mission = mission.id;
+
+      if (state === "active") {
+        node.setAttribute("role", "button");
+        node.setAttribute("tabindex", "0");
+        node.setAttribute("aria-label", `Enter quest: ${mission.name}`);
+
+        node.addEventListener("click", () => {
+          localStorage.setItem("active-css-mission", String(mission.id));
+          window.location.href = "css-arena.html";
+        });
+
+        node.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            localStorage.setItem("active-css-mission", String(mission.id));
+            window.location.href = "css-arena.html";
+          }
+        });
+      } else if (state === "powered-down") {
+        node.addEventListener("click", () => {
+          showToast(`Clear Mission ${String(mission.id - 1).padStart(2, "0")} to power this node.`);
+        });
+      }
+
+      if (state === "cleared") {
+        node.innerHTML = `
+          <div class="mission-top">
+            <span class="mission-number">✓ CLEARED</span>
+            <span class="mission-status">CLEARED</span>
+          </div>
+          <h2 class="mission-name">${mission.name}</h2>
+          <div class="mission-meta">
+            <p><strong>Skill:</strong> ${mission.skill}</p>
+            <p><strong>Reward:</strong> Claimed</p>
+          </div>
+          ${mission.boss ? `<span class="reactor-ring"></span>` : ""}
+        `;
+      }
+
+      if (state === "active") {
+        node.innerHTML = `
+          <div class="mission-top">
+            <span class="mission-number">${mission.boss ? "FINAL TRIAL" : `MISSION ${String(mission.id).padStart(2, "0")}`}</span>
+            <span class="mission-status">ENTER QUEST</span>
+          </div>
+          <h2 class="mission-name">${mission.name}</h2>
+          <div class="mission-meta">
+            <p><strong>Skill:</strong> ${mission.skill}</p>
+            <p><strong>Goal:</strong> ${mission.goal}</p>
+            <p><strong>Reward:</strong> +${mission.reward} XP</p>
+          </div>
+          ${mission.boss ? `<span class="reactor-ring"></span>` : ""}
+        `;
+      }
+
+      if (state === "powered-down") {
+        node.innerHTML = `
+          <div class="mission-top">
+            <span class="mission-number">${mission.boss ? "FINAL TRIAL" : `MISSION ${String(mission.id).padStart(2, "0")}`}</span>
+            <span class="mission-status">POWERED DOWN</span>
+          </div>
+          <h2 class="mission-name">???</h2>
+          <div class="mission-meta">
+            <p><strong>Skill:</strong> Powered Down</p>
+            <p>Clear Mission ${String(mission.id - 1).padStart(2, "0")} to unlock</p>
+          </div>
+          ${mission.boss ? `<span class="reactor-ring"></span>` : ""}
+        `;
+      }
+
+      return node;
+    }
+
+    function renderMap() {
+      missionMap.innerHTML = "";
+
+      missions.forEach(mission => {
+        missionMap.appendChild(createMissionNode(mission));
+      });
+
+      renderStats();
+
+      requestAnimationFrame(drawPaths);
+    }
+
+    function getNodeCenter(missionId) {
+      const node = missionMap.querySelector(`[data-mission="${missionId}"]`);
+      const wrapRect = mapWrap.getBoundingClientRect();
+      const nodeRect = node.getBoundingClientRect();
+
+      return {
+        x: nodeRect.left - wrapRect.left + nodeRect.width / 2,
+        y: nodeRect.top - wrapRect.top + nodeRect.height / 2
+      };
+    }
+
+    function getPathState(from, to) {
+      const currentLevel = getCurrentLevel();
+
+      if (from < currentLevel && to < currentLevel) return "cleared";
+
+      if (
+        from === currentLevel ||
+        to === currentLevel ||
+        (from < currentLevel && to === currentLevel)
+      ) {
+        const lowerNodeCleared = Math.min(from, to) < currentLevel;
+        const activeNodeIncluded = from === currentLevel || to === currentLevel;
+        if (lowerNodeCleared || activeNodeIncluded) return "active";
+      }
+
+      return "powered-down";
+    }
+
+    function drawPaths() {
+      if (window.innerWidth <= 900) {
+        pathLayer.innerHTML = "";
+        return;
+      }
+
+      const wrapRect = mapWrap.getBoundingClientRect();
+
+      pathLayer.setAttribute("viewBox", `0 0 ${wrapRect.width} ${wrapRect.height}`);
+      pathLayer.innerHTML = "";
+
+      connections.forEach(([from, to]) => {
+        const start = getNodeCenter(from);
+        const end = getNodeCenter(to);
+
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", start.x);
+        line.setAttribute("y1", start.y);
+        line.setAttribute("x2", end.x);
+        line.setAttribute("y2", end.y);
+        line.setAttribute("class", getPathState(from, to));
+
+        pathLayer.appendChild(line);
+      });
+    }
+
+    returnBtn.addEventListener("click", () => {
+      window.location.href = "dashboard.html";
+    });
+
+    resetBtn.addEventListener("click", () => {
+      const confirmReset = confirm("Reset CSS Circuit progress? HTML World progress will stay safe.");
+
+      if (!confirmReset) return;
+
+      localStorage.setItem("css-level", "1");
+      localStorage.removeItem("active-css-mission");
+
+      renderMap();
+      showToast("CSS Circuit reset. Design systems are offline again.");
+    });
+
+    window.addEventListener("resize", () => {
+      requestAnimationFrame(drawPaths);
+    });
+
+    renderMap();
+  </script>
 </body>
 </html>

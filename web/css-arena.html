@@ -1,1417 +1,1819 @@
-
-<button id="language-toggle" style="position: absolute; top: 18px; right: 24px; z-index: 1000; font-family: 'Press Start 2P', monospace; font-size: 8px; padding: 10px; background: var(--panel2); color: var(--green); border: 1px solid var(--line); border-radius: 4px; cursor: pointer;">FR</button>
-<script src="translations.js"></script>
-<script src="language.js"></script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>CSS Circuit | ByteRush</title>
-
-<link rel="stylesheet" href="arcade-theme.css">
-
-<style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Press+Start+2P&display=swap');
-
-:root {
-  --green: #39FF5A;
-  --red: #FF3B3B;
-  --bg: #03080F;
-  --panel: #050B12;
-  --panel2: #07111D;
-  --text: #E6FFE9;
-  --muted: rgba(230, 255, 233, 0.68);
-  --line: rgba(57, 255, 90, 0.28);
-  --yellow: #FACC15;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  background:
-    radial-gradient(circle at 12% 8%, rgba(57,255,90,0.08), transparent 26%),
-    radial-gradient(circle at 88% 82%, rgba(250,204,21,0.06), transparent 28%),
-    linear-gradient(rgba(57,255,90,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(57,255,90,0.025) 1px, transparent 1px),
-    var(--bg);
-  background-size: auto, auto, 42px 42px, 42px 42px;
-  color: var(--text);
-  font-family: "IBM Plex Mono", monospace;
-  padding: 10px;
-}
-
-.pixel {
-  font-family: "Press Start 2P", monospace;
-}
-
-#language-toggle {
-  color: var(--yellow) !important;
-  border-color: rgba(250,204,21,0.55) !important;
-}
-
-.arena {
-  max-width: 1240px;
-  height: calc(100vh - 20px);
-  margin: 0 auto;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  gap: 8px;
-}
-
-.top-command,
-.panel,
-.feedback-console {
-  border: 1px solid var(--line);
-  background: rgba(5, 11, 18, 0.92);
-  box-shadow: 0 18px 45px rgba(0,0,0,0.35);
-  position: relative;
-}
-
-.top-command::before,
-.panel::before,
-.feedback-console::before {
-  content: "";
-  position: absolute;
-  inset: 7px;
-  border: 1px dashed rgba(250,204,21,0.08);
-  pointer-events: none;
-}
-
-.top-command {
-  padding: 10px 12px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 16px;
-  align-items: center;
-}
-
-h1 {
-  margin: 0 0 4px;
-  color: var(--green);
-  font-size: 15px;
-  line-height: 1.4;
-  text-shadow: 2px 2px 0 rgba(250,204,21,0.16);
-}
-
-.desc {
-  margin: 0;
-  color: var(--muted);
-  font-size: 11px;
-}
-
-.stats {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-.stat-pill {
-  border: 1px solid rgba(250,204,21,0.35);
-  background: var(--panel2);
-  padding: 7px 9px;
-  min-width: 82px;
-  position: relative;
-  overflow: hidden;
-}
-
-.stat-pill::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 4px;
-  height: 100%;
-  background: var(--yellow);
-  opacity: 0.75;
-}
-
-.stat-pill span {
-  display: block;
-  color: var(--yellow);
-  font-size: 6px;
-  margin-bottom: 4px;
-}
-
-.stat-pill strong {
-  font-size: 11px;
-  color: var(--text);
-  font-weight: 700;
-}
-
-.main-arena {
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 230px minmax(360px, 1.2fr) minmax(320px, 1fr);
-  gap: 8px;
-}
-
-.panel {
-  padding: 10px;
-  min-height: 0;
-}
-
-.panel-title,
-.label {
-  font-family: "Press Start 2P", monospace;
-  font-size: 6px;
-  line-height: 1.5;
-  color: var(--yellow);
-  margin-bottom: 8px;
-}
-
-.mission-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.mission-title {
-  color: var(--text);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.4;
-}
-
-.skill-box {
-  background: var(--panel2);
-  border: 1px solid rgba(250,204,21,0.22);
-  padding: 10px;
-  position: relative;
-  z-index: 1;
-}
-
-.skill-box h2 {
-  margin: 0 0 6px;
-  color: var(--green);
-  font-size: 13px;
-}
-
-.skill-box p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.55;
-}
-
-.rule-box {
-  border-left: 3px solid var(--yellow);
-  background: rgba(250,204,21,0.07);
-  padding: 9px;
-  color: var(--text);
-  font-size: 11px;
-  line-height: 1.5;
-  position: relative;
-  z-index: 1;
-}
-
-.highlight {
-  color: var(--yellow);
-  font-weight: 700;
-}
-
-.editor-panel,
-.preview-panel {
-  display: flex;
-  flex-direction: column;
-}
-
-textarea {
-  width: 100%;
-  flex: 1;
-  min-height: 260px;
-  resize: none;
-  background: #02060B;
-  color: var(--green);
-  border: 1px solid var(--line);
-  padding: 11px;
-  font-size: 13px;
-  line-height: 1.5;
-  outline: none;
-  font-family: "IBM Plex Mono", monospace;
-  box-shadow: inset 0 0 0 1px rgba(250,204,21,0.04);
-}
-
-textarea:focus {
-  border-color: var(--yellow);
-  box-shadow: 0 0 0 2px rgba(250,204,21,0.08);
-}
-
-.buttons {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
-
-button {
-  border: 1px solid var(--yellow);
-  background: transparent;
-  color: var(--yellow);
-  padding: 8px 10px;
-  cursor: pointer;
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 11px;
-  font-weight: 700;
-  transition: 0.18s ease;
-}
-
-button:hover {
-  background: rgba(250,204,21,0.1);
-  transform: translateY(-1px);
-}
-
-button.primary {
-  background: var(--green);
-  color: var(--bg);
-  border-color: var(--green);
-  box-shadow: 4px 4px 0 rgba(250,204,21,0.45);
-}
-
-button.primary:hover {
-  box-shadow: 5px 5px 0 rgba(250,204,21,0.65);
-}
-
-button.danger {
-  color: var(--red);
-  border-color: var(--red);
-}
-
-button.danger:hover {
-  background: rgba(255,59,59,0.12);
-}
-
-button:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.browser-frame {
-  flex: 1;
-  min-height: 260px;
-  background: #02060B;
-  border: 1px solid var(--line);
-  display: flex;
-  flex-direction: column;
-}
-
-.browser-top {
-  height: 30px;
-  border-bottom: 1px solid var(--line);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 9px;
-  color: var(--muted);
-  font-size: 10px;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--green);
-  opacity: 0.8;
-}
-
-.dot.red {
-  background: var(--red);
-}
-
-.dot.yellow {
-  background: var(--yellow);
-}
-
-.preview-wrap {
-  flex: 1;
-  padding: 8px;
-}
-
-iframe {
-  width: 100%;
-  height: 100%;
-  min-height: 220px;
-  border: none;
-  background: #02060B;
-}
-
-.feedback-console {
-  padding: 10px 12px;
-}
-
-.console-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 1.4fr 1.2fr 0.9fr;
-  gap: 10px;
-}
-
-.console-item {
-  background: var(--panel2);
-  border: 1px solid rgba(250,204,21,0.2);
-  padding: 8px;
-  min-height: 50px;
-}
-
-.message {
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.45;
-}
-
-.correct {
-  color: var(--green);
-}
-
-.error {
-  color: var(--red);
-}
-
-.almost {
-  color: var(--yellow);
-}
-
-.success-flash {
-  animation: flash 0.4s ease-in-out;
-}
-
-@keyframes flash {
-  0% { background-color: var(--bg); }
-  50% { background-color: rgba(57, 255, 90, 0.12); }
-  100% { background-color: var(--bg); }
-}
-
-.preview-glow {
-  animation: previewGlow 0.7s ease-in-out;
-}
-
-@keyframes previewGlow {
-  0% { border-color: var(--line); }
-  50% { border-color: var(--yellow); }
-  100% { border-color: var(--line); }
-}
-
-.error-shake {
-  animation: shake 0.3s ease-in-out;
-}
-
-@keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-6px); }
-  50% { transform: translateX(6px); }
-  75% { transform: translateX(-6px); }
-  100% { transform: translateX(0); }
-}
-
-.xp-pop {
-  position: fixed;
-  left: 50%;
-  top: 58%;
-  color: var(--yellow);
-  font-size: 16px;
-  font-weight: 700;
-  pointer-events: none;
-  animation: xpFloat 1s ease-out forwards;
-  z-index: 9999;
-}
-
-@keyframes xpFloat {
-  0% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-45px) scale(1.2);
-  }
-}
-
-.mission-modal,
-.start-modal,
-.game-over-modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(3, 8, 15, 0.88);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 99999;
-  padding: 18px;
-}
-
-.mission-modal.show,
-.start-modal.show,
-.game-over-modal.show {
-  display: flex;
-}
-
-.mission-box,
-.start-box,
-.game-over-box {
-  width: min(520px, 100%);
-  background: var(--panel);
-  border: 2px solid var(--yellow);
-  padding: 24px;
-  text-align: center;
-  box-shadow: 8px 8px 0 rgba(250,204,21,0.18);
-  animation: popupIn 0.25s ease-out;
-}
-
-.game-over-box {
-  border-color: var(--red);
-  box-shadow: 8px 8px 0 rgba(255, 59, 59, 0.22);
-}
-
-@keyframes popupIn {
-  from {
-    opacity: 0;
-    transform: scale(0.92) translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-.mission-box h2,
-.start-box h2,
-.game-over-box h2 {
-  margin: 0 0 14px;
-  color: var(--yellow);
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-.game-over-box h2 {
-  color: var(--red);
-}
-
-.mission-box p,
-.start-box p,
-.game-over-box p {
-  margin: 0 0 14px;
-  color: var(--text);
-  font-size: 12px;
-  line-height: 1.6;
-}
-
-.learned-box,
-.start-instruction-box {
-  border: 1px solid rgba(250,204,21,0.35);
-  background: var(--panel2);
-  padding: 12px;
-  margin: 14px 0;
-}
-
-.learned-box p,
-.start-instruction-box p {
-  color: var(--muted);
-  font-size: 11px;
-  margin: 0;
-}
-
-.modal-next-btn,
-.start-btn,
-.try-again-btn {
-  margin-top: 10px;
-  background: var(--green);
-  color: var(--bg);
-  padding: 9px 14px;
-  border-color: var(--green);
-}
-
-.try-again-btn {
-  border-color: var(--red);
-  background: var(--red);
-  color: white;
-}
-
-@media (max-width: 1050px) {
-  .arena {
-    height: auto;
-  }
-
-  .top-command,
-  .main-arena,
-  .console-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .stats {
-    justify-content: flex-start;
-  }
-
-  textarea,
-  .browser-frame {
-    min-height: 240px;
-  }
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ByteRush | CSS Arena</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Press+Start+2P&display=swap');
+
+    :root {
+      --green: #39FF5A;
+      --yellow: #FACC15;
+      --red: #FF3B3B;
+      --bg: #03080F;
+      --panel: #050B12;
+      --panel2: #07111D;
+      --text: #E6FFE9;
+      --muted: rgba(230, 255, 233, 0.68);
+      --line: rgba(57, 255, 90, 0.28);
+      --yellowLine: rgba(250, 204, 21, 0.58);
+      --shadow: rgba(0, 0, 0, 0.42);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        linear-gradient(rgba(57,255,90,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(57,255,90,0.035) 1px, transparent 1px),
+        radial-gradient(circle at top left, rgba(250,204,21,0.10), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(57,255,90,0.08), transparent 30%),
+        var(--bg);
+      background-size: 38px 38px, 38px 38px, auto, auto;
+      color: var(--text);
+      font-family: "IBM Plex Mono", monospace;
+      overflow-x: hidden;
+    }
+
+    .page {
+      width: min(1220px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 18px 0;
+      display: grid;
+      gap: 14px;
+    }
+
+    .pixel {
+      font-family: "Press Start 2P", monospace;
+      letter-spacing: 0.5px;
+    }
+
+    .top-bar,
+    .arena,
+    .mission-strip {
+      background: linear-gradient(180deg, rgba(7,17,29,0.98), rgba(5,11,18,0.98));
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 50px var(--shadow);
+      position: relative;
+    }
+
+    .top-bar::before,
+    .arena::before,
+    .mission-strip::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border: 1px dashed var(--yellowLine);
+      pointer-events: none;
+      opacity: 0.8;
+    }
+
+    .top-bar {
+      border-radius: 18px;
+      padding: 20px 22px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .world-title {
+      font-size: 11px;
+      color: var(--green);
+      line-height: 1.7;
+    }
+
+    .mission-title {
+      font-size: 12px;
+      color: var(--yellow);
+      line-height: 1.7;
+      margin-top: 4px;
+    }
+
+    .stats {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .stat-pill {
+      min-height: 34px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 11px;
+      border: 1px solid rgba(57,255,90,0.22);
+      background: rgba(3,8,15,0.74);
+      border-radius: 999px;
+      color: var(--text);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 8px;
+    }
+
+    .lives {
+      color: var(--red);
+      letter-spacing: 2px;
+      font-size: 14px;
+    }
+
+    .objective {
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress-track {
+      height: 8px;
+      background: rgba(230,255,233,0.08);
+      border: 1px solid rgba(57,255,90,0.18);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress-fill {
+      width: 10%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--yellow), var(--green));
+      border-radius: 999px;
+      transition: width 0.35s ease;
+    }
+
+    .arena {
+      border-radius: 20px;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 45% 55%;
+      min-height: 500px;
+    }
+
+    .panel {
+      position: relative;
+      z-index: 1;
+      background: rgba(3,8,15,0.34);
+      border: 1px solid rgba(57,255,90,0.19);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      min-width: 0;
+    }
+
+    .editor-panel {
+      border-radius: 14px 0 0 14px;
+      border-right: none;
+    }
+
+    .preview-panel {
+      border-radius: 0 14px 14px 0;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(57,255,90,0.16);
+      padding-bottom: 12px;
+    }
+
+    .panel-title {
+      font-size: 10px;
+      color: var(--green);
+      line-height: 1.6;
+    }
+
+    .system-state {
+      font-size: 8px;
+      color: var(--yellow);
+      border: 1px solid rgba(250,204,21,0.4);
+      background: rgba(250,204,21,0.06);
+      border-radius: 999px;
+      padding: 8px 9px;
+      white-space: nowrap;
+    }
+
+    .instruction {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+      min-height: 42px;
+    }
+
+    textarea {
+      width: 100%;
+      flex: 1;
+      min-height: 255px;
+      resize: none;
+      background:
+        linear-gradient(rgba(250,204,21,0.025) 1px, transparent 1px),
+        var(--panel2);
+      background-size: 100% 28px;
+      border: 1px solid rgba(57,255,90,0.28);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 16px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 15px;
+      line-height: 1.55;
+      outline: none;
+      box-shadow: inset 0 0 28px rgba(0,0,0,0.35);
+    }
+
+    textarea:focus {
+      border-color: rgba(250,204,21,0.75);
+    }
+
+    .button-row {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      font-family: "Press Start 2P", monospace;
+      font-size: 8px;
+      line-height: 1.4;
+      color: var(--text);
+      background: rgba(7,17,29,0.92);
+      border: 1px solid rgba(57,255,90,0.3);
+      border-radius: 10px;
+      padding: 11px 12px;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      border-color: var(--yellow);
+      color: var(--yellow);
+      background: rgba(250,204,21,0.075);
+    }
+
+    .primary-btn {
+      background: rgba(57,255,90,0.11);
+      border-color: rgba(57,255,90,0.55);
+      color: var(--green);
+    }
+
+    .map-btn {
+      margin-left: auto;
+    }
+
+    .feedback {
+      min-height: 42px;
+      border: 1px solid rgba(57,255,90,0.15);
+      background: rgba(7,17,29,0.7);
+      border-radius: 12px;
+      padding: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .feedback.success {
+      color: var(--green);
+      border-color: rgba(57,255,90,0.5);
+      background: rgba(57,255,90,0.06);
+    }
+
+    .feedback.error {
+      color: #ffb4b4;
+      border-color: rgba(255,59,59,0.5);
+      background: rgba(255,59,59,0.06);
+    }
+
+    .feedback.scan {
+      color: var(--yellow);
+      border-color: rgba(250,204,21,0.55);
+      background: rgba(250,204,21,0.07);
+    }
+
+    .preview-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid rgba(57,255,90,0.16);
+      border-radius: 12px;
+      background: rgba(3,8,15,0.5);
+    }
+
+    .status-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 12px rgba(255,59,59,0.45);
+    }
+
+    .dot.repair {
+      background: var(--yellow);
+      box-shadow: 0 0 12px rgba(250,204,21,0.42);
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+
+    .dot.online {
+      background: var(--green);
+      box-shadow: 0 0 15px rgba(57,255,90,0.46);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.55; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.12); }
+    }
+
+    .preview-label {
+      font-size: 9px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .preview-state {
+      font-size: 10px;
+      color: var(--yellow);
+    }
+
+    .preview-screen {
+      flex: 1;
+      min-height: 330px;
+      border-radius: 16px;
+      border: 1px solid rgba(57,255,90,0.25);
+      background:
+        radial-gradient(circle at top, rgba(250,204,21,0.065), transparent 38%),
+        radial-gradient(circle at center, rgba(57,255,90,0.045), transparent 45%),
+        rgba(7,17,29,0.98);
+      padding: 18px;
+      overflow: auto;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      transition: 0.25s ease;
+    }
+
+    .preview-screen.online {
+      border-color: rgba(57,255,90,0.65);
+      box-shadow: inset 0 0 30px rgba(57,255,90,0.08), 0 0 22px rgba(57,255,90,0.08);
+    }
+
+    .preview-world {
+      width: 100%;
+      min-height: 100%;
+      border: 1px dashed rgba(230,255,233,0.16);
+      border-radius: 14px;
+      padding: 18px;
+      color: var(--muted);
+      background: rgba(3,8,15,0.35);
+      transition: 0.3s ease;
+    }
+
+    .design-stage {
+      width: 100%;
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+    }
+
+    .design-card {
+      width: min(460px, 100%);
+      background: #20242a;
+      border: 1px solid rgba(230,255,233,0.12);
+      border-radius: 8px;
+      padding: 14px;
+      color: #9ca3af;
+      text-align: center;
+      transition: 0.35s ease;
+      box-shadow: none;
+    }
+
+    .design-card h1 {
+      font-family: "IBM Plex Mono", monospace;
+      color: #8b8f96;
+      font-size: 18px;
+      margin-bottom: 10px;
+      line-height: 1.3;
+      transition: 0.35s ease;
+    }
+
+    .design-card p {
+      color: #8b8f96;
+      line-height: 1.55;
+      margin-bottom: 12px;
+      transition: 0.35s ease;
+    }
+
+    .design-card button {
+      margin-top: 8px;
+      color: #8b8f96;
+      border-color: rgba(230,255,233,0.12);
+    }
+
+    .design-card .mini-row {
+      display: flex;
+      gap: 8px;
+      flex-direction: column;
+      margin-top: 12px;
+    }
+
+    .mini-module {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      padding: 10px;
+      color: #8b8f96;
+      transition: 0.35s ease;
+    }
+
+    .broken-title {
+      color: #ffb4b4;
+      font-family: "Press Start 2P", monospace;
+      font-size: 11px;
+      line-height: 1.9;
+    }
+
+    .broken-sub {
+      color: var(--muted);
+      margin-top: 12px;
+      line-height: 1.6;
+    }
+
+    .system-card {
+      border: 1px solid rgba(57,255,90,0.25);
+      background: rgba(5,11,18,0.84);
+      border-radius: 14px;
+      padding: 18px;
+      width: 100%;
+      max-width: 460px;
+      margin: auto;
+      text-align: center;
+    }
+
+    .system-card.restored {
+      border-color: rgba(57,255,90,0.65);
+      animation: successFlash 0.7s ease;
+    }
+
+    @keyframes successFlash {
+      0% { box-shadow: 0 0 0 rgba(57,255,90,0); }
+      45% { box-shadow: 0 0 30px rgba(57,255,90,0.22); }
+      100% { box-shadow: 0 0 0 rgba(57,255,90,0); }
+    }
+
+    .mission-strip {
+      border-radius: 18px;
+      padding: 18px 20px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .mission-icon {
+      position: relative;
+      z-index: 1;
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      border: 1px solid rgba(250,204,21,0.42);
+      background: rgba(250,204,21,0.075);
+      font-size: 25px;
+    }
+
+    .mission-info {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 9px;
+    }
+
+    .mission-meta-title {
+      color: var(--yellow);
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    .meta-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .meta-grid strong {
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    .system-voice {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .system-voice span {
+      color: var(--green);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(3,8,15,0.78);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 30;
+      padding: 20px;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      width: min(520px, 100%);
+      background: linear-gradient(180deg, var(--panel2), var(--panel));
+      border: 1px solid rgba(57,255,90,0.35);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.65);
+      position: relative;
+      animation: modalPop 0.24s ease;
+    }
+
+    .modal::before {
+      content: "";
+      position: absolute;
+      inset: 9px;
+      border: 1px dashed var(--yellowLine);
+      border-radius: 14px;
+      pointer-events: none;
+    }
+
+    @keyframes modalPop {
+      from { transform: scale(0.96) translateY(8px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .modal-content {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 14px;
+      text-align: center;
+    }
+
+    .modal-title {
+      font-size: 14px;
+      color: var(--green);
+      line-height: 1.7;
+    }
+
+    .modal-subtitle {
+      color: var(--yellow);
+      font-size: 11px;
+      line-height: 1.8;
+    }
+
+    .modal-text {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .completed-state {
+      min-height: 75vh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .completed-card {
+      width: min(680px, 100%);
+      background: linear-gradient(180deg, var(--panel2), var(--panel));
+      border: 1px solid rgba(57,255,90,0.35);
+      border-radius: 22px;
+      padding: 28px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+    }
+
+    .completed-card h1 {
+      color: var(--green);
+      font-size: 16px;
+      line-height: 1.8;
+      margin-bottom: 14px;
+    }
+
+    .completed-card p {
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    @keyframes cssPulse {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.04); filter: brightness(1.18); }
+    }
+
+    @media (max-width: 900px) {
+      body {
+        overflow-y: auto;
+      }
+
+      .arena {
+        grid-template-columns: 1fr;
+      }
+
+      .editor-panel,
+      .preview-panel {
+        border-radius: 14px;
+        border-right: 1px solid rgba(57,255,90,0.19);
+      }
+
+      .preview-screen {
+        min-height: 290px;
+      }
+
+      .map-btn {
+        margin-left: 0;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        width: min(100% - 18px, 1220px);
+        padding: 10px 0;
+      }
+
+      .top-bar,
+      .arena,
+      .mission-strip {
+        border-radius: 14px;
+      }
+
+      .top-bar {
+        padding: 17px;
+      }
+
+      .arena {
+        padding: 12px;
+      }
+
+      .panel {
+        padding: 13px;
+      }
+
+      textarea {
+        font-size: 14px;
+        min-height: 230px;
+      }
+
+      .mission-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .mission-icon {
+        width: 48px;
+        height: 48px;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .button-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .button-row .map-btn {
+        grid-column: span 2;
+      }
+    }
+  </style>
 </head>
 
-<body class="theme-css">
-
-<main class="arena">
-
-  <section class="top-command">
-    <div>
-      <h1 class="pixel">CSS Circuit</h1>
-      <p class="desc">Restore the visual system of the web through guided styling missions.</p>
-    </div>
-
-    <div class="stats">
-      <div class="stat-pill">
-        <span class="pixel">MISSION</span>
-        <strong><span id="mission-count-inline">1</span> / 7</strong>
-      </div>
-
-      <div class="stat-pill">
-        <span class="pixel">XP</span>
-        <strong id="total-xp">0</strong>
-      </div>
-
-      <div class="stat-pill">
-        <span class="pixel">LIVES</span>
-        <strong id="lives">❤️❤️❤️</strong>
-      </div>
-
-      <div class="stat-pill">
-        <span class="pixel">TRIES</span>
-        <strong id="attempts">0</strong>
-      </div>
-
-      <div class="stat-pill">
-        <span class="pixel">STATUS</span>
-        <strong id="status">Active</strong>
-      </div>
-    </div>
-  </section>
-
-  <section class="main-arena">
-
-    <aside class="panel mission-panel">
-      <div>
-        <div class="panel-title">BYTEBOT BRIEFING</div>
-        <div class="mission-title" id="mission-title">Mission loading...</div>
-      </div>
-
-      <div class="skill-box">
-        <div class="label">SKILL</div>
-        <h2 id="skill-title">Skill loading...</h2>
-        <p id="bytebot-message">Mission instructions loading...</p>
-      </div>
-
-      <div class="skill-box">
-        <div class="label">WHY IT MATTERS</div>
-        <p id="why-message">Loading...</p>
-      </div>
-
-      <div class="rule-box" id="success-rule">
-        Success rule loading...
-      </div>
-    </aside>
-
-    <section class="panel editor-panel">
-      <div class="panel-title">CSS EDITOR</div>
-
-      <textarea id="code" spellcheck="false"></textarea>
-
-      <div class="buttons">
-        <button id="run-btn" class="primary" type="button">Run Code</button>
-        <button id="hint-btn" type="button">Hint</button>
-        <button id="next-btn" type="button" disabled>Next Mission</button>
-        <button id="back-btn" class="danger" type="button">Back to Map</button>
-      </div>
-    </section>
-
-    <section class="panel preview-panel">
-      <div class="panel-title">LIVE STYLE PREVIEW</div>
-
-      <div class="browser-frame" id="preview-frame">
-        <div class="browser-top">
-          <span class="dot red"></span>
-          <span class="dot yellow"></span>
-          <span class="dot green"></span>
-          <span>style-preview.css</span>
+<body>
+  <div id="app" class="page">
+    <section class="top-bar">
+      <div class="top-row">
+        <div>
+          <div class="world-title pixel">WORLD 02 / DESIGN CIRCUIT</div>
+          <div id="missionTitle" class="mission-title pixel">MISSION 01 — COLOR REACTOR</div>
         </div>
 
-        <div class="preview-wrap">
-          <div class="preview-page" id="preview-page">
-            <div class="preview-inner">
-              <h1 id="preview-title">Hello CSS</h1>
-              <p class="subtitle" id="preview-text">CSS controls color, spacing, size, layout, and visual feeling.</p>
+        <div class="stats">
+          <div class="stat-pill">
+            <span class="stat-label pixel">PLAYER</span>
+            <span id="playerName">Builder</span>
+          </div>
 
-              <div class="preview-card card" id="preview-card">
-                <h2>Profile Card</h2>
-                <p>Style me with CSS.</p>
-              </div>
+          <div class="stat-pill">
+            <span class="stat-label pixel">XP</span>
+            <span id="xpValue">0</span>
+          </div>
 
-              <button class="preview-button" id="preview-button">Repair Style</button>
+          <div class="stat-pill">
+            <span class="stat-label pixel">LIVES</span>
+            <span id="livesValue" class="lives">❤️❤️❤️</span>
+          </div>
 
-              <div class="focus-note" id="focus-note">Focus: watch the preview change as your CSS becomes correct.</div>
-            </div>
+          <div class="stat-pill">
+            <span class="stat-label pixel">DESIGN CIRCUIT RECOVERY</span>
+            <span id="recoveryValue">10%</span>
           </div>
         </div>
       </div>
+
+      <div id="objectiveText" class="objective">
+        Restore the interface colors and bring the visual system online.
+      </div>
+
+      <div class="progress-track">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
     </section>
 
-  </section>
+    <main class="arena">
+      <section class="panel editor-panel">
+        <div class="panel-header">
+          <div class="panel-title pixel">🎨 CSS REPAIR TERMINAL</div>
+          <div id="editorState" class="system-state pixel">VISUAL REPAIR MODE</div>
+        </div>
 
-  <section class="feedback-console">
-    <div class="panel-title">TERMINAL FEEDBACK</div>
+        <div id="instructionText" class="instruction">
+          Restore the missing interface color.
+        </div>
 
-    <div class="console-grid">
-      <div class="console-item">
-        <div class="label">RESULT</div>
-        <div class="message" id="result">Run your code to check the mission.</div>
+        <textarea id="codeEditor" spellcheck="false"></textarea>
+
+        <div class="button-row">
+          <button id="runBtn" class="primary-btn">RUN</button>
+          <button id="checkBtn">CHECK</button>
+          <button id="hintBtn">HINT</button>
+          <button id="resetBtn">RESET</button>
+          <button id="mapBtn" class="map-btn">RETURN TO MAP</button>
+        </div>
+
+        <div id="feedbackBox" class="feedback">
+          SYSTEM VOICE: Awaiting visual repair command.
+        </div>
+      </section>
+
+      <section class="panel preview-panel">
+        <div class="panel-header">
+          <div class="panel-title pixel">🖥 LIVE DESIGN PREVIEW</div>
+          <div id="previewMode" class="system-state pixel">OFFLINE</div>
+        </div>
+
+        <div class="preview-status">
+          <div class="status-left">
+            <span id="statusDot" class="dot"></span>
+            <div>
+              <div id="previewStatusLabel" class="preview-label pixel">COLOR REACTOR STATUS</div>
+              <div id="statusText" class="preview-state pixel">SYSTEM OFFLINE</div>
+            </div>
+          </div>
+
+          <div id="afterRepairLabel" class="preview-label pixel">AFTER REPAIR: COLOR ONLINE</div>
+        </div>
+
+        <div id="previewScreen" class="preview-screen">
+          <div id="previewWorld" class="preview-world"></div>
+        </div>
+      </section>
+    </main>
+
+    <section class="mission-strip">
+      <div id="missionIcon" class="mission-icon">🎨</div>
+
+      <div class="mission-info">
+        <div id="stripMissionName" class="mission-meta-title pixel">COLOR REACTOR</div>
+
+        <div class="meta-grid">
+          <div><strong>Skill:</strong> <span id="skillText">Colors</span></div>
+          <div><strong>Reward:</strong> <span id="rewardText">+20 XP</span></div>
+          <div><strong>Difficulty:</strong> <span id="difficultyText">EASY</span></div>
+        </div>
+
+        <div id="shortHintText" class="system-voice">
+          Hint: Use the color property to restore the heading signal.
+        </div>
+
+        <div id="systemVoiceText" class="system-voice">
+          <span>&gt; SYSTEM VOICE:</span> “Restore the lost interface color.”
+        </div>
       </div>
+    </section>
+  </div>
 
-      <div class="console-item">
-        <div class="label">HINT</div>
-        <div class="message" id="hint">Click Hint if you get stuck.</div>
-      </div>
+  <div id="completeModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-content">
+        <div class="modal-title pixel">MISSION CLEARED</div>
+        <div id="completeMissionName" class="modal-subtitle pixel">COLOR REACTOR RESTORED</div>
+        <div id="learnedText" class="modal-text">You learned how color restores visual meaning.</div>
+        <div id="xpRewardText" class="modal-subtitle pixel">+20 XP</div>
+        <div class="modal-text">NEXT QUEST UNLOCKED</div>
 
-      <div class="console-item">
-        <div class="label">WARNING</div>
-        <div class="message error" id="warning">No syntax warnings yet.</div>
-      </div>
-
-      <div class="console-item">
-        <div class="label">XP</div>
-        <div class="message correct" id="xp-feedback">0 XP gained.</div>
+        <div class="modal-actions">
+          <button id="completeMapBtn">RETURN TO MAP</button>
+          <button id="nextQuestBtn" class="primary-btn">NEXT QUEST</button>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
 
-</main>
+  <div id="gameOverModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-content">
+        <div class="modal-title pixel" style="color: var(--red);">GAME OVER</div>
+        <div class="modal-subtitle pixel">VISUAL SYSTEM UNSTABLE</div>
+        <div class="modal-text">
+          The design repair failed too many times. Restart this mission and rebuild the visual system.
+        </div>
 
-<div class="start-modal" id="start-modal">
-  <div class="start-box">
-    <h2 class="pixel" id="start-modal-title">MISSION START</h2>
-
-    <p id="start-modal-skill">Get ready.</p>
-
-    <div class="start-instruction-box">
-      <div class="label">WHAT TO DO</div>
-      <p id="start-modal-task">Read the mission, write your CSS, then click Run Code.</p>
+        <div class="modal-actions">
+          <button id="tryAgainBtn" class="primary-btn">TRY AGAIN</button>
+          <button id="gameOverMapBtn">RETURN TO MAP</button>
+        </div>
+      </div>
     </div>
-
-    <button id="start-mission-btn" class="start-btn" type="button">
-      Start Mission
-    </button>
   </div>
-</div>
 
-<div class="mission-modal" id="mission-modal">
-  <div class="mission-box">
-    <h2 class="pixel">MISSION COMPLETED</h2>
+  <audio id="successSound" src="success-sound.mp3" preload="auto"></audio>
+  <audio id="errorSound" src="error-sound.mp3" preload="auto"></audio>
+  <audio id="gameOverSound" src="game-lose-sound.mp3" preload="auto"></audio>
 
-    <p id="modal-success-text">Great work.</p>
+  <script>
+    const missions = [
+      {
+        level: 1,
+        icon: "🎨",
+        name: "COLOR REACTOR",
+        missionTitle: "MISSION 01 — COLOR REACTOR",
+        statusLabel: "COLOR REACTOR STATUS",
+        afterRepair: "AFTER REPAIR: COLOR ONLINE",
+        skill: "Colors",
+        reward: 20,
+        difficulty: "EASY",
+        objective: "Restore the interface colors and bring the visual system online.",
+        instruction: "The color signal is missing. Use the color property to restore the heading.",
+        shortHint: "Hint: Use the color property to restore the heading signal.",
+        voice: "Restore the lost interface color.",
+        learned: "You learned that CSS color changes how text visually communicates.",
+        starter: "h1 {\n  color: ________;\n}",
+        hints: [
+          "The heading needs a color rule.",
+          "Use the CSS property color inside h1.",
+          "Example: h1 { color: #39FF5A; }"
+        ],
+        offline: {
+          title: "COLOR SIGNAL MISSING",
+          sub: "INTERFACE DULL / INACTIVE"
+        },
+        validate(code) {
+          if (!hasSelector(code, "h1")) return fail("The color reactor needs an h1 selector.");
+          if (!hasProperty(code, "color")) return fail("The interface color signal is still missing. Add the color property.");
+          if (hasBlankValue(code, "color")) return fail("The color property is present, but the value is still empty.");
+          return pass();
+        }
+      },
+      {
+        level: 2,
+        icon: "🌌",
+        name: "WORLD SKIN",
+        missionTitle: "MISSION 02 — WORLD SKIN",
+        statusLabel: "SURFACE STATUS",
+        afterRepair: "AFTER REPAIR: SURFACE STABLE",
+        skill: "Backgrounds",
+        reward: 20,
+        difficulty: "EASY",
+        objective: "Repair the world surface using background color.",
+        instruction: "The surface layer is blank and unstable. Add a background color to the body.",
+        shortHint: "Hint: Use background-color on the body.",
+        voice: "Repair the world surface.",
+        learned: "You learned that background-color controls the surface behind the interface.",
+        starter: "body {\n  background-color: ________;\n}",
+        hints: [
+          "The world skin belongs on the body selector.",
+          "Use background-color to repair the surface.",
+          "Example: body { background-color: #03080F; }"
+        ],
+        offline: {
+          title: "SURFACE LAYER DAMAGED",
+          sub: "BACKGROUND NOT STABILIZED"
+        },
+        validate(code) {
+          if (!hasSelector(code, "body")) return fail("The surface repair needs a body selector.");
+          if (!hasProperty(code, "background-color") && !hasProperty(code, "background")) {
+            return fail("The world surface needs background-color or background.");
+          }
+          if (hasBlankValue(code, "background-color") || hasBlankValue(code, "background")) {
+            return fail("The background property is present, but the value is empty.");
+          }
+          return pass();
+        }
+      },
+      {
+        level: 3,
+        icon: "📶",
+        name: "SIGNAL STRENGTH",
+        missionTitle: "MISSION 03 — SIGNAL STRENGTH",
+        statusLabel: "SIGNAL STATUS",
+        afterRepair: "AFTER REPAIR: SIGNAL READABLE",
+        skill: "Font Size",
+        reward: 20,
+        difficulty: "EASY",
+        objective: "Make the visual signal readable by increasing font size.",
+        instruction: "The heading signal is too weak. Use font-size to strengthen it.",
+        shortHint: "Hint: Use font-size to make the heading readable.",
+        voice: "Strengthen the visual signal.",
+        learned: "You learned that font-size creates readable hierarchy.",
+        starter: "h1 {\n  font-size: ________;\n}",
+        hints: [
+          "The heading needs a font-size rule.",
+          "Use a value with px, rem, or em.",
+          "Example: h1 { font-size: 32px; }"
+        ],
+        offline: {
+          title: "SIGNAL TOO WEAK",
+          sub: "TEXT HIERARCHY UNREADABLE"
+        },
+        validate(code) {
+          if (!hasSelector(code, "h1")) return fail("The signal repair needs an h1 selector.");
+          if (!hasProperty(code, "font-size")) return fail("The signal is still weak. Add font-size.");
+          if (!/font-size\s*:\s*(\d+(\.\d+)?)(px|rem|em|%)\s*;/i.test(code)) {
+            return fail("The font-size needs a real size value, like 32px.");
+          }
+          return pass();
+        }
+      },
+      {
+        level: 4,
+        icon: "🛡️",
+        name: "SHIELD FRAMES",
+        missionTitle: "MISSION 04 — SHIELD FRAMES",
+        statusLabel: "FRAME STATUS",
+        afterRepair: "AFTER REPAIR: FRAMES PROTECTED",
+        skill: "Borders",
+        reward: 20,
+        difficulty: "MEDIUM",
+        objective: "Protect exposed interface cards with borders.",
+        instruction: "The panels are exposed. Add a border to the card.",
+        shortHint: "Hint: Use border on .card.",
+        voice: "Protect the exposed interface.",
+        learned: "You learned that borders define and protect interface surfaces.",
+        starter: ".card {\n  border: ________;\n}",
+        hints: [
+          "The exposed panel uses the .card selector.",
+          "Use the border property with size, style, and color.",
+          "Example: .card { border: 2px solid #39FF5A; }"
+        ],
+        offline: {
+          title: "FRAME SHIELDS DOWN",
+          sub: "PANELS EXPOSED"
+        },
+        validate(code) {
+          if (!hasSelector(code, ".card")) return fail("The shield frame needs the .card selector.");
+          if (!hasProperty(code, "border")) return fail("The panel still needs a border.");
+          if (!/border\s*:\s*[^;]*(solid|dashed|double|groove)[^;]*;/i.test(code)) {
+            return fail("The border needs a visible style, like solid or dashed.");
+          }
+          return pass();
+        }
+      },
+      {
+        level: 5,
+        icon: "⚖️",
+        name: "BALANCE GRID",
+        missionTitle: "MISSION 05 — BALANCE GRID",
+        statusLabel: "ALIGNMENT STATUS",
+        afterRepair: "AFTER REPAIR: SCREEN STABILIZED",
+        skill: "Alignment",
+        reward: 20,
+        difficulty: "MEDIUM",
+        objective: "Stabilize the screen by aligning the interface.",
+        instruction: "The panel feels unstable. Center the text inside the panel.",
+        shortHint: "Hint: Use text-align: center on .panel.",
+        voice: "Stabilize the visual alignment.",
+        learned: "You learned that alignment makes screens feel stable and intentional.",
+        starter: ".panel {\n  text-align: ________;\n}",
+        hints: [
+          "The unstable screen uses the .panel selector.",
+          "Use text-align to center the content.",
+          "Example: .panel { text-align: center; }"
+        ],
+        offline: {
+          title: "SCREEN MISALIGNED",
+          sub: "VISUAL BALANCE LOST"
+        },
+        validate(code) {
+          if (!hasSelector(code, ".panel")) return fail("The balance grid needs the .panel selector.");
+          if (!/text-align\s*:\s*center\s*;/i.test(code)) return fail("The screen is still unstable. Use text-align: center.");
+          return pass();
+        }
+      },
+      {
+        level: 6,
+        icon: "🧩",
+        name: "BREATHING ROOM",
+        missionTitle: "MISSION 06 — BREATHING ROOM",
+        statusLabel: "SPACING STATUS",
+        afterRepair: "AFTER REPAIR: ROOM RESTORED",
+        skill: "Spacing",
+        reward: 20,
+        difficulty: "MEDIUM",
+        objective: "Repair the cramped layout with padding and margin.",
+        instruction: "The interface is cramped. Add padding and margin to the card.",
+        shortHint: "Hint: Use padding and margin on .card.",
+        voice: "Give the interface room to breathe.",
+        learned: "You learned that spacing makes interfaces cleaner and easier to read.",
+        starter: ".card {\n  padding: ________;\n  margin: ________;\n}",
+        hints: [
+          "The cramped interface uses the .card selector.",
+          "Padding creates space inside. Margin creates space outside.",
+          "Example: .card { padding: 20px; margin: 16px; }"
+        ],
+        offline: {
+          title: "LAYOUT CRAMPED",
+          sub: "NO BREATHING ROOM DETECTED"
+        },
+        validate(code) {
+          if (!hasSelector(code, ".card")) return fail("The spacing repair needs the .card selector.");
+          if (!hasProperty(code, "padding")) return fail("The card needs padding inside it.");
+          if (!hasProperty(code, "margin")) return fail("The card needs margin around it.");
+          if (hasBlankValue(code, "padding") || hasBlankValue(code, "margin")) {
+            return fail("Padding and margin need real spacing values.");
+          }
+          return pass();
+        }
+      },
+      {
+        level: 7,
+        icon: "🧱",
+        name: "FLEX ENGINE",
+        missionTitle: "MISSION 07 — FLEX ENGINE",
+        statusLabel: "LAYOUT ENGINE STATUS",
+        afterRepair: "AFTER REPAIR: FLEX ONLINE",
+        skill: "Flexbox",
+        reward: 20,
+        difficulty: "HARD",
+        objective: "Activate the layout engine using flexbox.",
+        instruction: "The modules are stacked badly. Use flexbox and gap to align them.",
+        shortHint: "Hint: Use display: flex and gap on .container.",
+        voice: "Activate the layout engine.",
+        learned: "You learned that flexbox organizes modules into clean layouts.",
+        starter: ".container {\n  display: ________;\n  gap: ________;\n}",
+        hints: [
+          "The layout engine uses the .container selector.",
+          "Set display to flex.",
+          "Example: .container { display: flex; gap: 16px; }"
+        ],
+        offline: {
+          title: "LAYOUT ENGINE OFFLINE",
+          sub: "MODULES STACKED BADLY"
+        },
+        validate(code) {
+          if (!hasSelector(code, ".container")) return fail("The flex engine needs the .container selector.");
+          if (!/display\s*:\s*flex\s*;/i.test(code)) return fail("The layout engine needs display: flex.");
+          if (!hasProperty(code, "gap")) return fail("The modules need gap to create clean spacing.");
+          return pass();
+        }
+      },
+      {
+        level: 8,
+        icon: "🖱️",
+        name: "MOTION PULSE",
+        missionTitle: "MISSION 08 — MOTION PULSE",
+        statusLabel: "INTERACTION STATUS",
+        afterRepair: "AFTER REPAIR: RESPONSE ONLINE",
+        skill: "Hover Effects",
+        reward: 20,
+        difficulty: "HARD",
+        objective: "Make the interface respond when the player hovers.",
+        instruction: "The button feels dead. Add a hover rule to change its visual state.",
+        shortHint: "Hint: Use button:hover with background-color or color.",
+        voice: "Make the system respond to interaction.",
+        learned: "You learned that hover effects make interfaces feel alive.",
+        starter: "button:hover {\n  background-color: ________;\n}",
+        hints: [
+          "Interaction feedback uses the :hover selector.",
+          "Target button:hover.",
+          "Example: button:hover { background-color: #FACC15; }"
+        ],
+        offline: {
+          title: "INTERFACE RESPONSE DEAD",
+          sub: "HOVER FEEDBACK MISSING"
+        },
+        validate(code) {
+          if (!/button\s*:\s*hover/i.test(code)) return fail("The response system needs a button:hover selector.");
+          if (!hasProperty(code, "background-color") && !hasProperty(code, "background") && !hasProperty(code, "color") && !hasProperty(code, "transform")) {
+            return fail("The hover rule needs a visual change like background-color, color, or transform.");
+          }
+          return pass();
+        }
+      },
+      {
+        level: 9,
+        icon: "〰️",
+        name: "ENERGY WAVES",
+        missionTitle: "MISSION 09 — ENERGY WAVES",
+        statusLabel: "ENERGY STATUS",
+        afterRepair: "AFTER REPAIR: ENERGY FLOWING",
+        skill: "Animations",
+        reward: 20,
+        difficulty: "HARD",
+        objective: "Restart visual energy using animation.",
+        instruction: "The energy core is frozen. Add animation to .core.",
+        shortHint: "Hint: Use animation on .core.",
+        voice: "Restart the visual energy waves.",
+        learned: "You learned that animation can create motion and energy in an interface.",
+        starter: ".core {\n  animation: pulse 1s infinite;\n}\n\n@keyframes pulse {\n  50% {\n    transform: scale(1.1);\n  }\n}",
+        hints: [
+          "The frozen energy system uses the .core selector.",
+          "Add the animation property.",
+          "Example: .core { animation: pulse 1s infinite; }"
+        ],
+        offline: {
+          title: "ENERGY CORE FROZEN",
+          sub: "NO MOTION DETECTED"
+        },
+        validate(code) {
+          if (!hasSelector(code, ".core")) return fail("The energy waves need the .core selector.");
+          if (!hasProperty(code, "animation")) return fail("The energy core needs an animation property.");
+          if (!/@keyframes\s+[a-zA-Z0-9_-]+/i.test(code)) return fail("The animation needs @keyframes to define the motion.");
+          return pass();
+        }
+      },
+      {
+        level: 10,
+        icon: "💠",
+        name: "DESIGN CORE BOSS",
+        missionTitle: "MISSION 10 — DESIGN CORE BOSS",
+        statusLabel: "DESIGN CORE STATUS",
+        afterRepair: "AFTER REPAIR: DESIGN CORE ONLINE",
+        skill: "Full Card UI",
+        reward: 50,
+        difficulty: "BOSS",
+        objective: "Build a premium interface by combining CSS design systems.",
+        instruction: "Final repair: style the card with background, color, size, spacing, borders, rounded corners, and alignment or flexbox.",
+        shortHint: "Hint: The Design Core needs multiple CSS systems working together.",
+        voice: "Build the premium interface.",
+        learned: "You learned how multiple CSS properties work together to create a polished interface.",
+        starter: ".card {\n\n}",
+        hints: [
+          "Start with background and text color.",
+          "Add font-size, padding, margin, border, and border-radius.",
+          "Finish with text-align or display: flex."
+        ],
+        offline: {
+          title: "DESIGN CORE OFFLINE",
+          sub: "FULL INTERFACE REPAIR REQUIRED"
+        },
+        validate(code) {
+          if (!hasSelector(code, ".card")) return fail("Stage 1 unstable. Style the .card selector.");
+          if (!hasProperty(code, "background") && !hasProperty(code, "background-color")) {
+            return fail("Stage 1 unstable. Restore the card background.");
+          }
+          if (!hasProperty(code, "color")) {
+            return fail("Stage 2 unstable. Restore text color.");
+          }
+          if (!hasProperty(code, "font-size")) {
+            return fail("Stage 2 unstable. Add font-size for readable hierarchy.");
+          }
+          if (!hasProperty(code, "padding")) {
+            return fail("Stage 3 unstable. Add padding to create breathing room.");
+          }
+          if (!hasProperty(code, "border")) {
+            return fail("Stage 4 unstable. Add a border to protect the interface.");
+          }
+          if (!hasProperty(code, "border-radius")) {
+            return fail("Stage 4 unstable. Add border-radius for a premium surface.");
+          }
+          if (!hasProperty(code, "text-align") && !/display\s*:\s*flex\s*;/i.test(code)) {
+            return fail("Stage 5 unstable. Add alignment using text-align or display: flex.");
+          }
+          return pass();
+        }
+      }
+    ];
 
-    <div class="learned-box">
-      <div class="label">WHAT YOU LEARNED</div>
-      <p id="modal-learned-text"></p>
+    const app = document.getElementById("app");
+
+    const missionTitle = document.getElementById("missionTitle");
+    const playerName = document.getElementById("playerName");
+    const xpValue = document.getElementById("xpValue");
+    const livesValue = document.getElementById("livesValue");
+    const recoveryValue = document.getElementById("recoveryValue");
+    const progressFill = document.getElementById("progressFill");
+    const objectiveText = document.getElementById("objectiveText");
+    const instructionText = document.getElementById("instructionText");
+    const codeEditor = document.getElementById("codeEditor");
+    const feedbackBox = document.getElementById("feedbackBox");
+    const editorState = document.getElementById("editorState");
+    const previewMode = document.getElementById("previewMode");
+    const previewStatusLabel = document.getElementById("previewStatusLabel");
+    const afterRepairLabel = document.getElementById("afterRepairLabel");
+    const statusDot = document.getElementById("statusDot");
+    const statusText = document.getElementById("statusText");
+    const previewScreen = document.getElementById("previewScreen");
+    const previewWorld = document.getElementById("previewWorld");
+    const missionIcon = document.getElementById("missionIcon");
+    const stripMissionName = document.getElementById("stripMissionName");
+    const skillText = document.getElementById("skillText");
+    const rewardText = document.getElementById("rewardText");
+    const difficultyText = document.getElementById("difficultyText");
+    const shortHintText = document.getElementById("shortHintText");
+    const systemVoiceText = document.getElementById("systemVoiceText");
+
+    const runBtn = document.getElementById("runBtn");
+    const checkBtn = document.getElementById("checkBtn");
+    const hintBtn = document.getElementById("hintBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const mapBtn = document.getElementById("mapBtn");
+
+    const completeModal = document.getElementById("completeModal");
+    const completeMissionName = document.getElementById("completeMissionName");
+    const learnedText = document.getElementById("learnedText");
+    const xpRewardText = document.getElementById("xpRewardText");
+    const completeMapBtn = document.getElementById("completeMapBtn");
+    const nextQuestBtn = document.getElementById("nextQuestBtn");
+
+    const gameOverModal = document.getElementById("gameOverModal");
+    const tryAgainBtn = document.getElementById("tryAgainBtn");
+    const gameOverMapBtn = document.getElementById("gameOverMapBtn");
+
+    const successSound = document.getElementById("successSound");
+    const errorSound = document.getElementById("errorSound");
+    const gameOverSound = document.getElementById("gameOverSound");
+
+    let currentLevel = Number(localStorage.getItem("css-level")) || 1;
+    let xp = Number(localStorage.getItem("xp")) || 0;
+    let lives = 3;
+    let hintIndex = 0;
+    let missionComplete = false;
+    let currentMission = null;
+
+    function init() {
+      if (currentLevel >= 11) {
+        showCompletedWorld();
+        return;
+      }
+
+      currentMission = missions.find(m => m.level === currentLevel) || missions[0];
+
+      const storedName = localStorage.getItem("player-name");
+      playerName.textContent = storedName && storedName.trim() ? storedName.trim() : "Builder";
+
+      lives = 3;
+      hintIndex = 0;
+      missionComplete = false;
+
+      loadMission(currentMission);
+    }
+
+    function loadMission(mission) {
+      missionTitle.textContent = mission.missionTitle;
+      xpValue.textContent = xp;
+      updateLives();
+
+      const recovery = mission.level * 10;
+      recoveryValue.textContent = recovery + "%";
+      progressFill.style.width = recovery + "%";
+
+      objectiveText.textContent = mission.objective;
+      instructionText.textContent = mission.instruction;
+
+      codeEditor.value = mission.starter;
+
+      previewStatusLabel.textContent = mission.statusLabel;
+      afterRepairLabel.textContent = mission.afterRepair;
+
+      missionIcon.textContent = mission.icon;
+      stripMissionName.textContent = mission.name;
+      skillText.textContent = mission.skill;
+      rewardText.textContent = "+" + mission.reward + " XP";
+      difficultyText.textContent = mission.difficulty;
+      shortHintText.textContent = mission.shortHint;
+      systemVoiceText.innerHTML = `<span>&gt; SYSTEM VOICE:</span> “${mission.voice}”`;
+
+      feedback("SYSTEM VOICE: Awaiting visual repair command.", "normal");
+      setState("VISUAL REPAIR MODE", "OFFLINE");
+      renderOffline(mission);
+    }
+
+    function updateLives() {
+      livesValue.textContent = "❤️".repeat(lives) + "♡".repeat(3 - lives);
+    }
+
+    function setState(editor, preview, dotClass = "") {
+      editorState.textContent = editor;
+      previewMode.textContent = preview;
+
+      if (preview === "ONLINE" || preview === "RESTORED") {
+        statusText.textContent = "DESIGN SYSTEM ONLINE";
+      } else if (preview === "SCANNING") {
+        statusText.textContent = "SCANNING STYLE RULES...";
+      } else if (preview === "VALIDATING") {
+        statusText.textContent = "VALIDATING DESIGN SYSTEM...";
+      } else {
+        statusText.textContent = "SYSTEM OFFLINE";
+      }
+
+      statusDot.className = "dot";
+
+      if (dotClass) statusDot.classList.add(dotClass);
+
+      if (preview === "ONLINE" || preview === "RESTORED") {
+        statusDot.classList.add("online");
+        previewScreen.classList.add("online");
+      } else if (preview === "SCANNING" || preview === "VALIDATING") {
+        statusDot.classList.add("repair");
+        previewScreen.classList.remove("online");
+      } else {
+        previewScreen.classList.remove("online");
+      }
+    }
+
+    function feedback(message, type = "normal") {
+      feedbackBox.textContent = message;
+      feedbackBox.className = "feedback";
+
+      if (type === "success") feedbackBox.classList.add("success");
+      if (type === "error") feedbackBox.classList.add("error");
+      if (type === "scan") feedbackBox.classList.add("scan");
+    }
+
+    function renderOffline(mission) {
+      previewWorld.innerHTML = `
+        <div class="design-stage">
+          <div class="system-card">
+            <div class="broken-title">${escapeHTML(mission.offline.title)}</div>
+            <div class="broken-sub">${escapeHTML(mission.offline.sub)}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function runPreview() {
+      if (missionComplete) return;
+
+      const css = cleanCSS(codeEditor.value);
+
+      if (!css.trim()) {
+        renderOffline(currentMission);
+        feedback("SYSTEM VOICE: No style rules detected yet.", "normal");
+        setState("VISUAL REPAIR MODE", "OFFLINE");
+        return;
+      }
+
+      setState("VISUAL REPAIR MODE", "VISUAL REPAIR MODE", "repair");
+      feedback("SYSTEM VOICE: Preview updated. Check the repair when ready.", "normal");
+
+      renderDesignPreview(false);
+    }
+
+    async function checkMission() {
+      if (missionComplete) return;
+
+      setState("SCANNING", "SCANNING", "repair");
+      feedback("SCANNING STYLE RULES...", "scan");
+      await wait(650);
+
+      setState("VALIDATING", "VALIDATING", "repair");
+      feedback("VALIDATING DESIGN SYSTEM...", "scan");
+      await wait(700);
+
+      const result = currentMission.validate(codeEditor.value);
+
+      if (result.ok) {
+        completeMission();
+      } else {
+        failMissionCheck(result.message);
+      }
+    }
+
+    function completeMission() {
+      missionComplete = true;
+
+      setState("RESTORED", "ONLINE", "online");
+      feedback("DESIGN SYSTEM RESTORED. Visual repair complete.", "success");
+
+      renderDesignPreview(true);
+      playSound(successSound);
+
+      xp += currentMission.reward;
+      localStorage.setItem("xp", String(xp));
+      xpValue.textContent = xp;
+
+      const nextLevel = currentMission.level >= 10 ? 11 : currentMission.level + 1;
+      localStorage.setItem("css-level", String(nextLevel));
+
+      completeMissionName.textContent = `${currentMission.name} RESTORED`;
+      learnedText.textContent = currentMission.learned;
+      xpRewardText.textContent = `+${currentMission.reward} XP`;
+
+      if (currentMission.level >= 10) {
+        nextQuestBtn.textContent = "WORLD RESTORED";
+      } else {
+        nextQuestBtn.textContent = "NEXT QUEST";
+      }
+
+      setTimeout(() => {
+        completeModal.classList.add("show");
+      }, 700);
+    }
+
+    function failMissionCheck(message) {
+      lives -= 1;
+      updateLives();
+
+      playSound(errorSound);
+
+      setState("VISUAL REPAIR MODE", "OFFLINE");
+      feedback("VISUAL SIGNAL UNSTABLE. " + message, "error");
+
+      if (lives <= 0) {
+        setTimeout(() => {
+          playSound(gameOverSound);
+          gameOverModal.classList.add("show");
+        }, 450);
+      }
+    }
+
+    function renderDesignPreview(restored) {
+  const css = cleanCSS(codeEditor.value);
+  const styleId = "mission-style-preview";
+
+  let oldStyle = document.getElementById(styleId);
+  if (oldStyle) oldStyle.remove();
+
+  const style = document.createElement("style");
+  style.id = styleId;
+  style.textContent = scopeCSS(css);
+  document.head.appendChild(style);
+
+  let previewContent = "";
+
+  if (currentMission.level === 1) {
+    previewContent = `
+      <div class="container">
+        <div class="card design-card">
+          <h1>COLOR REACTOR</h1>
+          <p>The color signal is waiting for repair.</p>
+          <button type="button">Color System</button>
+        </div>
+      </div>
+    `;
+  }
+
+  if (currentMission.level === 2) {
+    previewContent = `
+      <div class="container">
+        <div class="card design-card">
+          <h1>WORLD SKIN</h1>
+          <p>The surface layer is unstable until the background is repaired.</p>
+          <button type="button">Surface Check</button>
+        </div>
+      </div>
+    `;
+  }
+
+  if (currentMission.level === 3) {
+    previewContent = `
+      <div class="container">
+        <div class="card design-card">
+          <h1>Weak Signal</h1>
+          <p>The heading is too small to command the interface.</p>
+          <button type="button">Signal Test</button>
+        </div>
+      </div>
+    `;
+  }
+
+  if (currentMission.level === 4) {
+    previewContent = `
+      <div class="container">
+        <div class="card design-card">
+          <h1>SHIELD FRAME</h1>
+          <p>This panel is exposed. Add a border to protect the interface.</p>
+          <button type="button">Shield Status</button>
+        </div>
+      </div>
+    `;
+  }
+
+  if (currentMission.level === 5) {
+    previewContent = `
+      <div class="container">
+        <div class="card design-card">
+          <h1>BALANCE GRID</h1>
+          <p>The screen feels unstable until the content is aligned.</p>
+          <button type="button">Stabilize</button>
+        </div>
+      </div>
+    `;
+  }
+
+  if (currentMission.level === 6) {
+    previewContent = `
+      <div class="container">
+        <div class="card design-card">
+          <h1>BREATHING ROOM</h1>
+          <p>The interface is cramped. Give this card space inside and outside.</p>
+          <button type="button">Space Check</button>
+        </div>
+      </div>
+    `;
+  }
+
+  if (currentMission.level === 7) {
+    previewContent = `
+      <div class="container">
+        <div class="card design-card mini-module">COLOR NODE</div>
+        <div class="card design-card mini-module">LAYOUT NODE</div>
+        <div class="card design-card mini-module">MOTION NODE</div>
+      </div>
+    `;
+  }
+
+  if (currentMission.level === 8) {
+    previewContent = `
+      <div class="container">
+        <div class="card design-card">
+          <h1>MOTION PULSE</h1>
+          <p>The button is waiting for hover feedback.</p>
+          <button type="button">Hover Me</button>
+        </div>
+      </div>
+    `;
+  }
+
+  if (currentMission.level === 9) {
+    previewContent = `
+      <div class="container">
+        <div class="card design-card">
+          <div class="core">
+            <h1>ENERGY CORE</h1>
+            <p>The core is frozen. Animation will restart visual energy.</p>
+            <button type="button">Energy Test</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  if (currentMission.level === 10) {
+    const bossStages = restored ? `
+      <div style="text-align:left; margin-bottom:14px; color:var(--muted); line-height:1.8;">
+        <div>✅ Stage 1: Card background restored</div>
+        <div>✅ Stage 2: Text signal repaired</div>
+        <div>✅ Stage 3: Spacing stabilized</div>
+        <div>✅ Stage 4: Frame protection activated</div>
+        <div>✅ Stage 5: Layout alignment restored</div>
+      </div>
+    ` : "";
+
+    previewContent = `
+      ${bossStages}
+      <div class="container">
+        <div class="card design-card">
+          <h1>DESIGN CORE</h1>
+          <p>Build a premium interface using background, color, size, spacing, borders, radius, and alignment.</p>
+          <button type="button">Activate Core</button>
+        </div>
+      </div>
+    `;
+  }
+
+  previewWorld.innerHTML = `
+    <div class="design-stage preview-scope ${restored ? "restored-preview" : ""}">
+      ${previewContent}
     </div>
+  `;
 
-    <button id="modal-next-btn" class="modal-next-btn" type="button">
-      Next Mission
-    </button>
-  </div>
-</div>
-
-<div class="game-over-modal" id="game-over-modal">
-  <div class="game-over-box">
-    <h2 class="pixel">GAME OVER</h2>
-
-    <p>You used up all your lives. Try the mission again and use the hint if you get stuck.</p>
-
-    <button id="try-again-btn" class="try-again-btn" type="button">
-      Try Again
-    </button>
-  </div>
-</div>
-
-<audio id="success-sound" src="./sounds/success.mp3" preload="auto"></audio>
-<audio id="error-sound" src="./sounds/error.mp3" preload="auto"></audio>
-<audio id="unlock-sound" src="./sounds/unlock.mp3" preload="auto"></audio>
-<audio id="mistake-sound" src="./sounds/mistake.mp3" preload="auto"></audio>
-<audio id="game-lose-sound" src="./sounds/game-lose-sound.mp3" preload="auto"></audio>
-
-<script>
-let level = parseInt(localStorage.getItem("css-level")) || 1;
-let attempts = 0;
-let lives = 3;
-let missionComplete = false;
-let lastWarningMessage = "";
-let shouldShowStartPopup = true;
-
-const missions = {
-  1: {
-    title: "Mission 1: Color System",
-    skill: "CSS Color",
-    starter: "h1 {\n  color: write color here;\n}",
-    selector: "h1",
-    property: "color:",
-    value: "blue",
-    success: "Color system restored.",
-    bytebot: 'Replace <span class="highlight">"write color here"</span> with <span class="highlight">"blue"</span>.',
-    why: "Color helps guide attention and gives a webpage visual personality.",
-    rule: "Use the h1 selector and set color to blue.",
-    learned: "You learned that the color property changes text color.",
-    hint1: "Keep h1 and color. Only replace the value.",
-    hint2: "Final answer should look like: h1 { color: blue; }",
-    focus: "Focus: watch the heading turn blue.",
-    check: function (code) {
-      return code.includes("h1{color:blue;}");
-    }
-  },
-
-  2: {
-    title: "Mission 2: Background Grid",
-    skill: "CSS Backgrounds",
-    starter: "body {\n  background-color: write background here;\n}",
-    selector: "body",
-    property: "background-color:",
-    value: "black",
-    success: "Background grid restored.",
-    bytebot: 'Replace <span class="highlight">"write background here"</span> with <span class="highlight">"black"</span>.',
-    why: "Backgrounds create contrast and help sections feel clear.",
-    rule: "Use the body selector and set background-color to black.",
-    learned: "You learned that background-color changes the background of an element.",
-    hint1: "Keep body and background-color. Only replace the value.",
-    hint2: "Final answer should look like: body { background-color: black; }",
-    focus: "Focus: watch the preview background become deeper while the content stays readable.",
-    check: function (code) {
-      return code.includes("body{background-color:black;}");
-    }
-  },
-
-  3: {
-    title: "Mission 3: Text Scale",
-    skill: "CSS Font Size",
-    starter: "h1 {\n  font-size: write size here;\n}",
-    selector: "h1",
-    property: "font-size:",
-    value: "40px",
-    success: "Text scale boosted.",
-    bytebot: 'Replace <span class="highlight">"write size here"</span> with <span class="highlight">"40px"</span>.',
-    why: "Font size controls hierarchy so important text stands out.",
-    rule: "Use the h1 selector and set font-size to 40px.",
-    learned: "You learned that font-size changes how large text appears.",
-    hint1: "CSS size needs a number and a unit, like px.",
-    hint2: "Final answer should look like: h1 { font-size: 40px; }",
-    focus: "Focus: watch the heading become larger.",
-    check: function (code) {
-      return code.includes("h1{font-size:40px;}");
-    }
-  },
-
-  4: {
-    title: "Mission 4: Border Shield",
-    skill: "CSS Borders",
-    starter: ".card {\n  border: write border here;\n}",
-    selector: ".card",
-    property: "border:",
-    value: "2px solid blue",
-    success: "Border shield activated.",
-    bytebot: 'Replace <span class="highlight">"write border here"</span> with <span class="highlight">"2px solid blue"</span>.',
-    why: "Borders separate content and make cards easier to understand.",
-    rule: "Use the .card selector and set border to 2px solid blue.",
-    learned: "You learned that border needs thickness, style, and color.",
-    hint1: "A border usually needs size, style, and color.",
-    hint2: "Final answer should look like: .card { border: 2px solid blue; }",
-    focus: "Focus: watch the card border turn blue.",
-    check: function (code) {
-      return code.includes(".card{border:2pxsolidblue;}");
-    }
-  },
-
-  5: {
-    title: "Mission 5: Alignment Lock",
-    skill: "CSS Text Alignment",
-    starter: ".card {\n  text-align: write alignment here;\n}",
-    selector: ".card",
-    property: "text-align:",
-    value: "center",
-    success: "Alignment locked.",
-    bytebot: 'Replace <span class="highlight">"write alignment here"</span> with <span class="highlight">"center"</span>.',
-    why: "Alignment improves readability and makes layouts feel intentional.",
-    rule: "Use the .card selector and set text-align to center.",
-    learned: "You learned that text-align controls horizontal text placement.",
-    hint1: "text-align can move text left, right, or center.",
-    hint2: "Final answer should look like: .card { text-align: center; }",
-    focus: "Focus: watch the card text center itself.",
-    check: function (code) {
-      return code.includes(".card{text-align:center;}");
-    }
-  },
-
-  6: {
-    title: "Mission 6: Spacing Module",
-    skill: "CSS Padding",
-    starter: ".card {\n  padding: write spacing here;\n}",
-    selector: ".card",
-    property: "padding:",
-    value: "30px",
-    success: "Spacing module restored.",
-    bytebot: 'Replace <span class="highlight">"write spacing here"</span> with <span class="highlight">"30px"</span>.',
-    why: "Spacing makes designs easier to read and prevents cramped layouts.",
-    rule: "Use the .card selector and set padding to 30px.",
-    learned: "You learned that padding adds space inside an element.",
-    hint1: "Padding creates space inside the card.",
-    hint2: "Final answer should look like: .card { padding: 30px; }",
-    focus: "Focus: watch the card get more breathing room.",
-    check: function (code) {
-      return code.includes(".card{padding:30px;}");
-    }
-  },
-
-  7: {
-    title: "Boss Mode: Styled Profile Card",
-    skill: "CSS Design Systems",
-    starter: ".card {\n  color: white;\n  background-color: black;\n  font-size: 20px;\n  border: 2px solid blue;\n  text-align: center;\n  padding: 30px;\n}",
-    boss: true,
-    success: "Boss cleared. JS Reactor unlocked.",
-    bytebot: 'Final CSS test. Your card must include <span class="highlight">color, background-color, font-size, border, text-align, and padding</span>.',
-    why: "Real design comes from combining multiple CSS properties into one clear visual system.",
-    rule: "Style the profile card using color, background-color, font-size, border, text-align, and padding.",
-    learned: "You learned how multiple CSS properties work together to style one card.",
-    hint1: "You need all six CSS properties: color, background-color, font-size, border, text-align, and padding.",
-    hint2: "Make sure each CSS property has a value and ends with a semicolon.",
-    focus: "Boss Mode: style the full card.",
-    check: function (code) {
-      const hasColor = code.includes("color:white;");
-      const hasBackground = code.includes("background-color:black;");
-      const hasFontSize = code.includes("font-size:20px;");
-      const hasBorder = code.includes("border:2pxsolidblue;");
-      const hasAlign = code.includes("text-align:center;");
-      const hasPadding = code.includes("padding:30px;");
-
-      return hasColor && hasBackground && hasFontSize && hasBorder && hasAlign && hasPadding;
-    }
+  if (restored) {
+    const cards = previewWorld.querySelectorAll(".design-card");
+    cards.forEach(card => {
+      card.classList.add("system-card", "restored");
+    });
   }
-};
-
-const missionCountInlineEl = document.getElementById("mission-count-inline");
-const totalXpEl = document.getElementById("total-xp");
-const livesEl = document.getElementById("lives");
-const attemptsEl = document.getElementById("attempts");
-const statusEl = document.getElementById("status");
-
-const titleEl = document.getElementById("mission-title");
-const skillTitleEl = document.getElementById("skill-title");
-const bytebotEl = document.getElementById("bytebot-message");
-const whyEl = document.getElementById("why-message");
-const successRuleEl = document.getElementById("success-rule");
-
-const codeBox = document.getElementById("code");
-const resultEl = document.getElementById("result");
-const hintEl = document.getElementById("hint");
-const warningEl = document.getElementById("warning");
-const xpFeedbackEl = document.getElementById("xp-feedback");
-
-const previewFrame = document.getElementById("preview-frame");
-const previewPage = document.getElementById("preview-page");
-const previewTitle = document.getElementById("preview-title");
-const previewText = document.getElementById("preview-text");
-const previewCard = document.getElementById("preview-card");
-const previewButton = document.getElementById("preview-button");
-const focusNote = document.getElementById("focus-note");
-
-const runBtn = document.getElementById("run-btn");
-const hintBtn = document.getElementById("hint-btn");
-const nextBtn = document.getElementById("next-btn");
-const backBtn = document.getElementById("back-btn");
-
-const startModal = document.getElementById("start-modal");
-const startModalTitle = document.getElementById("start-modal-title");
-const startModalSkill = document.getElementById("start-modal-skill");
-const startModalTask = document.getElementById("start-modal-task");
-const startMissionBtn = document.getElementById("start-mission-btn");
-
-const missionModal = document.getElementById("mission-modal");
-const modalSuccessText = document.getElementById("modal-success-text");
-const modalLearnedText = document.getElementById("modal-learned-text");
-const modalNextBtn = document.getElementById("modal-next-btn");
-
-const gameOverModal = document.getElementById("game-over-modal");
-const tryAgainBtn = document.getElementById("try-again-btn");
-
-function normalize(input) {
-  return input.replace(/\s+/g, "").toLowerCase();
-}
-
-function countMatches(text, pattern) {
-  const matches = text.match(pattern);
-  return matches ? matches.length : 0;
-}
-
-function updateStats() {
-  const xp = parseInt(localStorage.getItem("xp")) || 0;
-
-  missionCountInlineEl.innerText = Math.min(level, 7);
-  totalXpEl.innerText = xp;
-  livesEl.innerText = "❤️".repeat(lives) + "🖤".repeat(3 - lives);
-  attemptsEl.innerText = attempts;
-}
-
-function loadMission() {
-  const mission = missions[level];
-
-  attempts = 0;
-  lives = 3;
-  missionComplete = false;
-  lastWarningMessage = "";
-
-  missionModal.classList.remove("show");
-  gameOverModal.classList.remove("show");
-
-  updateStats();
-
-  resultEl.innerText = "Run your code to check the mission.";
-  resultEl.className = "message";
-
-  hintEl.innerText = "Click Hint if you get stuck.";
-  warningEl.innerText = "No syntax warnings yet.";
-  warningEl.className = "message error";
-  xpFeedbackEl.innerText = "0 XP gained.";
-
-  nextBtn.disabled = true;
-  runBtn.disabled = false;
-  hintBtn.disabled = false;
-  statusEl.innerText = "Active";
-
-  if (!mission) {
-    titleEl.innerText = "CSS Circuit Complete!";
-    skillTitleEl.innerText = "CSS Complete";
-    bytebotEl.innerText = "JS Reactor is ready. Head back to Mission Control.";
-    whyEl.innerText = "You completed the visual styling system.";
-    successRuleEl.innerText = "All CSS missions are complete.";
-    codeBox.value = "";
-    statusEl.innerText = "Complete";
-    runBtn.disabled = true;
-    hintBtn.disabled = true;
-    nextBtn.disabled = true;
-    updatePreview();
-    return;
-  }
-
-  titleEl.innerText = mission.title;
-  skillTitleEl.innerText = mission.skill;
-  bytebotEl.innerHTML = mission.bytebot;
-  whyEl.innerText = mission.why;
-  successRuleEl.innerText = mission.rule;
-  codeBox.value = mission.starter;
-  focusNote.innerText = mission.focus;
-
-  updatePreview();
-
-  if (shouldShowStartPopup) {
-    showStartPopup(mission);
-  }
-}
-
-function showStartPopup(mission) {
-  startModalTitle.innerText = mission.title;
-  startModalSkill.innerText = "Skill: " + mission.skill;
-  startModalTask.innerText = mission.rule + " Read the instruction, write the CSS in the editor, then click Run Code.";
-  startModal.classList.add("show");
-}
-
-function setWarning(message) {
-  warningEl.innerText = message;
-
-  if (
-    message &&
-    message !== "No syntax warnings yet." &&
-    message !== "No syntax warnings." &&
-    message !== lastWarningMessage
-  ) {
-    playMistake();
-  }
-
-  lastWarningMessage = message;
-}
-
-function checkSyntaxWarnings(rawCode) {
-  const mission = missions[level];
-
-  if (!mission || rawCode.trim().length === 0) {
-    setWarning("No syntax warnings yet.");
-    return;
-  }
-
-  const code = rawCode.trim();
-  const normalized = normalize(code);
-
-  const openBraceCount = countMatches(code, /{/g);
-  const closeBraceCount = countMatches(code, /}/g);
-
-  if (openBraceCount === 0 || closeBraceCount === 0) {
-    setWarning("A CSS curly brace { or } is missing.");
-    return;
-  }
-
-  if (openBraceCount !== closeBraceCount) {
-    setWarning("Your { and } braces are not balanced.");
-    return;
-  }
-
-  if (!normalized.includes(":")) {
-    setWarning("CSS properties need a colon : before the value.");
-    return;
-  }
-
-  if (!normalized.includes(";")) {
-    setWarning("CSS rules need a semicolon ; at the end.");
-    return;
-  }
-
-  if (!mission.boss) {
-    if (!normalized.includes(normalize(mission.selector))) {
-      setWarning("Missing selector: " + mission.selector);
-      return;
     }
 
-    if (!normalized.includes(normalize(mission.property))) {
-      setWarning("Missing property: " + mission.property);
-      return;
+    function showHint() {
+      if (missionComplete) return;
+
+      const hints = currentMission.hints;
+      const hint = hints[Math.min(hintIndex, hints.length - 1)];
+
+      feedback("HINT " + (Math.min(hintIndex + 1, hints.length)) + ": " + hint, "scan");
+
+      if (hintIndex < hints.length - 1) {
+        hintIndex++;
+      }
     }
-  }
-
-  setWarning("No syntax warnings.");
-}
-
-function resetPreviewStyles() {
-  previewPage.removeAttribute("style");
-  previewTitle.removeAttribute("style");
-  previewText.removeAttribute("style");
-  previewCard.removeAttribute("style");
-  previewButton.removeAttribute("style");
-  focusNote.removeAttribute("style");
-
-  previewPage.style.background =
-    "radial-gradient(circle at top right, rgba(57,255,90,0.03), transparent 30%), linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.005)), #02060B";
-  previewPage.style.color = "#E6FFE9";
-
-  previewTitle.style.color = "#E6FFE9";
-  previewTitle.style.fontSize = "30px";
-
-  previewText.style.color = "rgba(230,255,233,0.72)";
-
-  previewCard.style.background =
-    "linear-gradient(180deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01)), #07111D";
-  previewCard.style.color = "#E6FFE9";
-  previewCard.style.border = "1px solid rgba(57,255,90,0.16)";
-  previewCard.style.padding = "18px";
-  previewCard.style.textAlign = "left";
-  previewCard.style.fontSize = "16px";
-
-  previewButton.style.background =
-    "linear-gradient(180deg, rgba(57,255,90,0.16), rgba(57,255,90,0.08))";
-  previewButton.style.color = "#E6FFE9";
-  previewButton.style.borderColor = "rgba(57,255,90,0.18)";
-
-  focusNote.style.background = "rgba(57,255,90,0.04)";
-  focusNote.style.color = "rgba(230,255,233,0.74)";
-  focusNote.style.borderColor = "rgba(57,255,90,0.18)";
-}
-
-function updatePreview() {
-  const rawCode = codeBox.value;
-  const code = normalize(rawCode);
-
-  resetPreviewStyles();
-
-  if (code.includes("h1{color:blue;}")) {
-    previewTitle.style.color = "#74D7FF";
-  }
-
-  if (code.includes("body{background-color:black;}")) {
-    previewPage.style.background = "#000000";
-  }
-
-  if (code.includes("h1{font-size:40px;}")) {
-    previewTitle.style.fontSize = "40px";
-  }
-
-  if (code.includes(".card{border:2pxsolidblue;}")) {
-    previewCard.style.border = "2px solid #74D7FF";
-  }
-
-  if (code.includes(".card{text-align:center;}")) {
-    previewCard.style.textAlign = "center";
-  }
-
-  if (code.includes(".card{padding:30px;}")) {
-    previewCard.style.padding = "30px";
-  }
-
-  if (level === 7) {
-    if (code.includes("color:white;")) previewCard.style.color = "white";
-    if (code.includes("background-color:black;")) previewCard.style.background = "black";
-    if (code.includes("font-size:20px;")) previewCard.style.fontSize = "20px";
-    if (code.includes("border:2pxsolidblue;")) previewCard.style.border = "2px solid #74D7FF";
-    if (code.includes("text-align:center;")) previewCard.style.textAlign = "center";
-    if (code.includes("padding:30px;")) previewCard.style.padding = "30px";
-  }
-
-  checkSyntaxWarnings(rawCode);
-}
-
-function checkCode() {
-  if (missionComplete) return;
-
-  const mission = missions[level];
-  const rawCode = codeBox.value;
-  const code = normalize(rawCode);
-
-  updatePreview();
-
-  if (!mission) {
-    resultEl.innerText = "CSS Circuit already complete.";
-    resultEl.className = "message correct";
-    return;
-  }
-
-  attempts++;
-  updateStats();
-
-  if (mission.check(code)) {
-    const reward = mission.boss ? 50 : 10;
-    completeMission(reward, mission.success, mission.learned);
-  } else {
-    loseLife();
-  }
-}
-
-function loseLife() {
-  lives--;
-  updateStats();
-
-  if (lives <= 0) {
-    resultEl.innerText = "Game over. You used up all your lives.";
-    resultEl.className = "message error";
-    statusEl.innerText = "Game Over";
-
-    runBtn.disabled = true;
-    hintBtn.disabled = true;
-    nextBtn.disabled = true;
-
-    errorEffect();
-    playGameLose();
-    showGameOverPopup();
 
-    return;
-  }
-
-  playError();
-
-  const mission = missions[level];
-
-  resultEl.innerText = "Not correct yet. You lost one life.";
-  resultEl.className = "message error";
-  statusEl.innerText = "Try Again";
-
-  showHint(mission);
-  errorEffect();
-}
-
-function showGameOverPopup() {
-  gameOverModal.classList.add("show");
-}
-
-function tryAgainMission() {
-  gameOverModal.classList.remove("show");
-  shouldShowStartPopup = false;
-  loadMission();
-  shouldShowStartPopup = true;
-}
-
-function showHint(mission) {
-  if (attempts <= 1) {
-    hintEl.innerText = "Hint 1: " + mission.hint1;
-  } else {
-    hintEl.innerText = "Hint 2: " + mission.hint2;
-  }
-}
-
-function manualHint() {
-  const mission = missions[level];
-
-  if (!mission || missionComplete) return;
-
-  if (hintEl.innerText.includes("Hint 1")) {
-    hintEl.innerText = "Hint 2: " + mission.hint2;
-  } else {
-    hintEl.innerText = "Hint 1: " + mission.hint1;
-  }
-}
-
-function showMissionPopup(successMessage, learnedMessage) {
-  modalSuccessText.innerText = successMessage;
-  modalLearnedText.innerText = learnedMessage;
-
-  if (level > 7) {
-    modalNextBtn.innerText = "Back to Map";
-  } else {
-    modalNextBtn.innerText = "Next Mission";
-  }
-
-  missionModal.classList.add("show");
-}
-
-function completeMission(xpGain, message, learnedMessage) {
-  missionComplete = true;
-
-  resultEl.innerText = message + " +" + xpGain + " XP";
-  resultEl.className = "message correct";
-
-  hintEl.innerText = "Mission complete.";
-  xpFeedbackEl.innerText = "+" + xpGain + " XP gained.";
-  statusEl.innerText = "Complete";
-
-  setWarning("No syntax warnings.");
-
-  playSuccess();
-
-  document.body.classList.add("success-flash");
-  previewFrame.classList.add("preview-glow");
-
-  setTimeout(function () {
-    document.body.classList.remove("success-flash");
-    previewFrame.classList.remove("preview-glow");
-  }, 700);
-
-  showXPPop(xpGain);
-  addXP(xpGain);
-
-  runBtn.disabled = true;
-  hintBtn.disabled = true;
-  nextBtn.disabled = false;
-
-  if (level === 7) {
-    localStorage.setItem("js-level", 1);
-    playUnlock();
-  }
-
-  level++;
-  localStorage.setItem("css-level", level);
-
-  updateStats();
-
-  showMissionPopup(message, learnedMessage);
-}
-
-function goNextMission() {
-  if (level > 7) {
-    window.location.href = "css-map.html";
-    return;
-  }
-
-  loadMission();
-}
-
-function errorEffect() {
-  codeBox.classList.add("error-shake");
-
-  setTimeout(function () {
-    codeBox.classList.remove("error-shake");
-  }, 300);
-}
-
-function addXP(points) {
-  let xp = parseInt(localStorage.getItem("xp")) || 0;
-  xp += points;
-  localStorage.setItem("xp", xp);
-}
-
-function showXPPop(amount) {
-  const xp = document.createElement("div");
-  xp.className = "xp-pop";
-  xp.innerText = "+" + amount + " XP";
-
-  document.body.appendChild(xp);
-
-  setTimeout(function () {
-    xp.remove();
-  }, 1000);
-}
-
-function playSound(id) {
-  const sound = document.getElementById(id);
-
-  if (!sound) return;
-
-  sound.currentTime = 0;
-
-  sound.play().catch(function () {
-    console.log("Sound blocked or missing:", id);
-  });
-}
-
-function playSuccess() {
-  playSound("success-sound");
-}
-
-function playError() {
-  playSound("error-sound");
-}
-
-function playUnlock() {
-  playSound("unlock-sound");
-}
-
-function playMistake() {
-  playSound("mistake-sound");
-}
-
-function playGameLose() {
-  const sound = document.getElementById("game-lose-sound");
-
-  if (!sound) return;
-
-  sound.currentTime = 0;
-
-  sound.play().catch(function () {
-    console.log("Sound blocked or missing: game-lose-sound");
-  });
-
-  setTimeout(function () {
-    sound.pause();
-    sound.currentTime = 0;
-  }, 4000);
-}
-
-runBtn.addEventListener("click", checkCode);
-hintBtn.addEventListener("click", manualHint);
-nextBtn.addEventListener("click", goNextMission);
-
-startMissionBtn.addEventListener("click", function () {
-  startModal.classList.remove("show");
-});
-
-modalNextBtn.addEventListener("click", function () {
-  missionModal.classList.remove("show");
-  goNextMission();
-});
-
-tryAgainBtn.addEventListener("click", tryAgainMission);
-
-backBtn.addEventListener("click", function () {
-  window.location.href = "css-map.html";
-});
-
-codeBox.addEventListener("input", updatePreview);
-
-loadMission();
-</script>
-<script src="translations.js"></script>
-<script src="language.js"></script>
+    function resetMission() {
+      const oldStyle = document.getElementById("mission-style-preview");
+      if (oldStyle) oldStyle.remove();
+
+      lives = 3;
+      hintIndex = 0;
+      missionComplete = false;
+      updateLives();
+      codeEditor.value = currentMission.starter;
+      feedback("SYSTEM VOICE: Mission reset. Visual repair attempt ready.", "normal");
+      setState("VISUAL REPAIR MODE", "OFFLINE");
+      renderOffline(currentMission);
+      completeModal.classList.remove("show");
+      gameOverModal.classList.remove("show");
+    }
+
+    function goToMap() {
+      window.location.href = "css-map.html";
+    }
+
+    function goNextQuest() {
+      completeModal.classList.remove("show");
+
+      const oldStyle = document.getElementById("mission-style-preview");
+      if (oldStyle) oldStyle.remove();
+
+      currentLevel = Number(localStorage.getItem("css-level")) || 1;
+
+      if (currentLevel >= 11) {
+        showCompletedWorld();
+        return;
+      }
+
+      currentMission = missions.find(m => m.level === currentLevel);
+      lives = 3;
+      hintIndex = 0;
+      missionComplete = false;
+      loadMission(currentMission);
+    }
+
+    function showCompletedWorld() {
+      const oldStyle = document.getElementById("mission-style-preview");
+      if (oldStyle) oldStyle.remove();
+
+      app.innerHTML = `
+        <section class="completed-state">
+          <div class="completed-card">
+            <h1 class="pixel">WORLD 02 RESTORED</h1>
+            <p>
+              Design Circuit is back online. You restored color, surfaces, spacing, layout, interaction, and visual energy.
+              Return to the map to continue your ByteRush journey.
+            </p>
+            <button onclick="window.location.href='css-map.html'" class="primary-btn">RETURN TO MAP</button>
+          </div>
+        </section>
+      `;
+    }
+
+    function cleanCSS(css) {
+      return String(css)
+        .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "")
+        .replace(/<\/?style>/gi, "");
+    }
+
+    function scopeCSS(css) {
+      let scoped = css;
+
+      scoped = scoped.replace(/body\s*\{/gi, ".preview-scope {");
+      scoped = scoped.replace(/h1\s*\{/gi, ".preview-scope h1 {");
+      scoped = scoped.replace(/p\s*\{/gi, ".preview-scope p {");
+      scoped = scoped.replace(/button\s*:\s*hover\s*\{/gi, ".preview-scope button:hover {");
+      scoped = scoped.replace(/button\s*\{/gi, ".preview-scope button {");
+      scoped = scoped.replace(/\.card\s*\{/gi, ".preview-scope .card {");
+      scoped = scoped.replace(/\.panel\s*\{/gi, ".preview-scope .card {");
+      scoped = scoped.replace(/\.container\s*\{/gi, ".preview-scope .container {");
+      scoped = scoped.replace(/\.core\s*\{/gi, ".preview-scope .core {");
+
+      return scoped;
+    }
+
+    function escapeHTML(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function wait(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function playSound(audio) {
+      if (!audio) return;
+
+      try {
+        audio.currentTime = 0;
+        audio.play().catch(() => {});
+      } catch (e) {}
+    }
+
+    function normalize(code) {
+      return String(code).replace(/\s+/g, " ").trim();
+    }
+
+    function hasSelector(code, selector) {
+      const escaped = selector.replace(".", "\\.");
+      const pattern = new RegExp(escaped + "\\s*\\{", "i");
+      return pattern.test(code);
+    }
+
+    function hasProperty(code, property) {
+      const pattern = new RegExp(property.replace("-", "\\-") + "\\s*:\\s*[^;]+;", "i");
+      return pattern.test(code);
+    }
+
+    function hasBlankValue(code, property) {
+      const pattern = new RegExp(property.replace("-", "\\-") + "\\s*:\\s*(_+|\\s*)\\s*;", "i");
+      return pattern.test(code);
+    }
+
+    function pass() {
+      return { ok: true, message: "" };
+    }
+
+    function fail(message) {
+      return { ok: false, message };
+    }
+
+    runBtn.addEventListener("click", runPreview);
+    checkBtn.addEventListener("click", checkMission);
+    hintBtn.addEventListener("click", showHint);
+    resetBtn.addEventListener("click", resetMission);
+    mapBtn.addEventListener("click", goToMap);
+
+    completeMapBtn.addEventListener("click", goToMap);
+    nextQuestBtn.addEventListener("click", goNextQuest);
+
+    tryAgainBtn.addEventListener("click", resetMission);
+    gameOverMapBtn.addEventListener("click", goToMap);
+
+    codeEditor.addEventListener("keydown", function(e) {
+      if (e.key === "Tab") {
+        e.preventDefault();
+
+        const start = codeEditor.selectionStart;
+        const end = codeEditor.selectionEnd;
+        const before = codeEditor.value.substring(0, start);
+        const after = codeEditor.value.substring(end);
+
+        codeEditor.value = before + "  " + after;
+        codeEditor.selectionStart = codeEditor.selectionEnd = start + 2;
+      }
+    });
+
+    init();
+  </script>
 </body>
 </html>

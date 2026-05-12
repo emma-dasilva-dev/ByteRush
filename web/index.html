@@ -680,18 +680,6 @@ missionCards.forEach((card) => {
 function startGame() {
   music.play().catch(() => {});
 
-  let playerName = localStorage.getItem("player-name");
-
-  if (!playerName || playerName.trim() === "") {
-    playerName = prompt("What name do you want to be called?");
-
-    if (!playerName || playerName.trim() === "") {
-      playerName = "Builder";
-    }
-
-    localStorage.setItem("player-name", playerName.trim());
-  }
-
   bootScreen.style.display = "flex";
   systemStatus.textContent = t("bootingGame");
 
