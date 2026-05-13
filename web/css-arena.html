@@ -404,6 +404,83 @@
       display: grid;
       place-items: center;
     }
+    .css-test-zone {
+  width: 100%;
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.preview-scope {
+  width: 100%;
+  min-height: 100%;
+}
+
+.css-live-object {
+  width: min(420px, 100%);
+  min-height: 220px;
+  background: #1f2933;
+  border: 1px dashed rgba(230, 255, 233, 0.22);
+  border-radius: 12px;
+  padding: 18px;
+  color: #9ca3af;
+  text-align: left;
+  transition: all 0.25s ease;
+}
+
+.css-live-object h1 {
+  color: #7d8590;
+  font-size: 20px;
+  margin-bottom: 10px;
+  transition: all 0.25s ease;
+}
+
+.css-live-object p {
+  color: #8b949e;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  transition: all 0.25s ease;
+}
+
+.css-live-object button {
+  color: #9ca3af;
+  border-color: rgba(230,255,233,0.18);
+  transition: all 0.25s ease;
+}
+
+.css-live-object .card {
+  background: rgba(255,255,255,0.04);
+  border: 1px dashed rgba(230,255,233,0.15);
+  padding: 12px;
+  margin: 8px 0;
+  transition: all 0.25s ease;
+}
+
+.css-live-object .panel {
+  background: rgba(255,255,255,0.04);
+  padding: 12px;
+  transition: all 0.25s ease;
+}
+
+.css-live-object .container {
+  border: 1px dashed rgba(250,204,21,0.2);
+  padding: 10px;
+  transition: all 0.25s ease;
+}
+
+.css-live-object .module {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(230,255,233,0.14);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.css-live-object .core {
+  display: inline-block;
+  padding: 16px;
+  border: 1px dashed rgba(250,204,21,0.28);
+  border-radius: 12px;
+}
 
     .design-card {
       width: min(460px, 100%);
@@ -1200,16 +1277,15 @@
         reward: 50,
         difficulty: "BOSS",
         objective: "Build a premium interface by combining CSS design systems.",
-        instruction: "Final repair: style the card with background, color, size, spacing, borders, rounded corners, and alignment or flexbox.",
-        shortHint: "Hint: The Design Core needs multiple CSS systems working together.",
+        instruction: "Final repair: style .card with background-color, color, font-size, padding, border, border-radius, and text-align.",        shortHint: "Hint: The Design Core needs multiple CSS systems working together.",
         voice: "Build the premium interface.",
         learned: "You learned how multiple CSS properties work together to create a polished interface.",
-        starter: ".card {\n\n}",
-        hints: [
-          "Start with background and text color.",
-          "Add font-size, padding, margin, border, and border-radius.",
-          "Finish with text-align or display: flex."
-        ],
+starter: ".card {\n  background-color: ;\n  color: ;\n  font-size: ;\n  padding: ;\n  border: ;\n  border-radius: ;\n  text-align: ;\n}",hints: [
+  "Start with .card because the boss system is the card interface.",
+  "Add these: background-color, color, font-size, padding, border, border-radius, and text-align.",
+  "Example: .card { background-color: #07111D; color: #E6FFE9; font-size: 18px; padding: 24px; border: 2px solid #39FF5A; border-radius: 16px; text-align: center; }"
+],
+        
         offline: {
           title: "DESIGN CORE OFFLINE",
           sub: "FULL INTERFACE REPAIR REQUIRED"
@@ -1464,8 +1540,8 @@
       }
 
       setTimeout(() => {
-        completeModal.classList.add("show");
-      }, 700);
+  completeModal.classList.add("show");
+}, 4000);
     }
 
     function failMissionCheck(message) {
@@ -1494,54 +1570,48 @@
 
   const style = document.createElement("style");
   style.id = styleId;
-  style.textContent = scopeCSS(css);
+
+  style.textContent = `
+    ${scopeCSS(css)}
+  `;
+
   document.head.appendChild(style);
 
   let previewContent = "";
 
   if (currentMission.level === 1) {
     previewContent = `
-      <div class="container">
-        <div class="card design-card">
-          <h1>COLOR REACTOR</h1>
-          <p>The color signal is waiting for repair.</p>
-          <button type="button">Color System</button>
-        </div>
+      <div class="css-live-object">
+        <h1>COLOR REACTOR</h1>
+        <p>Target: change the heading color.</p>
       </div>
     `;
   }
 
   if (currentMission.level === 2) {
     previewContent = `
-      <div class="container">
-        <div class="card design-card">
-          <h1>WORLD SKIN</h1>
-          <p>The surface layer is unstable until the background is repaired.</p>
-          <button type="button">Surface Check</button>
-        </div>
+      <div class="css-live-object">
+        <h1>WORLD SKIN</h1>
+        <p>Target: change the body background surface.</p>
       </div>
     `;
   }
 
   if (currentMission.level === 3) {
     previewContent = `
-      <div class="container">
-        <div class="card design-card">
-          <h1>Weak Signal</h1>
-          <p>The heading is too small to command the interface.</p>
-          <button type="button">Signal Test</button>
-        </div>
+      <div class="css-live-object">
+        <h1>Weak Signal</h1>
+        <p>Target: increase the heading font size.</p>
       </div>
     `;
   }
 
   if (currentMission.level === 4) {
     previewContent = `
-      <div class="container">
-        <div class="card design-card">
+      <div class="css-live-object">
+        <div class="card">
           <h1>SHIELD FRAME</h1>
-          <p>This panel is exposed. Add a border to protect the interface.</p>
-          <button type="button">Shield Status</button>
+          <p>Target: protect this card with a border.</p>
         </div>
       </div>
     `;
@@ -1549,11 +1619,10 @@
 
   if (currentMission.level === 5) {
     previewContent = `
-      <div class="container">
-        <div class="card design-card">
+      <div class="css-live-object">
+        <div class="panel">
           <h1>BALANCE GRID</h1>
-          <p>The screen feels unstable until the content is aligned.</p>
-          <button type="button">Stabilize</button>
+          <p>Target: center this panel content.</p>
         </div>
       </div>
     `;
@@ -1561,11 +1630,10 @@
 
   if (currentMission.level === 6) {
     previewContent = `
-      <div class="container">
-        <div class="card design-card">
+      <div class="css-live-object">
+        <div class="card">
           <h1>BREATHING ROOM</h1>
-          <p>The interface is cramped. Give this card space inside and outside.</p>
-          <button type="button">Space Check</button>
+          <p>Target: add padding inside and margin outside this card.</p>
         </div>
       </div>
     `;
@@ -1573,35 +1641,32 @@
 
   if (currentMission.level === 7) {
     previewContent = `
-      <div class="container">
-        <div class="card design-card mini-module">COLOR NODE</div>
-        <div class="card design-card mini-module">LAYOUT NODE</div>
-        <div class="card design-card mini-module">MOTION NODE</div>
+      <div class="css-live-object">
+        <div class="container">
+          <div class="module">COLOR</div>
+          <div class="module">LAYOUT</div>
+          <div class="module">MOTION</div>
+        </div>
       </div>
     `;
   }
 
   if (currentMission.level === 8) {
     previewContent = `
-      <div class="container">
-        <div class="card design-card">
-          <h1>MOTION PULSE</h1>
-          <p>The button is waiting for hover feedback.</p>
-          <button type="button">Hover Me</button>
-        </div>
+      <div class="css-live-object">
+        <h1>MOTION PULSE</h1>
+        <p>Target: make the button respond on hover.</p>
+        <button type="button">Hover Me</button>
       </div>
     `;
   }
 
   if (currentMission.level === 9) {
     previewContent = `
-      <div class="container">
-        <div class="card design-card">
-          <div class="core">
-            <h1>ENERGY CORE</h1>
-            <p>The core is frozen. Animation will restart visual energy.</p>
-            <button type="button">Energy Test</button>
-          </div>
+      <div class="css-live-object">
+        <div class="core">
+          <h1>ENERGY CORE</h1>
+          <p>Target: animate this core.</p>
         </div>
       </div>
     `;
@@ -1620,10 +1685,10 @@
 
     previewContent = `
       ${bossStages}
-      <div class="container">
-        <div class="card design-card">
+      <div class="css-live-object">
+        <div class="card">
           <h1>DESIGN CORE</h1>
-          <p>Build a premium interface using background, color, size, spacing, borders, radius, and alignment.</p>
+          <p>Target: build this into a premium interface.</p>
           <button type="button">Activate Core</button>
         </div>
       </div>
@@ -1631,18 +1696,19 @@
   }
 
   previewWorld.innerHTML = `
-    <div class="design-stage preview-scope ${restored ? "restored-preview" : ""}">
+    <div class="css-test-zone preview-scope ${restored ? "restored-preview" : ""}">
       ${previewContent}
     </div>
   `;
 
   if (restored) {
-    const cards = previewWorld.querySelectorAll(".design-card");
-    cards.forEach(card => {
-      card.classList.add("system-card", "restored");
-    });
-  }
+    const target = previewWorld.querySelector(".css-live-object");
+    if (target) {
+      target.style.boxShadow = "0 0 28px rgba(57,255,90,0.16)";
+      target.style.borderColor = "rgba(57,255,90,0.55)";
     }
+  }
+}
 
     function showHint() {
       if (missionComplete) return;
@@ -1722,20 +1788,20 @@
     }
 
     function scopeCSS(css) {
-      let scoped = css;
+  let scoped = css;
 
-      scoped = scoped.replace(/body\s*\{/gi, ".preview-scope {");
-      scoped = scoped.replace(/h1\s*\{/gi, ".preview-scope h1 {");
-      scoped = scoped.replace(/p\s*\{/gi, ".preview-scope p {");
-      scoped = scoped.replace(/button\s*:\s*hover\s*\{/gi, ".preview-scope button:hover {");
-      scoped = scoped.replace(/button\s*\{/gi, ".preview-scope button {");
-      scoped = scoped.replace(/\.card\s*\{/gi, ".preview-scope .card {");
-      scoped = scoped.replace(/\.panel\s*\{/gi, ".preview-scope .card {");
-      scoped = scoped.replace(/\.container\s*\{/gi, ".preview-scope .container {");
-      scoped = scoped.replace(/\.core\s*\{/gi, ".preview-scope .core {");
+  scoped = scoped.replace(/body\s*\{/gi, ".preview-scope .css-live-object {");
+  scoped = scoped.replace(/h1\s*\{/gi, ".preview-scope h1 {");
+  scoped = scoped.replace(/p\s*\{/gi, ".preview-scope p {");
+  scoped = scoped.replace(/button\s*:\s*hover\s*\{/gi, ".preview-scope button:hover {");
+  scoped = scoped.replace(/button\s*\{/gi, ".preview-scope button {");
+  scoped = scoped.replace(/\.card\s*\{/gi, ".preview-scope .card {");
+  scoped = scoped.replace(/\.panel\s*\{/gi, ".preview-scope .panel {");
+  scoped = scoped.replace(/\.container\s*\{/gi, ".preview-scope .container {");
+  scoped = scoped.replace(/\.core\s*\{/gi, ".preview-scope .core {");
 
-      return scoped;
-    }
+  return scoped;
+}
 
     function escapeHTML(str) {
       return String(str)

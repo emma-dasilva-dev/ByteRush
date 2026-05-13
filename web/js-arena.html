@@ -1,1502 +1,2102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>JavaScript Core | ByteRush</title>
-
-<link rel="stylesheet" href="arcade-theme.css">
-
-<style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Press+Start+2P&display=swap');
-
-:root {
-  --green: #39FF5A;
-  --red: #FF3B3B;
-  --bg: #03080F;
-  --panel: #050B12;
-  --panel2: #07111D;
-  --text: #E6FFE9;
-  --muted: rgba(230, 255, 233, 0.68);
-  --line: rgba(57, 255, 90, 0.28);
-  --yellow: #FACC15;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  background:
-    radial-gradient(circle at 12% 8%, rgba(57,255,90,0.08), transparent 26%),
-    radial-gradient(circle at 88% 82%, rgba(250,204,21,0.06), transparent 28%),
-    linear-gradient(rgba(57,255,90,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(57,255,90,0.025) 1px, transparent 1px),
-    var(--bg);
-  background-size: auto, auto, 42px 42px, 42px 42px;
-  color: var(--text);
-  font-family: "IBM Plex Mono", monospace;
-  padding: 10px;
-}
-
-.pixel {
-  font-family: "Press Start 2P", monospace;
-}
-
-#language-toggle {
-  color: var(--yellow) !important;
-  border-color: rgba(250,204,21,0.55) !important;
-}
-
-.arena {
-  max-width: 1240px;
-  height: calc(100vh - 20px);
-  margin: 0 auto;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  gap: 8px;
-}
-
-.top-command,
-.panel,
-.feedback-console {
-  border: 1px solid var(--line);
-  background: rgba(5, 11, 18, 0.92);
-  box-shadow: 0 18px 45px rgba(0,0,0,0.35);
-  position: relative;
-}
-
-.top-command::before,
-.panel::before,
-.feedback-console::before {
-  content: "";
-  position: absolute;
-  inset: 7px;
-  border: 1px dashed rgba(250,204,21,0.08);
-  pointer-events: none;
-}
-
-.top-command {
-  padding: 10px 12px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 16px;
-  align-items: center;
-}
-
-h1 {
-  margin: 0 0 4px;
-  color: var(--green);
-  font-size: 15px;
-  line-height: 1.4;
-  text-shadow: 2px 2px 0 rgba(250,204,21,0.16);
-}
-
-.desc {
-  margin: 0;
-  color: var(--muted);
-  font-size: 11px;
-}
-
-.stats {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-.stat-pill {
-  border: 1px solid rgba(250,204,21,0.35);
-  background: var(--panel2);
-  padding: 7px 9px;
-  min-width: 82px;
-  position: relative;
-  overflow: hidden;
-}
-
-.stat-pill::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 4px;
-  height: 100%;
-  background: var(--yellow);
-  opacity: 0.75;
-}
-
-.stat-pill span {
-  display: block;
-  color: var(--yellow);
-  font-size: 6px;
-  margin-bottom: 4px;
-}
-
-.stat-pill strong {
-  font-size: 11px;
-  color: var(--text);
-  font-weight: 700;
-}
-
-.main-arena {
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 230px minmax(360px, 1.2fr) minmax(320px, 1fr);
-  gap: 8px;
-}
-
-.panel {
-  padding: 10px;
-  min-height: 0;
-}
-
-.panel-title,
-.label {
-  font-family: "Press Start 2P", monospace;
-  font-size: 6px;
-  line-height: 1.5;
-  color: var(--yellow);
-  margin-bottom: 8px;
-}
-
-.mission-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.mission-title {
-  color: var(--text);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.4;
-}
-
-.skill-box {
-  background: var(--panel2);
-  border: 1px solid rgba(250,204,21,0.22);
-  padding: 10px;
-  position: relative;
-  z-index: 1;
-}
-
-.skill-box h2 {
-  margin: 0 0 6px;
-  color: var(--green);
-  font-size: 13px;
-}
-
-.skill-box p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.55;
-}
-
-.rule-box {
-  border-left: 3px solid var(--yellow);
-  background: rgba(250,204,21,0.07);
-  padding: 9px;
-  color: var(--text);
-  font-size: 11px;
-  line-height: 1.5;
-  position: relative;
-  z-index: 1;
-}
-
-.highlight {
-  color: var(--yellow);
-  font-weight: 700;
-}
-
-.editor-panel,
-.preview-panel {
-  display: flex;
-  flex-direction: column;
-}
-
-textarea {
-  width: 100%;
-  flex: 1;
-  min-height: 260px;
-  resize: none;
-  background: #02060B;
-  color: var(--green);
-  border: 1px solid var(--line);
-  padding: 11px;
-  font-size: 13px;
-  line-height: 1.5;
-  outline: none;
-  font-family: "IBM Plex Mono", monospace;
-  box-shadow: inset 0 0 0 1px rgba(250,204,21,0.04);
-}
-
-textarea:focus {
-  border-color: var(--yellow);
-  box-shadow: 0 0 0 2px rgba(250,204,21,0.08);
-}
-
-.buttons {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
-
-button {
-  border: 1px solid var(--yellow);
-  background: transparent;
-  color: var(--yellow);
-  padding: 8px 10px;
-  cursor: pointer;
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 11px;
-  font-weight: 700;
-  transition: 0.18s ease;
-}
-
-button:hover {
-  background: rgba(250,204,21,0.1);
-  transform: translateY(-1px);
-}
-
-button.primary {
-  background: var(--green);
-  color: var(--bg);
-  border-color: var(--green);
-  box-shadow: 4px 4px 0 rgba(250,204,21,0.45);
-}
-
-button.primary:hover {
-  box-shadow: 5px 5px 0 rgba(250,204,21,0.65);
-}
-
-button.danger {
-  color: var(--red);
-  border-color: var(--red);
-}
-
-button.danger:hover {
-  background: rgba(255,59,59,0.12);
-}
-
-button:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.browser-frame {
-  flex: 1;
-  min-height: 260px;
-  background: #02060B;
-  border: 1px solid var(--line);
-  display: flex;
-  flex-direction: column;
-}
-
-.browser-top {
-  height: 30px;
-  border-bottom: 1px solid var(--line);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 9px;
-  color: var(--muted);
-  font-size: 10px;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--green);
-  opacity: 0.8;
-}
-
-.dot.red {
-  background: var(--red);
-}
-
-.dot.yellow {
-  background: var(--yellow);
-}
-
-.preview-wrap {
-  flex: 1;
-  padding: 8px;
-}
-
-iframe {
-  width: 100%;
-  height: 100%;
-  min-height: 220px;
-  border: none;
-  background: #02060B;
-}
-
-.feedback-console {
-  padding: 10px 12px;
-}
-
-.console-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 1.4fr 1.2fr 0.9fr;
-  gap: 10px;
-}
-
-.console-item {
-  background: var(--panel2);
-  border: 1px solid rgba(250,204,21,0.2);
-  padding: 8px;
-  min-height: 50px;
-}
-
-.message {
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.45;
-}
-
-.correct {
-  color: var(--green);
-}
-
-.error {
-  color: var(--red);
-}
-
-.almost {
-  color: var(--yellow);
-}
-
-.success-flash {
-  animation: flash 0.4s ease-in-out;
-}
-
-@keyframes flash {
-  0% { background-color: var(--bg); }
-  50% { background-color: rgba(57, 255, 90, 0.12); }
-  100% { background-color: var(--bg); }
-}
-
-.preview-glow {
-  animation: previewGlow 0.7s ease-in-out;
-}
-
-@keyframes previewGlow {
-  0% { border-color: var(--line); }
-  50% { border-color: var(--yellow); }
-  100% { border-color: var(--line); }
-}
-
-.error-shake {
-  animation: shake 0.3s ease-in-out;
-}
-
-@keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-6px); }
-  50% { transform: translateX(6px); }
-  75% { transform: translateX(-6px); }
-  100% { transform: translateX(0); }
-}
-
-.xp-pop {
-  position: fixed;
-  left: 50%;
-  top: 58%;
-  color: var(--yellow);
-  font-size: 16px;
-  font-weight: 700;
-  pointer-events: none;
-  animation: xpFloat 1s ease-out forwards;
-  z-index: 9999;
-}
-
-@keyframes xpFloat {
-  0% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-45px) scale(1.2);
-  }
-}
-
-.mission-modal,
-.start-modal,
-.game-over-modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(3, 8, 15, 0.88);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 99999;
-  padding: 18px;
-}
-
-.mission-modal.show,
-.start-modal.show,
-.game-over-modal.show {
-  display: flex;
-}
-
-.mission-box,
-.start-box,
-.game-over-box {
-  width: min(520px, 100%);
-  background: var(--panel);
-  border: 2px solid var(--yellow);
-  padding: 24px;
-  text-align: center;
-  box-shadow: 8px 8px 0 rgba(250,204,21,0.18);
-  animation: popupIn 0.25s ease-out;
-}
-
-.game-over-box {
-  border-color: var(--red);
-  box-shadow: 8px 8px 0 rgba(255, 59, 59, 0.22);
-}
-
-@keyframes popupIn {
-  from {
-    opacity: 0;
-    transform: scale(0.92) translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-.mission-box h2,
-.start-box h2,
-.game-over-box h2 {
-  margin: 0 0 14px;
-  color: var(--yellow);
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-.game-over-box h2 {
-  color: var(--red);
-}
-
-.mission-box p,
-.start-box p,
-.game-over-box p {
-  margin: 0 0 14px;
-  color: var(--text);
-  font-size: 12px;
-  line-height: 1.6;
-}
-
-.learned-box,
-.start-instruction-box {
-  border: 1px solid rgba(250,204,21,0.35);
-  background: var(--panel2);
-  padding: 12px;
-  margin: 14px 0;
-}
-
-.learned-box p,
-.start-instruction-box p {
-  color: var(--muted);
-  font-size: 11px;
-  margin: 0;
-}
-
-.modal-next-btn,
-.start-btn,
-.try-again-btn {
-  margin-top: 10px;
-  background: var(--green);
-  color: var(--bg);
-  padding: 9px 14px;
-  border-color: var(--green);
-}
-
-.try-again-btn {
-  border-color: var(--red);
-  background: var(--red);
-  color: white;
-}
-
-@media (max-width: 1050px) {
-  .arena {
-    height: auto;
-  }
-
-  .top-command,
-  .main-arena,
-  .console-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .stats {
-    justify-content: flex-start;
-  }
-
-  textarea,
-  .browser-frame {
-    min-height: 240px;
-  }
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ByteRush | JavaScript Arena</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Press+Start+2P&display=swap');
+
+    :root {
+      --green: #39FF5A;
+      --yellow: #FACC15;
+      --red: #FF3B3B;
+      --bg: #03080F;
+      --panel: #050B12;
+      --panel2: #07111D;
+      --text: #E6FFE9;
+      --muted: rgba(230, 255, 233, 0.68);
+      --line: rgba(57, 255, 90, 0.28);
+      --yellowLine: rgba(250, 204, 21, 0.58);
+      --shadow: rgba(0, 0, 0, 0.42);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        linear-gradient(rgba(57,255,90,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(57,255,90,0.035) 1px, transparent 1px),
+        radial-gradient(circle at 18% 12%, rgba(57,255,90,0.10), transparent 30%),
+        radial-gradient(circle at 82% 82%, rgba(250,204,21,0.08), transparent 28%),
+        var(--bg);
+      background-size: 38px 38px, 38px 38px, auto, auto;
+      color: var(--text);
+      font-family: "IBM Plex Mono", monospace;
+      overflow-x: hidden;
+    }
+
+    .page {
+      width: min(1220px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 18px 0;
+      display: grid;
+      gap: 14px;
+    }
+
+    .pixel {
+      font-family: "Press Start 2P", monospace;
+      letter-spacing: 0.5px;
+    }
+
+    .top-bar,
+    .arena,
+    .mission-strip {
+      background: linear-gradient(180deg, rgba(7,17,29,0.98), rgba(5,11,18,0.98));
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 50px var(--shadow);
+      position: relative;
+    }
+
+    .top-bar::before,
+    .arena::before,
+    .mission-strip::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border: 1px dashed var(--yellowLine);
+      pointer-events: none;
+      opacity: 0.8;
+    }
+
+    .top-bar {
+      border-radius: 18px;
+      padding: 20px 22px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .world-title {
+      font-size: 11px;
+      color: var(--green);
+      line-height: 1.7;
+    }
+
+    .mission-title {
+      font-size: 12px;
+      color: var(--yellow);
+      line-height: 1.7;
+      margin-top: 4px;
+    }
+
+    .stats {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .stat-pill {
+      min-height: 34px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 11px;
+      border: 1px solid rgba(57,255,90,0.22);
+      background: rgba(3,8,15,0.74);
+      border-radius: 999px;
+      color: var(--text);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 8px;
+    }
+
+    .lives {
+      color: var(--red);
+      letter-spacing: 2px;
+      font-size: 14px;
+    }
+
+    .objective {
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress-track {
+      height: 8px;
+      background: rgba(230,255,233,0.08);
+      border: 1px solid rgba(57,255,90,0.18);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress-fill {
+      width: 10%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), var(--yellow));
+      border-radius: 999px;
+      transition: width 0.35s ease;
+    }
+
+    .arena {
+      border-radius: 20px;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: 45% 55%;
+      min-height: 500px;
+    }
+
+    .panel {
+      position: relative;
+      z-index: 1;
+      background: rgba(3,8,15,0.34);
+      border: 1px solid rgba(57,255,90,0.19);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      min-width: 0;
+    }
+
+    .editor-panel {
+      border-radius: 14px 0 0 14px;
+      border-right: none;
+    }
+
+    .preview-panel {
+      border-radius: 0 14px 14px 0;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(57,255,90,0.16);
+      padding-bottom: 12px;
+    }
+
+    .panel-title {
+      font-size: 10px;
+      color: var(--green);
+      line-height: 1.6;
+    }
+
+    .system-state {
+      font-size: 8px;
+      color: var(--yellow);
+      border: 1px solid rgba(250,204,21,0.4);
+      background: rgba(250,204,21,0.06);
+      border-radius: 999px;
+      padding: 8px 9px;
+      white-space: nowrap;
+    }
+
+    .instruction {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.55;
+      min-height: 42px;
+    }
+
+    textarea {
+      width: 100%;
+      flex: 1;
+      min-height: 255px;
+      resize: none;
+      background:
+        linear-gradient(rgba(57,255,90,0.025) 1px, transparent 1px),
+        var(--panel2);
+      background-size: 100% 28px;
+      border: 1px solid rgba(57,255,90,0.28);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 16px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 15px;
+      line-height: 1.55;
+      outline: none;
+      box-shadow: inset 0 0 28px rgba(0,0,0,0.35);
+    }
+
+    textarea:focus {
+      border-color: rgba(250,204,21,0.75);
+    }
+
+    .button-row {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      font-family: "Press Start 2P", monospace;
+      font-size: 8px;
+      line-height: 1.4;
+      color: var(--text);
+      background: rgba(7,17,29,0.92);
+      border: 1px solid rgba(57,255,90,0.3);
+      border-radius: 10px;
+      padding: 11px 12px;
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      border-color: var(--yellow);
+      color: var(--yellow);
+      background: rgba(250,204,21,0.06);
+    }
+
+    .primary-btn {
+      background: rgba(57,255,90,0.11);
+      border-color: rgba(57,255,90,0.55);
+      color: var(--green);
+    }
+
+    .map-btn {
+      margin-left: auto;
+    }
+
+    .feedback {
+      min-height: 42px;
+      border: 1px solid rgba(57,255,90,0.15);
+      background: rgba(7,17,29,0.7);
+      border-radius: 12px;
+      padding: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .feedback.success {
+      color: var(--green);
+      border-color: rgba(57,255,90,0.5);
+      background: rgba(57,255,90,0.06);
+    }
+
+    .feedback.error {
+      color: #ffb4b4;
+      border-color: rgba(255,59,59,0.5);
+      background: rgba(255,59,59,0.06);
+    }
+
+    .feedback.scan {
+      color: var(--yellow);
+      border-color: rgba(250,204,21,0.55);
+      background: rgba(250,204,21,0.07);
+    }
+
+    .preview-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid rgba(57,255,90,0.16);
+      border-radius: 12px;
+      background: rgba(3,8,15,0.5);
+    }
+
+    .status-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 12px rgba(255,59,59,0.45);
+    }
+
+    .dot.repair {
+      background: var(--yellow);
+      box-shadow: 0 0 12px rgba(250,204,21,0.42);
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+
+    .dot.online {
+      background: var(--green);
+      box-shadow: 0 0 15px rgba(57,255,90,0.46);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.55; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.12); }
+    }
+
+    .preview-label {
+      font-size: 9px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .preview-state {
+      font-size: 10px;
+      color: var(--yellow);
+    }
+
+    .preview-screen {
+      flex: 1;
+      min-height: 330px;
+      border-radius: 16px;
+      border: 1px solid rgba(57,255,90,0.25);
+      background:
+        radial-gradient(circle at center, rgba(57,255,90,0.055), transparent 45%),
+        rgba(7,17,29,0.98);
+      padding: 18px;
+      overflow: auto;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      transition: 0.25s ease;
+    }
+
+    .preview-screen.online {
+      border-color: rgba(57,255,90,0.65);
+      box-shadow: inset 0 0 30px rgba(57,255,90,0.08), 0 0 22px rgba(57,255,90,0.08);
+    }
+
+    .preview-world {
+      width: 100%;
+      min-height: 100%;
+      border: 1px dashed rgba(230,255,233,0.16);
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      text-align: center;
+      color: var(--muted);
+      background:
+        linear-gradient(90deg, rgba(57,255,90,0.025) 1px, transparent 1px),
+        linear-gradient(rgba(57,255,90,0.025) 1px, transparent 1px),
+        rgba(3,8,15,0.35);
+      background-size: 28px 28px;
+    }
+
+    .logic-card {
+      width: min(470px, 100%);
+      border: 1px solid rgba(57,255,90,0.25);
+      background: rgba(5,11,18,0.86);
+      border-radius: 16px;
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+      transition: 0.25s ease;
+    }
+
+    .logic-card.restored {
+      border-color: rgba(57,255,90,0.68);
+      box-shadow: 0 0 28px rgba(57,255,90,0.13);
+      animation: successFlash 0.7s ease;
+    }
+
+    .logic-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(57,255,90,0.08), transparent);
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+
+    .logic-card.flow::before {
+      animation: dataFlow 1.4s ease;
+      opacity: 1;
+    }
+
+    @keyframes dataFlow {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(100%); }
+    }
+
+    @keyframes successFlash {
+      0% { box-shadow: 0 0 0 rgba(57,255,90,0); }
+      45% { box-shadow: 0 0 30px rgba(57,255,90,0.22); }
+      100% { box-shadow: 0 0 0 rgba(57,255,90,0); }
+    }
+
+    .logic-title {
+      font-family: "Press Start 2P", monospace;
+      color: var(--yellow);
+      font-size: 11px;
+      line-height: 1.8;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logic-text {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .brain-node {
+      width: 92px;
+      height: 92px;
+      margin: 0 auto 14px;
+      border: 1px solid rgba(250,204,21,0.44);
+      background: rgba(250,204,21,0.06);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 28px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .brain-node.online {
+      border-color: rgba(57,255,90,0.72);
+      background: rgba(57,255,90,0.08);
+      box-shadow: 0 0 22px rgba(57,255,90,0.16);
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+
+    .signal-line {
+      width: 80%;
+      height: 4px;
+      margin: 14px auto;
+      border-radius: 999px;
+      background: rgba(230,255,233,0.09);
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+    }
+
+    .signal-line span {
+      display: block;
+      width: 35%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--yellow), var(--green));
+      transform: translateX(-120%);
+    }
+
+    .signal-line.active span {
+      animation: signalMove 1s linear infinite;
+    }
+
+    @keyframes signalMove {
+      from { transform: translateX(-120%); }
+      to { transform: translateX(300%); }
+    }
+
+    .logic-output {
+      border: 1px solid rgba(57,255,90,0.22);
+      background: rgba(3,8,15,0.72);
+      border-radius: 12px;
+      padding: 12px;
+      min-height: 48px;
+      color: var(--text);
+      line-height: 1.5;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logic-button-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logic-button {
+      color: var(--green);
+      border-color: rgba(57,255,90,0.35);
+    }
+
+    .logic-button.inactive {
+      color: #7d8590;
+      border-color: rgba(230,255,233,0.12);
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .node-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mini-node {
+      border: 1px solid rgba(230,255,233,0.12);
+      background: rgba(255,255,255,0.04);
+      border-radius: 10px;
+      padding: 10px 4px;
+      color: #8b949e;
+      font-size: 12px;
+      transition: 0.25s ease;
+    }
+
+    .mini-node.online {
+      color: var(--green);
+      border-color: rgba(57,255,90,0.55);
+      background: rgba(57,255,90,0.08);
+      box-shadow: 0 0 14px rgba(57,255,90,0.1);
+    }
+
+    .vault-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .vault-item {
+      border: 1px solid rgba(57,255,90,0.24);
+      background: rgba(57,255,90,0.055);
+      border-radius: 10px;
+      padding: 9px;
+      color: var(--green);
+    }
+
+    .boss-stage-list {
+      text-align: left;
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 13px;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .boss-stage-list .on {
+      color: var(--green);
+    }
+
+    .counter-display {
+      width: 110px;
+      height: 82px;
+      margin: 12px auto;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      border: 1px solid rgba(250,204,21,0.42);
+      background: rgba(250,204,21,0.07);
+      color: var(--yellow);
+      font-family: "Press Start 2P", monospace;
+      font-size: 28px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .broken-title {
+      color: #ffb4b4;
+      font-family: "Press Start 2P", monospace;
+      font-size: 11px;
+      line-height: 1.9;
+    }
+
+    .broken-sub {
+      color: var(--muted);
+      margin-top: 12px;
+      line-height: 1.6;
+    }
+
+    .mission-strip {
+      border-radius: 18px;
+      padding: 18px 20px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .mission-icon {
+      position: relative;
+      z-index: 1;
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      border: 1px solid rgba(250,204,21,0.42);
+      background: rgba(250,204,21,0.075);
+      font-size: 25px;
+    }
+
+    .mission-info {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 9px;
+    }
+
+    .mission-meta-title {
+      color: var(--yellow);
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    .meta-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .meta-grid strong {
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    .system-voice {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .system-voice span {
+      color: var(--green);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(3,8,15,0.78);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 30;
+      padding: 20px;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      width: min(520px, 100%);
+      background: linear-gradient(180deg, var(--panel2), var(--panel));
+      border: 1px solid rgba(57,255,90,0.35);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.65);
+      position: relative;
+      animation: modalPop 0.24s ease;
+    }
+
+    .modal::before {
+      content: "";
+      position: absolute;
+      inset: 9px;
+      border: 1px dashed var(--yellowLine);
+      border-radius: 14px;
+      pointer-events: none;
+    }
+
+    @keyframes modalPop {
+      from { transform: scale(0.96) translateY(8px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .modal-content {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 14px;
+      text-align: center;
+    }
+
+    .modal-title {
+      font-size: 14px;
+      color: var(--green);
+      line-height: 1.7;
+    }
+
+    .modal-subtitle {
+      color: var(--yellow);
+      font-size: 11px;
+      line-height: 1.8;
+    }
+
+    .modal-text {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .completed-state {
+      min-height: 75vh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .completed-card {
+      width: min(680px, 100%);
+      background: linear-gradient(180deg, var(--panel2), var(--panel));
+      border: 1px solid rgba(57,255,90,0.35);
+      border-radius: 22px;
+      padding: 28px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+    }
+
+    .completed-card h1 {
+      color: var(--green);
+      font-size: 16px;
+      line-height: 1.8;
+      margin-bottom: 14px;
+    }
+
+    .completed-card p {
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        overflow-y: auto;
+      }
+
+      .arena {
+        grid-template-columns: 1fr;
+      }
+
+      .editor-panel,
+      .preview-panel {
+        border-radius: 14px;
+        border-right: 1px solid rgba(57,255,90,0.19);
+      }
+
+      .preview-screen {
+        min-height: 290px;
+      }
+
+      .map-btn {
+        margin-left: 0;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        width: min(100% - 18px, 1220px);
+        padding: 10px 0;
+      }
+
+      .top-bar,
+      .arena,
+      .mission-strip {
+        border-radius: 14px;
+      }
+
+      .top-bar {
+        padding: 17px;
+      }
+
+      .arena {
+        padding: 12px;
+      }
+
+      .panel {
+        padding: 13px;
+      }
+
+      textarea {
+        font-size: 14px;
+        min-height: 230px;
+      }
+
+      .mission-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .mission-icon {
+        width: 48px;
+        height: 48px;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .button-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .button-row .map-btn {
+        grid-column: span 2;
+      }
+    }
+  </style>
 </head>
 
-<body class="theme-js">
-  
-<main class="arena">
+<body>
+  <div id="app" class="page">
+    <section class="top-bar">
+      <div class="top-row">
+        <div>
+          <div class="world-title pixel">WORLD 03 / LOGIC CORE</div>
+          <div id="missionTitle" class="mission-title pixel">MISSION 01 — ENERGY CELLS</div>
+        </div>
 
-  <section class="top-command">
-          <div style="display: flex; align-items: center; justify-content: space-between;">
+        <div class="stats">
+          <div class="stat-pill">
+            <span class="stat-label pixel">PLAYER</span>
+            <span id="playerName">Builder</span>
+          </div>
+
+          <div class="stat-pill">
+            <span class="stat-label pixel">XP</span>
+            <span id="xpValue">0</span>
+          </div>
+
+          <div class="stat-pill">
+            <span class="stat-label pixel">LIVES</span>
+            <span id="livesValue" class="lives">❤️❤️❤️</span>
+          </div>
+
+          <div class="stat-pill">
+            <span class="stat-label pixel">LOGIC CORE RECOVERY</span>
+            <span id="recoveryValue">10%</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="objectiveText" class="objective">
+        Store a power value so the system can hold energy.
+      </div>
+
+      <div class="progress-track">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+    </section>
+
+    <main class="arena">
+      <section class="panel editor-panel">
+        <div class="panel-header">
+          <div class="panel-title pixel">⚡ JS COMMAND TERMINAL</div>
+          <div id="editorState" class="system-state pixel">COMMAND MODE</div>
+        </div>
+
+        <div id="instructionText" class="instruction">
+          Store energy inside a variable.
+        </div>
+
+        <textarea id="codeEditor" spellcheck="false"></textarea>
+
+        <div class="button-row">
+          <button id="runBtn" class="primary-btn">RUN</button>
+          <button id="checkBtn">CHECK</button>
+          <button id="hintBtn">HINT</button>
+          <button id="resetBtn">RESET</button>
+          <button id="mapBtn" class="map-btn">RETURN TO MAP</button>
+        </div>
+
+        <div id="feedbackBox" class="feedback">
+          SYSTEM VOICE: Awaiting command input.
+        </div>
+      </section>
+
+      <section class="panel preview-panel">
+        <div class="panel-header">
+          <div class="panel-title pixel">🧠 LIVE LOGIC PREVIEW</div>
+          <div id="previewMode" class="system-state pixel">OFFLINE</div>
+        </div>
+
+        <div class="preview-status">
+          <div class="status-left">
+            <span id="statusDot" class="dot"></span>
             <div>
-              <h1 class="pixel" data-key="jsCore">JavaScript Core</h1>
-              <p class="desc" data-key="jsArenaDesc">Restore interactivity and make the ByteRush world respond to code.</p>
+              <div id="previewStatusLabel" class="preview-label pixel">LOGIC CORE STATUS</div>
+              <div id="statusText" class="preview-state pixel">SYSTEM OFFLINE</div>
             </div>
           </div>
-          <div class="stats">
-      <div class="stat-pill">
-        <span class="pixel">MISSION</span>
-        <strong><span id="mission-count-inline">1</span> / 10</strong>
-      </div>
 
-      <div class="stat-pill">
-        <span class="pixel">XP</span>
-        <strong id="total-xp">0</strong>
-      </div>
-
-      <div class="stat-pill">
-        <span class="pixel">LIVES</span>
-        <strong id="lives">❤️❤️❤️</strong>
-      </div>
-
-      <div class="stat-pill">
-        <span class="pixel">TRIES</span>
-        <strong id="attempts">0</strong>
-      </div>
-
-      <div class="stat-pill">
-        <span class="pixel">STATUS</span>
-        <strong id="status">Active</strong>
-      </div>
-    </div>
-  </section>
-
-  <section class="main-arena">
-
-    <aside class="panel mission-panel">
-      <div>
-        <div class="panel-title">BYTEBOT BRIEFING</div>
-        <div class="mission-title" id="mission-title">Mission loading...</div>
-      </div>
-
-      <div class="skill-box">
-        <div class="label">SKILL</div>
-        <h2 id="skill-title">Skill loading...</h2>
-        <p id="bytebot-message">Mission instructions loading...</p>
-      </div>
-
-      <div class="skill-box">
-        <div class="label">WHY IT MATTERS</div>
-        <p id="why-message">Loading...</p>
-      </div>
-
-      <div class="rule-box" id="success-rule">
-        Success rule loading...
-      </div>
-    </aside>
-
-    <section class="panel editor-panel">
-      <div class="panel-title">JAVASCRIPT EDITOR</div>
-
-      <textarea id="code" spellcheck="false"></textarea>
-
-      <div class="buttons">
-        <button id="run-btn" class="primary" type="button">Run Code</button>
-        <button id="hint-btn" type="button">Hint</button>
-        <button id="next-btn" type="button" disabled>Next Mission</button>
-        <button id="back-btn" class="danger" type="button">Back to Map</button>
-      </div>
-    </section>
-
-    <section class="panel preview-panel">
-      <div class="panel-title">LIVE INTERACTION PREVIEW</div>
-
-      <div class="browser-frame" id="preview-frame">
-        <div class="browser-top">
-          <span class="dot red"></span>
-          <span class="dot yellow"></span>
-          <span class="dot"></span>
-          <span>interaction-preview.js</span>
+          <div id="afterRepairLabel" class="preview-label pixel">AFTER REPAIR: ENERGY STORED</div>
         </div>
 
-        <div class="preview-wrap">
-          <div id="preview-box" class="preview-box"></div>
+        <div id="previewScreen" class="preview-screen">
+          <div id="previewWorld" class="preview-world"></div>
+        </div>
+      </section>
+    </main>
+
+    <section class="mission-strip">
+      <div id="missionIcon" class="mission-icon">⚡</div>
+
+      <div class="mission-info">
+        <div id="stripMissionName" class="mission-meta-title pixel">ENERGY CELLS</div>
+
+        <div class="meta-grid">
+          <div><strong>Skill:</strong> <span id="skillText">Variables</span></div>
+          <div><strong>Reward:</strong> <span id="rewardText">+20 XP</span></div>
+          <div><strong>Difficulty:</strong> <span id="difficultyText">EASY</span></div>
+        </div>
+
+        <div id="shortHintText" class="system-voice">
+          Hint: Use let to store a value inside a variable.
+        </div>
+
+        <div id="systemVoiceText" class="system-voice">
+          <span>&gt; SYSTEM VOICE:</span> “Store power so the Logic Core can wake up.”
         </div>
       </div>
     </section>
+  </div>
 
-  </section>
+  <div id="completeModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-content">
+        <div class="modal-title pixel">MISSION CLEARED</div>
+        <div id="completeMissionName" class="modal-subtitle pixel">ENERGY CELLS RESTORED</div>
+        <div id="learnedText" class="modal-text">You learned how variables store values.</div>
+        <div id="xpRewardText" class="modal-subtitle pixel">+20 XP</div>
+        <div class="modal-text">NEXT QUEST UNLOCKED</div>
 
-  <section class="feedback-console">
-    <div class="panel-title">TERMINAL FEEDBACK</div>
-
-    <div class="console-grid">
-      <div class="console-item">
-        <div class="label">RESULT</div>
-        <div class="message" id="result">Run your code to check the mission.</div>
-      </div>
-
-      <div class="console-item">
-        <div class="label">HINT</div>
-        <div class="message" id="hint">Click Hint if you get stuck.</div>
-      </div>
-
-      <div class="console-item">
-        <div class="label">WARNING</div>
-        <div class="message error" id="warning">No syntax warnings yet.</div>
-      </div>
-
-      <div class="console-item">
-        <div class="label">XP</div>
-        <div class="message correct" id="xp-feedback">0 XP gained.</div>
+        <div class="modal-actions">
+          <button id="completeMapBtn">RETURN TO MAP</button>
+          <button id="nextQuestBtn" class="primary-btn">NEXT QUEST</button>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
 
-</main>
+  <div id="gameOverModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-content">
+        <div class="modal-title pixel" style="color: var(--red);">GAME OVER</div>
+        <div class="modal-subtitle pixel">LOGIC CORE UNSTABLE</div>
+        <div class="modal-text">
+          The command sequence failed too many times. Restart this mission and repair the Logic Core.
+        </div>
 
-<div class="start-modal" id="start-modal">
-  <div class="start-box">
-    <h2 class="pixel" id="start-modal-title">MISSION START</h2>
-
-    <p id="start-modal-skill">Get ready.</p>
-
-    <div class="start-instruction-box">
-      <div class="label">WHAT TO DO</div>
-      <p id="start-modal-task">Read the mission, write your JavaScript, then click Run Code.</p>
+        <div class="modal-actions">
+          <button id="tryAgainBtn" class="primary-btn">TRY AGAIN</button>
+          <button id="gameOverMapBtn">RETURN TO MAP</button>
+        </div>
+      </div>
     </div>
-
-    <button id="start-mission-btn" class="start-btn" type="button">
-      Start Mission
-    </button>
   </div>
-</div>
 
-<div class="mission-modal" id="mission-modal">
-  <div class="mission-box">
-    <h2 class="pixel">MISSION COMPLETED</h2>
+  <audio id="successSound" src="success-sound.mp3" preload="auto"></audio>
+  <audio id="errorSound" src="error-sound.mp3" preload="auto"></audio>
+  <audio id="gameOverSound" src="game-lose-sound.mp3" preload="auto"></audio>
 
-    <p id="modal-success-text">Great work.</p>
+  <script>
+    const missions = [
+      {
+        level: 1,
+        icon: "⚡",
+        name: "ENERGY CELLS",
+        missionTitle: "MISSION 01 — ENERGY CELLS",
+        statusLabel: "ENERGY CELL STATUS",
+        afterRepair: "AFTER REPAIR: ENERGY STORED",
+        skill: "Variables",
+        reward: 20,
+        difficulty: "EASY",
+        objective: "Store a power value so the system can hold energy.",
+        instruction: "The system has loose energy but cannot store it. Create a variable and give it a value.",
+        shortHint: "Hint: Use let, const, or var to store a value inside a variable.",
+        voice: "Store power so the Logic Core can wake up.",
+        learned: "You learned that variables store values the system can use later.",
+        starter: "let energy = ________;",
+        hints: [
+          "A variable stores a value.",
+          "Use let, const, or var and give it something after the equals sign.",
+          "Example: let energy = 100;"
+        ],
+        offline: {
+          title: "NO POWER VALUE DETECTED",
+          sub: "ENERGY CELL EMPTY"
+        },
+        validate(code) {
+          if (!/(let|const|var)\s+[a-zA-Z_$][\w$]*\s*=\s*[^;]+;?/i.test(code)) {
+            return fail("The energy cell needs a variable with a stored value.");
+          }
+          if (/=\s*_{2,}/.test(code)) {
+            return fail("The variable exists, but the value is still blank.");
+          }
+          return pass();
+        }
+      },
+      {
+        level: 2,
+        icon: "🛠️",
+        name: "ACTION COMMANDS",
+        missionTitle: "MISSION 02 — ACTION COMMANDS",
+        statusLabel: "COMMAND STATUS",
+        afterRepair: "AFTER REPAIR: ACTION REGISTERED",
+        skill: "Functions",
+        reward: 20,
+        difficulty: "EASY",
+        objective: "Create a reusable command so the system can perform actions.",
+        instruction: "The Logic Core can store values, but it cannot perform actions. Create a function with a body.",
+        shortHint: "Hint: Functions create reusable commands.",
+        voice: "Register an action command.",
+        learned: "You learned that functions are reusable commands.",
+        starter: "function activateSystem() {\n  \n}",
+        hints: [
+          "A function starts with function, then a name, then parentheses.",
+          "The command body goes inside curly braces.",
+          "Example: function activateSystem() { console.log('System online'); }"
+        ],
+        offline: {
+          title: "NO ACTION COMMAND FOUND",
+          sub: "SYSTEM CANNOT PERFORM TASKS"
+        },
+        validate(code) {
+          if (!/function\s+[a-zA-Z_$][\w$]*\s*\([^)]*\)\s*\{[\s\S]*\}/i.test(code) &&
+              !/(const|let|var)\s+[a-zA-Z_$][\w$]*\s*=\s*(function\s*\([^)]*\)\s*\{[\s\S]*\}|\([^)]*\)\s*=>\s*\{[\s\S]*\})/i.test(code)) {
+            return fail("The command module needs a function.");
+          }
+          const body = getFirstFunctionBody(code);
+          if (!body || !body.trim()) return fail("The action command is missing a function body.");
+          return pass();
+        }
+      },
+      {
+        level: 3,
+        icon: "🔘",
+        name: "TRIGGER BUTTONS",
+        missionTitle: "MISSION 03 — TRIGGER BUTTONS",
+        statusLabel: "TRIGGER STATUS",
+        afterRepair: "AFTER REPAIR: TRIGGER ONLINE",
+        skill: "Click Events",
+        reward: 20,
+        difficulty: "MEDIUM",
+        objective: "Connect a button to a click event so the system can listen.",
+        instruction: "The button exists, but input is ignored. Use addEventListener with a click event.",
+        shortHint: "Hint: Use addEventListener('click', function() { ... }).",
+        voice: "Make the system listen to input.",
+        learned: "You learned that click events let JavaScript react to the player.",
+        starter: "button.addEventListener('click', function() {\n  console.log('Button triggered');\n});",
+        hints: [
+          "The trigger needs addEventListener.",
+          "The event type should be click.",
+          "Example: button.addEventListener('click', function() { console.log('Triggered'); });"
+        ],
+        offline: {
+          title: "INPUT IGNORED",
+          sub: "TRIGGER SYSTEM DISCONNECTED"
+        },
+        validate(code) {
+          if (!/addEventListener\s*\(/i.test(code)) return fail("Trigger not found. Use addEventListener.");
+          if (!/['"]click['"]/i.test(code)) return fail("The listener exists, but it must listen for a click.");
+          return pass();
+        }
+      },
+      {
+        level: 4,
+        icon: "🚪",
+        name: "DECISION GATE",
+        missionTitle: "MISSION 04 — DECISION GATE",
+        statusLabel: "GATE STATUS",
+        afterRepair: "AFTER REPAIR: DECISION ACTIVE",
+        skill: "Conditions",
+        reward: 20,
+        difficulty: "MEDIUM",
+        objective: "Build a decision gate so the system can choose.",
+        instruction: "The gate cannot choose a path. Add an if condition. Use else if you want a backup path.",
+        shortHint: "Hint: Use if (...) { ... } to create a decision.",
+        voice: "Give the Logic Core judgment.",
+        learned: "You learned that conditions let programs make decisions.",
+        starter: "let energy = 100;\n\nif (energy >= 100) {\n  console.log('Gate open');\n}",
+        hints: [
+          "A decision gate starts with if.",
+          "The condition goes inside parentheses.",
+          "Example: if (energy >= 100) { console.log('Gate open'); }"
+        ],
+        offline: {
+          title: "GATE LOCKED",
+          sub: "NO DECISION LOGIC DETECTED"
+        },
+        validate(code) {
+          if (!/if\s*\([^)]{1,}\)\s*\{[\s\S]*\}/i.test(code)) {
+            return fail("Logic gate unstable. Add an if statement with a condition and body.");
+          }
+          return pass();
+        }
+      },
+      {
+        level: 5,
+        icon: "🔁",
+        name: "REPEAT ENGINE",
+        missionTitle: "MISSION 05 — REPEAT ENGINE",
+        statusLabel: "REPEAT STATUS",
+        afterRepair: "AFTER REPAIR: ENGINE ONLINE",
+        skill: "Loops",
+        reward: 20,
+        difficulty: "MEDIUM",
+        objective: "Repair the Repeat Engine so signals can fire automatically.",
+        instruction: "The system is repeating tasks manually. Use a loop to automate repeated signals.",
+        shortHint: "Hint: Use for, while, or forEach to repeat an action.",
+        voice: "Automate the signal sequence.",
+        learned: "You learned that loops repeat actions without writing the same code again.",
+        starter: "for (let i = 1; i <= 5; i++) {\n  console.log('Signal ' + i);\n}",
+        hints: [
+          "A loop repeats work.",
+          "Use for, while, or forEach.",
+          "Example: for (let i = 1; i <= 5; i++) { console.log(i); }"
+        ],
+        offline: {
+          title: "REPEAT ENGINE OFFLINE",
+          sub: "SIGNALS NOT AUTOMATED"
+        },
+        validate(code) {
+          if (!/for\s*\(|while\s*\(|\.forEach\s*\(/i.test(code)) {
+            return fail("Repeat engine broken. Add a for loop, while loop, or forEach.");
+          }
+          return pass();
+        }
+      },
+      {
+        level: 6,
+        icon: "🖥️",
+        name: "SCREEN OVERRIDE",
+        missionTitle: "MISSION 06 — SCREEN OVERRIDE",
+        statusLabel: "SCREEN STATUS",
+        afterRepair: "AFTER REPAIR: SCREEN CONTROLLED",
+        skill: "DOM Control",
+        reward: 20,
+        difficulty: "MEDIUM",
+        objective: "Use JavaScript to control what appears on screen.",
+        instruction: "The system is running, but the screen cannot change. Use document and update text or class state.",
+        shortHint: "Hint: Use getElementById, querySelector, innerText, textContent, innerHTML, or classList.",
+        voice: "Take control of the screen.",
+        learned: "You learned that DOM control lets JavaScript change the page.",
+        starter: "document.getElementById('status').innerText = 'System online';",
+        hints: [
+          "Screen control starts with document.",
+          "Select something using getElementById or querySelector.",
+          "Example: document.getElementById('status').innerText = 'System online';"
+        ],
+        offline: {
+          title: "SCREEN LOCKED",
+          sub: "DISPLAY CANNOT UPDATE"
+        },
+        validate(code) {
+          if (!/document\.(getElementById|querySelector)/i.test(code)) {
+            return fail("Screen override needs document.getElementById or document.querySelector.");
+          }
+          if (!/\.(innerText|textContent|innerHTML|classList)\b/i.test(code)) {
+            return fail("The screen is selected, but no visible update command was found.");
+          }
+          return pass();
+        }
+      },
+      {
+        level: 7,
+        icon: "🗄️",
+        name: "DATA VAULT",
+        missionTitle: "MISSION 07 — DATA VAULT",
+        statusLabel: "VAULT STATUS",
+        afterRepair: "AFTER REPAIR: DATA STORED",
+        skill: "Arrays",
+        reward: 20,
+        difficulty: "MEDIUM",
+        objective: "Store scattered data fragments inside an array.",
+        instruction: "The data fragments are scattered. Create an array with at least two values inside it.",
+        shortHint: "Hint: Arrays use square brackets: [ ].",
+        voice: "Store fragments inside the Data Vault.",
+        learned: "You learned that arrays store multiple values in one place.",
+        starter: "let missions = ['HTML', 'CSS', 'JavaScript'];",
+        hints: [
+          "An array uses square brackets.",
+          "Put multiple values inside the brackets.",
+          "Example: let energyCells = [20, 40, 60];"
+        ],
+        offline: {
+          title: "DATA FRAGMENTS SCATTERED",
+          sub: "VAULT STORAGE EMPTY"
+        },
+        validate(code) {
+          if (!/(let|const|var)\s+[a-zA-Z_$][\w$]*\s*=\s*\[[\s\S]*\]/i.test(code)) {
+            return fail("Data vault needs a variable storing an array.");
+          }
+          const content = code.match(/\[([\s\S]*?)\]/);
+          if (!content || content[1].split(",").filter(item => item.trim()).length < 2) {
+            return fail("The array needs at least two stored fragments.");
+          }
+          return pass();
+        }
+      },
+      {
+        level: 8,
+        icon: "⏱️",
+        name: "COUNTDOWN REACTOR",
+        missionTitle: "MISSION 08 — COUNTDOWN REACTOR",
+        statusLabel: "REACTOR STATUS",
+        afterRepair: "AFTER REPAIR: COUNTDOWN ONLINE",
+        skill: "Timers",
+        reward: 20,
+        difficulty: "HARD",
+        objective: "Control time inside the system using a timer.",
+        instruction: "The reactor is unstable. Use setInterval or setTimeout to create a timed sequence.",
+        shortHint: "Hint: Use setInterval or setTimeout.",
+        voice: "Start the countdown reactor.",
+        learned: "You learned that timers let JavaScript run code after time passes.",
+        starter: "let count = 5;\n\nlet timer = setInterval(function() {\n  count--;\n  console.log(count);\n\n  if (count === 0) {\n    clearInterval(timer);\n  }\n}, 1000);",
+        hints: [
+          "Timers use setInterval or setTimeout.",
+          "setInterval repeats after a time delay.",
+          "Example: setInterval(function() { console.log('pulse'); }, 1000);"
+        ],
+        offline: {
+          title: "REACTOR FROZEN",
+          sub: "NO TIMER SEQUENCE DETECTED"
+        },
+        validate(code) {
+          if (!/setInterval\s*\(|setTimeout\s*\(/i.test(code)) {
+            return fail("Reactor sequence broken. Add setInterval or setTimeout.");
+          }
+          return pass();
+        }
+      },
+      {
+        level: 9,
+        icon: "💾",
+        name: "SAVE CORE",
+        missionTitle: "MISSION 09 — SAVE CORE",
+        statusLabel: "MEMORY STATUS",
+        afterRepair: "AFTER REPAIR: MEMORY RESTORED",
+        skill: "Local Storage",
+        reward: 20,
+        difficulty: "HARD",
+        objective: "Restore memory so the system can remember saved values.",
+        instruction: "The system forgets everything. Use localStorage to save or load a value.",
+        shortHint: "Hint: Use localStorage.setItem or localStorage.getItem.",
+        voice: "Reconnect the Save Core.",
+        learned: "You learned that localStorage lets the browser remember values.",
+        starter: "localStorage.setItem('corePower', '100');\nlet savedPower = localStorage.getItem('corePower');",
+        hints: [
+          "Memory storage uses localStorage.",
+          "Use setItem to save and getItem to load.",
+          "Example: localStorage.setItem('xp', 100);"
+        ],
+        offline: {
+          title: "MEMORY LINK FAILED",
+          sub: "SAVE CORE DISCONNECTED"
+        },
+        validate(code) {
+          if (!/localStorage\.(setItem|getItem)\s*\(/i.test(code)) {
+            return fail("Memory link failed. Use localStorage.setItem or localStorage.getItem.");
+          }
+          return pass();
+        }
+      },
+      {
+        level: 10,
+        icon: "🧠",
+        name: "LOGIC CORE BOSS",
+        missionTitle: "MISSION 10 — LOGIC CORE BOSS",
+        statusLabel: "LOGIC CORE STATUS",
+        afterRepair: "AFTER REPAIR: CORE ONLINE",
+        skill: "Counter App",
+        reward: 50,
+        difficulty: "BOSS",
+        objective: "Build a real counter app to reactivate the JavaScript brain.",
+        instruction: "Final repair: create a counter with a variable, display update, functions, click events, decision logic, and localStorage save.",
+        shortHint: "Hint: The boss needs count, display update, functions, addEventListener, if logic, and localStorage.",
+        voice: "Rebuild the brain of ByteRush.",
+        learned: "You learned how JavaScript skills combine into a real interactive app.",
+        starter:
+`let count = 0;
 
-    <div class="learned-box">
-      <div class="label">WHAT YOU LEARNED</div>
-      <p id="modal-learned-text"></p>
-    </div>
+function updateDisplay() {
+  display.innerText = count;
 
-    <button id="modal-next-btn" class="modal-next-btn" type="button">
-      Next Mission
-    </button>
-  </div>
-</div>
+  if (count >= 10) {
+    status.innerText = "Core fully charged";
+  }
 
-<div class="game-over-modal" id="game-over-modal">
-  <div class="game-over-box">
-    <h2 class="pixel">GAME OVER</h2>
-
-    <p>You used up all your lives. Try the mission again and use the hint if you get stuck.</p>
-
-    <button id="try-again-btn" class="try-again-btn" type="button">
-      Try Again
-    </button>
-  </div>
-</div>
-
-<audio id="success-sound" src="./sounds/success.mp3" preload="auto"></audio>
-<audio id="error-sound" src="./sounds/error.mp3" preload="auto"></audio>
-<audio id="unlock-sound" src="./sounds/unlock.mp3" preload="auto"></audio>
-<audio id="mistake-sound" src="./sounds/mistake.mp3" preload="auto"></audio>
-<audio id="game-lose-sound" src="./sounds/game-lose-sound.mp3" preload="auto"></audio>
-
-<script>
-const TOTAL_JS_MISSIONS = 10;
-const JS_COMPLETED_LEVEL = TOTAL_JS_MISSIONS + 1;
-const CSS_COMPLETED_LEVEL = 11;
-
-const cssLevel = parseInt(localStorage.getItem("css-level")) || 0;
-
-if (cssLevel < CSS_COMPLETED_LEVEL) {
-  alert("JavaScript Core is locked. Complete all 10 CSS missions first!");
-  window.location.href = "dashboard.html";
+  localStorage.setItem("count", count);
 }
 
-let level = parseInt(localStorage.getItem("js-level")) || 1;
-
-if (level < 1) level = 1;
-if (level > JS_COMPLETED_LEVEL) level = JS_COMPLETED_LEVEL;
-
-let attempts = 0;
-let lives = 3;
-let missionComplete = false;
-let lastWarningMessage = "";
-let shouldShowStartPopup = true;
-
-const missions = {
-  1: {
-    title: "Mission 1: Variables",
-    skill: "JavaScript Variables",
-    starter: 'let name = "ByteRush";\n\nshowOutput(name);',
-    success: "Variable core restored.",
-    bytebot: 'Create a variable named <span class="highlight">name</span> and set it to <span class="highlight">"ByteRush"</span>.',
-    why: "Variables store information so programs can remember and reuse values.",
-    rule: 'Use let name = "ByteRush"; and show the output.',
-    learned: "You learned that variables store information in JavaScript.",
-    hint1: 'Set name equal to "ByteRush".',
-    hint2: 'Final answer should look like: let name = "ByteRush"; showOutput(name);',
-    preview: "variables",
-    reward: 10,
-    check: function(code) {
-      return code.includes("letname") && code.includes('"byterush"') && code.includes("showoutput");
-    }
-  },
-
-  2: {
-    title: "Mission 2: Functions",
-    skill: "JavaScript Functions",
-    starter: 'function greet() {\n  return "Welcome Builder";\n}\n\nshowOutput(greet());',
-    success: "Function module online.",
-    bytebot: 'Create a function named <span class="highlight">greet()</span> that returns <span class="highlight">"Welcome Builder"</span>.',
-    why: "Functions help you reuse actions instead of writing the same code again and again.",
-    rule: 'Use function greet() and return "Welcome Builder".',
-    learned: "You learned that functions group code into reusable actions.",
-    hint1: 'Use return inside the function.',
-    hint2: 'Final answer should return "Welcome Builder".',
-    preview: "functions",
-    reward: 10,
-    check: function(code) {
-      return code.includes("functiongreet") && code.includes("return") && code.includes('"welcomebuilder"');
-    }
-  },
-
-  3: {
-    title: "Mission 3: Click Events",
-    skill: "JavaScript Events",
-    starter: 'button.onclick = function() {\n  message.innerText = "Button activated!";\n};',
-    success: "Click event connected.",
-    bytebot: 'Make the button react when clicked by changing the message to <span class="highlight">"Button activated!"</span>.',
-    why: "Events make websites respond when users click, type, move, or choose something.",
-    rule: 'Use button.onclick and set message.innerText to "Button activated!".',
-    learned: "You learned that click events make pages respond to user actions.",
-    hint1: 'Use button.onclick to create the click event.',
-    hint2: 'Inside the function, set message.innerText to "Button activated!".',
-    preview: "click",
-    reward: 10,
-    check: function(code) {
-      return code.includes("button.onclick") && code.includes("message.innertext") && code.includes('"buttonactivated!"');
-    }
-  },
-
-  4: {
-    title: "Mission 4: Conditions",
-    skill: "JavaScript Conditions",
-    starter: 'let power = 75;\n\nif (power > 50) {\n  showOutput("Power level stable");\n}',
-    success: "Condition system restored.",
-    bytebot: 'Use an if statement to check if <span class="highlight">power</span> is greater than <span class="highlight">50</span>.',
-    why: "Conditions help programs make decisions.",
-    rule: 'Use if (power > 50) and show "Power level stable".',
-    learned: "You learned that conditions let programs choose what happens next.",
-    hint1: 'Use if (power > 50).',
-    hint2: 'If true, show this exact message: "Power level stable".',
-    preview: "conditions",
-    reward: 10,
-    check: function(code) {
-      return code.includes("if") && code.includes("power>50") && code.includes('"powerlevelstable"');
-    }
-  },
-
-  5: {
-    title: "Mission 5: Loops",
-    skill: "JavaScript Loops",
-    starter: 'for (let i = 1; i <= 5; i++) {\n  showOutput(i);\n}',
-    success: "Loop engine activated.",
-    bytebot: 'Use a loop to count from <span class="highlight">1</span> to <span class="highlight">5</span>.',
-    why: "Loops repeat actions automatically so programs can do more with less code.",
-    rule: "Use a for loop that starts at 1 and runs while i <= 5.",
-    learned: "You learned that loops repeat code multiple times.",
-    hint1: "Use a for loop.",
-    hint2: "Your loop should start at 1 and run while i <= 5.",
-    preview: "loops",
-    reward: 10,
-    check: function(code) {
-      return code.includes("for") && code.includes("i<=5") && code.includes("showoutput");
-    }
-  },
-
-  6: {
-    title: "Mission 6: DOM Control",
-    skill: "DOM Manipulation",
-    starter: 'title.innerText = "DOM Updated";',
-    success: "DOM control restored.",
-    bytebot: 'Change the page title text to <span class="highlight">"DOM Updated"</span> using JavaScript.',
-    why: "The DOM lets JavaScript change what users see on the page.",
-    rule: 'Use title.innerText = "DOM Updated";',
-    learned: "You learned that JavaScript can update webpage content.",
-    hint1: "Use title.innerText.",
-    hint2: 'Set title.innerText to "DOM Updated".',
-    preview: "dom",
-    reward: 10,
-    check: function(code) {
-      return code.includes("title.innertext") && code.includes('"domupdated"');
-    }
-  },
-
-  7: {
-    title: "Mission 7: Arrays",
-    skill: "JavaScript Arrays",
-    starter: 'let items = ["HTML", "CSS", "JavaScript"];\n\nshowOutput(items[2]);',
-    success: "Data vault opened.",
-    bytebot: 'Create an array named <span class="highlight">items</span> and show the third item: <span class="highlight">"JavaScript"</span>.',
-    why: "Arrays help programs store multiple values in one place.",
-    rule: 'Use an array and show items[2].',
-    learned: "You learned that arrays store lists of values and start counting from 0.",
-    hint1: 'Create an array like ["HTML", "CSS", "JavaScript"].',
-    hint2: "Use showOutput(items[2]); to show the third item.",
-    preview: "arrays",
-    reward: 10,
-    check: function(code) {
-      return code.includes("letitems") && code.includes("[") && code.includes("]") && code.includes("items[2]") && code.includes('"javascript"');
-    }
-  },
-
-  8: {
-    title: "Mission 8: Math Logic",
-    skill: "JavaScript Math",
-    starter: 'let score = 10 + 5;\n\nshowOutput(score);',
-    success: "Calculation reactor online.",
-    bytebot: 'Create a variable named <span class="highlight">score</span> and set it to <span class="highlight">10 + 5</span>.',
-    why: "Math lets programs calculate scores, totals, levels, timers, and game values.",
-    rule: "Use let score = 10 + 5; and show the output.",
-    learned: "You learned that JavaScript can calculate and store number values.",
-    hint1: "Create a variable named score.",
-    hint2: "Use showOutput(score); after creating the variable.",
-    preview: "math",
-    reward: 10,
-    check: function(code) {
-      return code.includes("letscore") && code.includes("10+5") && code.includes("showoutput(score)");
-    }
-  },
-
-  9: {
-    title: "Mission 9: Return Values",
-    skill: "JavaScript Return Logic",
-    starter: 'function doubleNumber(number) {\n  return number * 2;\n}\n\nshowOutput(doubleNumber(5));',
-    success: "Return signal restored.",
-    bytebot: 'Create a function named <span class="highlight">doubleNumber</span> that returns the number multiplied by <span class="highlight">2</span>.',
-    why: "Return values let functions send useful results back to the program.",
-    rule: "Use function doubleNumber(number) and return number * 2.",
-    learned: "You learned that functions can receive input and return a result.",
-    hint1: "The function needs one parameter: number.",
-    hint2: "Inside the function, use return number * 2;",
-    preview: "return",
-    reward: 10,
-    check: function(code) {
-      return code.includes("functiondoublenumber") && code.includes("returnnumber*2") && code.includes("doublenumber(5)");
-    }
-  },
-
-  10: {
-    title: "Boss Mode: Counter App",
-    skill: "JavaScript App Logic",
-    starter: 'let count = 0;\n\nbutton.onclick = function() {\n  count++;\n  counter.innerText = count;\n};',
-    boss: true,
-    success: "JavaScript Core complete.",
-    bytebot: "Final JavaScript test. Build a counter that increases when the button is clicked.",
-    why: "Small apps are built by combining variables, events, and DOM updates.",
-    rule: "Create count, increase it with count++, and update counter.innerText.",
-    learned: "You learned how to combine variables, events, and DOM changes into a working counter.",
-    hint1: "Create a count variable and increase it with count++.",
-    hint2: "Update counter.innerText after the button is clicked.",
-    preview: "boss",
-    reward: 50,
-    check: function(code) {
-      return code.includes("letcount=0") && code.includes("count++") && code.includes("counter.innertext") && code.includes("button.onclick");
-    }
-  }
-};
-
-const missionCountInlineEl = document.getElementById("mission-count-inline");
-const totalXpEl = document.getElementById("total-xp");
-const livesEl = document.getElementById("lives");
-const attemptsEl = document.getElementById("attempts");
-const statusEl = document.getElementById("status");
-
-const titleEl = document.getElementById("mission-title");
-const skillTitleEl = document.getElementById("skill-title");
-const bytebotEl = document.getElementById("bytebot-message");
-const whyEl = document.getElementById("why-message");
-const successRuleEl = document.getElementById("success-rule");
-
-const codeBox = document.getElementById("code");
-const resultEl = document.getElementById("result");
-const hintEl = document.getElementById("hint");
-const warningEl = document.getElementById("warning");
-const xpFeedbackEl = document.getElementById("xp-feedback");
-
-const previewFrame = document.getElementById("preview-frame");
-const previewBox = document.getElementById("preview-box");
-
-const runBtn = document.getElementById("run-btn");
-const hintBtn = document.getElementById("hint-btn");
-const nextBtn = document.getElementById("next-btn");
-const backBtn = document.getElementById("back-btn");
-
-const startModal = document.getElementById("start-modal");
-const startModalTitle = document.getElementById("start-modal-title");
-const startModalSkill = document.getElementById("start-modal-skill");
-const startModalTask = document.getElementById("start-modal-task");
-const startMissionBtn = document.getElementById("start-mission-btn");
-
-const missionModal = document.getElementById("mission-modal");
-const modalSuccessText = document.getElementById("modal-success-text");
-const modalLearnedText = document.getElementById("modal-learned-text");
-const modalNextBtn = document.getElementById("modal-next-btn");
-
-const gameOverModal = document.getElementById("game-over-modal");
-const tryAgainBtn = document.getElementById("try-again-btn");
-
-function normalize(code) {
-  return code.replace(/\s+/g, "").toLowerCase();
+function increase() {
+  count++;
+  updateDisplay();
 }
 
-function updateStats() {
-  const xp = parseInt(localStorage.getItem("xp")) || 0;
-
-  missionCountInlineEl.innerText = Math.min(level, TOTAL_JS_MISSIONS);
-  totalXpEl.innerText = xp;
-  livesEl.innerText = "❤️".repeat(lives) + "🖤".repeat(3 - lives);
-  attemptsEl.innerText = attempts;
+function decrease() {
+  count--;
+  updateDisplay();
 }
 
-function loadMission() {
-  const mission = missions[level];
-
-  attempts = 0;
-  lives = 3;
-  missionComplete = false;
-  lastWarningMessage = "";
-
-  missionModal.classList.remove("show");
-  gameOverModal.classList.remove("show");
-
-  updateStats();
-
-  resultEl.innerText = "Run your code to check the mission.";
-  resultEl.className = "message";
-
-  hintEl.innerText = "Click Hint if you get stuck.";
-  warningEl.innerText = "No syntax warnings yet.";
-  warningEl.className = "message error";
-  xpFeedbackEl.innerText = "0 XP gained.";
-
-  nextBtn.disabled = true;
-  runBtn.disabled = false;
-  hintBtn.disabled = false;
-  statusEl.innerText = "Active";
-
-  if (!mission) {
-    titleEl.innerText = "JavaScript Core Complete!";
-    skillTitleEl.innerText = "JavaScript Complete";
-    bytebotEl.innerText = "All 10 JavaScript missions are complete. Head back to Mission Control.";
-    whyEl.innerText = "You completed the interaction foundation.";
-    successRuleEl.innerText = "All 10 JavaScript missions are complete.";
-    codeBox.value = "";
-    statusEl.innerText = "Complete";
-    runBtn.disabled = true;
-    hintBtn.disabled = true;
-    nextBtn.disabled = true;
-    renderPreview("complete");
-    return;
-  }
-
-  titleEl.innerText = mission.title;
-  skillTitleEl.innerText = mission.skill;
-  bytebotEl.innerHTML = mission.bytebot;
-  whyEl.innerText = mission.why;
-  successRuleEl.innerText = mission.rule;
-  codeBox.value = mission.starter;
-
-  renderPreview(mission.preview);
-  updatePreview();
-
-  if (shouldShowStartPopup) {
-    showStartPopup(mission);
-  }
+function reset() {
+  count = 0;
+  updateDisplay();
 }
 
-function showStartPopup(mission) {
-  startModalTitle.innerText = mission.title;
-  startModalSkill.innerText = "Skill: " + mission.skill;
-  startModalTask.innerText = mission.rule + " Read the instruction, write the JavaScript in the editor, then click Run Code.";
-  startModal.classList.add("show");
-}
+plusBtn.addEventListener("click", increase);
+minusBtn.addEventListener("click", decrease);
+resetBtn.addEventListener("click", reset);`,
+        hints: [
+          "Start with let count = 0;",
+          "Create functions like increase, decrease, reset, and updateDisplay.",
+          "The boss needs: variable, display.innerText, functions, addEventListener click, if condition, and localStorage.setItem."
+        ],
+        offline: {
+          title: "LOGIC CORE OFFLINE",
+          sub: "MULTI-STAGE BRAIN REPAIR REQUIRED"
+        },
+        validate(code) {
+          if (!/(let|const|var)\s+count\s*=\s*[^;]+;?/i.test(code)) {
+            return fail("Stage 1 unstable. Create a count variable.");
+          }
+          if (!/(display|counter|number)[\w$]*\.(innerText|textContent|innerHTML)\s*=/i.test(code)) {
+            return fail("Stage 2 unstable. Connect the counter value to a display.");
+          }
+          if (!/function\s+[a-zA-Z_$][\w$]*\s*\([^)]*\)\s*\{[\s\S]*\}/i.test(code)) {
+            return fail("Stage 3 unstable. Build reusable action functions.");
+          }
+          if (!/addEventListener\s*\(\s*['"]click['"]/i.test(code)) {
+            return fail("Stage 4 unstable. Connect trigger buttons with click events.");
+          }
+          if (!/if\s*\([^)]{1,}\)\s*\{[\s\S]*\}/i.test(code)) {
+            return fail("Stage 5 unstable. Add decision logic with an if statement.");
+          }
+          if (!/localStorage\.(setItem|getItem)\s*\(/i.test(code)) {
+            return fail("Stage 6 unstable. Link the Save Core using localStorage.");
+          }
+          return pass();
+        }
+      }
+    ];
 
-function setWarning(message) {
-  warningEl.innerText = message;
+    const app = document.getElementById("app");
 
-  if (
-    message &&
-    message !== "No syntax warnings yet." &&
-    message !== "No syntax warnings." &&
-    message !== lastWarningMessage
-  ) {
-    playMistake();
-  }
+    const missionTitle = document.getElementById("missionTitle");
+    const playerName = document.getElementById("playerName");
+    const xpValue = document.getElementById("xpValue");
+    const livesValue = document.getElementById("livesValue");
+    const recoveryValue = document.getElementById("recoveryValue");
+    const progressFill = document.getElementById("progressFill");
+    const objectiveText = document.getElementById("objectiveText");
+    const instructionText = document.getElementById("instructionText");
+    const codeEditor = document.getElementById("codeEditor");
+    const feedbackBox = document.getElementById("feedbackBox");
+    const editorState = document.getElementById("editorState");
+    const previewMode = document.getElementById("previewMode");
+    const previewStatusLabel = document.getElementById("previewStatusLabel");
+    const afterRepairLabel = document.getElementById("afterRepairLabel");
+    const statusDot = document.getElementById("statusDot");
+    const statusText = document.getElementById("statusText");
+    const previewScreen = document.getElementById("previewScreen");
+    const previewWorld = document.getElementById("previewWorld");
+    const missionIcon = document.getElementById("missionIcon");
+    const stripMissionName = document.getElementById("stripMissionName");
+    const skillText = document.getElementById("skillText");
+    const rewardText = document.getElementById("rewardText");
+    const difficultyText = document.getElementById("difficultyText");
+    const shortHintText = document.getElementById("shortHintText");
+    const systemVoiceText = document.getElementById("systemVoiceText");
 
-  lastWarningMessage = message;
-}
+    const runBtn = document.getElementById("runBtn");
+    const checkBtn = document.getElementById("checkBtn");
+    const hintBtn = document.getElementById("hintBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const mapBtn = document.getElementById("mapBtn");
 
-function checkSyntaxWarnings(rawCode) {
-  if (rawCode.trim().length === 0) {
-    setWarning("No syntax warnings yet.");
-    return;
-  }
+    const completeModal = document.getElementById("completeModal");
+    const completeMissionName = document.getElementById("completeMissionName");
+    const learnedText = document.getElementById("learnedText");
+    const xpRewardText = document.getElementById("xpRewardText");
+    const completeMapBtn = document.getElementById("completeMapBtn");
+    const nextQuestBtn = document.getElementById("nextQuestBtn");
 
-  const openParen = (rawCode.match(/\(/g) || []).length;
-  const closeParen = (rawCode.match(/\)/g) || []).length;
-  const openBrace = (rawCode.match(/{/g) || []).length;
-  const closeBrace = (rawCode.match(/}/g) || []).length;
-  const doubleQuotes = (rawCode.match(/"/g) || []).length;
-  const singleQuotes = (rawCode.match(/'/g) || []).length;
+    const gameOverModal = document.getElementById("gameOverModal");
+    const tryAgainBtn = document.getElementById("tryAgainBtn");
+    const gameOverMapBtn = document.getElementById("gameOverMapBtn");
 
-  if (openParen !== closeParen) {
-    setWarning("Parentheses are not balanced. Check your ( and ).");
-    return;
-  }
+    const successSound = document.getElementById("successSound");
+    const errorSound = document.getElementById("errorSound");
+    const gameOverSound = document.getElementById("gameOverSound");
 
-  if (openBrace !== closeBrace) {
-    setWarning("Curly braces are not balanced. Check your { and }.");
-    return;
-  }
+    let currentLevel = Number(localStorage.getItem("js-level")) || 1;
+    let xp = Number(localStorage.getItem("xp")) || 0;
+    let lives = 3;
+    let hintIndex = 0;
+    let missionComplete = false;
+    let currentMission = null;
+    let countdownTimer = null;
 
-  if (doubleQuotes % 2 !== 0 || singleQuotes % 2 !== 0) {
-    setWarning("One of your quotes is not closed.");
-    return;
-  }
+    function init() {
+      if (currentLevel > 10) {
+        showCompletedWorld();
+        return;
+      }
 
-  setWarning("No syntax warnings.");
-}
+      currentMission = missions.find(m => m.level === currentLevel) || missions[0];
 
-function renderPreview(type) {
-  if (type === "variables") {
-    previewBox.innerHTML = `
-      <div class="mock-card">
-        <h3>VARIABLE OUTPUT</h3>
-        <p id="output">Waiting for variable...</p>
-      </div>
-    `;
-  }
+      const storedName = localStorage.getItem("player-name");
+      playerName.textContent = storedName && storedName.trim() ? storedName.trim() : "Builder";
 
-  if (type === "functions") {
-    previewBox.innerHTML = `
-      <div class="mock-card">
-        <h3>FUNCTION RETURN</h3>
-        <p id="output">Waiting for function...</p>
-      </div>
-    `;
-  }
+      lives = 3;
+      hintIndex = 0;
+      missionComplete = false;
 
-  if (type === "click") {
-    previewBox.innerHTML = `
-      <div class="mock-card">
-        <h3>CLICK EVENT TEST</h3>
-        <p id="message">Button is waiting...</p>
-        <button class="preview-action" id="button">Test Button</button>
-      </div>
-    `;
-  }
-
-  if (type === "conditions") {
-    previewBox.innerHTML = `
-      <div class="mock-card">
-        <h3>CONDITION CHECK</h3>
-        <p id="output">Waiting for power check...</p>
-      </div>
-    `;
-  }
-
-  if (type === "loops") {
-    previewBox.innerHTML = `
-      <div class="mock-card">
-        <h3>LOOP OUTPUT</h3>
-        <p id="output">Waiting for loop...</p>
-      </div>
-    `;
-  }
-
-  if (type === "dom") {
-    previewBox.innerHTML = `
-      <div class="mock-card">
-        <h3 id="title">Original DOM Text</h3>
-        <p>Use JavaScript to change the title above.</p>
-      </div>
-    `;
-  }
-
-  if (type === "arrays") {
-    previewBox.innerHTML = `
-      <div class="mock-card">
-        <h3>ARRAY OUTPUT</h3>
-        <p id="output">Waiting for array value...</p>
-      </div>
-    `;
-  }
-
-  if (type === "math") {
-    previewBox.innerHTML = `
-      <div class="mock-card">
-        <h3>MATH OUTPUT</h3>
-        <p id="output">Waiting for calculation...</p>
-      </div>
-    `;
-  }
-
-  if (type === "return") {
-    previewBox.innerHTML = `
-      <div class="mock-card">
-        <h3>RETURN VALUE</h3>
-        <p id="output">Waiting for returned result...</p>
-      </div>
-    `;
-  }
-
-  if (type === "boss") {
-    previewBox.innerHTML = `
-      <div class="mock-card">
-        <h3>BOSS COUNTER APP</h3>
-        <p>Counter: <span id="counter">0</span></p>
-        <button class="preview-action" id="button">Increase</button>
-      </div>
-    `;
-  }
-
-  if (type === "complete") {
-    previewBox.innerHTML = `
-      <div class="mock-card">
-        <h3>CORE COMPLETE</h3>
-        <p>JavaScript missions cleared.</p>
-      </div>
-    `;
-  }
-}
-
-function showOutput(value) {
-  const output = document.getElementById("output");
-
-  if (output) {
-    if (output.innerText.includes("Waiting")) {
-      output.innerText = value;
-    } else {
-      output.innerText += " " + value;
-    }
-  }
-}
-
-function updatePreview() {
-  const mission = missions[level];
-  const code = codeBox.value;
-
-  if (!mission) return;
-
-  renderPreview(mission.preview);
-  checkSyntaxWarnings(code);
-
-  try {
-    const button = document.getElementById("button");
-    const message = document.getElementById("message");
-    const title = document.getElementById("title");
-    const counter = document.getElementById("counter");
-
-    const runner = new Function(
-      "showOutput",
-      "button",
-      "message",
-      "title",
-      "counter",
-      code
-    );
-
-    runner(showOutput, button, message, title, counter);
-  } catch (error) {
-    return;
-  }
-}
-
-function checkCode() {
-  if (missionComplete) return;
-
-  const rawCode = codeBox.value;
-  const code = normalize(rawCode);
-  const mission = missions[level];
-
-  updatePreview();
-
-  if (!mission) {
-    resultEl.innerText = "JavaScript Core already complete.";
-    resultEl.className = "message correct";
-    return;
-  }
-
-  attempts++;
-  updateStats();
-
-  try {
-    const button = document.getElementById("button");
-    const message = document.getElementById("message");
-    const title = document.getElementById("title");
-    const counter = document.getElementById("counter");
-
-    const runner = new Function(
-      "showOutput",
-      "button",
-      "message",
-      "title",
-      "counter",
-      rawCode
-    );
-
-    runner(showOutput, button, message, title, counter);
-
-    if (mission.check(code)) {
-      completeMission(mission.reward, mission.success, mission.learned);
-    } else {
-      loseLife("Your code ran, but it does not match the mission goal.");
+      loadMission(currentMission);
     }
 
-  } catch (error) {
-    loseLife("Code error: " + error.message);
-  }
-}
+    function loadMission(mission) {
+      clearTimers();
 
-function loseLife(message) {
-  lives--;
-  updateStats();
+      missionTitle.textContent = mission.missionTitle;
+      xpValue.textContent = xp;
+      updateLives();
 
-  if (lives <= 0) {
-    resultEl.innerText = "Game over. You used up all your lives.";
-    resultEl.className = "message error";
-    statusEl.innerText = "Game Over";
+      const recovery = mission.level * 10;
+      recoveryValue.textContent = recovery + "%";
+      progressFill.style.width = recovery + "%";
 
-    runBtn.disabled = true;
-    hintBtn.disabled = true;
-    nextBtn.disabled = true;
+      objectiveText.textContent = mission.objective;
+      instructionText.textContent = mission.instruction;
 
-    errorEffect();
-    playGameLose();
-    showGameOverPopup();
+      codeEditor.value = mission.starter;
 
-    return;
-  }
+      previewStatusLabel.textContent = mission.statusLabel;
+      afterRepairLabel.textContent = mission.afterRepair;
 
-  playError();
+      missionIcon.textContent = mission.icon;
+      stripMissionName.textContent = mission.name;
+      skillText.textContent = mission.skill;
+      rewardText.textContent = "+" + mission.reward + " XP";
+      difficultyText.textContent = mission.difficulty;
+      shortHintText.textContent = mission.shortHint;
+      systemVoiceText.innerHTML = `<span>&gt; SYSTEM VOICE:</span> “${mission.voice}”`;
 
-  const mission = missions[level];
+      feedback("SYSTEM VOICE: Awaiting command input.", "normal");
+      setState("COMMAND MODE", "OFFLINE");
+      renderOffline(mission);
+    }
 
-  resultEl.innerText = message || "Not correct yet. You lost one life.";
-  resultEl.className = "message error";
-  statusEl.innerText = "Try Again";
+    function updateLives() {
+      livesValue.textContent = "❤️".repeat(lives) + "♡".repeat(3 - lives);
+    }
 
-  showHint(mission);
-  errorEffect();
-}
+    function setState(editor, preview, dotClass = "") {
+      editorState.textContent = editor;
+      previewMode.textContent = preview;
 
-function showGameOverPopup() {
-  gameOverModal.classList.add("show");
-}
+      if (preview === "ONLINE" || preview === "RESTORED") {
+        statusText.textContent = "SIGNAL ONLINE";
+      } else if (preview === "SCANNING") {
+        statusText.textContent = "SCANNING SCRIPT...";
+      } else if (preview === "VALIDATING") {
+        statusText.textContent = "VALIDATING LOGIC...";
+      } else if (preview === "RESPONDING") {
+        statusText.textContent = "SYSTEM RESPONDING";
+      } else {
+        statusText.textContent = "SYSTEM OFFLINE";
+      }
 
-function tryAgainMission() {
-  gameOverModal.classList.remove("show");
-  shouldShowStartPopup = false;
-  loadMission();
-  shouldShowStartPopup = true;
-}
+      statusDot.className = "dot";
 
-function showHint(mission) {
-  if (attempts <= 1) {
-    hintEl.innerText = "Hint 1: " + mission.hint1;
-  } else {
-    hintEl.innerText = "Hint 2: " + mission.hint2;
-  }
-}
+      if (dotClass) statusDot.classList.add(dotClass);
 
-function manualHint() {
-  const mission = missions[level];
+      if (preview === "ONLINE" || preview === "RESTORED" || preview === "RESPONDING") {
+        statusDot.classList.add("online");
+        previewScreen.classList.add("online");
+      } else if (preview === "SCANNING" || preview === "VALIDATING") {
+        statusDot.classList.add("repair");
+        previewScreen.classList.remove("online");
+      } else {
+        previewScreen.classList.remove("online");
+      }
+    }
 
-  if (!mission || missionComplete) return;
+    function feedback(message, type = "normal") {
+      feedbackBox.textContent = message;
+      feedbackBox.className = "feedback";
 
-  if (hintEl.innerText.includes("Hint 1")) {
-    hintEl.innerText = "Hint 2: " + mission.hint2;
-  } else {
-    hintEl.innerText = "Hint 1: " + mission.hint1;
-  }
-}
+      if (type === "success") feedbackBox.classList.add("success");
+      if (type === "error") feedbackBox.classList.add("error");
+      if (type === "scan") feedbackBox.classList.add("scan");
+    }
 
-function showMissionPopup(successMessage, learnedMessage) {
-  modalSuccessText.innerText = successMessage;
-  modalLearnedText.innerText = learnedMessage;
+    function renderOffline(mission) {
+      clearTimers();
 
-  modalNextBtn.innerText = "Return to Map";
+      previewWorld.innerHTML = `
+        <div class="logic-card">
+          <div class="brain-node">🧠</div>
+          <div class="broken-title">${escapeHTML(mission.offline.title)}</div>
+          <div class="broken-sub">${escapeHTML(mission.offline.sub)}</div>
+          <div class="signal-line"><span></span></div>
+        </div>
+      `;
+    }
 
-  missionModal.classList.add("show");
-}
+    function runPreview() {
+      if (missionComplete) return;
 
-function completeMission(xpGain, message, learnedMessage) {
-  missionComplete = true;
+      const code = codeEditor.value.trim();
 
-  resultEl.innerText = message + " +" + xpGain + " XP";
-  resultEl.className = "message correct";
+      if (!code) {
+        renderOffline(currentMission);
+        feedback("SYSTEM VOICE: No command code detected yet.", "normal");
+        setState("COMMAND MODE", "OFFLINE");
+        return;
+      }
 
-  hintEl.innerText = "Mission complete.";
-  xpFeedbackEl.innerText = "+" + xpGain + " XP gained.";
-  statusEl.innerText = "Complete";
+      setState("COMMAND MODE", "INPUT DETECTED", "repair");
+      feedback("SYSTEM VOICE: Command input detected. Use CHECK to validate the Logic Core.", "normal");
+      renderSimulation(false);
+    }
 
-  setWarning("No syntax warnings.");
+    async function checkMission() {
+      if (missionComplete) return;
 
-  playSuccess();
+      setState("SCANNING", "SCANNING", "repair");
+      feedback("SCANNING SCRIPT...", "scan");
+      await wait(650);
 
-  document.body.classList.add("success-flash");
-  previewFrame.classList.add("preview-glow");
+      setState("VALIDATING", "VALIDATING", "repair");
+      feedback("VALIDATING LOGIC...", "scan");
+      await wait(700);
 
-  setTimeout(function () {
-    document.body.classList.remove("success-flash");
-    previewFrame.classList.remove("preview-glow");
-  }, 700);
+      const result = currentMission.validate(codeEditor.value);
 
-  showXPPop(xpGain);
-  addXP(xpGain);
+      if (result.ok) {
+        completeMission();
+      } else {
+        failMissionCheck(result.message);
+      }
+    }
 
-  runBtn.disabled = true;
-  hintBtn.disabled = true;
-  nextBtn.disabled = false;
+    function completeMission() {
+      missionComplete = true;
 
-  level++;
+      setState("LOGIC CORE RESTORED", "ONLINE", "online");
+      feedback("LOGIC SIGNAL RESTORED. Command system online.", "success");
 
-  if (level > JS_COMPLETED_LEVEL) {
-    level = JS_COMPLETED_LEVEL;
-  }
+      renderSimulation(true);
+      playSound(successSound);
 
-  localStorage.setItem("js-level", String(level));
+      xp += currentMission.reward;
+      localStorage.setItem("xp", String(xp));
+      xpValue.textContent = xp;
 
-  updateStats();
+      const nextLevel = currentMission.level >= 10 ? 11 : currentMission.level + 1;
+      localStorage.setItem("js-level", String(nextLevel));
 
-  showMissionPopup(message, learnedMessage);
-}
+      completeMissionName.textContent = `${currentMission.name} RESTORED`;
+      learnedText.textContent = currentMission.learned;
+      xpRewardText.textContent = `+${currentMission.reward} XP`;
 
-function goNextMission() {
-  window.location.href = "js-map.html";
-}
+      if (currentMission.level >= 10) {
+        nextQuestBtn.textContent = "WORLD RESTORED";
+      } else {
+        nextQuestBtn.textContent = "NEXT QUEST";
+      }
 
-function errorEffect() {
-  codeBox.classList.add("error-shake");
+      setTimeout(() => {
+  completeModal.classList.add("show");
+}, currentMission.level === 8 ? 5500 : 4000);
+    }
 
-  setTimeout(function () {
-    codeBox.classList.remove("error-shake");
-  }, 300);
-}
+    function failMissionCheck(message) {
+      lives -= 1;
+      updateLives();
 
-function addXP(points) {
-  let xp = parseInt(localStorage.getItem("xp")) || 0;
-  xp += points;
-  localStorage.setItem("xp", xp);
-}
+      playSound(errorSound);
 
-function showXPPop(amount) {
-  const xp = document.createElement("div");
-  xp.className = "xp-pop";
-  xp.innerText = "+" + amount + " XP";
+      setState("COMMAND MODE", "OFFLINE");
+      feedback("SIGNAL INTERRUPTED. " + message, "error");
 
-  document.body.appendChild(xp);
+      if (lives <= 0) {
+        setTimeout(() => {
+          playSound(gameOverSound);
+          gameOverModal.classList.add("show");
+        }, 450);
+      }
+    }
 
-  setTimeout(function () {
-    xp.remove();
-  }, 1000);
-}
+    function renderSimulation(restored) {
+      clearTimers();
 
-function playSound(id) {
-  const sound = document.getElementById(id);
+      const level = currentMission.level;
+      let html = "";
 
-  if (!sound) return;
+      if (level === 1) {
+        const value = extractVariableValue(codeEditor.value) || "100";
+        html = logicShell({
+          title: "ENERGY CELL",
+          icon: "⚡",
+          message: restored ? "ENERGY STORED" : "Energy value detected",
+          output: restored ? `Stored value: ${escapeHTML(value)}` : "Variable signal preview ready.",
+          nodes: restored ? 1 : 0
+        });
+      }
 
-  sound.currentTime = 0;
+      if (level === 2) {
+        html = logicShell({
+          title: "ACTION COMMAND",
+          icon: "🛠️",
+          message: restored ? "ACTION COMMAND REGISTERED" : "Function command detected",
+          output: restored ? "Command can now run again and again." : "Function preview ready.",
+          button: "Run Command",
+          nodes: restored ? 2 : 0
+        });
+      }
 
-  sound.play().catch(function () {
-    console.log("Sound blocked or missing:", id);
-  });
-}
+      if (level === 3) {
+        html = `
+          <div class="logic-card ${restored ? "restored flow" : ""}">
+            <div class="brain-node ${restored ? "online" : ""}">🔘</div>
+            <div class="logic-title">TRIGGER BUTTONS</div>
+            <div class="logic-text">${restored ? "Trigger system online. Click the button." : "Button input waiting for event connection."}</div>
+            <div id="triggerOutput" class="logic-output">${restored ? "INPUT READY" : "INPUT IGNORED"}</div>
+            <div class="logic-button-row">
+              <button id="previewTriggerBtn" class="logic-button ${restored ? "" : "inactive"}" type="button">TRIGGER</button>
+            </div>
+            <div class="signal-line ${restored ? "active" : ""}"><span></span></div>
+          </div>
+        `;
+      }
 
-function playSuccess() {
-  playSound("success-sound");
-}
+      if (level === 4) {
+        html = `
+          <div class="logic-card ${restored ? "restored flow" : ""}">
+            <div class="brain-node ${restored ? "online" : ""}">🚪</div>
+            <div class="logic-title">DECISION GATE</div>
+            <div class="logic-text">${restored ? "Condition detected. Gate decision complete." : "Decision path waiting for logic."}</div>
+            <div class="logic-output">${restored ? "GATE OPEN" : "GATE LOCKED"}</div>
+            <div class="signal-line ${restored ? "active" : ""}"><span></span></div>
+          </div>
+        `;
+      }
 
-function playError() {
-  playSound("error-sound");
-}
+      if (level === 5) {
+        html = `
+          <div class="logic-card ${restored ? "restored flow" : ""}">
+            <div class="brain-node ${restored ? "online" : ""}">🔁</div>
+            <div class="logic-title">REPEAT ENGINE</div>
+            <div class="logic-text">${restored ? "Repeated signals are firing automatically." : "Loop structure detected."}</div>
+            <div class="node-grid">
+              ${[1,2,3,4,5].map(n => `<div class="mini-node ${restored ? "online" : ""}">S${n}</div>`).join("")}
+            </div>
+            <div class="signal-line ${restored ? "active" : ""}"><span></span></div>
+          </div>
+        `;
+      }
 
-function playUnlock() {
-  playSound("unlock-sound");
-}
+      if (level === 6) {
+        html = `
+          <div class="logic-card ${restored ? "restored flow" : ""}">
+            <div class="brain-node ${restored ? "online" : ""}">🖥️</div>
+            <div class="logic-title">SCREEN OVERRIDE</div>
+            <div class="logic-text">DOM control channel ${restored ? "connected" : "preview detected"}.</div>
+            <div id="status" class="logic-output">${restored ? "System online" : "Screen waiting for override."}</div>
+            <div class="signal-line ${restored ? "active" : ""}"><span></span></div>
+          </div>
+        `;
+      }
 
-function playMistake() {
-  playSound("mistake-sound");
-}
+      if (level === 7) {
+        html = `
+          <div class="logic-card ${restored ? "restored flow" : ""}">
+            <div class="brain-node ${restored ? "online" : ""}">🗄️</div>
+            <div class="logic-title">DATA VAULT</div>
+            <div class="logic-text">${restored ? "Data fragments stored inside the vault." : "Array structure detected."}</div>
+            <div class="vault-list">
+              ${getArrayItems(codeEditor.value).map(item => `<div class="vault-item">${escapeHTML(item)}</div>`).join("") || `<div class="vault-item">Fragment 01</div><div class="vault-item">Fragment 02</div>`}
+            </div>
+            <div class="signal-line ${restored ? "active" : ""}"><span></span></div>
+          </div>
+        `;
+      }
 
-function playGameLose() {
-  const sound = document.getElementById("game-lose-sound");
+      if (level === 8) {
+        html = `
+          <div class="logic-card ${restored ? "restored flow" : ""}">
+            <div class="brain-node ${restored ? "online" : ""}">⏱️</div>
+            <div class="logic-title">COUNTDOWN REACTOR</div>
+            <div class="logic-text">${restored ? "Countdown sequence started." : "Timer command detected."}</div>
+            <div id="countdownOutput" class="counter-display">${restored ? "5" : "--"}</div>
+            <div class="logic-output" id="countdownStatus">${restored ? "REACTOR COUNTING" : "REACTOR FROZEN"}</div>
+            <div class="signal-line ${restored ? "active" : ""}"><span></span></div>
+          </div>
+        `;
+      }
 
-  if (!sound) return;
+      if (level === 9) {
+        const savedKey = "jsSaveCoreDemo";
+        if (restored) {
+          localStorage.setItem(savedKey, "Progress memory restored");
+        }
 
-  sound.currentTime = 0;
+        html = `
+          <div class="logic-card ${restored ? "restored flow" : ""}">
+            <div class="brain-node ${restored ? "online" : ""}">💾</div>
+            <div class="logic-title">SAVE CORE</div>
+            <div class="logic-text">${restored ? "Memory link connected." : "Storage command detected."}</div>
+            <div class="logic-output">${restored ? localStorage.getItem(savedKey) : "MEMORY DISCONNECTED"}</div>
+            <div class="signal-line ${restored ? "active" : ""}"><span></span></div>
+          </div>
+        `;
+      }
 
-  sound.play().catch(function () {
-    console.log("Sound blocked or missing: game-lose-sound");
-  });
+      if (level === 10) {
+        html = `
+          <div class="logic-card ${restored ? "restored flow" : ""}">
+            <div class="brain-node ${restored ? "online" : ""}">🧠</div>
+            <div class="logic-title">LOGIC CORE BOSS</div>
 
-  setTimeout(function () {
-    sound.pause();
-    sound.currentTime = 0;
-  }, 4000);
-}
+            <div class="boss-stage-list">
+              <div class="${hasBossStage(1) ? "on" : ""}">☑ Stage 1: Energy value stored</div>
+              <div class="${hasBossStage(2) ? "on" : ""}">☑ Stage 2: Display link online</div>
+              <div class="${hasBossStage(3) ? "on" : ""}">☑ Stage 3: Action command registered</div>
+              <div class="${hasBossStage(4) ? "on" : ""}">☑ Stage 4: Trigger system online</div>
+              <div class="${hasBossStage(5) ? "on" : ""}">☑ Stage 5: Decision gate active</div>
+              <div class="${hasBossStage(6) ? "on" : ""}">☑ Stage 6: Save Core linked</div>
+            </div>
 
-runBtn.addEventListener("click", checkCode);
-hintBtn.addEventListener("click", manualHint);
-nextBtn.addEventListener("click", goNextMission);
+            <div id="counterDisplay" class="counter-display">0</div>
+            <div id="bossStatus" class="logic-output">${restored ? "LOGIC CORE ONLINE" : "Counter system awaiting complete command chain."}</div>
 
-startMissionBtn.addEventListener("click", function () {
-  startModal.classList.remove("show");
-});
+            <div class="logic-button-row">
+              <button id="bossMinus" class="logic-button ${restored ? "" : "inactive"}" type="button">-</button>
+              <button id="bossPlus" class="logic-button ${restored ? "" : "inactive"}" type="button">+</button>
+              <button id="bossReset" class="logic-button ${restored ? "" : "inactive"}" type="button">RESET</button>
+            </div>
 
-modalNextBtn.addEventListener("click", function () {
-  missionModal.classList.remove("show");
-  goNextMission();
-});
+            <div class="signal-line ${restored ? "active" : ""}"><span></span></div>
+          </div>
+        `;
+      }
 
-tryAgainBtn.addEventListener("click", tryAgainMission);
+      previewWorld.innerHTML = html;
+      attachPreviewInteractions(restored);
 
-backBtn.addEventListener("click", function () {
-  window.location.href = "js-map.html";
-});
+      if (level === 8 && restored) {
+        startCountdown();
+      }
+    }
 
-codeBox.addEventListener("input", updatePreview);
+    function logicShell({ title, icon, message, output, button, nodes }) {
+      const nodeHTML = nodes ? `
+        <div class="node-grid">
+          ${[1,2,3,4,5].map(n => `<div class="mini-node ${n <= nodes ? "online" : ""}">N${n}</div>`).join("")}
+        </div>
+      ` : "";
 
-loadMission();
-</script>
-<script src="translations.js"></script>
-<script src="language.js"></script>
+      const buttonHTML = button ? `
+        <div class="logic-button-row">
+          <button id="logicActionBtn" class="logic-button" type="button">${button}</button>
+        </div>
+      ` : "";
+
+      return `
+        <div class="logic-card ${nodes ? "restored flow" : ""}">
+          <div class="brain-node ${nodes ? "online" : ""}">${icon}</div>
+          <div class="logic-title">${title}</div>
+          <div class="logic-text">${message}</div>
+          <div id="logicOutput" class="logic-output">${output}</div>
+          ${buttonHTML}
+          ${nodeHTML}
+          <div class="signal-line ${nodes ? "active" : ""}"><span></span></div>
+        </div>
+      `;
+    }
+
+    function attachPreviewInteractions(restored) {
+      const triggerBtn = document.getElementById("previewTriggerBtn");
+      const triggerOutput = document.getElementById("triggerOutput");
+
+      if (triggerBtn && restored) {
+        triggerBtn.addEventListener("click", () => {
+          triggerOutput.textContent = "BUTTON TRIGGERED — SYSTEM RESPONDED";
+          setState("SYSTEM RESPONDING", "RESPONDING", "online");
+        });
+      }
+
+      const actionBtn = document.getElementById("logicActionBtn");
+      const logicOutput = document.getElementById("logicOutput");
+
+      if (actionBtn && restored) {
+        let runCount = 0;
+        actionBtn.addEventListener("click", () => {
+          runCount++;
+          logicOutput.textContent = `COMMAND RAN ${runCount} TIME${runCount === 1 ? "" : "S"}`;
+          setState("SYSTEM RESPONDING", "RESPONDING", "online");
+        });
+      }
+
+      if (currentMission.level === 10 && restored) {
+        let count = Number(localStorage.getItem("bossCounterDemo")) || 0;
+        const display = document.getElementById("counterDisplay");
+        const status = document.getElementById("bossStatus");
+        const plus = document.getElementById("bossPlus");
+        const minus = document.getElementById("bossMinus");
+        const reset = document.getElementById("bossReset");
+
+        const update = () => {
+          display.textContent = count;
+          localStorage.setItem("bossCounterDemo", String(count));
+
+          if (count >= 10) {
+            status.textContent = "CORE FULLY CHARGED";
+          } else if (count < 0) {
+            status.textContent = "CORE ENERGY LOW";
+          } else {
+            status.textContent = "LOGIC CORE RESPONDING";
+          }
+
+          setState("SYSTEM RESPONDING", "RESPONDING", "online");
+        };
+
+        update();
+
+        plus.addEventListener("click", () => {
+          count++;
+          update();
+        });
+
+        minus.addEventListener("click", () => {
+          count--;
+          update();
+        });
+
+        reset.addEventListener("click", () => {
+          count = 0;
+          update();
+        });
+      }
+    }
+
+    function startCountdown() {
+      const output = document.getElementById("countdownOutput");
+      const status = document.getElementById("countdownStatus");
+      let count = 5;
+
+      output.textContent = count;
+
+      countdownTimer = setInterval(() => {
+        count--;
+        output.textContent = count;
+
+        if (count <= 0) {
+          clearTimers();
+          output.textContent = "0";
+          status.textContent = "COUNTDOWN COMPLETE — REACTOR ONLINE";
+          setState("SYSTEM RESPONDING", "RESPONDING", "online");
+        }
+      }, 450);
+    }
+
+    function clearTimers() {
+      if (countdownTimer) {
+        clearInterval(countdownTimer);
+        countdownTimer = null;
+      }
+    }
+
+    function showHint() {
+      if (missionComplete) return;
+
+      const hints = currentMission.hints;
+      const hint = hints[Math.min(hintIndex, hints.length - 1)];
+
+      feedback("HINT " + (Math.min(hintIndex + 1, hints.length)) + ": " + hint, "scan");
+
+      if (hintIndex < hints.length - 1) {
+        hintIndex++;
+      }
+    }
+
+    function resetMission() {
+      clearTimers();
+
+      lives = 3;
+      hintIndex = 0;
+      missionComplete = false;
+      updateLives();
+      codeEditor.value = currentMission.starter;
+      feedback("SYSTEM VOICE: Mission reset. Command input ready.", "normal");
+      setState("COMMAND MODE", "OFFLINE");
+      renderOffline(currentMission);
+      completeModal.classList.remove("show");
+      gameOverModal.classList.remove("show");
+    }
+
+    function goToMap() {
+      window.location.href = "js-map.html";
+    }
+
+    function goNextQuest() {
+      completeModal.classList.remove("show");
+      clearTimers();
+
+      currentLevel = Number(localStorage.getItem("js-level")) || 1;
+
+      if (currentLevel > 10) {
+        showCompletedWorld();
+        return;
+      }
+
+      currentMission = missions.find(m => m.level === currentLevel);
+      lives = 3;
+      hintIndex = 0;
+      missionComplete = false;
+      loadMission(currentMission);
+    }
+
+    function showCompletedWorld() {
+      clearTimers();
+
+      app.innerHTML = `
+        <section class="completed-state">
+          <div class="completed-card">
+            <h1 class="pixel">WORLD 03 RESTORED</h1>
+            <p>
+              JavaScript Core is online. You restored behavior, logic, reactions, memory, timing, and intelligence.
+              The brain of ByteRush is awake.
+            </p>
+            <button onclick="window.location.href='js-map.html'" class="primary-btn">RETURN TO MAP</button>
+          </div>
+        </section>
+      `;
+    }
+
+    function escapeHTML(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function wait(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function playSound(audio) {
+      if (!audio) return;
+
+      try {
+        audio.currentTime = 0;
+        audio.play().catch(() => {});
+      } catch (e) {}
+    }
+
+    function getFirstFunctionBody(code) {
+      const match = code.match(/function\s+[a-zA-Z_$][\w$]*\s*\([^)]*\)\s*\{([\s\S]*)\}/i);
+      if (match) return match[1];
+
+      const arrow = code.match(/=>\s*\{([\s\S]*)\}/i);
+      if (arrow) return arrow[1];
+
+      return "";
+    }
+
+    function extractVariableValue(code) {
+      const match = code.match(/(?:let|const|var)\s+[a-zA-Z_$][\w$]*\s*=\s*([^;]+);?/i);
+      return match ? match[1].trim().replaceAll('"', "").replaceAll("'", "") : "";
+    }
+
+    function getArrayItems(code) {
+      const match = code.match(/\[([\s\S]*?)\]/);
+      if (!match) return [];
+      return match[1]
+        .split(",")
+        .map(item => item.trim().replace(/^['"]|['"]$/g, ""))
+        .filter(Boolean)
+        .slice(0, 5);
+    }
+
+    function hasBossStage(stage) {
+      const code = codeEditor.value;
+
+      if (stage === 1) return /(let|const|var)\s+count\s*=\s*[^;]+;?/i.test(code);
+      if (stage === 2) return /(display|counter|number)[\w$]*\.(innerText|textContent|innerHTML)\s*=/i.test(code);
+      if (stage === 3) return /function\s+[a-zA-Z_$][\w$]*\s*\([^)]*\)\s*\{[\s\S]*\}/i.test(code);
+      if (stage === 4) return /addEventListener\s*\(\s*['"]click['"]/i.test(code);
+      if (stage === 5) return /if\s*\([^)]{1,}\)\s*\{[\s\S]*\}/i.test(code);
+      if (stage === 6) return /localStorage\.(setItem|getItem)\s*\(/i.test(code);
+
+      return false;
+    }
+
+    function pass() {
+      return { ok: true, message: "" };
+    }
+
+    function fail(message) {
+      return { ok: false, message };
+    }
+
+    runBtn.addEventListener("click", runPreview);
+    checkBtn.addEventListener("click", checkMission);
+    hintBtn.addEventListener("click", showHint);
+    resetBtn.addEventListener("click", resetMission);
+    mapBtn.addEventListener("click", goToMap);
+
+    completeMapBtn.addEventListener("click", goToMap);
+    nextQuestBtn.addEventListener("click", goNextQuest);
+
+    tryAgainBtn.addEventListener("click", resetMission);
+    gameOverMapBtn.addEventListener("click", goToMap);
+
+    codeEditor.addEventListener("keydown", function(e) {
+      if (e.key === "Tab") {
+        e.preventDefault();
+
+        const start = codeEditor.selectionStart;
+        const end = codeEditor.selectionEnd;
+        const before = codeEditor.value.substring(0, start);
+        const after = codeEditor.value.substring(end);
+
+        codeEditor.value = before + "  " + after;
+        codeEditor.selectionStart = codeEditor.selectionEnd = start + 2;
+      }
+    });
+
+    init();
+  </script>
 </body>
 </html>
