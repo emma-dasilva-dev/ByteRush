@@ -3,287 +3,282 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ByteRush | Web Systems Boss</title>
+  <title>Web Systems Boss | ByteRush</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="projects.css" />
 </head>
-
 <body>
-  <main class="project-shell">
-    <section class="project-topbar panel-frame">
-      <div>
-        <p class="mini-label">PROJECT 06 / FINAL BUILD</p>
-        <h1 class="project-title">👾 WEB SYSTEMS BOSS</h1>
-        <p class="project-subtitle">Combine HTML, CSS, and JavaScript into one mini interactive app.</p>
-      </div>
-
-      <div class="lab-stats">
-        <div class="stat-pill"><span>PLAYER</span><strong id="playerName">Builder</strong></div>
-        <div class="stat-pill"><span>XP</span><strong id="xpValue">0</strong></div>
-        <div class="stat-pill"><span>REWARD</span><strong>+150</strong></div>
-        <div class="stat-pill"><span>STATUS</span><strong id="projectStatus">In Progress</strong></div>
-      </div>
-    </section>
-
-    <section class="project-main panel-frame">
-      <div class="project-panel guide-panel">
-        <div class="panel-heading">
-          <h2>BOSS BUILD GUIDE</h2>
-          <div id="stepCounter" class="step-counter">STEP 1 / 10</div>
-        </div>
-
-        <div class="step-card">
-          <h3 id="stepTitle"></h3>
-          <p id="stepExplain"></p>
-          <ul id="stepTask"></ul>
-          <p class="project-hint" id="stepHint"></p>
-        </div>
-
-        <div id="stepDots" class="step-status-list"></div>
-
-        <div class="step-actions">
-          <button id="prevStepBtn">PREVIOUS STEP</button>
-          <button id="nextStepBtn">NEXT STEP</button>
-          <button id="checkStepBtn" class="primary-btn">CHECK STEP</button>
-          <button id="completeProjectBtn" class="secondary-btn">COMPLETE PROJECT</button>
-        </div>
-      </div>
-
-      <div class="project-panel build-panel">
-        <div class="panel-heading">
-          <h2>FINAL APP PREVIEW</h2>
-          <div class="step-counter">HTML + CSS + JS</div>
-        </div>
-
-        <div class="input-grid">
-          <div class="input-row">
-            <label>APP TITLE</label>
-            <input id="bossTitle" value="Web Systems Control" />
-          </div>
-
-          <div class="input-row">
-            <label>STATUS MESSAGE</label>
-            <input id="bossMessage" value="System waiting for activation." />
-          </div>
-        </div>
-
-        <div class="preview-box">
-          <div id="projectPreview" class="preview-stage"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="project-bottom-console panel-frame">
-      <div class="feedback-console" id="feedbackText">
-        <strong>SYSTEM VOICE:</strong> Final build sequence loaded.
-      </div>
-
-      <div class="bottom-actions">
-        <button id="audioToggle" class="secondary-btn">PROJECT AUDIO: ON</button>
-        <button id="returnLabBtn">RETURN TO PROJECT LAB</button>
-      </div>
-    </section>
-  </main>
-
-  <div id="completeModal" class="modal-backdrop">
-    <div class="modal">
-      <div class="modal-content">
-        <div class="modal-title">FINAL BUILD COMPLETE</div>
-        <div id="completeTitle" class="modal-subtitle">Web Systems Boss Online</div>
-        <div id="completeReward" class="modal-subtitle">+150 XP</div>
-        <p id="completeMessage" class="modal-text">You combined HTML, CSS, and JavaScript.</p>
-        <button id="modalReturnBtn" class="primary-btn">RETURN TO PROJECT LAB</button>
-      </div>
-    </div>
-  </div>
-
   <script src="projects.js"></script>
+
   <script>
-    let power = Number(localStorage.getItem("project6-power") || "0");
-    let activated = false;
-    let hoverUsed = false;
-    let saved = localStorage.getItem("project6-power") !== null;
-
-    function value(id) {
-      return document.getElementById(id).value.trim();
-    }
-
-    function savePower() {
-      localStorage.setItem("project6-power", String(power));
-      saved = true;
-    }
-
-    window.BRProjectConfig = {
-      id: 6,
-      name: "Web Systems Boss",
+    ByteRushProjects.createProjectPage({
+      projectId: "project-6",
+      title: "Web Systems Boss",
+      difficulty: "Final Build",
       xp: 150,
       completeTitle: "Web Systems Boss Online",
-      completeMessage: "You combined HTML, CSS, and JavaScript into one working mini app.",
-      renderPreview() {
-        return `
-          <div class="boss-app-card ${activated ? "theme-green" : "theme-dark"}">
-            <h2>${value("bossTitle") || "Web Systems Control"}</h2>
-            <p>${value("bossMessage") || "System waiting for activation."}</p>
-
-            <div class="counter-number">${power}</div>
-
-            <div class="preview-buttons">
-              <button id="bossActivateBtn" type="button">ACTIVATE</button>
-              <button id="bossPowerBtn" type="button">ADD POWER</button>
-              <button id="bossSaveBtn" type="button">SAVE</button>
-              <button id="bossResetBtn" type="button">RESET</button>
-            </div>
-
-            <span class="saved-chip">${activated ? "SYSTEM ONLINE" : "SYSTEM STANDBY"} | SAVED: ${saved ? "YES" : "NO"}</span>
-          </div>
-        `;
-      },
-      afterRender() {
-        const activateBtn = document.getElementById("bossActivateBtn");
-        const powerBtn = document.getElementById("bossPowerBtn");
-        const saveBtn = document.getElementById("bossSaveBtn");
-        const resetBtn = document.getElementById("bossResetBtn");
-
-        activateBtn.addEventListener("mouseenter", () => {
-          hoverUsed = true;
-        });
-
-        activateBtn.addEventListener("click", () => {
-          activated = true;
-          document.getElementById("bossMessage").value = "System activated. Power core online.";
-          document.getElementById("projectPreview").innerHTML = window.BRProjectConfig.renderPreview();
-          window.BRProjectConfig.afterRender();
-        });
-
-        powerBtn.addEventListener("click", () => {
-          power += 10;
-          document.getElementById("projectPreview").innerHTML = window.BRProjectConfig.renderPreview();
-          window.BRProjectConfig.afterRender();
-        });
-
-        saveBtn.addEventListener("click", () => {
-          savePower();
-          document.getElementById("projectPreview").innerHTML = window.BRProjectConfig.renderPreview();
-          window.BRProjectConfig.afterRender();
-        });
-
-        resetBtn.addEventListener("click", () => {
-          power = 0;
-          activated = false;
-          savePower();
-          document.getElementById("bossMessage").value = "System reset. Ready for new build.";
-          document.getElementById("projectPreview").innerHTML = window.BRProjectConfig.renderPreview();
-          window.BRProjectConfig.afterRender();
-        });
-      },
+      completeMessage: "You combined HTML, CSS, and JavaScript.",
+      startHTML: "",
+      startCSS: "",
+      startJS: "",
       steps: [
         {
-          title: "Build page structure",
-          explain: "A complete app needs a clear structure before anything can work.",
-          task: "<li>Look at the full app card in the preview.</li>",
-          hint: "The card is the app structure.",
-          validate() {
-            return { ok: true, message: "Page structure online." };
+          title: "Create the Command Center",
+          objective: "Create the main app container.",
+          why: "The container holds the full final boss project.",
+          code: `<div class="command-center">
+
+</div>`,
+          preview: "An empty command center panel should appear.",
+          hint: "Type this in the HTML box.",
+          check: function (api) {
+            return /class=["']command-center["']/i.test(api.html)
+              ? { pass: true, message: "STEP ONLINE: Command center container detected." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Add a div with class=\"command-center\"." };
           }
         },
         {
-          title: "Add header section",
-          explain: "The header gives the app a clear name.",
-          task: "<li>Type an app title.</li>",
-          hint: "Example: Web Systems Control.",
-          validate() {
-            return value("bossTitle").length >= 3
-              ? { ok: true, message: "Header section online." }
-              : { ok: false, message: "Add an app title." };
+          title: "Add the Header",
+          objective: "Add the app title.",
+          why: "The title tells the player what they built.",
+          code: `<h2>ByteRush Command Center</h2>`,
+          preview: "The title should appear at the top of the app.",
+          hint: "Use an h2 tag inside the command center.",
+          check: function (api) {
+            return /<h2[\s>]/i.test(api.html) && /ByteRush Command Center/i.test(api.html)
+              ? { pass: true, message: "STEP ONLINE: Command center title detected." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Add the h2 title ByteRush Command Center." };
           }
         },
         {
-          title: "Add main card/interface",
-          explain: "The card is where the user sees the system and controls it.",
-          task: "<li>Check the main card in the preview.</li>",
-          hint: "It holds the title, message, number, and buttons.",
-          validate() {
-            return { ok: true, message: "Main interface online." };
+          title: "Add the Player Name",
+          objective: "Add a player identity area.",
+          why: "This brings back the profile idea from the Identity Badge project.",
+          code: `<p id="playerName">Player: Code Explorer</p>`,
+          preview: "The player name should appear in the command center.",
+          hint: "The id must be exactly playerName.",
+          check: function (api) {
+            return /id=["']playerName["']/i.test(api.html)
+              ? { pass: true, message: "STEP ONLINE: Player name area detected." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Add an element with id=\"playerName\"." };
           }
         },
         {
-          title: "Add buttons",
-          explain: "Buttons give the user control over the app.",
-          task: "<li>Find ACTIVATE, ADD POWER, SAVE, and RESET.</li>",
-          hint: "Four buttons should appear.",
-          validate() {
-            return document.getElementById("bossActivateBtn") &&
-              document.getElementById("bossPowerBtn") &&
-              document.getElementById("bossSaveBtn") &&
-              document.getElementById("bossResetBtn")
-              ? { ok: true, message: "Control buttons online." }
-              : { ok: false, message: "One or more control buttons are missing." };
+          title: "Add the Energy Display",
+          objective: "Add a number that shows system energy.",
+          why: "This brings back the counter idea from the Energy Counter project.",
+          code: `<h3 id="energyDisplay">Energy: 0</h3>`,
+          preview: "The energy display should appear.",
+          hint: "The id must be exactly energyDisplay.",
+          check: function (api) {
+            return /id=["']energyDisplay["']/i.test(api.html)
+              ? { pass: true, message: "STEP ONLINE: Energy display detected." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Add an element with id=\"energyDisplay\"." };
           }
         },
         {
-          title: "Add status display",
-          explain: "The status message tells the user what the system is doing.",
-          task: "<li>Write a status message.</li>",
-          hint: "Example: System waiting for activation.",
-          validate() {
-            return value("bossMessage").length >= 5
-              ? { ok: true, message: "Status display online." }
-              : { ok: false, message: "Add a status message." };
+          title: "Add the Energy Button",
+          objective: "Add a button that increases energy.",
+          why: "This button will make the app interactive.",
+          code: `<button id="energyBtn">Charge Energy</button>`,
+          preview: "A Charge Energy button should appear.",
+          hint: "The id must be exactly energyBtn.",
+          check: function (api) {
+            return /<button[^>]+id=["']energyBtn["']/i.test(api.html)
+              ? { pass: true, message: "STEP ONLINE: Energy button detected." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Add a button with id=\"energyBtn\"." };
           }
         },
         {
-          title: "Style the full interface",
-          explain: "Good spacing, borders, and color make the app feel premium.",
-          task: "<li>Check that the app card is readable and styled.</li>",
-          hint: "The card should look like a ByteRush system panel.",
-          validate() {
-            return { ok: true, message: "Interface styling online." };
+          title: "Add the Mission Status",
+          objective: "Add a system status message.",
+          why: "Status text tells the player what the app is doing.",
+          code: `<p id="systemStatus">System waiting...</p>`,
+          preview: "A system waiting message should appear.",
+          hint: "The id must be exactly systemStatus.",
+          check: function (api) {
+            return /id=["']systemStatus["']/i.test(api.html)
+              ? { pass: true, message: "STEP ONLINE: System status detected." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Add an element with id=\"systemStatus\"." };
           }
         },
         {
-          title: "Add hover effects",
-          explain: "Hover effects make the interface feel responsive.",
-          task: "<li>Move your mouse over ACTIVATE.</li>",
-          hint: "The button should lift slightly.",
-          validate() {
-            return hoverUsed
-              ? { ok: true, message: "Hover response online." }
-              : { ok: false, message: "Hover over the ACTIVATE button first." };
+          title: "Add the Activate Button",
+          objective: "Add a button that changes the system status.",
+          why: "This button will make the command center feel alive.",
+          code: `<button id="activateBtn">Activate System</button>`,
+          preview: "An Activate System button should appear.",
+          hint: "The id must be exactly activateBtn.",
+          check: function (api) {
+            return /<button[^>]+id=["']activateBtn["']/i.test(api.html)
+              ? { pass: true, message: "STEP ONLINE: Activate button detected." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Add a button with id=\"activateBtn\"." };
           }
         },
         {
-          title: "Add JavaScript interaction",
-          explain: "JavaScript makes buttons change the app.",
-          task: "<li>Click ACTIVATE or ADD POWER.</li>",
-          hint: "The card should change or the number should increase.",
-          validate() {
-            return activated || power > 0
-              ? { ok: true, message: "JavaScript interaction online." }
-              : { ok: false, message: "Click ACTIVATE or ADD POWER first." };
+          title: "Add the Theme Button",
+          objective: "Add a button that changes the design.",
+          why: "This brings back the theme switching idea from Skin Reactor.",
+          code: `<button id="themeBtn">Switch Skin</button>`,
+          preview: "A Switch Skin button should appear.",
+          hint: "The id must be exactly themeBtn.",
+          check: function (api) {
+            return /<button[^>]+id=["']themeBtn["']/i.test(api.html)
+              ? { pass: true, message: "STEP ONLINE: Theme button detected." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Add a button with id=\"themeBtn\"." };
           }
         },
         {
-          title: "Save a value with localStorage",
-          explain: "Saving lets the app remember something.",
-          task: "<li>Click SAVE.</li>",
-          hint: "The chip should say SAVED: YES.",
-          validate() {
-            savePower();
-            return localStorage.getItem("project6-power") !== null
-              ? { ok: true, message: "LocalStorage save online." }
-              : { ok: false, message: "Power value was not saved." };
+          title: "Style the Command Center",
+          objective: "Make the final app look complete.",
+          why: "CSS turns the structure into a polished interface.",
+          code: `.command-center {
+  background: #07111D;
+  border: 2px solid #39FF5A;
+  padding: 24px;
+  border-radius: 18px;
+  text-align: center;
+}
+
+.boss-theme {
+  background: #211B05;
+  color: #FACC15;
+}`,
+          preview: "The command center should look like a finished ByteRush system.",
+          hint: "Type this in the CSS box.",
+          check: function (api) {
+            const css = api.normalize(api.css);
+            const pass = css.includes(".command-center") &&
+              css.includes("background") &&
+              css.includes("border") &&
+              css.includes("padding") &&
+              css.includes("border-radius") &&
+              css.includes("text-align");
+
+            return pass
+              ? { pass: true, message: "STEP ONLINE: Command center styling detected." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Style .command-center with background, border, padding, border-radius, and text-align." };
           }
         },
         {
-          title: "Complete final build",
-          explain: "You combined structure, design, interaction, and memory.",
-          task: "<li>Check this final step.</li><li>Then press Complete Project.</li>",
-          hint: "This is your final Projects challenge.",
-          validate() {
-            return { ok: true, message: "Web Systems Boss ready." };
+          title: "Make the Energy Button Work",
+          objective: "Make the energy number increase.",
+          why: "JavaScript can change text when a button is clicked.",
+          code: `let energy = 0;
+
+const energyDisplay = document.getElementById("energyDisplay");
+const energyBtn = document.getElementById("energyBtn");
+
+energyBtn.addEventListener("click", function () {
+  energy = energy + 1;
+  energyDisplay.textContent = "Energy: " + energy;
+});`,
+          preview: "When Charge Energy is clicked, Energy should go up by 1.",
+          hint: "Find energyDisplay and energyBtn, then update the text when clicked.",
+          check: function (api) {
+            const btn = api.preview.querySelector("#energyBtn");
+            const display = api.preview.querySelector("#energyDisplay");
+
+            if (!btn || !display) {
+              return { pass: false, message: "SYSTEM CHECK FAILED: Build the energy display and button first." };
+            }
+
+            const before = display.textContent;
+            btn.click();
+
+            return display.textContent !== before
+              ? { pass: true, message: "STEP ONLINE: Energy button updates the display." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Clicking Charge Energy should update the energy display." };
+          }
+        },
+        {
+          title: "Make the Activate Button Work",
+          objective: "Make the system status update.",
+          why: "This shows the player how JavaScript can change messages on the page.",
+          code: `const systemStatus = document.getElementById("systemStatus");
+const activateBtn = document.getElementById("activateBtn");
+
+activateBtn.addEventListener("click", function () {
+  systemStatus.textContent = "System Online";
+});`,
+          preview: "When Activate System is clicked, the status should change to System Online.",
+          hint: "Change systemStatus.textContent inside the activate button click function.",
+          check: function (api) {
+            const btn = api.preview.querySelector("#activateBtn");
+            const status = api.preview.querySelector("#systemStatus");
+
+            if (!btn || !status) {
+              return { pass: false, message: "SYSTEM CHECK FAILED: Build the status text and activate button first." };
+            }
+
+            btn.click();
+
+            return /System Online/i.test(status.textContent)
+              ? { pass: true, message: "STEP ONLINE: Activate button brings the system online." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Clicking Activate System should show System Online." };
+          }
+        },
+        {
+          title: "Make the Theme Button Work",
+          objective: "Make the app switch skins.",
+          why: "JavaScript can add or remove classes to change the design.",
+          code: `const commandCenter = document.querySelector(".command-center");
+const themeBtn = document.getElementById("themeBtn");
+
+themeBtn.addEventListener("click", function () {
+  commandCenter.classList.toggle("boss-theme");
+});`,
+          preview: "Clicking Switch Skin should change the command center style.",
+          hint: "Use classList.toggle to add or remove a theme class.",
+          check: function (api) {
+            const btn = api.preview.querySelector("#themeBtn");
+            const card = api.preview.querySelector(".command-center");
+
+            if (!btn || !card) {
+              return { pass: false, message: "SYSTEM CHECK FAILED: Build the command center and theme button first." };
+            }
+
+            const before = card.className;
+            btn.click();
+
+            return card.className !== before
+              ? { pass: true, message: "STEP ONLINE: Theme button changes the app skin." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Clicking Switch Skin should change the command center class or style." };
+          }
+        },
+        {
+          title: "Save the System",
+          objective: "Save the command center progress.",
+          why: "localStorage lets the browser remember the system status or energy.",
+          code: `localStorage.setItem("bossEnergy", energy);
+const savedEnergy = localStorage.getItem("bossEnergy");`,
+          preview: "The app should save at least one value and load it again.",
+          hint: "Use localStorage.setItem and localStorage.getItem.",
+          check: function (api) {
+            const pass = api.js.includes("localStorage.setItem") && api.js.includes("localStorage.getItem");
+
+            return pass
+              ? { pass: true, message: "STEP ONLINE: System saving code detected." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Add localStorage.setItem and localStorage.getItem to save a value." };
+          }
+        },
+        {
+          title: "Complete the Final Build",
+          objective: "Finish the Web Systems Boss.",
+          why: "You combined HTML, CSS, JavaScript, interaction, styling, and saving.",
+          code: "",
+          preview: "The app should show identity, energy, status, buttons, theme switching, and saved progress.",
+          hint: "Check this final step, then press Complete Project.",
+          check: function () {
+            return { pass: true, message: "STEP ONLINE: Final boss build ready for completion." };
           }
         }
       ]
-    };
+    });
   </script>
 </body>
 </html>

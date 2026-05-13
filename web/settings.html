@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Settings | ByteRush</title>
 
 <link rel="stylesheet" href="arcade-theme.css">
@@ -41,12 +41,16 @@ body {
   padding: 28px 18px;
 }
 
+button,
+select {
+  font-family: 'Press Start 2P', monospace;
+}
+
 #language-toggle {
   position: absolute;
   top: 18px;
   right: 24px;
   z-index: 1000;
-  font-family: 'Press Start 2P', monospace;
   font-size: 8px;
   padding: 10px;
   background: var(--panel2);
@@ -62,7 +66,7 @@ body {
 }
 
 .page {
-  width: min(880px, 100%);
+  width: min(900px, 100%);
   margin: 0 auto;
 }
 
@@ -92,7 +96,7 @@ body {
   content: "";
   position: absolute;
   inset: 8px;
-  border: 1px dashed rgba(250,204,21,0.09);
+  border: 1px dashed rgba(250,204,21,0.12);
   pointer-events: none;
   border-radius: 14px;
 }
@@ -101,22 +105,28 @@ body {
   color: var(--yellow);
   font-size: 8px;
   margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
 }
 
 h1 {
   margin: 0 0 12px;
-  font-size: clamp(20px,4vw,34px);
+  font-size: clamp(20px, 4vw, 34px);
   line-height: 1.4;
   color: var(--green);
   text-shadow: 3px 3px 0 rgba(250,204,21,0.16);
+  position: relative;
+  z-index: 1;
 }
 
 .subtitle {
   color: var(--muted);
   font-size: 9px;
   line-height: 1.8;
-  max-width: 620px;
+  max-width: 660px;
   margin: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .settings-grid {
@@ -146,7 +156,7 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
+  gap: 22px;
   padding: 16px 0;
   border-bottom: 1px solid rgba(255,255,255,0.06);
   position: relative;
@@ -172,14 +182,13 @@ h1 {
 }
 
 .toggle-btn {
-  min-width: 120px;
+  min-width: 132px;
   background: var(--green);
   color: var(--bg);
   border: 1px solid var(--green);
   border-radius: 14px;
   padding: 14px 16px;
   cursor: pointer;
-  font-family: 'Press Start 2P', monospace;
   font-size: 7px;
   transition: 0.18s ease;
   box-shadow: 4px 4px 0 rgba(250,204,21,0.45);
@@ -197,44 +206,21 @@ h1 {
   box-shadow: 4px 4px 0 rgba(255,59,59,0.22);
 }
 
-.volume-wrap {
-  width: 240px;
-}
-
-.volume-slider {
-  width: 100%;
-  appearance: none;
-  height: 10px;
-  border-radius: 999px;
-  background: #111A24;
-  outline: none;
-  border: 1px solid rgba(250,204,21,0.35);
-}
-
-.volume-slider::-webkit-slider-thumb {
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--yellow);
-  cursor: pointer;
-  border: 2px solid var(--bg);
-}
-
-.volume-slider::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--yellow);
-  cursor: pointer;
-  border: 2px solid var(--bg);
-}
-
-.volume-value {
-  margin-top: 12px;
+.select-box {
+  min-width: 180px;
+  background: var(--panel2);
   color: var(--yellow);
-  font-size: 8px;
-  text-align: right;
+  border: 1px solid rgba(250,204,21,0.45);
+  border-radius: 14px;
+  padding: 14px 16px;
+  font-size: 7px;
+  cursor: pointer;
+  outline: none;
+}
+
+.select-box:focus {
+  border-color: var(--green);
+  color: var(--green);
 }
 
 .bottom-bar {
@@ -251,7 +237,6 @@ h1 {
   border-radius: 16px;
   padding: 14px 18px;
   cursor: pointer;
-  font-family: 'Press Start 2P', monospace;
   font-size: 8px;
   transition: 0.18s ease;
 }
@@ -260,6 +245,16 @@ h1 {
   background: var(--yellow);
   color: var(--bg);
   transform: translateY(-2px);
+}
+
+.btn.danger {
+  border-color: rgba(255,59,59,0.55);
+  color: var(--red);
+}
+
+.btn.danger:hover {
+  background: var(--red);
+  color: white;
 }
 
 .save-message {
@@ -274,6 +269,37 @@ h1 {
   box-shadow: 4px 4px 0 rgba(250,204,21,0.14);
 }
 
+.warning-box {
+  border: 1px solid rgba(255,59,59,0.35);
+  background: rgba(255,59,59,0.06);
+  border-radius: 16px;
+  padding: 16px;
+  color: var(--muted);
+  font-size: 7px;
+  line-height: 1.8;
+  position: relative;
+  z-index: 1;
+}
+
+.warning-box strong {
+  color: var(--red);
+}
+
+body.large-text .subtitle,
+body.large-text .setting-info p,
+body.large-text .warning-box {
+  font-size: 9px;
+}
+
+body.large-text .setting-info h3 {
+  font-size: 10px;
+}
+
+body.reduced-motion * {
+  transition: none !important;
+  animation: none !important;
+}
+
 @media(max-width:700px) {
   #language-toggle {
     position: static;
@@ -286,7 +312,8 @@ h1 {
     align-items: flex-start;
   }
 
-  .volume-wrap {
+  .select-box,
+  .toggle-btn {
     width: 100%;
   }
 
@@ -305,91 +332,176 @@ h1 {
 
 <button id="language-toggle">FR</button>
 
-<audio id="bg-music" autoplay loop>
-  <source src="sounds/background-music.mp3" type="audio/mpeg">
-</audio>
-
 <div class="page">
 
   <header class="header">
-    <div class="kicker" ata-key="settingsKicker">BYTE RUSH / SYSTEM SETTINGS</div>
-    <h1 ata-key="settingsTitle">Game Settings</h1>
-    <p class="subtitle" ata-key="settingsDesc">Customize your ByteRush experience, control music volume, and adjust your gameplay environment.</p>
+    <div class="kicker">BYTE RUSH / SYSTEM SETTINGS</div>
+    <h1>Game Settings</h1>
+    <p class="subtitle">
+      Customize the ByteRush experience. Keep this page simple. Settings should help the player, not overload them.
+    </p>
   </header>
 
   <main class="settings-grid">
 
     <section class="card">
-
-      <div class="card-title" data-key="audioSettings">AUDIO SETTINGS</div>
+      <div class="card-title">DISPLAY SETTINGS</div>
 
       <div class="setting-row">
-
         <div class="setting-info">
-          <h3 data-key="backgroundMusic">BACKGROUND MUSIC</h3>
-          <p data-key="backgroundMusicDesc">Turn the ByteRush soundtrack on or off during gameplay.</p>
+          <h3>LARGE TEXT</h3>
+          <p>Make small instructions easier to read during missions.</p>
         </div>
 
-        <button id="music-toggle" class="toggle-btn">
-          MUSIC ON
+        <button id="text-toggle" class="toggle-btn">
+          TEXT OFF
         </button>
-
       </div>
 
       <div class="setting-row">
-
         <div class="setting-info">
-          <h3 data-key="musicVolume">MUSIC VOLUME</h3>
-          <p data-key="musicVolumeDesc">Adjust the global soundtrack volume for every page in the game.</p>
+          <h3>REDUCED MOTION</h3>
+          <p>Reduce hover movement and animations for a calmer game feel.</p>
         </div>
 
-        <div class="volume-wrap">
-
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value="60"
-            class="volume-slider"
-            id="volume-slider"
-          >
-
-          <div class="volume-value">
-            <span id="volume-text">60%</span>
-          </div>
-
-        </div>
-
+        <button id="motion-toggle" class="toggle-btn">
+          MOTION OFF
+        </button>
       </div>
 
+      <div class="setting-row">
+        <div class="setting-info">
+          <h3>SCREEN MODE</h3>
+          <p>Choose how focused the game interface should feel.</p>
+        </div>
+
+        <select id="screen-mode" class="select-box">
+          <option value="normal">NORMAL</option>
+          <option value="focus">FOCUS</option>
+          <option value="compact">COMPACT</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-title">GAMEPLAY SETTINGS</div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <h3>MISSION TIPS</h3>
+          <p>Show simple beginner-friendly instructions before missions.</p>
+        </div>
+
+        <button id="tips-toggle" class="toggle-btn">
+          TIPS ON
+        </button>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <h3>AUTO SAVE</h3>
+          <p>Save progress in the browser while the player completes missions.</p>
+        </div>
+
+        <button id="autosave-toggle" class="toggle-btn">
+          SAVE ON
+        </button>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <h3>DIFFICULTY</h3>
+          <p>Beginner mode keeps the game easier for new coders.</p>
+        </div>
+
+        <select id="difficulty" class="select-box">
+          <option value="beginner">BEGINNER</option>
+          <option value="normal">NORMAL</option>
+          <option value="challenge">CHALLENGE</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-title">LANGUAGE SETTINGS</div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <h3>LANGUAGE DISPLAY</h3>
+          <p>This saves the language choice. Translation logic can be connected later.</p>
+        </div>
+
+        <select id="language-select" class="select-box">
+          <option value="en">ENGLISH</option>
+          <option value="fr">FRANÇAIS</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-title">RESET SETTINGS</div>
+
+      <div class="warning-box">
+        <strong>Warning:</strong> This only resets settings saved on this device. It does not delete game files.
+      </div>
     </section>
 
     <div class="save-message" id="save-message">
-      <span data-key="settingsSaved">SETTINGS SAVED</span>
+      SETTINGS SAVED
     </div>
 
   </main>
 
   <div class="bottom-bar">
-
-    <button class="btn" onclick="goBack()">
-      <span data-key="backToDashboard">← BACK TO DASHBOARD</span>
-    </button>
-
-    <button class="btn" id="reset-btn">
-      <span data-key="resetAudioSettings">RESET AUDIO SETTINGS</span>
-    </button>
-
+    <button class="btn" onclick="goBack()">← BACK TO DASHBOARD</button>
+    <button class="btn danger" id="reset-btn">RESET SETTINGS</button>
   </div>
 
 </div>
 
 <script>
-const volumeSlider = document.getElementById("volume-slider");
-const volumeText = document.getElementById("volume-text");
-const musicToggle = document.getElementById("music-toggle");
-const saveMessage = document.getElementById("save-message");
+const textToggle = document.getElementById("text-toggle");
+const motionToggle = document.getElementById("motion-toggle");
+const tipsToggle = document.getElementById("tips-toggle");
+const autosaveToggle = document.getElementById("autosave-toggle");
+
+const screenMode = document.getElementById("screen-mode");
+const difficulty = document.getElementById("difficulty");
+const languageSelect = document.getElementById("language-select");
+const languageToggle = document.getElementById("language-toggle");
+
 const resetBtn = document.getElementById("reset-btn");
+const saveMessage = document.getElementById("save-message");
+
+const SETTINGS_KEY = "byterush-settings";
+
+const defaultSettings = {
+  largeText: false,
+  reducedMotion: false,
+  missionTips: true,
+  autoSave: true,
+  screenMode: "normal",
+  difficulty: "beginner",
+  language: "en"
+};
+
+function getSettings() {
+  const saved = localStorage.getItem(SETTINGS_KEY);
+
+  if (!saved) {
+    return { ...defaultSettings };
+  }
+
+  try {
+    return { ...defaultSettings, ...JSON.parse(saved) };
+  } catch {
+    return { ...defaultSettings };
+  }
+}
+
+function saveSettings(settings) {
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+}
 
 function showSaveMessage() {
   saveMessage.style.display = "block";
@@ -401,91 +513,82 @@ function showSaveMessage() {
   }, 1600);
 }
 
-function updateToggleButton() {
-  const musicEnabled = localStorage.getItem("music-enabled") !== "false";
+function setToggleState(button, isOn, onText, offText) {
+  button.innerText = isOn ? onText : offText;
 
-  if (musicEnabled) {
-    musicToggle.innerText = "MUSIC ON";
-    musicToggle.classList.remove("off");
+  if (isOn) {
+    button.classList.remove("off");
   } else {
-    musicToggle.innerText = "MUSIC OFF";
-    musicToggle.classList.add("off");
+    button.classList.add("off");
   }
 }
 
-function loadSettings() {
-  let savedVolume = parseFloat(localStorage.getItem("music-volume"));
+function applySettings(settings) {
+  document.body.classList.toggle("large-text", settings.largeText);
+  document.body.classList.toggle("reduced-motion", settings.reducedMotion);
 
-  if (isNaN(savedVolume)) {
-    savedVolume = 0.6;
-    localStorage.setItem("music-volume", savedVolume);
-  }
+  setToggleState(textToggle, settings.largeText, "TEXT ON", "TEXT OFF");
+  setToggleState(motionToggle, settings.reducedMotion, "MOTION ON", "MOTION OFF");
+  setToggleState(tipsToggle, settings.missionTips, "TIPS ON", "TIPS OFF");
+  setToggleState(autosaveToggle, settings.autoSave, "SAVE ON", "SAVE OFF");
 
-  volumeSlider.value = Math.round(savedVolume * 100);
-  volumeText.innerText = Math.round(savedVolume * 100) + "%";
+  screenMode.value = settings.screenMode;
+  difficulty.value = settings.difficulty;
+  languageSelect.value = settings.language;
 
-  const bgMusic = document.getElementById("bg-music");
-
-  if (bgMusic) {
-    bgMusic.volume = savedVolume;
-
-    if (localStorage.getItem("music-enabled") === "false") {
-      bgMusic.pause();
-    }
-  }
-
-  updateToggleButton();
+  languageToggle.innerText = settings.language === "en" ? "FR" : "EN";
 }
 
-volumeSlider.addEventListener("input", () => {
-  const volume = volumeSlider.value / 100;
+function updateSetting(key, value) {
+  const settings = getSettings();
+  settings[key] = value;
 
-  localStorage.setItem("music-volume", volume);
-  volumeText.innerText = volumeSlider.value + "%";
-
-  const bgMusic = document.getElementById("bg-music");
-
-  if (bgMusic) {
-    bgMusic.volume = volume;
-  }
-
+  saveSettings(settings);
+  applySettings(settings);
   showSaveMessage();
+}
+
+textToggle.addEventListener("click", () => {
+  const settings = getSettings();
+  updateSetting("largeText", !settings.largeText);
 });
 
-musicToggle.addEventListener("click", () => {
-  const musicEnabled = localStorage.getItem("music-enabled") !== "false";
-  const bgMusic = document.getElementById("bg-music");
+motionToggle.addEventListener("click", () => {
+  const settings = getSettings();
+  updateSetting("reducedMotion", !settings.reducedMotion);
+});
 
-  if (musicEnabled) {
-    localStorage.setItem("music-enabled", "false");
+tipsToggle.addEventListener("click", () => {
+  const settings = getSettings();
+  updateSetting("missionTips", !settings.missionTips);
+});
 
-    if (bgMusic) {
-      bgMusic.pause();
-    }
-  } else {
-    localStorage.setItem("music-enabled", "true");
+autosaveToggle.addEventListener("click", () => {
+  const settings = getSettings();
+  updateSetting("autoSave", !settings.autoSave);
+});
 
-    if (bgMusic) {
-      bgMusic.play().catch(() => {});
-    }
-  }
+screenMode.addEventListener("change", () => {
+  updateSetting("screenMode", screenMode.value);
+});
 
-  updateToggleButton();
-  showSaveMessage();
+difficulty.addEventListener("change", () => {
+  updateSetting("difficulty", difficulty.value);
+});
+
+languageSelect.addEventListener("change", () => {
+  updateSetting("language", languageSelect.value);
+});
+
+languageToggle.addEventListener("click", () => {
+  const settings = getSettings();
+  const nextLanguage = settings.language === "en" ? "fr" : "en";
+  updateSetting("language", nextLanguage);
 });
 
 resetBtn.addEventListener("click", () => {
-  localStorage.setItem("music-volume", "0.6");
-  localStorage.setItem("music-enabled", "true");
-
-  const bgMusic = document.getElementById("bg-music");
-
-  if (bgMusic) {
-    bgMusic.volume = 0.6;
-    bgMusic.play().catch(() => {});
-  }
-
-  loadSettings();
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(defaultSettings));
+  applySettings(defaultSettings);
   showSaveMessage();
 });
 
@@ -493,12 +596,8 @@ function goBack() {
   window.location.href = "dashboard.html";
 }
 
-loadSettings();
+applySettings(getSettings());
 </script>
-
-<script src="audio.js"></script>
-<script src="translations.js"></script>
-<script src="language.js"></script>
 
 </body>
 </html>

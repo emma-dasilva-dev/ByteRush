@@ -3,275 +3,252 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ByteRush | Mission Tracker</title>
+  <title>Mission Tracker | ByteRush</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="projects.css" />
 </head>
-
 <body>
-  <main class="project-shell">
-    <section class="project-topbar panel-frame">
-      <div>
-        <p class="mini-label">PROJECT 04 / INTERMEDIATE BUILD</p>
-        <h1 class="project-title">✅ MISSION TRACKER</h1>
-        <p class="project-subtitle">Build a simple tool that tracks missions and completed tasks.</p>
-      </div>
-
-      <div class="lab-stats">
-        <div class="stat-pill"><span>PLAYER</span><strong id="playerName">Builder</strong></div>
-        <div class="stat-pill"><span>XP</span><strong id="xpValue">0</strong></div>
-        <div class="stat-pill"><span>REWARD</span><strong>+100</strong></div>
-        <div class="stat-pill"><span>STATUS</span><strong id="projectStatus">In Progress</strong></div>
-      </div>
-    </section>
-
-    <section class="project-main panel-frame">
-      <div class="project-panel guide-panel">
-        <div class="panel-heading">
-          <h2>BUILD GUIDE</h2>
-          <div id="stepCounter" class="step-counter">STEP 1 / 10</div>
-        </div>
-
-        <div class="step-card">
-          <h3 id="stepTitle"></h3>
-          <p id="stepExplain"></p>
-          <ul id="stepTask"></ul>
-          <p class="project-hint" id="stepHint"></p>
-        </div>
-
-        <div id="stepDots" class="step-status-list"></div>
-
-        <div class="step-actions">
-          <button id="prevStepBtn">PREVIOUS STEP</button>
-          <button id="nextStepBtn">NEXT STEP</button>
-          <button id="checkStepBtn" class="primary-btn">CHECK STEP</button>
-          <button id="completeProjectBtn" class="secondary-btn">COMPLETE PROJECT</button>
-        </div>
-      </div>
-
-      <div class="project-panel build-panel">
-        <div class="panel-heading">
-          <h2>LIVE TRACKER PREVIEW</h2>
-          <div class="step-counter">HTML + CSS + JS</div>
-        </div>
-
-        <div class="input-grid">
-          <div class="input-row">
-            <label>TRACKER TITLE</label>
-            <input id="trackerTitle" value="Mission Tracker" />
-          </div>
-        </div>
-
-        <div class="preview-box">
-          <div id="projectPreview" class="preview-stage"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="project-bottom-console panel-frame">
-      <div class="feedback-console" id="feedbackText">
-        <strong>SYSTEM VOICE:</strong> Build a tool that remembers missions.
-      </div>
-
-      <div class="bottom-actions">
-        <button id="audioToggle" class="secondary-btn">PROJECT AUDIO: ON</button>
-        <button id="returnLabBtn">RETURN TO PROJECT LAB</button>
-      </div>
-    </section>
-  </main>
-
-  <div id="completeModal" class="modal-backdrop">
-    <div class="modal">
-      <div class="modal-content">
-        <div class="modal-title">BUILD COMPLETE</div>
-        <div id="completeTitle" class="modal-subtitle">Mission Tracker Online</div>
-        <div id="completeReward" class="modal-subtitle">+100 XP</div>
-        <p id="completeMessage" class="modal-text">You built a useful tool.</p>
-        <button id="modalReturnBtn" class="primary-btn">RETURN TO PROJECT LAB</button>
-      </div>
-    </div>
-  </div>
-
   <script src="projects.js"></script>
+
   <script>
-    let tasks = JSON.parse(localStorage.getItem("project4-tasks") || "[]");
-
-    if (tasks.length === 0) {
-      tasks = [
-        { text: "Repair HTML World", done: true },
-        { text: "Restore CSS Circuit", done: true },
-        { text: "Activate JavaScript Core", done: false }
-      ];
-    }
-
-    function value(id) {
-      return document.getElementById(id).value.trim();
-    }
-
-    function saveTasks() {
-      localStorage.setItem("project4-tasks", JSON.stringify(tasks));
-    }
-
-    window.BRProjectConfig = {
-      id: 4,
-      name: "Mission Tracker",
+    ByteRushProjects.createProjectPage({
+      projectId: "project-4",
+      title: "Mission Tracker",
+      difficulty: "Intermediate",
       xp: 100,
       completeTitle: "Mission Tracker Online",
-      completeMessage: "You built a useful mission tracker with JavaScript.",
-      renderPreview() {
-        return `
-          <div class="tracker-card theme-green">
-            <h2>${value("trackerTitle") || "Mission Tracker"}</h2>
-            <p>Add a mission, then click it to mark it complete.</p>
-
-            <div class="preview-buttons">
-              <input id="missionInput" style="flex:1; min-width:160px;" placeholder="New mission..." />
-              <button id="addMissionBtn" type="button">ADD</button>
-            </div>
-
-            <div class="task-list">
-              ${tasks.map((task, index) => `
-                <div class="task-item ${task.done ? "done" : ""}" data-task-index="${index}">
-                  <span>${task.text}</span>
-                  <strong>${task.done ? "DONE" : "OPEN"}</strong>
-                </div>
-              `).join("")}
-            </div>
-
-            <span class="saved-chip">TASKS SAVED: ${tasks.length}</span>
-          </div>
-        `;
-      },
-      afterRender() {
-        const input = document.getElementById("missionInput");
-        const btn = document.getElementById("addMissionBtn");
-
-        btn.addEventListener("click", () => {
-          const text = input.value.trim();
-          if (!text) return;
-          tasks.push({ text, done: false });
-          saveTasks();
-          document.getElementById("projectPreview").innerHTML = window.BRProjectConfig.renderPreview();
-          window.BRProjectConfig.afterRender();
-        });
-
-        document.querySelectorAll("[data-task-index]").forEach(item => {
-          item.addEventListener("click", () => {
-            const index = Number(item.dataset.taskIndex);
-            tasks[index].done = !tasks[index].done;
-            saveTasks();
-            document.getElementById("projectPreview").innerHTML = window.BRProjectConfig.renderPreview();
-            window.BRProjectConfig.afterRender();
-          });
-        });
-      },
+      completeMessage: "You built a working mission tracker.",
+      startHTML: "",
+      startCSS: "",
+      startJS: "",
       steps: [
         {
-          title: "Create app container",
-          explain: "The container holds the full tracker app.",
-          task: "<li>Look at the tracker card in the preview.</li>",
-          hint: "The card is the app container.",
-          validate() {
-            return { ok: true, message: "Tracker container online." };
+          title: "Create the Tracker App",
+          objective: "Create the main box for the mission tracker.",
+          why: "The tracker app will hold the input, button, and mission list.",
+          code: `<div class="tracker-app">
+
+</div>`,
+          preview: "An empty tracker box should appear.",
+          hint: "Type this in the HTML box.",
+          check: function (api) {
+            return /class=["']tracker-app["']/i.test(api.html)
+              ? { pass: true, message: "STEP ONLINE: Tracker app box detected." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Add a div with class=\"tracker-app\"." };
           }
         },
         {
-          title: "Add title",
-          explain: "The title tells users what the app does.",
-          task: "<li>Type a tracker title.</li>",
-          hint: "Example: Mission Tracker.",
-          validate() {
-            return value("trackerTitle").length >= 3
-              ? { ok: true, message: "Tracker title connected." }
-              : { ok: false, message: "Add a tracker title." };
+          title: "Add the Title",
+          objective: "Give the tracker a title.",
+          why: "The title tells the player what the tool does.",
+          code: `<h2>Mission Tracker</h2>`,
+          preview: "The title should appear at the top of the tracker.",
+          hint: "Use an h2 tag inside the tracker app.",
+          check: function (api) {
+            return /<h2[\s>]/i.test(api.html)
+              ? { pass: true, message: "STEP ONLINE: Tracker title detected." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Add an h2 title." };
           }
         },
         {
-          title: "Add input field",
-          explain: "The input lets the player type a new mission.",
-          task: "<li>Find the input field in the preview.</li>",
-          hint: "It says New mission...",
-          validate() {
-            return document.getElementById("missionInput")
-              ? { ok: true, message: "Input field online." }
-              : { ok: false, message: "Input field missing." };
+          title: "Add the Input Field",
+          objective: "Add a place where the player can type a mission.",
+          why: "An input field lets the player type text into the app.",
+          code: `<input id="missionInput" type="text" placeholder="Type a mission...">`,
+          preview: "A text input should appear.",
+          hint: "The id must be exactly missionInput.",
+          check: function (api) {
+            return /<input[^>]+id=["']missionInput["']/i.test(api.html)
+              ? { pass: true, message: "STEP ONLINE: Mission input detected." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Add an input with id=\"missionInput\"." };
           }
         },
         {
-          title: "Add add-task button",
-          explain: "The button sends the typed mission into the list.",
-          task: "<li>Find the ADD button.</li>",
-          hint: "The button is beside the input.",
-          validate() {
-            return document.getElementById("addMissionBtn")
-              ? { ok: true, message: "Add button online." }
-              : { ok: false, message: "Add button missing." };
+          title: "Add the Button",
+          objective: "Add a button for adding missions.",
+          why: "The button will send the typed mission into the list.",
+          code: `<button id="addMissionBtn">Add Mission</button>`,
+          preview: "An Add Mission button should appear.",
+          hint: "The id must be exactly addMissionBtn.",
+          check: function (api) {
+            return /<button[^>]+id=["']addMissionBtn["']/i.test(api.html)
+              ? { pass: true, message: "STEP ONLINE: Add Mission button detected." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Add a button with id=\"addMissionBtn\"." };
           }
         },
         {
-          title: "Add task list area",
-          explain: "The list shows all missions the player has added.",
-          task: "<li>Look for the task list under the input.</li>",
-          hint: "There should be mission rows.",
-          validate() {
-            return tasks.length >= 1
-              ? { ok: true, message: "Task list online." }
-              : { ok: false, message: "Add at least one task." };
+          title: "Add the Mission List",
+          objective: "Create a place where missions will appear.",
+          why: "A list holds multiple items. Each mission will become one item.",
+          code: `<ul id="missionList"></ul>`,
+          preview: "An empty mission list area should appear.",
+          hint: "The id must be exactly missionList.",
+          check: function (api) {
+            return /<ul[^>]+id=["']missionList["']/i.test(api.html)
+              ? { pass: true, message: "STEP ONLINE: Mission list detected." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Add a ul with id=\"missionList\"." };
           }
         },
         {
-          title: "Style the tracker",
-          explain: "The tracker needs spacing, colors, and clean sections.",
-          task: "<li>Check that the tracker is readable.</li>",
-          hint: "Look for the card, list rows, and status chip.",
-          validate() {
-            return { ok: true, message: "Tracker styling online." };
+          title: "Style the Tracker",
+          objective: "Make the tracker look like a real ByteRush tool.",
+          why: "CSS makes the tracker easier to read and more fun to use.",
+          code: `.tracker-app {
+  background: #07111D;
+  border: 2px solid #39FF5A;
+  padding: 20px;
+  border-radius: 16px;
+}
+
+.completed {
+  text-decoration: line-through;
+  opacity: 0.6;
+}`,
+          preview: "The tracker should now look like a styled app panel.",
+          hint: "Type this in the CSS box.",
+          check: function (api) {
+            const css = api.normalize(api.css);
+            const pass = css.includes(".tracker-app") &&
+              css.includes("background") &&
+              css.includes("border") &&
+              css.includes("padding") &&
+              css.includes("border-radius");
+
+            return pass
+              ? { pass: true, message: "STEP ONLINE: Tracker styling detected." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Style .tracker-app with background, border, padding, and border-radius." };
           }
         },
         {
-          title: "Use JavaScript to add missions",
-          explain: "JavaScript makes the ADD button create new tasks.",
-          task: "<li>Type a new mission and press ADD.</li>",
-          hint: "Try: Build my first app.",
-          validate() {
-            return tasks.length >= 4
-              ? { ok: true, message: "Add mission logic online." }
-              : { ok: false, message: "Add one new mission using the input." };
+          title: "Find the Input, Button, and List",
+          objective: "Tell JavaScript where the tracker parts are.",
+          why: "JavaScript needs to find the input, button, and list before it can use them.",
+          code: `const missionInput = document.getElementById("missionInput");
+const addMissionBtn = document.getElementById("addMissionBtn");
+const missionList = document.getElementById("missionList");`,
+          preview: "Nothing visible changes yet. JavaScript is now connected.",
+          hint: "Use document.getElementById for all three parts.",
+          check: function (api) {
+            const js = api.js;
+            const pass = js.includes('getElementById("missionInput")') &&
+              js.includes('getElementById("addMissionBtn")') &&
+              js.includes('getElementById("missionList")');
+
+            return pass
+              ? { pass: true, message: "STEP ONLINE: JavaScript found the tracker parts." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Use getElementById for missionInput, addMissionBtn, and missionList." };
           }
         },
         {
-          title: "Mark tasks complete",
-          explain: "Clicking a task should change its done state.",
-          task: "<li>Click any mission row to mark it complete.</li>",
-          hint: "Completed tasks get crossed out.",
-          validate() {
-            return tasks.some(task => task.done)
-              ? { ok: true, message: "Complete task logic online." }
-              : { ok: false, message: "Mark at least one task complete." };
+          title: "Add a Mission to the List",
+          objective: "Make the button add typed text to the list.",
+          why: "When the player types a mission and clicks the button, JavaScript creates a new list item.",
+          code: `addMissionBtn.addEventListener("click", function () {
+  const missionText = missionInput.value;
+
+  if (missionText.trim() === "") {
+    return;
+  }
+
+  const li = document.createElement("li");
+  li.textContent = missionText;
+  missionList.appendChild(li);
+
+  missionInput.value = "";
+});`,
+          preview: "Typing a mission and clicking the button should add it to the list.",
+          hint: "Create an li, set its text, and append it to missionList.",
+          check: function (api) {
+            const input = api.preview.querySelector("#missionInput");
+            const btn = api.preview.querySelector("#addMissionBtn");
+            const list = api.preview.querySelector("#missionList");
+
+            if (!input || !btn || !list) {
+              return { pass: false, message: "SYSTEM CHECK FAILED: Build the input, button, and list first." };
+            }
+
+            input.value = "Test Mission";
+            btn.click();
+
+            return list.children.length > 0
+              ? { pass: true, message: "STEP ONLINE: Add Mission button creates a list item." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Type a mission and click Add Mission. A new list item should appear." };
           }
         },
         {
-          title: "Save tasks to localStorage",
-          explain: "Saving means the browser can remember your tasks.",
-          task: "<li>The tracker saves tasks automatically.</li>",
-          hint: "Refresh later and your tasks can still exist.",
-          validate() {
-            saveTasks();
-            return localStorage.getItem("project4-tasks")
-              ? { ok: true, message: "LocalStorage save online." }
-              : { ok: false, message: "Storage did not save." };
+          title: "Mark a Mission Complete",
+          objective: "Let the player click a mission to mark it complete.",
+          why: "A class can change how something looks. When the mission is clicked, it gets a completed style.",
+          code: `li.addEventListener("click", function () {
+  li.classList.toggle("completed");
+});`,
+          preview: "Clicking a mission should mark it as complete or incomplete.",
+          hint: "Put this code after the li is created inside the addMissionBtn click function.",
+          check: function (api) {
+            const input = api.preview.querySelector("#missionInput");
+            const btn = api.preview.querySelector("#addMissionBtn");
+            const list = api.preview.querySelector("#missionList");
+
+            if (!input || !btn || !list) {
+              return { pass: false, message: "SYSTEM CHECK FAILED: Build the tracker parts first." };
+            }
+
+            input.value = "Clickable Mission";
+            btn.click();
+
+            const li = list.querySelector("li");
+            if (!li) {
+              return { pass: false, message: "SYSTEM CHECK FAILED: Add Mission should create a list item first." };
+            }
+
+            li.click();
+
+            return li.classList.contains("completed")
+              ? { pass: true, message: "STEP ONLINE: Clicking a mission toggles the completed class." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Clicking a mission should add or remove the completed class." };
           }
         },
         {
-          title: "Complete the build",
-          explain: "Your tracker can add, show, complete, and save missions.",
-          task: "<li>Check this final step.</li><li>Then press Complete Project.</li>",
-          hint: "This is a real useful tool.",
-          validate() {
-            return { ok: true, message: "Mission Tracker ready." };
+          title: "Save Missions",
+          objective: "Save missions so they do not disappear after refresh.",
+          why: "localStorage lets the browser remember small pieces of information.",
+          code: `function saveMissions() {
+  localStorage.setItem("missions", missionList.innerHTML);
+}
+
+function loadMissions() {
+  missionList.innerHTML = localStorage.getItem("missions") || "";
+}
+
+loadMissions();`,
+          preview: "When missions are added, they should be saved. When the page reloads, saved missions should appear again.",
+          hint: "Use localStorage.setItem and localStorage.getItem.",
+          check: function (api) {
+            const js = api.js;
+            const pass = js.includes("localStorage.setItem") && js.includes("localStorage.getItem");
+
+            return pass
+              ? { pass: true, message: "STEP ONLINE: localStorage save and load code detected." }
+              : { pass: false, message: "SYSTEM CHECK FAILED: Add localStorage.setItem and localStorage.getItem to save missions." };
+          }
+        },
+        {
+          title: "Complete the Build",
+          objective: "Finish the mission tracker.",
+          why: "You created a useful tool with typing, clicking, lists, styling, and saving.",
+          code: "",
+          preview: "The tracker should let you add missions, click missions complete, and save progress.",
+          hint: "Check this final step, then press Complete Project.",
+          check: function () {
+            return { pass: true, message: "STEP ONLINE: Mission Tracker ready for completion." };
           }
         }
       ]
-    };
+    });
   </script>
 </body>
 </html>

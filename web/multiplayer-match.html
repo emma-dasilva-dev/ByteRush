@@ -1,852 +1,1441 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Multiplayer Match | ByteRush</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ByteRush | Multiplayer Match</title>
 
-<link rel="stylesheet" href="arcade-theme.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Press+Start+2P&display=swap');
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Press+Start+2P&display=swap');
+    :root {
+      /* Main ByteRush Colors */
+      --green: #39FF5A;
+      --yellow: #FACC15;
+      --red: #FF3B3B;
 
-:root {
-  --green: #39FF5A;
-  --red: #FF3B3B;
-  --bg: #03080F;
-  --panel: #050B12;
-  --panel2: #07111D;
-  --text: #E6FFE9;
-  --muted: rgba(230, 255, 233, 0.68);
-  --line: rgba(57, 255, 90, 0.28);
-  --yellow: #FACC15;
-}
+      /* Background Colors */
+      --bg: #03080F;
+      --panel: #050B12;
+      --panel2: #07111D;
 
-* {
-  box-sizing: border-box;
-}
+      /* Text Colors */
+      --text: #E7FFE9;
+      --muted: #8FAF9A;
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, rgba(57,255,90,0.08), transparent 32%),
-    radial-gradient(circle at bottom right, rgba(250,204,21,0.06), transparent 30%),
-    linear-gradient(rgba(57,255,90,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(57,255,90,0.025) 1px, transparent 1px),
-    var(--bg);
-  background-size: auto, auto, 44px 44px, 44px 44px;
-  color: var(--text);
-  font-family: "IBM Plex Mono", monospace;
-  padding: 16px;
-  line-height: 1.45;
-}
+      /* Border / Line Colors */
+      --line: rgba(57, 255, 90, 0.22);
+      --yellow-line: rgba(250, 204, 21, 0.45);
+      --red-line: rgba(255, 59, 59, 0.45);
 
-.pixel {
-  font-family: "Press Start 2P", monospace;
-}
+      /* Glow / Shadow Colors */
+      --green-glow: rgba(57, 255, 90, 0.18);
+      --yellow-glow: rgba(250, 204, 21, 0.18);
+      --red-glow: rgba(255, 59, 59, 0.18);
 
-#language-toggle {
-  position: absolute;
-  top: 18px;
-  right: 24px;
-  z-index: 1000;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 8px;
-  padding: 10px;
-  background: var(--panel2);
-  color: var(--yellow);
-  border: 1px solid rgba(250,204,21,0.5);
-  border-radius: 4px;
-  cursor: pointer;
-}
+      /* Transparent UI Colors */
+      --green-soft: rgba(57, 255, 90, 0.08);
+      --yellow-soft: rgba(250, 204, 21, 0.08);
+      --red-soft: rgba(255, 59, 59, 0.08);
+    }
 
-#language-toggle:hover {
-  color: var(--green);
-  background: rgba(250,204,21,0.08);
-}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-.match {
-  max-width: 1060px;
-  margin: 0 auto;
-}
+    html {
+      min-height: 100%;
+      background: var(--bg);
+    }
 
-.topbar,
-.panel,
-.player-card,
-.feedback-card {
-  border: 1px solid var(--line);
-  background: rgba(5,11,18,0.92);
-  box-shadow: 0 18px 45px rgba(0,0,0,0.35);
-  position: relative;
-}
+    body {
+      min-height: 100vh;
+      font-family: "IBM Plex Mono", monospace;
+      color: var(--text);
+      background:
+        linear-gradient(rgba(57, 255, 90, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(57, 255, 90, 0.035) 1px, transparent 1px),
+        radial-gradient(circle at top left, rgba(57, 255, 90, 0.08), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(250, 204, 21, 0.06), transparent 28%),
+        var(--bg);
+      background-size: 34px 34px, 34px 34px, 100% 100%, 100% 100%, auto;
+      overflow-x: hidden;
+      line-height: 1.7;
+    }
 
-.topbar {
-  padding: 14px;
-  margin-bottom: 10px;
-  border-radius: 22px;
-}
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-.topbar::before {
-  content: "LIVE MATCH";
-  position: absolute;
-  top: -11px;
-  left: 18px;
-  background: var(--bg);
-  color: var(--yellow);
-  border: 1px solid rgba(250,204,21,0.45);
-  padding: 6px 10px;
-  font-family: "Press Start 2P", monospace;
-  font-size: 7px;
-}
+    button {
+      font-family: inherit;
+    }
 
-.topbar::after,
-.panel::before {
-  content: "";
-  position: absolute;
-  inset: 8px;
-  border: 1px dashed rgba(250,204,21,0.08);
-  border-radius: 16px;
-  pointer-events: none;
-}
+    .page {
+      width: min(1100px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 18px 0 34px;
+    }
 
-.panel {
-  padding: 12px;
-  margin-bottom: 10px;
-  border-radius: 22px;
-}
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 14px;
+      margin-bottom: 22px;
+      background: rgba(5, 11, 18, 0.92);
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+      position: relative;
+    }
 
-h1 {
-  margin: 0 0 5px;
-  color: var(--green);
-  font-size: 15px;
-  line-height: 1.4;
-  text-shadow: 3px 3px 0 rgba(250,204,21,0.16);
-}
+    .topbar::before,
+    .topbar::after,
+    .panel::before,
+    .panel::after {
+      content: "";
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: var(--yellow-soft);
+      border: 1px solid var(--yellow-line);
+    }
 
-.desc {
-  color: var(--muted);
-  font-size: 11px;
-  margin: 0;
-  position: relative;
-  z-index: 1;
-}
+    .topbar::before,
+    .panel::before {
+      top: 8px;
+      left: 8px;
+    }
 
-.match-status {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 7px;
-  margin-top: 8px;
-  position: relative;
-  z-index: 1;
-}
+    .topbar::after,
+    .panel::after {
+      right: 8px;
+      bottom: 8px;
+    }
 
-.status-box {
-  border: 1px solid rgba(250,204,21,0.22);
-  background: var(--panel2);
-  padding: 8px;
-  border-radius: 14px;
-  position: relative;
-  overflow: hidden;
-}
+    .brand,
+    .top-title,
+    .pixel,
+    .btn {
+      font-family: "Press Start 2P", monospace;
+    }
 
-.status-box::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 4px;
-  height: 100%;
-  background: var(--yellow);
-  opacity: 0.75;
-}
+    .brand {
+      font-size: 12px;
+      color: var(--green);
+      letter-spacing: 0.5px;
+    }
 
-.label,
-.panel-title {
-  font-family: "Press Start 2P", monospace;
-  font-size: 6px;
-  line-height: 1.4;
-  color: var(--yellow);
-  margin: 0 0 5px;
-  position: relative;
-  z-index: 1;
-}
+    .top-title {
+      font-size: 9px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+    }
 
-.status-box p {
-  margin: 0;
-  font-size: 11px;
-  color: var(--text);
-  position: relative;
-  z-index: 1;
-}
+    .top-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
 
-.players-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 10px;
-}
+    .btn {
+      min-height: 42px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      background: var(--panel2);
+      color: var(--green);
+      cursor: pointer;
+      font-size: 8px;
+      line-height: 1.5;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
 
-.player-card {
-  background: var(--panel2);
-  border: 1px solid rgba(250,204,21,0.22);
-  padding: 10px;
-  border-radius: 18px;
-}
+    .btn:hover {
+      transform: translateY(-2px);
+      border-color: var(--yellow-line);
+      background: var(--yellow-soft);
+    }
 
-.player-top {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  font-size: 11px;
-  margin-bottom: 8px;
-}
+    .btn.primary {
+      color: var(--yellow);
+      border-color: var(--yellow-line);
+      background: var(--yellow-soft);
+      box-shadow: 0 0 18px var(--yellow-glow);
+    }
 
-.player-name {
-  color: var(--text);
-  font-weight: 700;
-}
+    .btn.secondary {
+      color: var(--green);
+      background: var(--panel2);
+    }
 
-.player-state {
-  color: var(--yellow);
-}
+    .panel {
+      position: relative;
+      background: linear-gradient(180deg, rgba(7, 17, 29, 0.98), rgba(5, 11, 18, 0.98));
+      border: 1px solid var(--line);
+      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.48);
+      padding: 22px;
+    }
 
-.progress-track {
-  width: 100%;
-  height: 10px;
-  background: #02060B;
-  border: 1px solid var(--line);
-  overflow: hidden;
-  border-radius: 999px;
-}
+    .inner {
+      border: 1px dashed var(--yellow-line);
+      background: rgba(3, 8, 15, 0.38);
+      padding: 24px;
+    }
 
-.progress-bar {
-  width: 0%;
-  height: 100%;
-  background: var(--green);
-  transition: width 0.35s ease;
-}
+    .screen {
+      display: none;
+      animation: fadeIn 220ms ease both;
+    }
 
-.opponent-bar {
-  background: var(--yellow);
-}
+    .screen.active {
+      display: block;
+    }
 
-.arena-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-textarea {
-  width: 100%;
-  min-height: 240px;
-  resize: vertical;
-  background: #02060B;
-  color: var(--green);
-  border: 1px solid var(--line);
-  padding: 11px;
-  font-size: 12px;
-  line-height: 1.45;
-  outline: none;
-  font-family: "IBM Plex Mono", monospace;
-  border-radius: 16px;
-  position: relative;
-  z-index: 1;
-}
+    .start-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+      gap: 18px;
+      align-items: stretch;
+    }
 
-textarea:focus {
-  border-color: var(--yellow);
-  box-shadow: 0 0 0 2px rgba(250,204,21,0.08);
-}
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--yellow);
+      font-size: 8px;
+      margin-bottom: 18px;
+      line-height: 1.8;
+    }
 
-.challenge-box {
-  background: var(--panel2);
-  border: 1px solid rgba(250,204,21,0.22);
-  padding: 10px;
-  margin-bottom: 8px;
-  border-radius: 16px;
-  position: relative;
-  z-index: 1;
-}
+    .dot {
+      width: 8px;
+      height: 8px;
+      background: var(--green);
+      border: 1px solid var(--line);
+      box-shadow: 0 0 0 4px var(--green-glow);
+      flex-shrink: 0;
+    }
 
-.challenge-box h2 {
-  margin: 0 0 6px;
-  color: var(--text);
-  font-size: 15px;
-}
+    h1,
+    h2,
+    h3 {
+      font-family: "Press Start 2P", monospace;
+      font-weight: 400;
+      line-height: 1.65;
+    }
 
-.challenge-box p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 11px;
-}
+    h1 {
+      font-size: clamp(22px, 4vw, 38px);
+      color: var(--green);
+      margin-bottom: 14px;
+    }
 
-.preview-box {
-  background: #02060B;
-  border: 1px solid rgba(250,204,21,0.22);
-  min-height: 240px;
-  padding: 12px;
-  color: var(--text);
-  overflow: auto;
-  border-radius: 16px;
-  position: relative;
-  z-index: 1;
-}
+    h2 {
+      font-size: clamp(17px, 3vw, 25px);
+      color: var(--green);
+      margin-bottom: 14px;
+    }
 
-.preview-box h1 {
-  color: var(--text);
-  text-shadow: none;
-  font-size: 22px;
-  font-family: "IBM Plex Mono", monospace;
-}
+    h3 {
+      font-size: 11px;
+      color: var(--yellow);
+      margin-bottom: 12px;
+    }
 
-.buttons {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-  position: relative;
-  z-index: 1;
-}
+    .subtitle {
+      font-size: clamp(17px, 2vw, 20px);
+      line-height: 1.75;
+      font-weight: 700;
+      color: var(--text);
+      max-width: 760px;
+      margin-bottom: 12px;
+    }
 
-button {
-  border: 1px solid rgba(250,204,21,0.5);
-  background: transparent;
-  color: var(--yellow);
-  padding: 8px 11px;
-  cursor: pointer;
-  font-family: "IBM Plex Mono", monospace;
-  font-size: 11px;
-  font-weight: 700;
-  border-radius: 14px;
-  transition: 0.18s ease;
-}
+    .text {
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.85;
+      max-width: 780px;
+    }
 
-button:hover {
-  background: var(--yellow);
-  color: var(--bg);
-  transform: translateY(-1px);
-}
+    .match-info,
+    .score-row,
+    .status-row,
+    .result-stats {
+      display: grid;
+      gap: 12px;
+    }
 
-button.primary {
-  background: var(--green);
-  color: var(--bg);
-  border-color: var(--green);
-  box-shadow: 4px 4px 0 rgba(250,204,21,0.45);
-}
+    .match-info {
+      grid-template-columns: repeat(3, 1fr);
+      margin-top: 22px;
+    }
 
-button.danger {
-  color: var(--red);
-  border-color: var(--red);
-}
+    .score-row,
+    .result-stats {
+      grid-template-columns: repeat(2, 1fr);
+    }
 
-button.danger:hover {
-  background: var(--red);
-  color: var(--bg);
-}
+    .status-row {
+      grid-template-columns: repeat(3, 1fr);
+      margin-bottom: 14px;
+    }
 
-button:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
+    .card,
+    .player-preview,
+    .score-card,
+    .status-card,
+    .result-card-small {
+      border: 1px solid var(--line);
+      background: var(--panel2);
+      padding: 14px;
+    }
 
-.feedback-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 7px;
-  position: relative;
-  z-index: 1;
-}
+    .score-card.active {
+      border-color: var(--yellow-line);
+      background: var(--yellow-soft);
+      box-shadow: 0 0 18px var(--yellow-glow);
+    }
 
-.feedback-card {
-  background: var(--panel2);
-  border: 1px solid rgba(250,204,21,0.22);
-  padding: 8px;
-  min-height: 68px;
-  border-radius: 16px;
-}
+    .label {
+      display: block;
+      font-family: "Press Start 2P", monospace;
+      font-size: 7px;
+      color: var(--yellow);
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
 
-.message {
-  color: var(--muted);
-  font-size: 10.5px;
-  line-height: 1.45;
-}
+    .value,
+    .status-value {
+      color: var(--text);
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 1.6;
+    }
 
-.correct {
-  color: var(--green);
-}
+    .status-value {
+      color: var(--green);
+      font-size: 18px;
+    }
 
-.error {
-  color: var(--red);
-}
+    .status-value.warning {
+      color: var(--yellow);
+    }
 
-.almost {
-  color: var(--yellow);
-}
+    .status-value.danger {
+      color: var(--red);
+    }
 
-.result-panel {
-  border-color: rgba(250,204,21,0.55);
-}
+    .score-name {
+      color: var(--text);
+      font-weight: 700;
+      font-size: 17px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
 
-.hidden {
-  display: none;
-}
+    .score-value {
+      color: var(--green);
+      font-weight: 700;
+      font-size: 26px;
+      line-height: 1.3;
+      margin-top: 4px;
+    }
 
-.xp-pop {
-  position: fixed;
-  left: 50%;
-  top: 58%;
-  color: var(--yellow);
-  font-size: 16px;
-  font-weight: 700;
-  pointer-events: none;
-  animation: xpFloat 1s ease-out forwards;
-  z-index: 9999;
-}
+    .player-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
 
-@keyframes xpFloat {
-  0% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
+    .player-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+    }
 
-  100% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-45px) scale(1.2);
-  }
-}
+    .player-row strong {
+      color: var(--text);
+      text-align: right;
+    }
 
-.success-flash {
-  animation: successFlash 0.5s ease-in-out;
-}
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
 
-@keyframes successFlash {
-  0% { background-color: var(--bg); }
-  50% { background-color: rgba(250,204,21,0.12); }
-  100% { background-color: var(--bg); }
-}
+    .progress-shell {
+      height: 10px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      overflow: hidden;
+      margin-bottom: 22px;
+    }
 
-.error-shake {
-  animation: shake 0.3s ease-in-out;
-}
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--green), var(--yellow));
+      transition: width 220ms ease;
+    }
 
-@keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-6px); }
-  50% { transform: translateX(6px); }
-  75% { transform: translateX(-6px); }
-  100% { transform: translateX(0); }
-}
+    .turn-banner {
+      border: 1px solid var(--yellow-line);
+      background: var(--yellow-soft);
+      color: var(--text);
+      padding: 13px;
+      margin-bottom: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.7;
+    }
 
-@media (max-width: 900px) {
-  #language-toggle {
-    position: static;
-    width: 100%;
-    margin-bottom: 14px;
-  }
+    .turn-banner span {
+      color: var(--yellow);
+    }
 
-  .match-status,
-  .players-grid,
-  .arena-layout,
-  .feedback-grid {
-    grid-template-columns: 1fr;
-  }
+    .topic-tag {
+      display: inline-flex;
+      align-items: center;
+      font-family: "Press Start 2P", monospace;
+      font-size: 8px;
+      color: var(--yellow);
+      border: 1px solid var(--yellow-line);
+      background: var(--yellow-soft);
+      padding: 10px 11px;
+      margin-bottom: 16px;
+      line-height: 1.7;
+    }
 
-  h1 {
-    font-size: 14px;
-  }
-}
-</style>
+    .question {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: clamp(22px, 3vw, 30px);
+      color: var(--text);
+      line-height: 1.55;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .answers {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .answer-btn {
+      min-height: 64px;
+      padding: 16px;
+      text-align: left;
+      border: 1px solid var(--line);
+      background: var(--panel2);
+      color: var(--text);
+      cursor: pointer;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1.55;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .answer-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      border-color: var(--yellow-line);
+      background: var(--yellow-soft);
+    }
+
+    .answer-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.95;
+    }
+
+    .answer-btn.correct {
+      border-color: var(--line);
+      background: var(--green-soft);
+      color: var(--green);
+    }
+
+    .answer-btn.wrong {
+      border-color: var(--red-line);
+      background: var(--red-soft);
+      color: var(--red);
+    }
+
+    .answer-btn.dimmed {
+      opacity: 0.52;
+    }
+
+    .feedback {
+      display: none;
+      padding: 16px;
+      border: 1px solid var(--line);
+      background: var(--panel2);
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.8;
+      margin-top: 8px;
+    }
+
+    .feedback.show {
+      display: block;
+    }
+
+    .feedback.correct {
+      border-color: var(--line);
+      background: var(--green-soft);
+    }
+
+    .feedback.wrong {
+      border-color: var(--red-line);
+      background: var(--red-soft);
+    }
+
+    .feedback-title {
+      color: var(--text);
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .match-footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+
+    .next-btn {
+      display: none;
+    }
+
+    .next-btn.show {
+      display: inline-flex;
+    }
+
+    .result-panel {
+      max-width: 760px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .winner {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Press Start 2P", monospace;
+      font-size: 9px;
+      line-height: 1.7;
+      padding: 10px 12px;
+      margin: 4px 0 14px;
+      border: 1px solid var(--yellow-line);
+      background: var(--yellow-soft);
+      color: var(--yellow);
+    }
+
+    .result-stats {
+      margin: 22px 0;
+      text-align: left;
+    }
+
+    .result-card-small strong {
+      display: block;
+      color: var(--text);
+      font-size: 22px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .center {
+      justify-content: center;
+    }
+
+    @media (max-width: 850px) {
+      .topbar {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .top-actions {
+        justify-content: center;
+      }
+
+      .start-layout,
+      .match-info,
+      .score-row,
+      .status-row,
+      .answers,
+      .result-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .match-footer {
+        justify-content: stretch;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .page {
+        width: min(100% - 20px, 1100px);
+        padding-top: 10px;
+      }
+
+      .panel {
+        padding: 14px;
+      }
+
+      .inner {
+        padding: 16px;
+      }
+
+      h1 {
+        font-size: 21px;
+      }
+
+      .subtitle,
+      .text {
+        font-size: 15px;
+      }
+
+      .question {
+        font-size: 21px;
+      }
+
+      .answer-btn {
+        font-size: 16px;
+      }
+
+      .player-row {
+        flex-direction: column;
+      }
+
+      .player-row strong {
+        text-align: left;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">ByteRush</div>
+      <div class="top-title">Multiplayer Match</div>
 
-<button id="language-toggle">FR</button>
-
-<audio id="bg-music" autoplay loop>
-  <source src="sounds/background-music.mp3" type="audio/mpeg">
-</audio>
-
-<main class="match">
-
-  <section class="topbar">
-    <h1 class="pixel">Multiplayer Match</h1>
-    <p class="desc">Complete the challenge before your opponent. Clean code wins.</p>
-
-    <div class="match-status">
-      <div class="status-box">
-        <div class="label">TOPIC</div>
-        <p id="match-topic">HTML + CSS Basics</p>
+      <div class="top-actions">
+        <a href="multiplayer.html" class="btn" id="backToLobbyBtn">Multiplayer</a>
+        <a href="dashboard.html" class="btn" id="backToDashboardBtn">Dashboard</a>
       </div>
+    </header>
 
-      <div class="status-box">
-        <div class="label">TIME</div>
-        <p><span id="timer">30</span>s</p>
-      </div>
+    <main>
+      <section class="screen active" id="startScreen">
+        <article class="panel">
+          <div class="inner">
+            <div class="start-layout">
+              <div>
+                <div class="eyebrow pixel">
+                  <span class="dot"></span>
+                  MATCH ROOM READY
+                </div>
 
-      <div class="status-box">
-        <div class="label">REWARD</div>
-        <p id="reward">+15 XP</p>
-      </div>
+                <h1>CODING BATTLE</h1>
 
-      <div class="status-box">
-        <div class="label">STATUS</div>
-        <p id="status">Active</p>
-      </div>
-    </div>
-  </section>
+                <p class="subtitle">
+                  Two players. One question at a time. Highest score wins.
+                </p>
 
-  <section class="players-grid">
-    <div class="player-card">
-      <div class="player-top">
-        <span class="player-name" id="player-name">You</span>
-        <span class="player-state" id="your-state">Typing...</span>
-      </div>
+                <p class="text">
+                  Player 1 answers first. Then Player 2 answers. Each correct answer gives 1 point.
+                </p>
 
-      <div class="progress-track">
-        <div class="progress-bar" id="your-progress"></div>
-      </div>
-    </div>
+                <div class="match-info">
+                  <div class="card">
+                    <span class="label">ROUNDS</span>
+                    <div class="value">5</div>
+                  </div>
 
-    <div class="player-card">
-      <div class="player-top">
-        <span class="player-name" id="opponent-name">Opponent</span>
-        <span class="player-state" id="opponent-state">Thinking...</span>
-      </div>
+                  <div class="card">
+                    <span class="label">TURNS</span>
+                    <div class="value">10 Total</div>
+                  </div>
 
-      <div class="progress-track">
-        <div class="progress-bar opponent-bar" id="opponent-progress"></div>
-      </div>
-    </div>
-  </section>
+                  <div class="card">
+                    <span class="label">TIME</span>
+                    <div class="value">20s / Turn</div>
+                  </div>
+                </div>
 
-  <section id="result-panel" class="panel result-panel hidden">
-    <div class="panel-title">MATCH RESULT</div>
-    <div class="message" id="final-result">Result loading...</div>
+                <div class="button-row">
+                  <button class="btn primary" id="beginMatchBtn" type="button">BEGIN MATCH</button>
+                  <a href="multiplayer.html" class="btn secondary" id="changePlayersBtn">CHANGE PLAYERS</a>
+                </div>
+              </div>
 
-    <div class="buttons">
-      <button class="primary" type="button" onclick="playAgain()">Play Again</button>
-      <button type="button" onclick="window.location.href='multiplayer.html'">Multiplayer Menu</button>
-      <button class="danger" type="button" onclick="window.location.href='dashboard.html'">Dashboard</button>
-    </div>
-  </section>
+              <aside class="player-preview">
+                <h3>PLAYERS</h3>
 
-  <section class="arena-layout">
+                <div class="player-list">
+                  <div class="player-row">
+                    <span>Player 1</span>
+                    <strong id="previewPlayerOne">Player 1</strong>
+                  </div>
 
-    <div class="panel">
-      <div class="panel-title">CHALLENGE</div>
+                  <div class="player-row">
+                    <span>Player 2</span>
+                    <strong id="previewPlayerTwo">Player 2</strong>
+                  </div>
 
-      <div class="challenge-box">
-        <h2>Create a Main Heading</h2>
-        <p>Replace the starter text with a correct HTML heading that says: <strong>Hello World</strong></p>
-      </div>
+                  <div class="player-row">
+                    <span>Mode</span>
+                    <strong>Local Match</strong>
+                  </div>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </article>
+      </section>
 
-      <div class="panel-title">CODE EDITOR</div>
-      <textarea id="code" spellcheck="false"><h1>write title here</h1></textarea>
+      <section class="screen" id="matchScreen">
+        <article class="panel">
+          <div class="inner">
+            <div class="score-row">
+              <div class="score-card" id="playerOneScoreCard">
+                <span class="label">PLAYER 1</span>
+                <div class="score-name" id="playerOneNameDisplay">Player 1</div>
+                <div class="score-value" id="playerOneScoreDisplay">0</div>
+              </div>
 
-      <div class="buttons">
-        <button class="primary" id="submit-btn" type="button" onclick="submitAnswer()">Submit Answer</button>
-        <button type="button" onclick="showHint()">Hint</button>
-        <button class="danger" type="button" onclick="leaveMatch()">Leave Match</button>
-      </div>
-    </div>
+              <div class="score-card" id="playerTwoScoreCard">
+                <span class="label">PLAYER 2</span>
+                <div class="score-name" id="playerTwoNameDisplay">Player 2</div>
+                <div class="score-value" id="playerTwoScoreDisplay">0</div>
+              </div>
+            </div>
 
-    <div class="panel">
-      <div class="panel-title">LIVE PREVIEW</div>
+            <div class="status-row">
+              <div class="status-card">
+                <span class="label">ROUND</span>
+                <div class="status-value" id="roundDisplay">1 / 5</div>
+              </div>
 
-      <div class="preview-box" id="preview-box">
-        <div id="preview-output"></div>
-      </div>
-    </div>
+              <div class="status-card">
+                <span class="label">TURN</span>
+                <div class="status-value" id="turnDisplay">1 / 10</div>
+              </div>
 
-  </section>
+              <div class="status-card">
+                <span class="label">TIME</span>
+                <div class="status-value" id="timerDisplay">20s</div>
+              </div>
+            </div>
 
-  <section class="panel">
-    <div class="panel-title">RESULTS / HINTS / WARNING</div>
+            <div class="progress-shell">
+              <div class="progress-bar" id="progressBar"></div>
+            </div>
 
-    <div class="feedback-grid">
-      <div class="feedback-card">
-        <div class="label">RESULT</div>
-        <div class="message" id="result">Submit your answer to check it.</div>
-      </div>
+            <div class="turn-banner" id="turnBanner">
+              Current Turn: <span>Player 1</span>
+            </div>
 
-      <div class="feedback-card">
-        <div class="label">HINT</div>
-        <div class="message" id="hint">Click Hint if you get stuck.</div>
-      </div>
+            <div class="topic-tag" id="topicTag">TOPIC: HTML</div>
 
-      <div class="feedback-card">
-        <div class="label">WARNING</div>
-        <div class="message error" id="warning">No syntax warnings yet.</div>
-      </div>
+            <h2 class="question" id="questionText">Question appears here.</h2>
 
-      <div class="feedback-card">
-        <div class="label">LEARNED</div>
-        <div class="message" id="learned">Use correct HTML structure to win.</div>
-      </div>
-    </div>
-  </section>
+            <div class="answers" id="answersGrid"></div>
 
-</main>
+            <div class="feedback" id="feedbackBox">
+              <div class="feedback-title" id="feedbackTitle">Correct.</div>
+              <p id="feedbackText">Explanation appears here.</p>
+            </div>
 
-<audio id="success-sound" src="./sounds/success.mp3" preload="auto"></audio>
-<audio id="error-sound" src="./sounds/error.mp3" preload="auto"></audio>
-<audio id="mistake-sound" src="./sounds/mistake.mp3" preload="auto"></audio>
+            <div class="match-footer">
+              <button class="btn primary next-btn" id="nextTurnBtn" type="button">NEXT TURN</button>
+            </div>
+          </div>
+        </article>
+      </section>
 
-<script>
-const playerNameEl = document.getElementById("player-name");
-const opponentNameEl = document.getElementById("opponent-name");
-const matchTopicEl = document.getElementById("match-topic");
-const rewardEl = document.getElementById("reward");
-const timerEl = document.getElementById("timer");
-const statusEl = document.getElementById("status");
+      <section class="screen" id="resultScreen">
+        <article class="panel result-panel">
+          <div class="inner">
+            <div class="eyebrow pixel">
+              <span class="dot"></span>
+              MATCH COMPLETE
+            </div>
 
-const codeBox = document.getElementById("code");
-const previewOutput = document.getElementById("preview-output");
-const resultEl = document.getElementById("result");
-const hintEl = document.getElementById("hint");
-const warningEl = document.getElementById("warning");
-const learnedEl = document.getElementById("learned");
+            <h2>FINAL SCORE</h2>
 
-const yourProgress = document.getElementById("your-progress");
-const opponentProgress = document.getElementById("opponent-progress");
-const yourState = document.getElementById("your-state");
-const opponentState = document.getElementById("opponent-state");
+            <div class="winner" id="winnerBadge">Winner: Player 1</div>
 
-const resultPanel = document.getElementById("result-panel");
-const finalResult = document.getElementById("final-result");
-const submitBtn = document.getElementById("submit-btn");
+            <p class="text" id="resultMessage" style="margin: 0 auto;">
+              Strong match. Keep practicing and come back sharper.
+            </p>
 
-let timeLeft = 30;
-let timerInterval = null;
-let opponentInterval = null;
-let opponentPercent = 0;
-let matchOver = false;
+            <div class="result-stats">
+              <div class="result-card-small">
+                <span class="label">PLAYER 1</span>
+                <strong id="finalPlayerOneScore">Player 1: 0</strong>
+              </div>
 
-function loadMatchData() {
-  const playerName = localStorage.getItem("player-name") || "You";
-  const opponent = localStorage.getItem("match-opponent") || "ByteMaster";
-  const topic = localStorage.getItem("match-topic") || "HTML + CSS Basics";
-  const reward = localStorage.getItem("match-reward") || "+15 XP";
+              <div class="result-card-small">
+                <span class="label">PLAYER 2</span>
+                <strong id="finalPlayerTwoScore">Player 2: 0</strong>
+              </div>
+            </div>
 
-  playerNameEl.innerText = playerName;
-  opponentNameEl.innerText = opponent;
-  matchTopicEl.innerText = topic;
-  rewardEl.innerText = reward;
-}
+            <div class="button-row center">
+              <button class="btn primary" id="playAgainBtn" type="button">PLAY AGAIN</button>
+              <a href="multiplayer.html" class="btn secondary" id="backToMultiplayerBtn">BACK</a>
+              <a href="dashboard.html" class="btn secondary" id="resultDashboardBtn">DASHBOARD</a>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
 
-function normalize(code) {
-  return code.replace(/\s+/g, "").toLowerCase();
-}
+  <script>
+    const TOTAL_ROUNDS = 5;
+    const TOTAL_TURNS = TOTAL_ROUNDS * 2;
+    const TURN_TIME = 20;
 
-function updatePreview() {
-  previewOutput.innerHTML = codeBox.value;
-  checkWarning();
-  updateYourProgress();
-}
+    const startScreen = document.getElementById("startScreen");
+    const matchScreen = document.getElementById("matchScreen");
+    const resultScreen = document.getElementById("resultScreen");
 
-function updateYourProgress() {
-  const code = normalize(codeBox.value);
-  let percent = 15;
+    const beginMatchBtn = document.getElementById("beginMatchBtn");
+    const nextTurnBtn = document.getElementById("nextTurnBtn");
+    const playAgainBtn = document.getElementById("playAgainBtn");
 
-  if (code.includes("<h1>")) percent += 25;
-  if (code.includes("</h1>")) percent += 25;
-  if (code.includes("helloworld")) percent += 35;
+    const previewPlayerOne = document.getElementById("previewPlayerOne");
+    const previewPlayerTwo = document.getElementById("previewPlayerTwo");
 
-  if (percent > 100) percent = 100;
+    const playerOneNameDisplay = document.getElementById("playerOneNameDisplay");
+    const playerTwoNameDisplay = document.getElementById("playerTwoNameDisplay");
+    const playerOneScoreDisplay = document.getElementById("playerOneScoreDisplay");
+    const playerTwoScoreDisplay = document.getElementById("playerTwoScoreDisplay");
+    const playerOneScoreCard = document.getElementById("playerOneScoreCard");
+    const playerTwoScoreCard = document.getElementById("playerTwoScoreCard");
 
-  yourProgress.style.width = percent + "%";
+    const roundDisplay = document.getElementById("roundDisplay");
+    const turnDisplay = document.getElementById("turnDisplay");
+    const timerDisplay = document.getElementById("timerDisplay");
+    const progressBar = document.getElementById("progressBar");
+    const turnBanner = document.getElementById("turnBanner");
 
-  if (percent >= 100) {
-    yourState.innerText = "Ready";
-  } else {
-    yourState.innerText = "Typing...";
-  }
-}
+    const topicTag = document.getElementById("topicTag");
+    const questionText = document.getElementById("questionText");
+    const answersGrid = document.getElementById("answersGrid");
+    const feedbackBox = document.getElementById("feedbackBox");
+    const feedbackTitle = document.getElementById("feedbackTitle");
+    const feedbackText = document.getElementById("feedbackText");
 
-function checkWarning() {
-  const raw = codeBox.value.trim();
-  const code = normalize(raw);
+    const winnerBadge = document.getElementById("winnerBadge");
+    const resultMessage = document.getElementById("resultMessage");
+    const finalPlayerOneScore = document.getElementById("finalPlayerOneScore");
+    const finalPlayerTwoScore = document.getElementById("finalPlayerTwoScore");
 
-  if (raw.length === 0) {
-    warningEl.innerText = "Your editor is empty.";
-    return;
-  }
+    const navigationLinks = [
+      document.getElementById("backToLobbyBtn"),
+      document.getElementById("backToDashboardBtn"),
+      document.getElementById("changePlayersBtn"),
+      document.getElementById("backToMultiplayerBtn"),
+      document.getElementById("resultDashboardBtn")
+    ];
 
-  if (!code.includes("<h1>")) {
-    warningEl.innerText = "Missing opening <h1> tag.";
-    return;
-  }
+    let playerOneName = "Player 1";
+    let playerTwoName = "Player 2";
 
-  if (!code.includes("</h1>")) {
-    warningEl.innerText = "Missing closing </h1> tag.";
-    return;
-  }
+    let playerOneScore = 0;
+    let playerTwoScore = 0;
+    let currentTurnIndex = 0;
+    let currentQuestion = null;
+    let selectedQuestions = [];
+    let answeredCurrentTurn = false;
+    let timeLeft = TURN_TIME;
+    let timerId = null;
 
-  warningEl.innerText = "No syntax warnings.";
-}
+    const soundFiles = {
+      select: "project-audio/ui-select.mp3",
+      hover: "project-audio/ui-hover.mp3",
+      correct: "project-audio/correct.mp3",
+      wrong: "project-audio/wrong.mp3",
+      complete: "project-audio/trial-complete.mp3"
+    };
 
-function startTimer() {
-  clearInterval(timerInterval);
+    const questionBank = [
+      {
+        topic: "HTML",
+        question: "Which HTML tag creates the biggest heading?",
+        choices: ["<h1>", "<p>", "<button>", "<img>"],
+        answer: "<h1>",
+        explanation: "The <h1> tag creates the biggest heading."
+      },
+      {
+        topic: "HTML",
+        question: "Which HTML tag creates a paragraph?",
+        choices: ["<p>", "<a>", "<ul>", "<input>"],
+        answer: "<p>",
+        explanation: "The <p> tag creates a paragraph."
+      },
+      {
+        topic: "HTML",
+        question: "Which HTML tag creates a clickable link?",
+        choices: ["<a>", "<img>", "<li>", "<title>"],
+        answer: "<a>",
+        explanation: "The <a> tag creates a clickable link."
+      },
+      {
+        topic: "HTML",
+        question: "Which HTML tag shows an image?",
+        choices: ["<img>", "<pic>", "<photo>", "<image>"],
+        answer: "<img>",
+        explanation: "The <img> tag is used to show an image."
+      },
+      {
+        topic: "HTML",
+        question: "Which HTML tag creates a button?",
+        choices: ["<button>", "<click>", "<press>", "<tap>"],
+        answer: "<button>",
+        explanation: "The <button> tag creates a button."
+      },
+      {
+        topic: "HTML",
+        question: "Which HTML tag is used for one list item?",
+        choices: ["<li>", "<ul>", "<ol>", "<list>"],
+        answer: "<li>",
+        explanation: "The <li> tag creates one list item."
+      },
+      {
+        topic: "HTML",
+        question: "Which HTML tag usually holds visible page content?",
+        choices: ["<body>", "<head>", "<title>", "<meta>"],
+        answer: "<body>",
+        explanation: "The <body> tag holds the visible page content."
+      },
+      {
+        topic: "HTML",
+        question: "Which HTML tag lets a user type text?",
+        choices: ["<input>", "<text>", "<write>", "<type>"],
+        answer: "<input>",
+        explanation: "The <input> tag lets users type information."
+      },
 
-  timerInterval = setInterval(function () {
-    if (matchOver) return;
+      {
+        topic: "CSS",
+        question: "Which CSS property changes text color?",
+        choices: ["color", "background-color", "font-size", "border"],
+        answer: "color",
+        explanation: "The color property changes text color."
+      },
+      {
+        topic: "CSS",
+        question: "Which CSS property changes the background color?",
+        choices: ["background-color", "color", "padding", "margin"],
+        answer: "background-color",
+        explanation: "The background-color property changes the background color."
+      },
+      {
+        topic: "CSS",
+        question: "Which CSS property changes text size?",
+        choices: ["font-size", "text-color", "border", "width"],
+        answer: "font-size",
+        explanation: "The font-size property changes text size."
+      },
+      {
+        topic: "CSS",
+        question: "Which CSS property adds space inside an element?",
+        choices: ["padding", "margin", "border", "height"],
+        answer: "padding",
+        explanation: "Padding adds space inside an element."
+      },
+      {
+        topic: "CSS",
+        question: "Which CSS property adds space outside an element?",
+        choices: ["margin", "padding", "display", "font-size"],
+        answer: "margin",
+        explanation: "Margin adds space outside an element."
+      },
+      {
+        topic: "CSS",
+        question: "Which CSS property creates a line around an element?",
+        choices: ["border", "padding", "color", "width"],
+        answer: "border",
+        explanation: "The border property creates a line around an element."
+      },
+      {
+        topic: "CSS",
+        question: "Which selector targets a class named card?",
+        choices: [".card", "#card", "card", "*card"],
+        answer: ".card",
+        explanation: "A class selector starts with a dot."
+      },
+      {
+        topic: "CSS",
+        question: "Which selector targets an id named hero?",
+        choices: ["#hero", ".hero", "hero", "*hero"],
+        answer: "#hero",
+        explanation: "An id selector starts with a hashtag."
+      },
 
-    timeLeft--;
-    timerEl.innerText = timeLeft;
+      {
+        topic: "JAVASCRIPT",
+        question: "Which keyword can create a variable?",
+        choices: ["let", "button", "style", "image"],
+        answer: "let",
+        explanation: "The let keyword can create a variable."
+      },
+      {
+        topic: "JAVASCRIPT",
+        question: "Which value means yes or on?",
+        choices: ["true", "false", "maybe", "none"],
+        answer: "true",
+        explanation: "true usually means yes, on, or correct."
+      },
+      {
+        topic: "JAVASCRIPT",
+        question: "Which value means no or off?",
+        choices: ["false", "true", "start", "green"],
+        answer: "false",
+        explanation: "false usually means no, off, or not correct."
+      },
+      {
+        topic: "JAVASCRIPT",
+        question: "Which symbol is commonly used to add numbers?",
+        choices: ["+", "-", "*", "/"],
+        answer: "+",
+        explanation: "The + symbol can add numbers."
+      },
+      {
+        topic: "JAVASCRIPT",
+        question: "Which statement checks if something is true?",
+        choices: ["if", "click", "style", "text"],
+        answer: "if",
+        explanation: "An if statement checks a condition."
+      },
+      {
+        topic: "JAVASCRIPT",
+        question: "Which word can repeat code?",
+        choices: ["for", "once", "button", "color"],
+        answer: "for",
+        explanation: "A for loop can repeat code."
+      },
+      {
+        topic: "JAVASCRIPT",
+        question: "What can a function help you do?",
+        choices: ["Reuse code", "Only change colors", "Delete HTML", "Open a folder"],
+        answer: "Reuse code",
+        explanation: "A function lets you reuse a group of instructions."
+      },
+      {
+        topic: "JAVASCRIPT",
+        question: "Which command can show a simple popup message?",
+        choices: ["alert()", "color()", "image()", "page()"],
+        answer: "alert()",
+        explanation: "alert() can show a simple popup message."
+      }
+    ];
 
-    if (timeLeft <= 0) {
-      endMatch(false, "Time is up. You lost this round.");
+    function showScreen(screenToShow) {
+      startScreen.classList.remove("active");
+      matchScreen.classList.remove("active");
+      resultScreen.classList.remove("active");
+      screenToShow.classList.add("active");
     }
-  }, 1000);
-}
 
-function startOpponentProgress() {
-  clearInterval(opponentInterval);
+    function playSound(type) {
+      const file = soundFiles[type];
 
-  opponentInterval = setInterval(function () {
-    if (matchOver) return;
+      if (!file) return;
 
-    const increase = Math.floor(Math.random() * 9) + 3;
-    opponentPercent += increase;
-
-    if (opponentPercent > 100) opponentPercent = 100;
-
-    opponentProgress.style.width = opponentPercent + "%";
-
-    if (opponentPercent < 40) {
-      opponentState.innerText = "Reading...";
-    } else if (opponentPercent < 75) {
-      opponentState.innerText = "Typing...";
-    } else if (opponentPercent < 100) {
-      opponentState.innerText = "Checking...";
-    } else {
-      opponentState.innerText = "Submitted";
-      endMatch(false, opponentNameEl.innerText + " finished first.");
+      try {
+        const audio = new Audio(file);
+        audio.volume = 0.5;
+        audio.play().catch(function () {});
+      } catch (error) {}
     }
-  }, 2200);
-}
 
-function submitAnswer() {
-  if (matchOver) return;
+    function trackEvent(eventName) {
+      let analytics = [];
 
-  const code = normalize(codeBox.value);
+      try {
+        const storedAnalytics = localStorage.getItem("byterush-analytics");
+        analytics = storedAnalytics ? JSON.parse(storedAnalytics) : [];
 
-  updatePreview();
+        if (!Array.isArray(analytics)) {
+          analytics = [];
+        }
+      } catch (error) {
+        analytics = [];
+      }
 
-  if (code === "<h1>helloworld</h1>") {
-    endMatch(true, "You won! Clean HTML heading submitted first.");
-  } else {
-    resultEl.innerText = "Not correct yet. Fix the heading and try again.";
-    resultEl.className = "message error";
-    learnedEl.innerText = "The correct structure is: <h1>Hello World</h1>";
-    playSound("error-sound");
-    codeBox.classList.add("error-shake");
+      const eventData = {
+        event: eventName,
+        timestamp: new Date().toISOString()
+      };
 
-    setTimeout(function () {
-      codeBox.classList.remove("error-shake");
-    }, 300);
-  }
-}
+      analytics.push(eventData);
+      localStorage.setItem("byterush-analytics", JSON.stringify(analytics));
+      console.log("ByteRush Event:", eventData);
+    }
 
-function showHint() {
-  hintEl.innerText = "Use exactly this structure: <h1>Hello World</h1>";
-}
+    function shuffleArray(array) {
+      const copiedArray = [...array];
 
-function endMatch(won, message) {
-  if (matchOver) return;
+      for (let i = copiedArray.length - 1; i > 0; i--) {
+        const randomIndex = Math.floor(Math.random() * (i + 1));
+        const temporaryValue = copiedArray[i];
+        copiedArray[i] = copiedArray[randomIndex];
+        copiedArray[randomIndex] = temporaryValue;
+      }
 
-  matchOver = true;
+      return copiedArray;
+    }
 
-  clearInterval(timerInterval);
-  clearInterval(opponentInterval);
+    function loadPlayerNames() {
+      const storedPlayerOne = localStorage.getItem("multiplayer-player-one");
+      const storedPlayerTwo = localStorage.getItem("multiplayer-player-two");
 
-  submitBtn.disabled = true;
-  statusEl.innerText = won ? "Victory" : "Defeat";
+      playerOneName = storedPlayerOne && storedPlayerOne.trim() ? storedPlayerOne.trim() : "Player 1";
+      playerTwoName = storedPlayerTwo && storedPlayerTwo.trim() ? storedPlayerTwo.trim() : "Player 2";
 
-  resultPanel.classList.remove("hidden");
-  finalResult.innerText = message;
+      previewPlayerOne.textContent = playerOneName;
+      previewPlayerTwo.textContent = playerTwoName;
 
-  if (won) {
-    resultEl.innerText = "Victory! +" + getRewardNumber() + " XP gained.";
-    resultEl.className = "message correct";
-    learnedEl.innerText = "You practiced clean heading structure under pressure.";
+      playerOneNameDisplay.textContent = playerOneName;
+      playerTwoNameDisplay.textContent = playerTwoName;
+    }
 
-    addXP(getRewardNumber());
-    showXPPop(getRewardNumber());
-    playSound("success-sound");
-    document.body.classList.add("success-flash");
+    function beginMatch() {
+      playSound("select");
+      trackEvent("multiplayer_match_begin");
 
-    yourProgress.style.width = "100%";
-    yourState.innerText = "Submitted";
-  } else {
-    resultEl.innerText = "Defeat. Review the structure and try again.";
-    resultEl.className = "message error";
-    playSound("error-sound");
-  }
+      playerOneScore = 0;
+      playerTwoScore = 0;
+      currentTurnIndex = 0;
+      answeredCurrentTurn = false;
 
-  setTimeout(function () {
-    document.body.classList.remove("success-flash");
-  }, 700);
-}
+      selectedQuestions = shuffleArray(questionBank).slice(0, TOTAL_TURNS);
 
-function getRewardNumber() {
-  const text = rewardEl.innerText;
-  const number = parseInt(text.replace(/\D/g, "")) || 15;
-  return number;
-}
+      updateScoreDisplay();
+      showScreen(matchScreen);
+      loadTurn();
+    }
 
-function addXP(points) {
-  let xp = parseInt(localStorage.getItem("xp")) || 0;
-  xp += points;
-  localStorage.setItem("xp", xp);
-}
+    function getCurrentPlayerNumber() {
+      return currentTurnIndex % 2 === 0 ? 1 : 2;
+    }
 
-function showXPPop(amount) {
-  const xp = document.createElement("div");
-  xp.className = "xp-pop";
-  xp.innerText = "+" + amount + " XP";
+    function getCurrentPlayerName() {
+      return getCurrentPlayerNumber() === 1 ? playerOneName : playerTwoName;
+    }
 
-  document.body.appendChild(xp);
+    function getCurrentRound() {
+      return Math.floor(currentTurnIndex / 2) + 1;
+    }
 
-  setTimeout(function () {
-    xp.remove();
-  }, 1000);
-}
+    function loadTurn() {
+      clearInterval(timerId);
 
-function playSound(id) {
-  const sound = document.getElementById(id);
+      answeredCurrentTurn = false;
+      timeLeft = TURN_TIME;
+      currentQuestion = selectedQuestions[currentTurnIndex];
 
-  if (!sound) return;
+      const currentPlayerName = getCurrentPlayerName();
 
-  sound.currentTime = 0;
+      roundDisplay.textContent = getCurrentRound() + " / " + TOTAL_ROUNDS;
+      turnDisplay.textContent = (currentTurnIndex + 1) + " / " + TOTAL_TURNS;
+      timerDisplay.textContent = TURN_TIME + "s";
+      timerDisplay.classList.remove("warning", "danger");
 
-  sound.play().catch(function () {
-    console.log("Sound blocked or missing:", id);
-  });
-}
+      turnBanner.innerHTML = 'Current Turn: <span>' + currentPlayerName + '</span>';
+      topicTag.textContent = "TOPIC: " + currentQuestion.topic;
+      questionText.textContent = currentQuestion.question;
 
-function playAgain() {
-  window.location.href = "waiting-room.html";
-}
+      feedbackBox.className = "feedback";
+      feedbackTitle.textContent = "";
+      feedbackText.textContent = "";
 
-function leaveMatch() {
-  window.location.href = "multiplayer.html";
-}
+      nextTurnBtn.classList.remove("show");
+      nextTurnBtn.textContent = currentTurnIndex === TOTAL_TURNS - 1 ? "SEE RESULTS" : "NEXT TURN";
 
-codeBox.addEventListener("input", updatePreview);
+      answersGrid.innerHTML = "";
 
-loadMatchData();
-updatePreview();
-startTimer();
-startOpponentProgress();
-</script>
+      const shuffledChoices = shuffleArray(currentQuestion.choices);
 
-<script src="audio.js"></script>
-<script src="translations.js"></script>
-<script src="language.js"></script>
+      shuffledChoices.forEach(function (choice) {
+        const answerButton = document.createElement("button");
+        answerButton.type = "button";
+        answerButton.className = "answer-btn";
+        answerButton.textContent = choice;
 
+        answerButton.addEventListener("click", function () {
+          handleAnswer(choice, answerButton);
+        });
+
+        answerButton.addEventListener("mouseenter", function () {
+          playSound("hover");
+        });
+
+        answersGrid.appendChild(answerButton);
+      });
+
+      updateActivePlayerCard();
+      updateProgressBar();
+      startTurnTimer();
+    }
+
+    function startTurnTimer() {
+      clearInterval(timerId);
+
+      timerId = setInterval(function () {
+        timeLeft--;
+        updateTimerDisplay();
+
+        if (timeLeft <= 0) {
+          clearInterval(timerId);
+          handleTimeOut();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      timerDisplay.textContent = timeLeft + "s";
+      timerDisplay.classList.remove("warning", "danger");
+
+      if (timeLeft <= 5) {
+        timerDisplay.classList.add("danger");
+      } else if (timeLeft <= 10) {
+        timerDisplay.classList.add("warning");
+      }
+    }
+
+    function updateProgressBar() {
+      const progressPercent = (currentTurnIndex / TOTAL_TURNS) * 100;
+      progressBar.style.width = progressPercent + "%";
+    }
+
+    function updateActivePlayerCard() {
+      playerOneScoreCard.classList.remove("active");
+      playerTwoScoreCard.classList.remove("active");
+
+      if (getCurrentPlayerNumber() === 1) {
+        playerOneScoreCard.classList.add("active");
+      } else {
+        playerTwoScoreCard.classList.add("active");
+      }
+    }
+
+    function updateScoreDisplay() {
+      playerOneScoreDisplay.textContent = playerOneScore;
+      playerTwoScoreDisplay.textContent = playerTwoScore;
+    }
+
+    function handleAnswer(selectedChoice, clickedButton) {
+      if (answeredCurrentTurn) return;
+
+      clearInterval(timerId);
+      answeredCurrentTurn = true;
+
+      const isCorrect = selectedChoice === currentQuestion.answer;
+      const answerButtons = answersGrid.querySelectorAll(".answer-btn");
+
+      answerButtons.forEach(function (button) {
+        button.disabled = true;
+
+        if (button.textContent === currentQuestion.answer) {
+          button.classList.add("correct");
+        } else if (button === clickedButton && !isCorrect) {
+          button.classList.add("wrong");
+        } else {
+          button.classList.add("dimmed");
+        }
+      });
+
+      if (isCorrect) {
+        if (getCurrentPlayerNumber() === 1) {
+          playerOneScore++;
+        } else {
+          playerTwoScore++;
+        }
+
+        updateScoreDisplay();
+
+        feedbackTitle.textContent = "Correct.";
+        feedbackText.textContent = currentQuestion.explanation;
+        feedbackBox.className = "feedback show correct";
+        playSound("correct");
+        trackEvent("multiplayer_answer_correct");
+      } else {
+        feedbackTitle.textContent = "Not quite.";
+        feedbackText.textContent = "The correct answer is " + currentQuestion.answer + ". " + currentQuestion.explanation;
+        feedbackBox.className = "feedback show wrong";
+        playSound("wrong");
+        trackEvent("multiplayer_answer_wrong");
+      }
+
+      nextTurnBtn.classList.add("show");
+    }
+
+    function handleTimeOut() {
+      if (answeredCurrentTurn) return;
+
+      answeredCurrentTurn = true;
+
+      const answerButtons = answersGrid.querySelectorAll(".answer-btn");
+
+      answerButtons.forEach(function (button) {
+        button.disabled = true;
+
+        if (button.textContent === currentQuestion.answer) {
+          button.classList.add("correct");
+        } else {
+          button.classList.add("dimmed");
+        }
+      });
+
+      feedbackTitle.textContent = "Time is up.";
+      feedbackText.textContent = "The correct answer is " + currentQuestion.answer + ". " + currentQuestion.explanation;
+      feedbackBox.className = "feedback show wrong";
+
+      playSound("wrong");
+      trackEvent("multiplayer_turn_timeout");
+
+      nextTurnBtn.classList.add("show");
+    }
+
+    function goToNextTurn() {
+      playSound("select");
+
+      if (currentTurnIndex >= TOTAL_TURNS - 1) {
+        endMatch();
+        return;
+      }
+
+      currentTurnIndex++;
+      loadTurn();
+    }
+
+    function endMatch() {
+      clearInterval(timerId);
+      progressBar.style.width = "100%";
+
+      finalPlayerOneScore.textContent = playerOneName + ": " + playerOneScore;
+      finalPlayerTwoScore.textContent = playerTwoName + ": " + playerTwoScore;
+
+      if (playerOneScore > playerTwoScore) {
+        winnerBadge.textContent = "Winner: " + playerOneName;
+        resultMessage.textContent = playerOneName + " wins this match. " + playerTwoName + ", run it back and close the gap.";
+      } else if (playerTwoScore > playerOneScore) {
+        winnerBadge.textContent = "Winner: " + playerTwoName;
+        resultMessage.textContent = playerTwoName + " wins this match. " + playerOneName + ", run it back and close the gap.";
+      } else {
+        winnerBadge.textContent = "Draw Match";
+        resultMessage.textContent = "Both players tied. That means one thing: rematch.";
+      }
+
+      saveMatchHistory();
+      playSound("complete");
+      trackEvent("multiplayer_match_complete");
+
+      showScreen(resultScreen);
+    }
+
+    function saveMatchHistory() {
+      let history = [];
+
+      try {
+        const storedHistory = localStorage.getItem("byterush-multiplayer-history");
+        history = storedHistory ? JSON.parse(storedHistory) : [];
+
+        if (!Array.isArray(history)) {
+          history = [];
+        }
+      } catch (error) {
+        history = [];
+      }
+
+      history.push({
+        playerOne: playerOneName,
+        playerTwo: playerTwoName,
+        playerOneScore: playerOneScore,
+        playerTwoScore: playerTwoScore,
+        totalRounds: TOTAL_ROUNDS,
+        completedAt: new Date().toISOString()
+      });
+
+      localStorage.setItem("byterush-multiplayer-history", JSON.stringify(history));
+    }
+
+    function playAgain() {
+      trackEvent("multiplayer_play_again");
+      beginMatch();
+    }
+
+    function handleNavigationClick() {
+      playSound("select");
+      trackEvent("multiplayer_match_page_left");
+    }
+
+    beginMatchBtn.addEventListener("click", beginMatch);
+    nextTurnBtn.addEventListener("click", goToNextTurn);
+    playAgainBtn.addEventListener("click", playAgain);
+
+    beginMatchBtn.addEventListener("mouseenter", function () {
+      playSound("hover");
+    });
+
+    nextTurnBtn.addEventListener("mouseenter", function () {
+      playSound("hover");
+    });
+
+    playAgainBtn.addEventListener("mouseenter", function () {
+      playSound("hover");
+    });
+
+    navigationLinks.forEach(function (link) {
+      if (link) {
+        link.addEventListener("click", handleNavigationClick);
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+      loadPlayerNames();
+      trackEvent("multiplayer_match_page_opened");
+    });
+  </script>
 </body>
 </html>
