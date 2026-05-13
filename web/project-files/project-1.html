@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ByteRush | Identity Badge</title>
+  <link rel="stylesheet" href="projects.css" />
+</head>
+
+<body>
+  <main class="project-shell">
+    <section class="project-topbar panel-frame">
+      <div>
+        <p class="mini-label">PROJECT 01 / BEGINNER BUILD</p>
+        <h1 class="project-title">🪪 IDENTITY BADGE</h1>
+        <p class="project-subtitle">Build a player profile card with HTML and CSS.</p>
+      </div>
+
+      <div class="lab-stats">
+        <div class="stat-pill"><span>PLAYER</span><strong id="playerName">Builder</strong></div>
+        <div class="stat-pill"><span>XP</span><strong id="xpValue">0</strong></div>
+        <div class="stat-pill"><span>REWARD</span><strong>+50</strong></div>
+        <div class="stat-pill"><span>STATUS</span><strong id="projectStatus">In Progress</strong></div>
+      </div>
+    </section>
+
+    <section class="project-main panel-frame">
+      <div class="project-panel guide-panel">
+        <div class="panel-heading">
+          <h2>BUILD GUIDE</h2>
+          <div id="stepCounter" class="step-counter">STEP 1 / 7</div>
+        </div>
+
+        <div class="step-card">
+          <h3 id="stepTitle">Step title</h3>
+          <p id="stepExplain">Step explanation</p>
+          <ul id="stepTask"></ul>
+          <p class="project-hint" id="stepHint">Hint appears here.</p>
+        </div>
+
+        <div id="stepDots" class="step-status-list"></div>
+
+        <div class="step-actions">
+          <button id="prevStepBtn">PREVIOUS STEP</button>
+          <button id="nextStepBtn">NEXT STEP</button>
+          <button id="checkStepBtn" class="primary-btn">CHECK STEP</button>
+          <button id="completeProjectBtn" class="secondary-btn">COMPLETE PROJECT</button>
+        </div>
+      </div>
+
+      <div class="project-panel build-panel">
+        <div class="panel-heading">
+          <h2>LIVE PROJECT PREVIEW</h2>
+          <div class="step-counter">HTML + CSS</div>
+        </div>
+
+        <div class="code-workstation">
+          <div class="input-grid">
+            <div class="input-row">
+              <label>PLAYER NAME</label>
+              <input id="badgeName" value="Byte Runner" />
+            </div>
+
+            <div class="input-row">
+              <label>SHORT BIO</label>
+              <textarea id="badgeBio">I repair broken digital worlds with code.</textarea>
+            </div>
+
+            <div class="input-row">
+              <label>AVATAR EMOJI</label>
+              <input id="badgeAvatar" value="🚀" maxlength="4" />
+            </div>
+
+            <div class="input-row">
+              <label>CARD COLOR</label>
+              <select id="badgeColor">
+                <option value="green">System Green</option>
+                <option value="yellow">Reward Yellow</option>
+                <option value="dark">Dark Core</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-box">
+          <div id="projectPreview" class="preview-stage"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="project-bottom-console panel-frame">
+      <div class="feedback-console" id="feedbackText">
+        <strong>SYSTEM VOICE:</strong> Start building your player identity.
+      </div>
+
+      <div class="bottom-actions">
+        <button id="audioToggle" class="secondary-btn">PROJECT AUDIO: ON</button>
+        <button id="returnLabBtn">RETURN TO PROJECT LAB</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="completeModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-content">
+        <div class="modal-title">BUILD COMPLETE</div>
+        <div id="completeTitle" class="modal-subtitle">Identity Badge Online</div>
+        <div id="completeReward" class="modal-subtitle">+50 XP</div>
+        <p id="completeMessage" class="modal-text">You created your player identity.</p>
+        <button id="modalReturnBtn" class="primary-btn">RETURN TO PROJECT LAB</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="projects.js"></script>
+  <script>
+    function value(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    function badgeThemeClass() {
+      const color = value("badgeColor");
+      if (color === "yellow") return "theme-yellow";
+      if (color === "dark") return "theme-dark";
+      return "theme-green";
+    }
+
+    window.BRProjectConfig = {
+      id: 1,
+      name: "Identity Badge",
+      xp: 50,
+      completeTitle: "Identity Badge Online",
+      completeMessage: "You created your player identity with HTML and CSS.",
+      renderPreview() {
+        const name = value("badgeName") || "Player Name";
+        const bio = value("badgeBio") || "Your bio appears here.";
+        const avatar = value("badgeAvatar") || "🚀";
+
+        return `
+          <div class="badge-card ${badgeThemeClass()}">
+            <div class="avatar-circle">${avatar}</div>
+            <h2>${name}</h2>
+            <p>${bio}</p>
+            <span class="saved-chip">PLAYER IDENTITY ONLINE</span>
+          </div>
+        `;
+      },
+      steps: [
+        {
+          title: "Create the card container",
+          explain: "A container is a box that holds everything inside your card.",
+          task: "<li>Look at the preview card on the right.</li><li>This card is your container.</li>",
+          hint: "The card is the main box around the player info.",
+          validate() {
+            return { ok: true, message: "Card container detected." };
+          }
+        },
+        {
+          title: "Add your player name",
+          explain: "A name tells the system who this badge belongs to.",
+          task: "<li>Type a player name in the Player Name box.</li>",
+          hint: "Use your name or a game name.",
+          validate() {
+            return value("badgeName").length >= 2
+              ? { ok: true, message: "Player name connected." }
+              : { ok: false, message: "Add a player name with at least 2 letters." };
+          }
+        },
+        {
+          title: "Add a short bio",
+          explain: "A paragraph gives the card a little more personality.",
+          task: "<li>Write one short sentence about your player.</li>",
+          hint: "Example: I build games with code.",
+          validate() {
+            return value("badgeBio").length >= 8
+              ? { ok: true, message: "Bio paragraph restored." }
+              : { ok: false, message: "Write a slightly longer bio." };
+          }
+        },
+        {
+          title: "Add an avatar",
+          explain: "The avatar is a small image or symbol for the player.",
+          task: "<li>Type one emoji or short symbol in the avatar box.</li>",
+          hint: "Try 🚀, 🧠, ⚡, or 🌟.",
+          validate() {
+            return value("badgeAvatar").length >= 1
+              ? { ok: true, message: "Avatar signal online." }
+              : { ok: false, message: "Add an avatar emoji or symbol." };
+          }
+        },
+        {
+          title: "Style the card background",
+          explain: "Background color makes the card feel like a real interface.",
+          task: "<li>Choose a card color from the dropdown.</li>",
+          hint: "Try System Green first.",
+          validate() {
+            return { ok: true, message: "Card background styled." };
+          }
+        },
+        {
+          title: "Add border, padding, and rounded corners",
+          explain: "Borders protect the card. Padding gives the content room. Rounded corners make it feel premium.",
+          task: "<li>The preview already shows border, padding, and rounded corners.</li><li>Check this step when you can see the card shape clearly.</li>",
+          hint: "Look for the border around the card.",
+          validate() {
+            return { ok: true, message: "Card frame protected." };
+          }
+        },
+        {
+          title: "Complete the build",
+          explain: "Your player card now has structure, content, and style.",
+          task: "<li>Check this final step.</li><li>Then press Complete Project.</li>",
+          hint: "All systems should be online.",
+          validate() {
+            return { ok: true, message: "Identity Badge ready for launch." };
+          }
+        }
+      ]
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ByteRush | Skin Reactor</title>
+  <link rel="stylesheet" href="projects.css" />
+</head>
+
+<body>
+  <main class="project-shell">
+    <section class="project-topbar panel-frame">
+      <div>
+        <p class="mini-label">PROJECT 05 / INTERMEDIATE BUILD</p>
+        <h1 class="project-title">🎛️ SKIN REACTOR</h1>
+        <p class="project-subtitle">Build a theme switching system with HTML, CSS, and JavaScript.</p>
+      </div>
+
+      <div class="lab-stats">
+        <div class="stat-pill"><span>PLAYER</span><strong id="playerName">Builder</strong></div>
+        <div class="stat-pill"><span>XP</span><strong id="xpValue">0</strong></div>
+        <div class="stat-pill"><span>REWARD</span><strong>+100</strong></div>
+        <div class="stat-pill"><span>STATUS</span><strong id="projectStatus">In Progress</strong></div>
+      </div>
+    </section>
+
+    <section class="project-main panel-frame">
+      <div class="project-panel guide-panel">
+        <div class="panel-heading">
+          <h2>BUILD GUIDE</h2>
+          <div id="stepCounter" class="step-counter">STEP 1 / 10</div>
+        </div>
+
+        <div class="step-card">
+          <h3 id="stepTitle"></h3>
+          <p id="stepExplain"></p>
+          <ul id="stepTask"></ul>
+          <p class="project-hint" id="stepHint"></p>
+        </div>
+
+        <div id="stepDots" class="step-status-list"></div>
+
+        <div class="step-actions">
+          <button id="prevStepBtn">PREVIOUS STEP</button>
+          <button id="nextStepBtn">NEXT STEP</button>
+          <button id="checkStepBtn" class="primary-btn">CHECK STEP</button>
+          <button id="completeProjectBtn" class="secondary-btn">COMPLETE PROJECT</button>
+        </div>
+      </div>
+
+      <div class="project-panel build-panel">
+        <div class="panel-heading">
+          <h2>LIVE THEME PREVIEW</h2>
+          <div class="step-counter">HTML + CSS + JS</div>
+        </div>
+
+        <div class="input-grid">
+          <div class="input-row">
+            <label>INTERFACE TITLE</label>
+            <input id="skinTitle" value="Skin Reactor" />
+          </div>
+
+          <div class="input-row">
+            <label>DESCRIPTION</label>
+            <textarea id="skinDesc">Switch the system skin and watch the interface respond.</textarea>
+          </div>
+        </div>
+
+        <div class="preview-box">
+          <div id="projectPreview" class="preview-stage"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="project-bottom-console panel-frame">
+      <div class="feedback-console" id="feedbackText">
+        <strong>SYSTEM VOICE:</strong> Build a theme controller.
+      </div>
+
+      <div class="bottom-actions">
+        <button id="audioToggle" class="secondary-btn">PROJECT AUDIO: ON</button>
+        <button id="returnLabBtn">RETURN TO PROJECT LAB</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="completeModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-content">
+        <div class="modal-title">BUILD COMPLETE</div>
+        <div id="completeTitle" class="modal-subtitle">Skin Reactor Online</div>
+        <div id="completeReward" class="modal-subtitle">+100 XP</div>
+        <p id="completeMessage" class="modal-text">You controlled the look of the system.</p>
+        <button id="modalReturnBtn" class="primary-btn">RETURN TO PROJECT LAB</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="projects.js"></script>
+  <script>
+    let currentTheme = localStorage.getItem("project5-theme") || "dark";
+    let themeChanged = false;
+
+    function value(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    function themeClass() {
+      if (currentTheme === "green") return "theme-green";
+      if (currentTheme === "yellow") return "theme-yellow";
+      return "theme-dark";
+    }
+
+    function themeName() {
+      if (currentTheme === "green") return "GREEN SYSTEM";
+      if (currentTheme === "yellow") return "YELLOW REWARD";
+      return "DARK CORE";
+    }
+
+    window.BRProjectConfig = {
+      id: 5,
+      name: "Skin Reactor",
+      xp: 100,
+      completeTitle: "Skin Reactor Online",
+      completeMessage: "You built a live theme switching system.",
+      renderPreview() {
+        return `
+          <div class="skin-card ${themeClass()}">
+            <h2>${value("skinTitle") || "Skin Reactor"}</h2>
+            <p>${value("skinDesc") || "Theme description appears here."}</p>
+
+            <div class="preview-buttons">
+              <button id="darkThemeBtn" type="button">DARK</button>
+              <button id="greenThemeBtn" type="button">GREEN</button>
+              <button id="yellowThemeBtn" type="button">YELLOW</button>
+            </div>
+
+            <span class="saved-chip">ACTIVE THEME: ${themeName()}</span>
+          </div>
+        `;
+      },
+      afterRender() {
+        const dark = document.getElementById("darkThemeBtn");
+        const green = document.getElementById("greenThemeBtn");
+        const yellow = document.getElementById("yellowThemeBtn");
+
+        function setTheme(theme) {
+          currentTheme = theme;
+          themeChanged = true;
+          localStorage.setItem("project5-theme", theme);
+          document.getElementById("projectPreview").innerHTML = window.BRProjectConfig.renderPreview();
+          window.BRProjectConfig.afterRender();
+        }
+
+        dark.addEventListener("click", () => setTheme("dark"));
+        green.addEventListener("click", () => setTheme("green"));
+        yellow.addEventListener("click", () => setTheme("yellow"));
+      },
+      steps: [
+        {
+          title: "Create interface card",
+          explain: "The card is the system that will change skins.",
+          task: "<li>Look at the card in the live preview.</li>",
+          hint: "The entire card changes when themes switch.",
+          validate() {
+            return { ok: true, message: "Interface card online." };
+          }
+        },
+        {
+          title: "Add title and description",
+          explain: "The title and description explain what the theme system does.",
+          task: "<li>Fill in the interface title and description.</li>",
+          hint: "Keep the description short.",
+          validate() {
+            return value("skinTitle").length >= 3 && value("skinDesc").length >= 8
+              ? { ok: true, message: "Title and description connected." }
+              : { ok: false, message: "Add a title and short description." };
+          }
+        },
+        {
+          title: "Add theme buttons",
+          explain: "Buttons give the player control over the interface.",
+          task: "<li>Find the DARK, GREEN, and YELLOW buttons.</li>",
+          hint: "Each button changes the skin.",
+          validate() {
+            return document.getElementById("darkThemeBtn") && document.getElementById("greenThemeBtn") && document.getElementById("yellowThemeBtn")
+              ? { ok: true, message: "Theme buttons online." }
+              : { ok: false, message: "Theme buttons are missing." };
+          }
+        },
+        {
+          title: "Create default theme",
+          explain: "The default theme is the system's starting look.",
+          task: "<li>Click the DARK button.</li>",
+          hint: "Dark Core is the default.",
+          validate() {
+            currentTheme = "dark";
+            localStorage.setItem("project5-theme", "dark");
+            return { ok: true, message: "Default theme online." };
+          }
+        },
+        {
+          title: "Create green theme",
+          explain: "The green theme feels like ByteRush system power.",
+          task: "<li>Click the GREEN button.</li>",
+          hint: "The card border should glow green.",
+          validate() {
+            currentTheme = "green";
+            themeChanged = true;
+            localStorage.setItem("project5-theme", "green");
+            return { ok: true, message: "Green theme online." };
+          }
+        },
+        {
+          title: "Create yellow theme",
+          explain: "The yellow theme feels like reward energy.",
+          task: "<li>Click the YELLOW button.</li>",
+          hint: "The card border should turn yellow.",
+          validate() {
+            currentTheme = "yellow";
+            themeChanged = true;
+            localStorage.setItem("project5-theme", "yellow");
+            return { ok: true, message: "Yellow theme online." };
+          }
+        },
+        {
+          title: "Use JavaScript to switch themes",
+          explain: "JavaScript changes the class or state when a button is clicked.",
+          task: "<li>Click at least one theme button.</li>",
+          hint: "The preview should change immediately.",
+          validate() {
+            return themeChanged
+              ? { ok: true, message: "Theme switching logic online." }
+              : { ok: false, message: "Click a theme button first." };
+          }
+        },
+        {
+          title: "Update status text",
+          explain: "Status text tells the player which theme is active.",
+          task: "<li>Check the active theme chip at the bottom of the card.</li>",
+          hint: "It should say ACTIVE THEME.",
+          validate() {
+            return { ok: true, message: "Theme status text online." };
+          }
+        },
+        {
+          title: "Save selected theme",
+          explain: "Saving the theme means the system remembers the player's choice.",
+          task: "<li>The selected theme saves automatically.</li>",
+          hint: "This uses localStorage.",
+          validate() {
+            return localStorage.getItem("project5-theme")
+              ? { ok: true, message: "Theme memory saved." }
+              : { ok: false, message: "Theme was not saved yet." };
+          }
+        },
+        {
+          title: "Complete the build",
+          explain: "Your interface can now change its look and remember the selected skin.",
+          task: "<li>Check this final step.</li><li>Then press Complete Project.</li>",
+          hint: "The Skin Reactor is alive.",
+          validate() {
+            return { ok: true, message: "Skin Reactor ready." };
+          }
+        }
+      ]
+    };
+  </script>
+</body>
+</html>

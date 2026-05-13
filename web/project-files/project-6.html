@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ByteRush | Web Systems Boss</title>
+  <link rel="stylesheet" href="projects.css" />
+</head>
+
+<body>
+  <main class="project-shell">
+    <section class="project-topbar panel-frame">
+      <div>
+        <p class="mini-label">PROJECT 06 / FINAL BUILD</p>
+        <h1 class="project-title">👾 WEB SYSTEMS BOSS</h1>
+        <p class="project-subtitle">Combine HTML, CSS, and JavaScript into one mini interactive app.</p>
+      </div>
+
+      <div class="lab-stats">
+        <div class="stat-pill"><span>PLAYER</span><strong id="playerName">Builder</strong></div>
+        <div class="stat-pill"><span>XP</span><strong id="xpValue">0</strong></div>
+        <div class="stat-pill"><span>REWARD</span><strong>+150</strong></div>
+        <div class="stat-pill"><span>STATUS</span><strong id="projectStatus">In Progress</strong></div>
+      </div>
+    </section>
+
+    <section class="project-main panel-frame">
+      <div class="project-panel guide-panel">
+        <div class="panel-heading">
+          <h2>BOSS BUILD GUIDE</h2>
+          <div id="stepCounter" class="step-counter">STEP 1 / 10</div>
+        </div>
+
+        <div class="step-card">
+          <h3 id="stepTitle"></h3>
+          <p id="stepExplain"></p>
+          <ul id="stepTask"></ul>
+          <p class="project-hint" id="stepHint"></p>
+        </div>
+
+        <div id="stepDots" class="step-status-list"></div>
+
+        <div class="step-actions">
+          <button id="prevStepBtn">PREVIOUS STEP</button>
+          <button id="nextStepBtn">NEXT STEP</button>
+          <button id="checkStepBtn" class="primary-btn">CHECK STEP</button>
+          <button id="completeProjectBtn" class="secondary-btn">COMPLETE PROJECT</button>
+        </div>
+      </div>
+
+      <div class="project-panel build-panel">
+        <div class="panel-heading">
+          <h2>FINAL APP PREVIEW</h2>
+          <div class="step-counter">HTML + CSS + JS</div>
+        </div>
+
+        <div class="input-grid">
+          <div class="input-row">
+            <label>APP TITLE</label>
+            <input id="bossTitle" value="Web Systems Control" />
+          </div>
+
+          <div class="input-row">
+            <label>STATUS MESSAGE</label>
+            <input id="bossMessage" value="System waiting for activation." />
+          </div>
+        </div>
+
+        <div class="preview-box">
+          <div id="projectPreview" class="preview-stage"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="project-bottom-console panel-frame">
+      <div class="feedback-console" id="feedbackText">
+        <strong>SYSTEM VOICE:</strong> Final build sequence loaded.
+      </div>
+
+      <div class="bottom-actions">
+        <button id="audioToggle" class="secondary-btn">PROJECT AUDIO: ON</button>
+        <button id="returnLabBtn">RETURN TO PROJECT LAB</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="completeModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-content">
+        <div class="modal-title">FINAL BUILD COMPLETE</div>
+        <div id="completeTitle" class="modal-subtitle">Web Systems Boss Online</div>
+        <div id="completeReward" class="modal-subtitle">+150 XP</div>
+        <p id="completeMessage" class="modal-text">You combined HTML, CSS, and JavaScript.</p>
+        <button id="modalReturnBtn" class="primary-btn">RETURN TO PROJECT LAB</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="projects.js"></script>
+  <script>
+    let power = Number(localStorage.getItem("project6-power") || "0");
+    let activated = false;
+    let hoverUsed = false;
+    let saved = localStorage.getItem("project6-power") !== null;
+
+    function value(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    function savePower() {
+      localStorage.setItem("project6-power", String(power));
+      saved = true;
+    }
+
+    window.BRProjectConfig = {
+      id: 6,
+      name: "Web Systems Boss",
+      xp: 150,
+      completeTitle: "Web Systems Boss Online",
+      completeMessage: "You combined HTML, CSS, and JavaScript into one working mini app.",
+      renderPreview() {
+        return `
+          <div class="boss-app-card ${activated ? "theme-green" : "theme-dark"}">
+            <h2>${value("bossTitle") || "Web Systems Control"}</h2>
+            <p>${value("bossMessage") || "System waiting for activation."}</p>
+
+            <div class="counter-number">${power}</div>
+
+            <div class="preview-buttons">
+              <button id="bossActivateBtn" type="button">ACTIVATE</button>
+              <button id="bossPowerBtn" type="button">ADD POWER</button>
+              <button id="bossSaveBtn" type="button">SAVE</button>
+              <button id="bossResetBtn" type="button">RESET</button>
+            </div>
+
+            <span class="saved-chip">${activated ? "SYSTEM ONLINE" : "SYSTEM STANDBY"} | SAVED: ${saved ? "YES" : "NO"}</span>
+          </div>
+        `;
+      },
+      afterRender() {
+        const activateBtn = document.getElementById("bossActivateBtn");
+        const powerBtn = document.getElementById("bossPowerBtn");
+        const saveBtn = document.getElementById("bossSaveBtn");
+        const resetBtn = document.getElementById("bossResetBtn");
+
+        activateBtn.addEventListener("mouseenter", () => {
+          hoverUsed = true;
+        });
+
+        activateBtn.addEventListener("click", () => {
+          activated = true;
+          document.getElementById("bossMessage").value = "System activated. Power core online.";
+          document.getElementById("projectPreview").innerHTML = window.BRProjectConfig.renderPreview();
+          window.BRProjectConfig.afterRender();
+        });
+
+        powerBtn.addEventListener("click", () => {
+          power += 10;
+          document.getElementById("projectPreview").innerHTML = window.BRProjectConfig.renderPreview();
+          window.BRProjectConfig.afterRender();
+        });
+
+        saveBtn.addEventListener("click", () => {
+          savePower();
+          document.getElementById("projectPreview").innerHTML = window.BRProjectConfig.renderPreview();
+          window.BRProjectConfig.afterRender();
+        });
+
+        resetBtn.addEventListener("click", () => {
+          power = 0;
+          activated = false;
+          savePower();
+          document.getElementById("bossMessage").value = "System reset. Ready for new build.";
+          document.getElementById("projectPreview").innerHTML = window.BRProjectConfig.renderPreview();
+          window.BRProjectConfig.afterRender();
+        });
+      },
+      steps: [
+        {
+          title: "Build page structure",
+          explain: "A complete app needs a clear structure before anything can work.",
+          task: "<li>Look at the full app card in the preview.</li>",
+          hint: "The card is the app structure.",
+          validate() {
+            return { ok: true, message: "Page structure online." };
+          }
+        },
+        {
+          title: "Add header section",
+          explain: "The header gives the app a clear name.",
+          task: "<li>Type an app title.</li>",
+          hint: "Example: Web Systems Control.",
+          validate() {
+            return value("bossTitle").length >= 3
+              ? { ok: true, message: "Header section online." }
+              : { ok: false, message: "Add an app title." };
+          }
+        },
+        {
+          title: "Add main card/interface",
+          explain: "The card is where the user sees the system and controls it.",
+          task: "<li>Check the main card in the preview.</li>",
+          hint: "It holds the title, message, number, and buttons.",
+          validate() {
+            return { ok: true, message: "Main interface online." };
+          }
+        },
+        {
+          title: "Add buttons",
+          explain: "Buttons give the user control over the app.",
+          task: "<li>Find ACTIVATE, ADD POWER, SAVE, and RESET.</li>",
+          hint: "Four buttons should appear.",
+          validate() {
+            return document.getElementById("bossActivateBtn") &&
+              document.getElementById("bossPowerBtn") &&
+              document.getElementById("bossSaveBtn") &&
+              document.getElementById("bossResetBtn")
+              ? { ok: true, message: "Control buttons online." }
+              : { ok: false, message: "One or more control buttons are missing." };
+          }
+        },
+        {
+          title: "Add status display",
+          explain: "The status message tells the user what the system is doing.",
+          task: "<li>Write a status message.</li>",
+          hint: "Example: System waiting for activation.",
+          validate() {
+            return value("bossMessage").length >= 5
+              ? { ok: true, message: "Status display online." }
+              : { ok: false, message: "Add a status message." };
+          }
+        },
+        {
+          title: "Style the full interface",
+          explain: "Good spacing, borders, and color make the app feel premium.",
+          task: "<li>Check that the app card is readable and styled.</li>",
+          hint: "The card should look like a ByteRush system panel.",
+          validate() {
+            return { ok: true, message: "Interface styling online." };
+          }
+        },
+        {
+          title: "Add hover effects",
+          explain: "Hover effects make the interface feel responsive.",
+          task: "<li>Move your mouse over ACTIVATE.</li>",
+          hint: "The button should lift slightly.",
+          validate() {
+            return hoverUsed
+              ? { ok: true, message: "Hover response online." }
+              : { ok: false, message: "Hover over the ACTIVATE button first." };
+          }
+        },
+        {
+          title: "Add JavaScript interaction",
+          explain: "JavaScript makes buttons change the app.",
+          task: "<li>Click ACTIVATE or ADD POWER.</li>",
+          hint: "The card should change or the number should increase.",
+          validate() {
+            return activated || power > 0
+              ? { ok: true, message: "JavaScript interaction online." }
+              : { ok: false, message: "Click ACTIVATE or ADD POWER first." };
+          }
+        },
+        {
+          title: "Save a value with localStorage",
+          explain: "Saving lets the app remember something.",
+          task: "<li>Click SAVE.</li>",
+          hint: "The chip should say SAVED: YES.",
+          validate() {
+            savePower();
+            return localStorage.getItem("project6-power") !== null
+              ? { ok: true, message: "LocalStorage save online." }
+              : { ok: false, message: "Power value was not saved." };
+          }
+        },
+        {
+          title: "Complete final build",
+          explain: "You combined structure, design, interaction, and memory.",
+          task: "<li>Check this final step.</li><li>Then press Complete Project.</li>",
+          hint: "This is your final Projects challenge.",
+          validate() {
+            return { ok: true, message: "Web Systems Boss ready." };
+          }
+        }
+      ]
+    };
+  </script>
+</body>
+</html>

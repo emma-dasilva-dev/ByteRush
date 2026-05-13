@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ByteRush | Pixel Bistro</title>
+  <link rel="stylesheet" href="projects.css" />
+</head>
+
+<body>
+  <main class="project-shell">
+    <section class="project-topbar panel-frame">
+      <div>
+        <p class="mini-label">PROJECT 02 / BEGINNER BUILD</p>
+        <h1 class="project-title">🍜 PIXEL BISTRO</h1>
+        <p class="project-subtitle">Build a retro restaurant menu with HTML and CSS.</p>
+      </div>
+
+      <div class="lab-stats">
+        <div class="stat-pill"><span>PLAYER</span><strong id="playerName">Builder</strong></div>
+        <div class="stat-pill"><span>XP</span><strong id="xpValue">0</strong></div>
+        <div class="stat-pill"><span>REWARD</span><strong>+50</strong></div>
+        <div class="stat-pill"><span>STATUS</span><strong id="projectStatus">In Progress</strong></div>
+      </div>
+    </section>
+
+    <section class="project-main panel-frame">
+      <div class="project-panel guide-panel">
+        <div class="panel-heading">
+          <h2>BUILD GUIDE</h2>
+          <div id="stepCounter" class="step-counter">STEP 1 / 7</div>
+        </div>
+
+        <div class="step-card">
+          <h3 id="stepTitle"></h3>
+          <p id="stepExplain"></p>
+          <ul id="stepTask"></ul>
+          <p class="project-hint" id="stepHint"></p>
+        </div>
+
+        <div id="stepDots" class="step-status-list"></div>
+
+        <div class="step-actions">
+          <button id="prevStepBtn">PREVIOUS STEP</button>
+          <button id="nextStepBtn">NEXT STEP</button>
+          <button id="checkStepBtn" class="primary-btn">CHECK STEP</button>
+          <button id="completeProjectBtn" class="secondary-btn">COMPLETE PROJECT</button>
+        </div>
+      </div>
+
+      <div class="project-panel build-panel">
+        <div class="panel-heading">
+          <h2>LIVE MENU PREVIEW</h2>
+          <div class="step-counter">HTML + CSS</div>
+        </div>
+
+        <div class="input-grid">
+          <div class="input-row">
+            <label>RESTAURANT TITLE</label>
+            <input id="menuTitle" value="Pixel Bistro" />
+          </div>
+
+          <div class="input-row">
+            <label>DESCRIPTION</label>
+            <textarea id="menuDesc">Fresh digital meals for hungry builders.</textarea>
+          </div>
+
+          <div class="input-row">
+            <label>FOOD ITEM 1</label>
+            <input id="item1" value="Byte Burger" />
+          </div>
+
+          <div class="input-row">
+            <label>PRICE 1</label>
+            <input id="price1" value="$8" />
+          </div>
+
+          <div class="input-row">
+            <label>FOOD ITEM 2</label>
+            <input id="item2" value="Pixel Fries" />
+          </div>
+
+          <div class="input-row">
+            <label>PRICE 2</label>
+            <input id="price2" value="$4" />
+          </div>
+
+          <div class="input-row">
+            <label>FOOD ITEM 3</label>
+            <input id="item3" value="Code Soda" />
+          </div>
+
+          <div class="input-row">
+            <label>PRICE 3</label>
+            <input id="price3" value="$3" />
+          </div>
+        </div>
+
+        <div class="preview-box">
+          <div id="projectPreview" class="preview-stage"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="project-bottom-console panel-frame">
+      <div class="feedback-console" id="feedbackText">
+        <strong>SYSTEM VOICE:</strong> Build your menu one section at a time.
+      </div>
+
+      <div class="bottom-actions">
+        <button id="audioToggle" class="secondary-btn">PROJECT AUDIO: ON</button>
+        <button id="returnLabBtn">RETURN TO PROJECT LAB</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="completeModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-content">
+        <div class="modal-title">BUILD COMPLETE</div>
+        <div id="completeTitle" class="modal-subtitle">Pixel Bistro Online</div>
+        <div id="completeReward" class="modal-subtitle">+50 XP</div>
+        <p id="completeMessage" class="modal-text">You created a real styled menu.</p>
+        <button id="modalReturnBtn" class="primary-btn">RETURN TO PROJECT LAB</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="projects.js"></script>
+  <script>
+    function value(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    window.BRProjectConfig = {
+      id: 2,
+      name: "Pixel Bistro",
+      xp: 50,
+      completeTitle: "Pixel Bistro Online",
+      completeMessage: "You built a styled restaurant menu with real sections.",
+      renderPreview() {
+        return `
+          <div class="menu-card theme-yellow">
+            <h2>${value("menuTitle") || "Restaurant Title"}</h2>
+            <p>${value("menuDesc") || "Restaurant description appears here."}</p>
+
+            <div class="menu-items">
+              <div class="menu-item"><span>${value("item1") || "Food Item"}</span><strong>${value("price1") || "$0"}</strong></div>
+              <div class="menu-item"><span>${value("item2") || "Food Item"}</span><strong>${value("price2") || "$0"}</strong></div>
+              <div class="menu-item"><span>${value("item3") || "Food Item"}</span><strong>${value("price3") || "$0"}</strong></div>
+            </div>
+
+            <span class="saved-chip">MENU SYSTEM ONLINE</span>
+          </div>
+        `;
+      },
+      steps: [
+        {
+          title: "Create menu container",
+          explain: "The container holds the whole restaurant menu.",
+          task: "<li>Look at the menu card in the preview.</li><li>This is the box that holds everything.</li>",
+          hint: "The full menu sits inside one main card.",
+          validate() {
+            return { ok: true, message: "Menu container online." };
+          }
+        },
+        {
+          title: "Add restaurant title",
+          explain: "The title tells people what the restaurant is called.",
+          task: "<li>Type a restaurant name.</li>",
+          hint: "Example: Pixel Bistro.",
+          validate() {
+            return value("menuTitle").length >= 2
+              ? { ok: true, message: "Restaurant title restored." }
+              : { ok: false, message: "Add a restaurant title." };
+          }
+        },
+        {
+          title: "Add restaurant description",
+          explain: "A short description tells people what the place is about.",
+          task: "<li>Write one short sentence about the restaurant.</li>",
+          hint: "Keep it simple and fun.",
+          validate() {
+            return value("menuDesc").length >= 8
+              ? { ok: true, message: "Menu description connected." }
+              : { ok: false, message: "Write a short description." };
+          }
+        },
+        {
+          title: "Add 3 food items",
+          explain: "A real menu needs items people can choose.",
+          task: "<li>Fill in all three food item boxes.</li>",
+          hint: "Use fun names if you want.",
+          validate() {
+            return value("item1") && value("item2") && value("item3")
+              ? { ok: true, message: "Food items loaded." }
+              : { ok: false, message: "Add all three food items." };
+          }
+        },
+        {
+          title: "Add prices",
+          explain: "Prices make the menu feel complete.",
+          task: "<li>Fill in all three price boxes.</li>",
+          hint: "Example: $8.",
+          validate() {
+            return value("price1") && value("price2") && value("price3")
+              ? { ok: true, message: "Prices connected." }
+              : { ok: false, message: "Add prices for all items." };
+          }
+        },
+        {
+          title: "Style the menu",
+          explain: "Background, border, spacing, and color make the menu easier to read.",
+          task: "<li>Check the preview.</li><li>You should see a styled menu card with clear sections.</li>",
+          hint: "Look for the yellow border and clean spacing.",
+          validate() {
+            return { ok: true, message: "Menu styling online." };
+          }
+        },
+        {
+          title: "Complete the build",
+          explain: "Your menu now has structure, content, prices, and style.",
+          task: "<li>Check this final step.</li><li>Then press Complete Project.</li>",
+          hint: "The bistro is ready to open.",
+          validate() {
+            return { ok: true, message: "Pixel Bistro ready." };
+          }
+        }
+      ]
+    };
+  </script>
+</body>
+</html>

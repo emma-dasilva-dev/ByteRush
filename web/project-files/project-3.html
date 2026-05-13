@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ByteRush | Energy Counter</title>
+  <link rel="stylesheet" href="projects.css" />
+</head>
+
+<body>
+  <main class="project-shell">
+    <section class="project-topbar panel-frame">
+      <div>
+        <p class="mini-label">PROJECT 03 / BEGINNER JS</p>
+        <h1 class="project-title">⚡ ENERGY COUNTER</h1>
+        <p class="project-subtitle">Build a working click counter with HTML, CSS, and JavaScript.</p>
+      </div>
+
+      <div class="lab-stats">
+        <div class="stat-pill"><span>PLAYER</span><strong id="playerName">Builder</strong></div>
+        <div class="stat-pill"><span>XP</span><strong id="xpValue">0</strong></div>
+        <div class="stat-pill"><span>REWARD</span><strong>+75</strong></div>
+        <div class="stat-pill"><span>STATUS</span><strong id="projectStatus">In Progress</strong></div>
+      </div>
+    </section>
+
+    <section class="project-main panel-frame">
+      <div class="project-panel guide-panel">
+        <div class="panel-heading">
+          <h2>BUILD GUIDE</h2>
+          <div id="stepCounter" class="step-counter">STEP 1 / 9</div>
+        </div>
+
+        <div class="step-card">
+          <h3 id="stepTitle"></h3>
+          <p id="stepExplain"></p>
+          <ul id="stepTask"></ul>
+          <p class="project-hint" id="stepHint"></p>
+        </div>
+
+        <div id="stepDots" class="step-status-list"></div>
+
+        <div class="step-actions">
+          <button id="prevStepBtn">PREVIOUS STEP</button>
+          <button id="nextStepBtn">NEXT STEP</button>
+          <button id="checkStepBtn" class="primary-btn">CHECK STEP</button>
+          <button id="completeProjectBtn" class="secondary-btn">COMPLETE PROJECT</button>
+        </div>
+      </div>
+
+      <div class="project-panel build-panel">
+        <div class="panel-heading">
+          <h2>LIVE COUNTER PREVIEW</h2>
+          <div class="step-counter">HTML + CSS + JS</div>
+        </div>
+
+        <div class="input-grid">
+          <div class="input-row">
+            <label>COUNTER TITLE</label>
+            <input id="counterTitle" value="Energy Counter" />
+          </div>
+
+          <div class="input-row">
+            <label>STARTING NUMBER</label>
+            <input id="startNumber" type="number" value="0" />
+          </div>
+        </div>
+
+        <div class="preview-box">
+          <div id="projectPreview" class="preview-stage"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="project-bottom-console panel-frame">
+      <div class="feedback-console" id="feedbackText">
+        <strong>SYSTEM VOICE:</strong> Make the interface respond to clicks.
+      </div>
+
+      <div class="bottom-actions">
+        <button id="audioToggle" class="secondary-btn">PROJECT AUDIO: ON</button>
+        <button id="returnLabBtn">RETURN TO PROJECT LAB</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="completeModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-content">
+        <div class="modal-title">BUILD COMPLETE</div>
+        <div id="completeTitle" class="modal-subtitle">Energy Counter Online</div>
+        <div id="completeReward" class="modal-subtitle">+75 XP</div>
+        <p id="completeMessage" class="modal-text">You made the interface respond.</p>
+        <button id="modalReturnBtn" class="primary-btn">RETURN TO PROJECT LAB</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="projects.js"></script>
+  <script>
+    let counterValue = 0;
+
+    function value(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    function syncCounterStart() {
+      counterValue = Number(value("startNumber")) || 0;
+    }
+
+    window.BRProjectConfig = {
+      id: 3,
+      name: "Energy Counter",
+      xp: 75,
+      completeTitle: "Energy Counter Online",
+      completeMessage: "You built a working click counter with JavaScript.",
+      renderPreview() {
+        return `
+          <div class="counter-card theme-green">
+            <h2>${value("counterTitle") || "Energy Counter"}</h2>
+            <p>Click the buttons to control the energy value.</p>
+            <div id="counterNumber" class="counter-number">${counterValue}</div>
+            <div class="preview-buttons">
+              <button id="increaseBtn" type="button">+ ENERGY</button>
+              <button id="decreaseBtn" type="button">- ENERGY</button>
+              <button id="resetCounterBtn" type="button">RESET</button>
+            </div>
+            <span class="saved-chip">COUNTER SYSTEM READY</span>
+          </div>
+        `;
+      },
+      afterRender() {
+        const number = document.getElementById("counterNumber");
+        const inc = document.getElementById("increaseBtn");
+        const dec = document.getElementById("decreaseBtn");
+        const reset = document.getElementById("resetCounterBtn");
+
+        function update() {
+          number.textContent = counterValue;
+        }
+
+        inc.addEventListener("click", () => {
+          counterValue++;
+          update();
+        });
+
+        dec.addEventListener("click", () => {
+          counterValue--;
+          update();
+        });
+
+        reset.addEventListener("click", () => {
+          counterValue = 0;
+          update();
+        });
+      },
+      steps: [
+        {
+          title: "Create counter display",
+          explain: "The display shows the current number.",
+          task: "<li>Look for the big number in the preview.</li>",
+          hint: "The number is the main output.",
+          validate() {
+            syncCounterStart();
+            return { ok: true, message: "Counter display online." };
+          }
+        },
+        {
+          title: "Add increase button",
+          explain: "This button will make the number go up.",
+          task: "<li>Find the + ENERGY button in the preview.</li>",
+          hint: "This button adds energy.",
+          validate() {
+            return document.getElementById("increaseBtn")
+              ? { ok: true, message: "Increase button connected." }
+              : { ok: false, message: "Increase button missing." };
+          }
+        },
+        {
+          title: "Add decrease button",
+          explain: "This button will make the number go down.",
+          task: "<li>Find the - ENERGY button in the preview.</li>",
+          hint: "This button removes energy.",
+          validate() {
+            return document.getElementById("decreaseBtn")
+              ? { ok: true, message: "Decrease button connected." }
+              : { ok: false, message: "Decrease button missing." };
+          }
+        },
+        {
+          title: "Add reset button",
+          explain: "Reset brings the number back to zero.",
+          task: "<li>Find the RESET button in the preview.</li>",
+          hint: "Reset is useful when the player wants to start over.",
+          validate() {
+            return document.getElementById("resetCounterBtn")
+              ? { ok: true, message: "Reset button connected." }
+              : { ok: false, message: "Reset button missing." };
+          }
+        },
+        {
+          title: "Style the counter panel",
+          explain: "The panel needs color, spacing, and a clear number.",
+          task: "<li>Check that the counter card looks clean and readable.</li>",
+          hint: "The big yellow number should stand out.",
+          validate() {
+            return { ok: true, message: "Counter panel styled." };
+          }
+        },
+        {
+          title: "Connect increase button",
+          explain: "JavaScript makes the number go up when the button is clicked.",
+          task: "<li>Click + ENERGY once.</li>",
+          hint: "The number should increase.",
+          validate() {
+            const before = counterValue;
+            counterValue++;
+            return counterValue === before + 1
+              ? { ok: true, message: "Increase logic online." }
+              : { ok: false, message: "Increase logic did not respond." };
+          }
+        },
+        {
+          title: "Connect decrease button",
+          explain: "JavaScript makes the number go down when the button is clicked.",
+          task: "<li>Click - ENERGY once.</li>",
+          hint: "The number should decrease.",
+          validate() {
+            const before = counterValue;
+            counterValue--;
+            return counterValue === before - 1
+              ? { ok: true, message: "Decrease logic online." }
+              : { ok: false, message: "Decrease logic did not respond." };
+          }
+        },
+        {
+          title: "Connect reset button",
+          explain: "JavaScript can reset the value back to zero.",
+          task: "<li>Click RESET.</li>",
+          hint: "The number should become 0.",
+          validate() {
+            counterValue = 0;
+            return { ok: true, message: "Reset logic online." };
+          }
+        },
+        {
+          title: "Complete the build",
+          explain: "Your counter now has display, buttons, style, and real interaction.",
+          task: "<li>Check this final step.</li><li>Then press Complete Project.</li>",
+          hint: "You made the interface respond.",
+          validate() {
+            return { ok: true, message: "Energy Counter ready." };
+          }
+        }
+      ]
+    };
+  </script>
+</body>
+</html>
